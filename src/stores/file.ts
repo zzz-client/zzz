@@ -32,8 +32,14 @@ export default class FileStore implements IStore {
         }
     }
     get(entityType: EntityType, entityName: string): any {
-        const filePath = `${entityType}/${entityName}.${this.fileExtension}`;
-        return this.parse(fs.readFileSync(filePath, "utf8"));
+        if (entityType === EntityType.Request) {
+            const letter = new Letter();
+            this.load(letter, entityName, "Integrate");
+            return letter;
+        } else {
+            const filePath = `${entityType}/${entityName}.${this.fileExtension}`;
+            return this.parse(fs.readFileSync(filePath, "utf8"));
+        }
     }
     store(key: string, value: any): void {
         const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
