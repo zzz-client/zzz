@@ -55,5 +55,6 @@ function JsonStore(): IStore {
     return new FileStore("json", JSON.parse, (data: any) => JSON.stringify(data, null, 2));
 }
 function newInstance(): IStore {
-    return new PostmanStore("PostmanCollection.json");
+    return YamlStore();
+    // return new PostmanStore("PostmanCollection.json");
 }
