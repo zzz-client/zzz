@@ -23,7 +23,7 @@ export default class ClientActor implements IActor {
             if (error.response && error.response.data) {
                 throw new Error(error.response.data);
             }
-            throw new Error(error.code);
+            throw new Error(error.code || "what");
         }
         if (letter.Trigger && letter.Trigger.After) {
             letter.Trigger.After(result);

@@ -29,7 +29,7 @@ export default class PostmanStore implements IStore {
         const childLetter = new Letter();
         new FileStore("yml", YAML.parse, YAML.stringify).load(childLetter, requestFilePath, environmentName);
         letter.Variables = childLetter.Variables;
-        letter.Variables.url = letter.URL;
+        letter.Variables.url = "{{baseUrl}}";
     }
     get(entityType: EntityType, entityName: string) {
         throw new Error("Method not implemented.");
