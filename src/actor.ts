@@ -13,7 +13,7 @@ function newInstance(type: string): IActor {
             return new SummaryActor();
         case "Curl":
             return new CurlActor();
-        case "Http":
+        case "Client":
             return new HttpActor();
         case "Connect":
             return new ConnectActor();
