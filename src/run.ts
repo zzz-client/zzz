@@ -5,6 +5,7 @@ import { parseAppConfig } from "./request";
 import Serve from "./serve";
 import { EntityType, Get } from "./store";
 import tim from "./tim";
+import * as YAML from "yaml";
 
 // prettier-ignore
 const testRequests = [
@@ -12,6 +13,23 @@ const testRequests = [
     "BasicFunctionality",
     "Mess/v1/Send Emails"
 ];
+
+export const appConfigDefaults = {
+    environment: "Integrate",
+    actor: "Client",
+    hooks: "YAML"
+};
+
+export type Parser = { parse: (input: string) => any; stringify: (input: any) => string };
+export const Parsers = {
+    YML: YAML,
+    YAML: YAML,
+    JSON: JSON,
+    TEXT: {
+        parse: (input: string) => input,
+        stringify: (input: any) => input
+    }
+};
 
 async function main() {
     try {
@@ -28,6 +46,7 @@ async function main() {
         const [beforeHook, afterHook] = Hooks(config.hooks, config.request, letter);
         beforeHook();
         const actResult = await Act(letter, config.actor);
+        console.log("act", actResult);
         afterHook(actResult);
         console.info(actResult);
     } catch (e) {

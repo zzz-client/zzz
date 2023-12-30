@@ -1,16 +1,16 @@
-import { dirname } from "path";
+import { basename, dirname } from "path";
 import Letter, { AnyNonPromise } from "../request";
 import { EntityType, IStore } from "../store";
 import fs = require("node:fs");
+import { Parser, Parsers } from "../run";
 
 export default class FileStore implements IStore {
     fileExtension: string;
-    parse: Function;
-    stringify: Function;
-    constructor(fileExtension: string, parseMethod: Function, stringifyMethod: Function) {
+    constructor(fileExtension: string) {
         this.fileExtension = fileExtension;
-        this.parse = parseMethod;
-        this.stringify = stringifyMethod;
+    }
+    parser(): Parser {
+        return Parsers[this.fileExtension.toUpperCase()];
     }
     get<T>(entityType: EntityType, entityName: string, environmentName: string): Promise<AnyNonPromise<T>> {
         if (entityType === EntityType.Request) {
@@ -20,36 +20,38 @@ export default class FileStore implements IStore {
         } else {
             const entityFolder = getDirectoryForEntity(entityType);
             const filePath = `${entityFolder}/${entityName}.${this.fileExtension}`;
-            return this.parse(fs.readFileSync(filePath, "utf8"));
+            console.log("filePath=", filePath);
+            return this.parser().parse(fs.readFileSync(filePath, "utf8"));
         }
     }
     store<T>(key: string, value: AnyNonPromise<T>): Promise<void> {
         const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
         let sessionContents: { Variables: AnyNonPromise<T> };
         if (fs.existsSync(sessionPath)) {
-            sessionContents = this.parse(fs.readFileSync(sessionPath, "utf8"));
+            sessionContents = this.parser().parse(fs.readFileSync(sessionPath, "utf8"));
         } else {
             sessionContents = { Variables: {} as AnyNonPromise<T> };
         }
         sessionContents.Variables[key] = value;
-        fs.writeFileSync(sessionPath, this.stringify(sessionContents));
+        fs.writeFileSync(sessionPath, this.parser().stringify(sessionContents));
         return Promise.resolve();
     }
-    load(letter: Letter, requestFilePath: string, environmentName: string): void {
-        const defaultFilePaths = getDefaultFilePaths("requests/" + requestFilePath, this.fileExtension, environmentName);
-        for (const filePath of defaultFilePaths) {
-            if (fs.existsSync(filePath)) {
-                const fileContents = this.parse(fs.readFileSync(filePath, "utf8"));
+    load(letter: Letter, requestId: string, environmentName: string): void {
+        const defaultFilePaths = getDefaultFilePaths("requests/" + requestId, this.fileExtension, environmentName);
+        for (const defaultFilePath of defaultFilePaths) {
+            if (fs.existsSync(defaultFilePath)) {
+                const fileContents = this.parser().parse(fs.readFileSync(defaultFilePath, "utf8"));
                 checkForbidden(fileContents);
                 applyChanges(letter, fileContents);
             }
         }
-        const fileContents = this.parse(fs.readFileSync("requests/" + requestFilePath + "." + this.fileExtension, "utf8"));
+        const X = "requests/" + requestId + "." + this.fileExtension;
+        const fileContents = this.parser().parse(fs.readFileSync(X, "utf8"));
         checkRequired(fileContents);
         applyChanges(letter, fileContents);
         const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
         if (fs.existsSync(sessionPath)) {
-            const sessionContents = this.parse(fs.readFileSync(sessionPath, "utf8"));
+            const sessionContents = this.parser().parse(fs.readFileSync(sessionPath, "utf8"));
             applyChanges(letter, sessionContents);
         }
     }

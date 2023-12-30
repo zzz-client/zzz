@@ -1,11 +1,13 @@
-import { table } from "table";
 import { IActor } from "../actor";
-import Letter, { AnyNonPromise } from "../request";
+import { AnyNonPromise } from "../request";
+import { Parsers } from "../run";
 
 export default class SummaryActor implements IActor {
     format<T>(data: AnyNonPromise<T>): string {
-        console.log("data", data);
-        return table(data as any);
+        return Parsers.TEXT.stringify(data);
     }
-    async act(_letter: Letter): Promise<void> {}
+    async act<T>(data: AnyNonPromise<T>): Promise<any> {
+        // TODO: bad use of any?
+        return data;
+    }
 }

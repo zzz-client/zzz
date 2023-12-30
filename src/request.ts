@@ -1,4 +1,5 @@
 import * as Minimist from "minimist";
+import { appConfigDefaults } from "./run";
 
 export default class Request {
     URL: string;
@@ -16,9 +17,9 @@ export type AnyNonPromise<T> = (T & { then?: void }) | Request;
 
 export function parseAppConfig(): AppConfig {
     const argv = Minimist(process.argv.slice(2));
-    const environment = getArgv(argv, "e", "environment", "Integrate");
-    const actor = getArgv(argv, "a", "actor", "Client");
-    const hooks = getArgv(argv, "h", "hooks", "YAML");
+    const environment = getArgv(argv, "e", "environment", appConfigDefaults["environment"]);
+    const actor = getArgv(argv, "a", "actor", appConfigDefaults["actor"]);
+    const hooks = getArgv(argv, "h", "hooks", appConfigDefaults["hooks"]);
     const request = argv._.length === 0 ? "serve" : argv._[0];
     return {
         environment,

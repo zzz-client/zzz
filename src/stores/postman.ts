@@ -1,8 +1,8 @@
-import * as YAML from "yaml";
 import Letter, { AnyNonPromise } from "../request";
 import { EntityType, IStore } from "../store";
 import FileStore from "./file";
 import fs = require("node:fs");
+import path = require("node:path");
 
 export default class PostmanStore implements IStore {
     collection: CollectionSchema;
@@ -23,7 +23,9 @@ async function loadLetter(collection: CollectionSchema, requestFilePath: string,
     const letter = new Letter();
     console.debug("Loading letter from postman collection", requestFilePath);
     // TODO: Write this so it cna work recursively
-    const [folderName, requestName] = requestFilePath.split("/");
+    const folderName = path.dirname(requestFilePath);
+    const extension = path.extname(requestFilePath);
+    const requestName = path.basename(requestFilePath, extension);
     const folder = collection.item.filter((item) => item.name === folderName)[0];
     const request = folder.item.filter((item) => item.name === requestName)[0].request;
     letter.Method = request.method;
@@ -41,7 +43,8 @@ async function loadLetter(collection: CollectionSchema, requestFilePath: string,
     return letter;
 }
 async function loadVariables(requestFilePath: string, environmentName: string): Promise<StringToStringMap> {
-    const childLetter = (await new FileStore("yml", YAML.parse, YAML.stringify).get(EntityType.Request, requestFilePath, environmentName)) as Letter;
+    requestFilePath = path.basename(requestFilePath, path.extname(requestFilePath));
+    const childLetter = (await new FileStore("yml").get(EntityType.Request, requestFilePath, environmentName)) as Letter;
     return childLetter.Variables;
 }
 interface StringToStringMap {

@@ -1,5 +1,5 @@
-import * as YAML from "yaml";
 import Letter from "./request";
+import { Parsers } from "./run";
 import FileStore from "./stores/file";
 import PostmanStore from "./stores/postman";
 export enum EntityType {
@@ -33,10 +33,10 @@ export interface IStore {
 function newInstance(type: string): IStore {
     switch (type.toLowerCase()) {
         case "json":
-            return new FileStore("json", YAML.parse, YAML.stringify);
+            return new FileStore("json");
         case "yml":
         default:
-            return new FileStore("yml", JSON.parse, (data: any) => JSON.stringify(data, null, 2));
+            return new FileStore("yml");
         case "postman":
             return new PostmanStore("PostmanCollection.json");
     }
@@ -49,7 +49,7 @@ async function loadLetter(requestFilePath: string, environmentName: string): Pro
 }
 function loadBody(letter: Letter, requestFilePath: string, environmentName: string) {
     if (typeof letter.Body === "string") {
-        letter.Body = JSON.parse(letter.Body);
+        letter.Body = Parsers["JSON"].parse(letter.Body); // TODO: Different for different types?
         return;
     }
 }

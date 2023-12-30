@@ -27,6 +27,6 @@ export default function Serve(appConfig: AppConfig) {
                 res.end();
             });
     }).listen(HTTP_PORT, () => {
-        console.log(`App is running on port ${HTTP_PORT}`);
+        console.info(`App is running on port ${HTTP_PORT}`);
     });
 }
