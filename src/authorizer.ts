@@ -1,6 +1,10 @@
 import { exit } from "process";
 import Letter from "./letter";
 import { Get, EntityType } from "./store";
+import BearerTokenAuthorizer from "./authorizers/bearerToken";
+import BasicAuthAuthorizer from "./authorizers/basicAuth";
+import HeaderAuthorizer from "./authorizers/header";
+import QueryAuthorizer from "./authorizers/query";
 
 export default function Authorize(letter: Letter, authorizationDefinition: string): void {
     if (authorizationDefinition) {
@@ -11,7 +15,9 @@ export default function Authorize(letter: Letter, authorizationDefinition: strin
         injection.apply(letter, authValues);
     }
 }
-
+export interface IAuthorization {
+    apply(letter: Letter, authorizationConfig: any): void;
+}
 function newInstance(type: string): IAuthorization {
     switch (type) {
         case "BearerToken":
@@ -32,27 +38,4 @@ function extractAuthType(authorizationDefinition: any): string {
         throw new Error("Unable to detect auth type");
     }
     return authType[0];
-}
-interface IAuthorization {
-    apply(letter: Letter, authorizationConfig: any): void;
-}
-class BearerTokenAuthorizer implements IAuthorization {
-    apply(letter: Letter, authorizationConfig: any): void {
-        letter.Headers["Authorization"] = `Bearer ${authorizationConfig}`;
-    }
-}
-class BasicAuthAuthorizer implements IAuthorization {
-    apply(letter: Letter, authorizationConfig: any): void {
-        letter.Headers["Authorization"] = "Basic " + Buffer.from(authorizationConfig.Username + authorizationConfig.Password).toString("base64");
-    }
-}
-class HeaderAuthorizer implements IAuthorization {
-    apply(letter: Letter, authorizationConfig: any): void {
-        letter.Headers[authorizationConfig.Name] = authorizationConfig.Value;
-    }
-}
-class QueryAuthorizer implements IAuthorization {
-    apply(letter: Letter, authorizationConfig: any): void {
-        letter.QueryParams[authorizationConfig.Param] = authorizationConfig.Value;
-    }
 }

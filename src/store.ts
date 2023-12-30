@@ -55,5 +55,4 @@ function JsonStore(): IStore {
 }
 function newInstance(): IStore {
     return YamlStore();
-    // return JsonStore();
 }
