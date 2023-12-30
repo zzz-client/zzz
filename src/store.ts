@@ -7,14 +7,15 @@ export enum EntityType {
     Environment,
     Authorization
 }
-
-let instance: IStore = null;
-function getInstance(): IStore {
-    if (instance == null) {
-        instance = newInstance("Postman");
-    }
+export function getInstance(): IStore {
     return instance;
 }
+export const Stores = {
+    Postman: newInstance("postman"),
+    JSON: newInstance("json"),
+    YAML: newInstance("yaml")
+};
+const instance: IStore = Stores.Postman;
 
 export default function Store(key: string, value: string, environmentName: string): any {
     return getInstance().store(key, value, environmentName);

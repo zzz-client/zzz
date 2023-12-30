@@ -20,7 +20,6 @@ export default class FileStore implements IStore {
         } else {
             const entityFolder = getDirectoryForEntity(entityType);
             const filePath = `${entityFolder}/${entityName}.${this.fileExtension}`;
-            console.log("filePath=", filePath);
             return this.parser().parse(fs.readFileSync(filePath, "utf8"));
         }
     }

@@ -5,6 +5,7 @@ import Request, { AnyNonPromise } from "./request";
 
 export default async function Act(letter: Request, actorName: string): Promise<any> {
     const actor = newInstance(actorName);
+    console.log("ACTOR", actor);
     const result = await actor.act(letter);
     return actor.format(result);
 }
@@ -15,11 +16,13 @@ export interface IActor {
 function newInstance(type: string): IActor {
     switch (type) {
         case "Summary":
+        case "plain/text":
+        case "txt":
             return new SummaryActor();
         case "Curl":
-        case "plain/text":
             return new CurlActor();
         case "Client":
+        case "application/json":
         case "json":
             return new ClientActor();
         default:

@@ -1,8 +1,8 @@
 import Letter, { AnyNonPromise } from "../request";
-import { EntityType, IStore } from "../store";
-import FileStore from "./file";
+import { Parsers } from "../run";
 import fs = require("node:fs");
 import path = require("node:path");
+import { EntityType, IStore, Stores } from "../store";
 
 export default class PostmanStore implements IStore {
     collection: CollectionSchema;
@@ -11,21 +11,24 @@ export default class PostmanStore implements IStore {
     }
     async get(entityType: EntityType, entityName: string, environmentName: string): Promise<any> {
         if (entityType === EntityType.Request) {
-            return await loadLetter(this.collection, entityName, environmentName);
+            return await loadLetter(this.collection, environmentName, entityName);
         }
-        throw new Error("Method not implemented.");
+        return Stores.YAML.get(entityType, entityName, environmentName);
     }
     async store<T>(key: string, value: AnyNonPromise<T>): Promise<void> {
         throw new Error("Method not implemented.");
     }
 }
-async function loadLetter(collection: CollectionSchema, requestFilePath: string, environmentName: string): Promise<Letter> {
+async function loadLetter(collection: CollectionSchema, environmentName: string, requestFilePath: string): Promise<Letter> {
     const letter = new Letter();
-    console.debug("Loading letter from postman collection", requestFilePath);
+    console.debug("Loading letter from postman collection: ", requestFilePath);
     // TODO: Write this so it cna work recursively
     const folderName = path.dirname(requestFilePath);
     const extension = path.extname(requestFilePath);
     const requestName = path.basename(requestFilePath, extension);
+    console.log("requestFilePath", requestFilePath);
+    console.log("folderName", folderName);
+    console.log("requestName", requestName);
     const folder = collection.item.filter((item) => item.name === folderName)[0];
     const request = folder.item.filter((item) => item.name === requestName)[0].request;
     letter.Method = request.method;
@@ -39,14 +42,35 @@ async function loadLetter(collection: CollectionSchema, requestFilePath: string,
     for (let query of request.url.query) {
         letter.QueryParams[query.key] = query.value;
     }
-    letter.Variables = await loadVariables(requestFilePath, environmentName);
+    applyChanges(letter, await loadEnvironment("globals", null));
+    // applyChanges(letter, await loadEnvironment("globals.local", null));
+    applyChanges(letter, await loadEnvironment(environmentName, environmentName));
+    applyChanges(letter, await loadEnvironment(environmentName + ".local", environmentName));
+    applyChanges(letter, await loadEnvironment("session.local", null));
     return letter;
 }
-async function loadVariables(requestFilePath: string, environmentName: string): Promise<StringToStringMap> {
-    requestFilePath = path.basename(requestFilePath, path.extname(requestFilePath));
-    const childLetter = (await new FileStore("yml").get(EntityType.Request, requestFilePath, environmentName)) as Letter;
-    return childLetter.Variables;
+async function loadEnvironment(target: string, environmentName: string): Promise<Letter> {
+    try {
+        return await Stores.YAML.get(EntityType.Environment, target, environmentName);
+    } catch (e) {
+        return new Letter();
+    }
 }
+// TODO: Duplicate code
+function applyChanges<T>(destination: AnyNonPromise<T>, source: AnyNonPromise<T>): void {
+    // console.log("Applying", source, "to", destination);
+    if (!source) {
+        return;
+    }
+    for (const key of Object.keys(source)) {
+        if (destination[key] !== undefined && typeof destination[key] === "object") {
+            applyChanges(destination[key], source[key]);
+        } else {
+            destination[key] = source[key];
+        }
+    }
+}
+// TODO: Duplicate code
 interface StringToStringMap {
     [key: string]: string;
 }

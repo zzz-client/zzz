@@ -24,10 +24,13 @@ export type Parser = { parse: (input: string) => any; stringify: (input: any) =>
 export const Parsers = {
     YML: YAML,
     YAML: YAML,
-    JSON: JSON,
+    JSON: {
+        parse: JSON.parse,
+        stringify: (input: any) => JSON.stringify(input, null, 2)
+    },
     TEXT: {
-        parse: (input: string) => input,
-        stringify: (input: any) => input
+        parse: (input: string) => input + "",
+        stringify: (input: any) => input + ""
     }
 };
 
