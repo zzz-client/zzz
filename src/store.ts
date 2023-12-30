@@ -48,18 +48,25 @@ class FileStore implements IStore {
         const fileContents = this.parse(fs.readFileSync(requestFilePath, "utf8"));
         checkRequired(fileContents);
         applyChanges(letter, fileContents);
+        loadSession(letter, this.parse, this.fileExtension);
     }
     get(entityType: EntityType, entityName: string): any {
         const filePath = `${entityType}/${entityName}.${this.fileExtension}`;
         return this.parse(fs.readFileSync(filePath, "utf8"));
     }
 }
+function loadSession(letter: Letter, parseFunction: Function, fileExtension: string): void {
+    const sessionContents = parseFunction(fs.readFileSync(`session.${fileExtension}`, "utf8"));
+    applyChanges(letter, sessionContents);
+}
 function getEnvironmentPath(environmentName: string, fileExtension: string): string {
     return `${EntityType.Environment}/${environmentName}.${fileExtension}`;
 }
 
 function getDefaultFilePaths(requestFilePath: string, fileExtension: string, environmentName: string): string[] {
-    const defaultEnvironments = ["global.local", "global", `${environmentName}.local`, environmentName].map((name) => getEnvironmentPath(name, fileExtension));
+    const defaultEnvironments = ["globals.local", "globals", `${environmentName}.local`, environmentName].map((name) =>
+        getEnvironmentPath(name, fileExtension)
+    );
     const defaultFilePaths = [];
     let currentDirectory = dirname(requestFilePath);
     while (currentDirectory !== "." && currentDirectory !== "") {
@@ -68,12 +75,16 @@ function getDefaultFilePaths(requestFilePath: string, fileExtension: string, env
     }
     return [...defaultEnvironments, ...defaultFilePaths.reverse()];
 }
-function applyChanges(letter: Letter, fileContents: any): void {
-    if (!fileContents) {
+function applyChanges(destination: any, source: any): void {
+    if (!source) {
         return;
     }
-    for (const key of Object.keys(fileContents)) {
-        letter[key] = fileContents[key];
+    for (const key of Object.keys(source)) {
+        if (destination[key] !== undefined && typeof destination[key] === "object") {
+            applyChanges(destination[key], source[key]);
+        } else {
+            destination[key] = source[key];
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 Method: POST
 URL: "{{url}}{{apexrest_path}}mess/v1/send/PurchaseTransactionForReservation"
 Body:
-  SubscriberKey: "{{0035600000iFaknAAC}}"
+  SubscriberKey: "0035600000iFaknAAC"
   RecipientAddresses:
     - tnetherton@inspirato.com
   EmailAddress: tnetherton@inspirato.com

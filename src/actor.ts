@@ -53,8 +53,7 @@ class NodeJsActor implements IActor {
                 })
             ).data;
         } catch (error) {
-            console.log("!!!", error.errors);
-            return error.errors;
+            return error.response.data;
         }
     }
 }
