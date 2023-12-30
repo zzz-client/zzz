@@ -1,4 +1,3 @@
-import { exit } from "process";
 import Letter from "./letter";
 import { Get, EntityType } from "./store";
 import BearerTokenAuthorizer from "./authorizers/bearerToken";

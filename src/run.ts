@@ -6,9 +6,9 @@ import Act from "./actor";
 import Letter from "./letter";
 import tim from "./tim";
 
-// const request = "mess/v1/sendEmails";
+// const request = "Authentication/OAuth Client Credentials";
 // const request = "BasicFunctionality";
-const request = "Authentication/OAuth Client Credentials";
+const request = "Mess/v1/Send Emails";
 const environment = "Integrate";
 const actor = "Client";
 
@@ -24,16 +24,20 @@ async function main() {
         const actResult = await Act(letter, actor);
         console.info("RESULT", actResult);
     } catch (e) {
-        console.error(e);
+        console.error("ERRRROR", e);
         process.exit(1);
     }
 }
 
 function loadHooks(letter: Letter, requestFilePath: string) {
-    const beforePath = dirname(requestFilePath) + "/before.js";
-    const afterPath = dirname(requestFilePath) + "/after.js";
+    const beforePath = "requests/" + dirname(requestFilePath) + "/before.js";
+    const afterPath = "requests/" + dirname(requestFilePath) + "/after.js";
+    if (!letter.Trigger) {
+        letter.Trigger = { Before: null, After: null };
+    }
     if (fs.existsSync(afterPath)) {
-        letter.Trigger.After = (data) => {
+        letter.Trigger.After = (result) => {
+            const data = result; // This is expected by the eval statement
             return eval(fs.readFileSync(afterPath, "utf8"));
         };
     }

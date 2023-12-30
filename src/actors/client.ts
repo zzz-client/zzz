@@ -24,14 +24,17 @@ function formatError(error: any) {
     if (error.response && error.response.data) {
         return error.response.data;
     }
-    return error.code;
+    if (error.code) {
+        return new Error(error.code);
+    }
+    return error;
 }
 async function fireRequest(letter: Letter): Promise<any> {
     try {
         console.log(`${letter.Method} ${letter.URL}`);
         return await doRequest(letter);
     } catch (error) {
-        throw new Error(formatError(error));
+        throw formatError(error);
     }
 }
 async function doRequest(letter: Letter): Promise<any> {
