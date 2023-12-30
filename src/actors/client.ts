@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { IActor } from "../actor";
-import Letter from "../letter";
-import SummaryActor from "./summary";
+import Letter from "../request";
 
 const defaultStringify = (data) => JSON.stringify(data, null, 2);
 

@@ -1,9 +1,11 @@
+import { table } from "table";
 import { IActor } from "../actor";
-import Letter, { AnyNonPromise } from "../letter";
+import Letter, { AnyNonPromise } from "../request";
 
 export default class SummaryActor implements IActor {
     format<T>(data: AnyNonPromise<T>): string {
-        return JSON.stringify(data, null, 2);
+        console.log("data", data);
+        return table(data as any);
     }
     async act(_letter: Letter): Promise<void> {}
 }

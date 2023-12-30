@@ -1,12 +1,11 @@
 import * as YAML from "yaml";
-import Letter from "./letter";
+import Letter from "./request";
 import FileStore from "./stores/file";
 import PostmanStore from "./stores/postman";
 export enum EntityType {
-    Default,
-    Request = "requests",
-    Environment = "environments",
-    Authorization = "authorizations"
+    Request,
+    Environment,
+    Authorization
 }
 
 let instance: IStore = null;

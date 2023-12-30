@@ -1,5 +1,5 @@
 import { IAuthorization } from "../authorizer";
-import Letter from "../letter";
+import Letter from "../request";
 
 export default class BasicAuthAuthorizer implements IAuthorization {
     apply(letter: Letter, authorizationConfig: Config): void {

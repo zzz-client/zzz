@@ -1,9 +1,8 @@
 import * as YAML from "yaml";
-import { IStore } from "../store";
-import Letter, { AnyNonPromise } from "../letter";
-import { EntityType } from "../store";
-import fs = require("node:fs");
+import Letter, { AnyNonPromise } from "../request";
+import { EntityType, IStore } from "../store";
 import FileStore from "./file";
+import fs = require("node:fs");
 
 export default class PostmanStore implements IStore {
     collection: CollectionSchema;
@@ -22,6 +21,7 @@ export default class PostmanStore implements IStore {
 }
 async function loadLetter(collection: CollectionSchema, requestFilePath: string, environmentName: string): Promise<Letter> {
     const letter = new Letter();
+    console.debug("Loading letter from postman collection", requestFilePath);
     // TODO: Write this so it cna work recursively
     const [folderName, requestName] = requestFilePath.split("/");
     const folder = collection.item.filter((item) => item.name === folderName)[0];

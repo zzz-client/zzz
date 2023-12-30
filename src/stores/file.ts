@@ -1,7 +1,6 @@
 import { dirname } from "path";
-import { IStore } from "../store";
-import Letter, { AnyNonPromise } from "../letter";
-import { EntityType } from "../store";
+import Letter, { AnyNonPromise } from "../request";
+import { EntityType, IStore } from "../store";
 import fs = require("node:fs");
 
 export default class FileStore implements IStore {
@@ -19,7 +18,8 @@ export default class FileStore implements IStore {
             this.load(letter, entityName, environmentName);
             return Promise.resolve(letter);
         } else {
-            const filePath = `${entityType}/${entityName}.${this.fileExtension}`;
+            const entityFolder = getDirectoryForEntity(entityType);
+            const filePath = `${entityFolder}/${entityName}.${this.fileExtension}`;
             return this.parse(fs.readFileSync(filePath, "utf8"));
         }
     }
@@ -54,9 +54,20 @@ export default class FileStore implements IStore {
         }
     }
 }
-
+function getDirectoryForEntity(entityType: EntityType): string {
+    switch (entityType) {
+        case EntityType.Request:
+            return "requests";
+        case EntityType.Environment:
+            return "environments";
+        case EntityType.Authorization:
+            return "authorizations";
+        default:
+            throw `Unknown entity type ${entityType}`;
+    }
+}
 function getEnvironmentPath(environmentName: string, fileExtension: string): string {
-    return `${EntityType.Environment}/${environmentName}.${fileExtension}`;
+    return getDirectoryForEntity(EntityType.Environment) + `/${environmentName}.${fileExtension}`;
 }
 function getDefaultFilePaths(requestFilePath: string, fileExtension: string, environmentName: string): string[] {
     const defaultEnvironments = ["globals.local", "globals", `${environmentName}.local`, environmentName].map((name) =>

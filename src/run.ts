@@ -1,43 +1,22 @@
-const http = require("http");
-const HTTP_PORT = process.env.PORT || 8000;
-import { EntityType, Get } from "./store";
-import Authorize from "./authorizer";
 import Act from "./actor";
-import tim from "./tim";
+import Authorize from "./authorizer";
 import Hooks from "./hooks";
-import * as Minimist from "minimist";
-import { AnyNonPromise } from "./letter";
-
-function parseAppConfig(): AppConfig {
-    const argv = Minimist(process.argv.slice(2));
-    const environment = getArgv(argv, "e", "environment", "Integrate");
-    const actor = getArgv(argv, "a", "actor", "Client");
-    const hooks = getArgv(argv, "h", "hooks", "YAML");
-    const request = argv._.length === 0 ? "serve" : argv._[0];
-    return {
-        environment,
-        actor,
-        request,
-        hooks
-    };
-}
-type AppConfig = {
-    environment: string;
-    actor: string;
-    request: string | "serve";
-    hooks: string;
-};
+import { parseAppConfig } from "./request";
+import Serve from "./serve";
+import { EntityType, Get } from "./store";
+import tim from "./tim";
 
 // prettier-ignore
 const testRequests = [
     "Authentication/OAuth Client Credentials",
     "BasicFunctionality",
     "Mess/v1/Send Emails"
-], testRequest = testRequests[ 0 ];
+];
 
 async function main() {
     try {
         const config = parseAppConfig();
+        // config.request = testRequests[0];
         if (config.request === "serve") {
             Serve(config);
             return;
@@ -55,36 +34,6 @@ async function main() {
         console.error("!!!", e);
         process.exit(1);
     }
-}
-
-function getArgv<T>(minimist: AnyNonPromise<T>, short: string, full: string, defaultVal: string): string {
-    return minimist[short] || minimist[full] || defaultVal;
-}
-
-function Serve(appConfig: AppConfig) {
-    http.createServer((req, res) => {
-        const { method, url, headers } = req;
-        if (url === "/favicon.ico") {
-            res.end();
-            return;
-        }
-        const resourcePath = decodeURI(url.substring(1));
-        console.log("First request", method, resourcePath);
-        Get(EntityType.Request, resourcePath, "Integrate")
-            .then((letter) => {
-                tim(letter, letter.Variables);
-                return Act(letter, appConfig.actor);
-            })
-            .then((result) => {
-                res.writeHead(200, { "Content-Type": "text/plain" }); // TODO: How to have this set from Actor? Maybe add to IActor interface?
-                res.write(result);
-                // res.writeHead(200, { "Content-Type": "application/json" });
-                // res.write(JSON.stringify(what, null, 4));
-                res.end();
-            });
-    }).listen(HTTP_PORT, () => {
-        console.log(`App is running on port ${HTTP_PORT}`);
-    });
 }
 
 main();

@@ -1,15 +1,15 @@
 import ClientActor from "./actors/client";
 import CurlActor from "./actors/curl";
 import SummaryActor from "./actors/summary";
-import Letter, { AnyNonPromise } from "./letter";
+import Request, { AnyNonPromise } from "./request";
 
-export default async function Act(letter: Letter, actorName: string): Promise<any> {
+export default async function Act(letter: Request, actorName: string): Promise<any> {
     const actor = newInstance(actorName);
     const result = await actor.act(letter);
     return actor.format(result);
 }
 export interface IActor {
-    act(letter: Letter): Promise<any>;
+    act(letter: Request): Promise<any>;
     format<T>(data: AnyNonPromise<T>): string;
 }
 function newInstance(type: string): IActor {

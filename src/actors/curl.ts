@@ -1,5 +1,5 @@
 import { IActor } from "../actor";
-import Letter, { AnyNonPromise } from "../letter";
+import Letter, { AnyNonPromise } from "../request";
 
 export default class CurlActor implements IActor {
     format<T>(culCommand: AnyNonPromise<T>): string {

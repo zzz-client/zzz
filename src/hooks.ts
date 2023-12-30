@@ -1,7 +1,7 @@
 import fs = require("node:fs");
-import Letter from "./letter";
-import Store from "./store";
 import { dirname } from "path";
+import Letter from "./request";
+import Store from "./store";
 
 global.Store = Store; // Must be defined for eval
 

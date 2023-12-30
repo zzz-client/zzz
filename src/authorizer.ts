@@ -1,9 +1,9 @@
-import Letter from "./letter";
-import { Get, EntityType } from "./store";
-import BearerTokenAuthorizer from "./authorizers/bearerToken";
 import BasicAuthAuthorizer from "./authorizers/basicAuth";
+import BearerTokenAuthorizer from "./authorizers/bearerToken";
 import HeaderAuthorizer from "./authorizers/header";
 import QueryAuthorizer from "./authorizers/query";
+import Letter from "./request";
+import { EntityType, Get } from "./store";
 
 export default function Authorize(letter: Letter, authorizationDefinition: string): void {
     if (authorizationDefinition) {
