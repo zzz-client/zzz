@@ -6,6 +6,7 @@ import Act from "./actor";
 import tim from "./tim";
 import Hooks from "./hooks";
 import * as Minimist from "minimist";
+import { AnyNonPromise } from "./letter";
 
 function parseAppConfig(): AppConfig {
     const argv = Minimist(process.argv.slice(2));
@@ -20,12 +21,12 @@ function parseAppConfig(): AppConfig {
         hooks
     };
 }
-interface AppConfig {
+type AppConfig = {
     environment: string;
     actor: string;
     request: string | "serve";
     hooks: string;
-}
+};
 
 // prettier-ignore
 const testRequests = [
@@ -56,7 +57,7 @@ async function main() {
     }
 }
 
-function getArgv(minimist: any, short: string, full: string, defaultVal: string): string {
+function getArgv<T>(minimist: AnyNonPromise<T>, short: string, full: string, defaultVal: string): string {
     return minimist[short] || minimist[full] || defaultVal;
 }
 

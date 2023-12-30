@@ -1,6 +1,6 @@
 import { dirname } from "path";
 import { IStore } from "../store";
-import Letter from "../letter";
+import Letter, { AnyNonPromise } from "../letter";
 import { EntityType } from "../store";
 import fs = require("node:fs");
 
@@ -13,7 +13,7 @@ export default class FileStore implements IStore {
         this.parse = parseMethod;
         this.stringify = stringifyMethod;
     }
-    get(entityType: EntityType, entityName: string, environmentName: string): Promise<any> {
+    get<T>(entityType: EntityType, entityName: string, environmentName: string): Promise<AnyNonPromise<T>> {
         if (entityType === EntityType.Request) {
             const letter = new Letter();
             this.load(letter, entityName, environmentName);
@@ -23,13 +23,13 @@ export default class FileStore implements IStore {
             return this.parse(fs.readFileSync(filePath, "utf8"));
         }
     }
-    store(key: string, value: any): Promise<void> {
+    store<T>(key: string, value: AnyNonPromise<T>): Promise<void> {
         const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
-        let sessionContents: any;
+        let sessionContents: { Variables: AnyNonPromise<T> };
         if (fs.existsSync(sessionPath)) {
             sessionContents = this.parse(fs.readFileSync(sessionPath, "utf8"));
         } else {
-            sessionContents = { Variables: {} };
+            sessionContents = { Variables: {} as AnyNonPromise<T> };
         }
         sessionContents.Variables[key] = value;
         fs.writeFileSync(sessionPath, this.stringify(sessionContents));
@@ -70,7 +70,7 @@ function getDefaultFilePaths(requestFilePath: string, fileExtension: string, env
     }
     return [...defaultEnvironments, ...defaultFilePaths.reverse()];
 }
-function applyChanges(destination: any, source: any): void {
+function applyChanges<T>(destination: AnyNonPromise<T>, source: AnyNonPromise<T>): void {
     if (!source) {
         return;
     }
@@ -85,14 +85,14 @@ function applyChanges(destination: any, source: any): void {
 
 const REQUIRED_ON_REQUEST = ["Method", "URL"];
 const NO_DEFAULT_ALLOWED = ["Method", "URL", "QueryParams", "Body"];
-function checkRequired(fileContents: any): void {
+function checkRequired<T>(fileContents: AnyNonPromise<T>): void {
     for (const key of REQUIRED_ON_REQUEST) {
         if (!fileContents[key]) {
             throw `Missing required key ${key}`;
         }
     }
 }
-function checkForbidden(fileContents: any): void {
+function checkForbidden<T>(fileContents: AnyNonPromise<T>): void {
     for (const key of NO_DEFAULT_ALLOWED) {
         if (fileContents[key]) {
             throw `Forbidden key ${key}`;

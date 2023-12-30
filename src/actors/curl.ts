@@ -1,7 +1,10 @@
 import { IActor } from "../actor";
-import Letter from "../letter";
+import Letter, { AnyNonPromise } from "../letter";
 
 export default class CurlActor implements IActor {
+    format<T>(culCommand: AnyNonPromise<T>): string {
+        return culCommand as string;
+    }
     async act(letter: Letter): Promise<string> {
         let curlCommand = `curl -X ${letter.Method} ${letter.URL}?`;
         Object.keys(letter.QueryParams).forEach((key) => {

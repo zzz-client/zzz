@@ -1,8 +1,18 @@
 import axios, { AxiosResponse } from "axios";
 import { IActor } from "../actor";
 import Letter from "../letter";
+import SummaryActor from "./summary";
+
+const defaultStringify = (data) => JSON.stringify(data, null, 2);
 
 export default class ClientActor implements IActor {
+    stringify: Function;
+    constructor(stringify: Function = defaultStringify) {
+        this.stringify = stringify;
+    }
+    format(data: any): string {
+        return this.stringify(data, null, 2);
+    }
     async act(letter: Letter): Promise<AxiosResponse> {
         try {
             console.log(`${letter.Method} ${letter.URL}`);
@@ -21,7 +31,6 @@ function formatError(error: any) {
     }
     return error;
 }
-
 async function doRequest(letter: Letter): Promise<any> {
     return (
         await axios.request({

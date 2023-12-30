@@ -1,6 +1,6 @@
 import * as YAML from "yaml";
 import { IStore } from "../store";
-import Letter from "../letter";
+import Letter, { AnyNonPromise } from "../letter";
 import { EntityType } from "../store";
 import fs = require("node:fs");
 import FileStore from "./file";
@@ -16,7 +16,7 @@ export default class PostmanStore implements IStore {
         }
         throw new Error("Method not implemented.");
     }
-    async store(key: string, value: any): Promise<void> {
+    async store<T>(key: string, value: AnyNonPromise<T>): Promise<void> {
         throw new Error("Method not implemented.");
     }
 }
@@ -41,7 +41,7 @@ async function loadLetter(collection: CollectionSchema, requestFilePath: string,
     return letter;
 }
 async function loadVariables(requestFilePath: string, environmentName: string): Promise<StringToStringMap> {
-    const childLetter = await new FileStore("yml", YAML.parse, YAML.stringify).get(EntityType.Request, requestFilePath, environmentName);
+    const childLetter = (await new FileStore("yml", YAML.parse, YAML.stringify).get(EntityType.Request, requestFilePath, environmentName)) as Letter;
     return childLetter.Variables;
 }
 interface StringToStringMap {
