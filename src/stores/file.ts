@@ -1,5 +1,5 @@
 import { dirname } from "path";
-import { IStore, checkForbidden, checkRequired } from "../store";
+import { IStore } from "../store";
 import Letter from "../letter";
 import { EntityType } from "../store";
 import fs = require("node:fs");
@@ -12,6 +12,28 @@ export default class FileStore implements IStore {
         this.fileExtension = fileExtension;
         this.parse = parseMethod;
         this.stringify = stringifyMethod;
+    }
+    get(entityType: EntityType, entityName: string, environmentName: string): Promise<any> {
+        if (entityType === EntityType.Request) {
+            const letter = new Letter();
+            this.load(letter, entityName, environmentName);
+            return Promise.resolve(letter);
+        } else {
+            const filePath = `${entityType}/${entityName}.${this.fileExtension}`;
+            return this.parse(fs.readFileSync(filePath, "utf8"));
+        }
+    }
+    store(key: string, value: any): Promise<void> {
+        const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
+        let sessionContents: any;
+        if (fs.existsSync(sessionPath)) {
+            sessionContents = this.parse(fs.readFileSync(sessionPath, "utf8"));
+        } else {
+            sessionContents = { Variables: {} };
+        }
+        sessionContents.Variables[key] = value;
+        fs.writeFileSync(sessionPath, this.stringify(sessionContents));
+        return Promise.resolve();
     }
     load(letter: Letter, requestFilePath: string, environmentName: string): void {
         const defaultFilePaths = getDefaultFilePaths("requests/" + requestFilePath, this.fileExtension, environmentName);
@@ -30,27 +52,6 @@ export default class FileStore implements IStore {
             const sessionContents = this.parse(fs.readFileSync(sessionPath, "utf8"));
             applyChanges(letter, sessionContents);
         }
-    }
-    get(entityType: EntityType, entityName: string): any {
-        if (entityType === EntityType.Request) {
-            const letter = new Letter();
-            this.load(letter, entityName, "Integrate");
-            return letter;
-        } else {
-            const filePath = `${entityType}/${entityName}.${this.fileExtension}`;
-            return this.parse(fs.readFileSync(filePath, "utf8"));
-        }
-    }
-    store(key: string, value: any): void {
-        const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
-        let sessionContents: any;
-        if (fs.existsSync(sessionPath)) {
-            sessionContents = this.parse(fs.readFileSync(sessionPath, "utf8"));
-        } else {
-            sessionContents = { Variables: {} };
-        }
-        sessionContents.Variables[key] = value;
-        fs.writeFileSync(sessionPath, this.stringify(sessionContents));
     }
 }
 
@@ -78,6 +79,23 @@ function applyChanges(destination: any, source: any): void {
             applyChanges(destination[key], source[key]);
         } else {
             destination[key] = source[key];
+        }
+    }
+}
+
+const REQUIRED_ON_REQUEST = ["Method", "URL"];
+const NO_DEFAULT_ALLOWED = ["Method", "URL", "QueryParams", "Body"];
+function checkRequired(fileContents: any): void {
+    for (const key of REQUIRED_ON_REQUEST) {
+        if (!fileContents[key]) {
+            throw `Missing required key ${key}`;
+        }
+    }
+}
+function checkForbidden(fileContents: any): void {
+    for (const key of NO_DEFAULT_ALLOWED) {
+        if (fileContents[key]) {
+            throw `Forbidden key ${key}`;
         }
     }
 }

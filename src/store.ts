@@ -8,54 +8,49 @@ export enum EntityType {
     Environment = "environments",
     Authorization = "authorizations"
 }
-const REQUIRED_ON_REQUEST = ["Method", "URL"];
-const NO_DEFAULT_ALLOWED = ["Method", "URL", "QueryParams", "Body"];
+
+let instance: IStore = null;
+function getInstance(): IStore {
+    if (instance == null) {
+        instance = newInstance("Postman");
+    }
+    return instance;
+}
 
 export default function Store(key: string, value: string, environmentName: string): any {
-    return newInstance().store(key, value, environmentName);
+    return getInstance().store(key, value, environmentName);
 }
-export function Get(entityType: EntityType, entityName: string, environmentName: string): any {
+export async function Get(entityType: EntityType, entityName: string, environmentName: string): Promise<any> {
     if (entityType === EntityType.Request) {
         return loadLetter(entityName, environmentName);
+    } else {
+        return getInstance().get(entityType, entityName, environmentName);
     }
-    return newInstance().get(entityType, entityName, environmentName);
-}
-function loadLetter(requestFilePath: string, environmentName: string): Letter {
-    const letter = newInstance().get(EntityType.Request, requestFilePath, environmentName);
-    loadBody(letter, requestFilePath, environmentName);
-    return letter;
 }
 export interface IStore {
-    get(entityType: EntityType, entityName: string, environmentName: string): any;
-    store(key: string, value: any, environmentName: string): void;
+    get(entityType: EntityType, entityName: string, environmentName: string): Promise<any>;
+    store(key: string, value: any, environmentName: string): Promise<void>;
 }
-export function checkRequired(fileContents: any): void {
-    for (const key of REQUIRED_ON_REQUEST) {
-        if (!fileContents[key]) {
-            throw `Missing required key ${key}`;
-        }
+function newInstance(type: string): IStore {
+    switch (type.toLowerCase()) {
+        case "json":
+            return new FileStore("json", YAML.parse, YAML.stringify);
+        case "yml":
+        default:
+            return new FileStore("yml", JSON.parse, (data: any) => JSON.stringify(data, null, 2));
+        case "postman":
+            return new PostmanStore("PostmanCollection.json");
     }
 }
-export function checkForbidden(fileContents: any): void {
-    for (const key of NO_DEFAULT_ALLOWED) {
-        if (fileContents[key]) {
-            throw `Forbidden key ${key}`;
-        }
-    }
+
+async function loadLetter(requestFilePath: string, environmentName: string): Promise<Letter> {
+    const letter = await getInstance().get(EntityType.Request, requestFilePath, environmentName);
+    loadBody(letter, requestFilePath, environmentName);
+    return letter;
 }
 function loadBody(letter: Letter, requestFilePath: string, environmentName: string) {
     if (typeof letter.Body === "string") {
         letter.Body = JSON.parse(letter.Body);
         return;
     }
-}
-function YamlStore(): IStore {
-    return new FileStore("yml", YAML.parse, YAML.stringify);
-}
-function JsonStore(): IStore {
-    return new FileStore("json", JSON.parse, (data: any) => JSON.stringify(data, null, 2));
-}
-function newInstance(): IStore {
-    return YamlStore();
-    // return new PostmanStore("PostmanCollection.json");
 }
