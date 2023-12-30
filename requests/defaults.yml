@@ -1,0 +1,16 @@
+Authorization: BearerToken
+Headers:
+  Cache-Control: no-cache
+  Content-Length: 0
+  Host: "{{host}}"
+  User-Agent: "PostmanRuntime/7.36.0"
+  Accept: "*/*"
+  Accept-Encoding: gzip, deflate, br
+  Connection: keep-alive
+Settings:
+  EnableCookies: true
+  FollowRedirects: true
+  MaxRedirects: 10
+  FollowAuthorizationHeader: true
+  FollowHttpMethod: false
+  RemoveReferrerHeader: false

@@ -1,0 +1,7 @@
+Variables:
+  auth_path: /services/oauth2/
+  version_path: v{{version}}/
+  standard_path: /services/data/{{version}}/
+  apexrest_path: /services/apexrest/
+  url: ""
+  latest_version: 59.0
