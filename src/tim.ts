@@ -1,6 +1,19 @@
+export default function Do(data: any, variables: any): void {
+    Object.keys(data).forEach((key) => {
+        const dataValue = data[key];
+        if (typeof dataValue === "string") {
+            data[key] = render(dataValue, variables);
+        } else if (typeof dataValue === "object" && dataValue !== null) {
+            Do(dataValue, variables);
+        } else {
+            // console.warn("Unknown dataValue type", key, dataValue);
+        }
+    });
+}
+
 // github.com/premasagar/tim
 // MIT License
-export default function render(template: string, data: any): string {
+function render(template: string, data: any): string {
     var start = "{{",
         end = "}}",
         path = "[a-z0-9_$][\\.a-z0-9_]*", // e.g. config.person.name
