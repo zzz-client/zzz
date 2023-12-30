@@ -4,6 +4,16 @@
     "description": "Replacement for Postman",
     "scripts": {
         "build": "tsc",
-        "start": "node dist/src/index.js"
+        "watch": "tsc -w",
+        "start": "node dist/src/index.js",
+        "prestart": "npm run build",
+        "test": "jest",
+        "clean": "rm -rf junit.xml dist coverage"
+    },
+    "dependencies": {
+        "yaml": "^2.3.4"
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.6"
     }
 }

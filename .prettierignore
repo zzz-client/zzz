@@ -1,0 +1,11 @@
+*.md
+*.bicep
+junit.xml
+coverage
+dist
+.artifactignore
+.editorconfig
+.funcignore
+.gitignore
+.prettierignore
+.vscode

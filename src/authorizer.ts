@@ -12,7 +12,7 @@ export default function Authorize(letter: Letter, authorizationDefinition: strin
     injection.apply(letter, authValues);
 }
 
-function newInstance(type: string): IAuthorization{
+function newInstance(type: string): IAuthorization {
     switch (type) {
         case "BearerToken":
             return new BearerTokenAuthorizer();
@@ -33,12 +33,12 @@ function loadAuthConfig(authorizationDefinition: string): any {
 function extractAuthType(authorizationDefinition: any): string {
     const authType = Object.keys(authorizationDefinition);
     if (authType.length !== 1) {
-        throw new Error('Unable to detect auth type');
+        throw new Error("Unable to detect auth type");
     }
     return authType[0];
 }
 interface IAuthorization {
-    apply(letter: Letter, authorizationConfig: any): void
+    apply(letter: Letter, authorizationConfig: any): void;
 }
 class BearerTokenAuthorizer implements IAuthorization {
     apply(letter: Letter, authorizationConfig: any): void {

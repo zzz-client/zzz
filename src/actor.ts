@@ -2,14 +2,14 @@ import Letter from "./letter";
 
 export default function Act(letter: Letter, actorName: string): void {
     const result = newInstance(actorName).act(letter);
-    if(result){
+    if (result) {
         console.log(result);
     }
 }
 interface IActor {
-    act(letter: Letter): string | null
+    act(letter: Letter): string | null;
 }
-function newInstance(type: string): IActor{
+function newInstance(type: string): IActor {
     switch (type) {
         case "Summary":
             return new SummaryActor();
@@ -31,7 +31,7 @@ class SummaryActor implements IActor {
 }
 class CurlActor implements IActor {
     act(letter: Letter): string {
-        throw new Error('curl -X ' + letter.method + ' ' + letter.url + ' ' + letter.headers + '...');
+        throw new Error("curl -X " + letter.method + " " + letter.url + " " + letter.headers + "...");
     }
 }
 class NodeJsActor implements IActor {
@@ -44,4 +44,3 @@ class DenoActor implements IActor {
         throw new Error("Method not implemented.");
     }
 }
-
