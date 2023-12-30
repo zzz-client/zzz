@@ -9,8 +9,7 @@ export default class ClientActor implements IActor {
             letter.Trigger.Before();
         }
         try {
-            // const fullUrl = letter.URL + convertQueryParamsToString(letter);
-            // console.log(`${letter.Method} ${fullUrl}`);
+            console.log(`${letter.Method} ${letter.URL}`);
             result = (
                 await axios.request({
                     method: letter.Method,
@@ -21,8 +20,10 @@ export default class ClientActor implements IActor {
                 })
             ).data;
         } catch (error) {
-            // console.error(error.response);
-            return error.response.data;
+            if (error.response && error.response.data) {
+                throw new Error(error.response.data);
+            }
+            throw new Error(error.code);
         }
         if (letter.Trigger && letter.Trigger.After) {
             letter.Trigger.After(result);
