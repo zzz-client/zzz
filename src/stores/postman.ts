@@ -1,5 +1,4 @@
 import Letter, { AnyNonPromise } from "../request";
-import { Parsers } from "../run";
 import fs = require("node:fs");
 import path = require("node:path");
 import { EntityType, IStore, Stores } from "../store";
@@ -26,9 +25,6 @@ async function loadLetter(collection: CollectionSchema, environmentName: string,
     const folderName = path.dirname(requestFilePath);
     const extension = path.extname(requestFilePath);
     const requestName = path.basename(requestFilePath, extension);
-    console.log("requestFilePath", requestFilePath);
-    console.log("folderName", folderName);
-    console.log("requestName", requestName);
     const folder = collection.item.filter((item) => item.name === folderName)[0];
     const request = folder.item.filter((item) => item.name === requestName)[0].request;
     letter.Method = request.method;

@@ -49,7 +49,6 @@ async function main() {
         const [beforeHook, afterHook] = Hooks(config.hooks, config.request, letter);
         beforeHook();
         const actResult = await Act(letter, config.actor);
-        console.log("act", actResult);
         afterHook(actResult);
         console.info(actResult);
     } catch (e) {

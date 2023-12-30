@@ -8,6 +8,6 @@ export default class SummaryActor implements IActor {
     }
     async act<T>(data: AnyNonPromise<T>): Promise<any> {
         // TODO: bad use of any?
-        return data;
+        return Promise.resolve(data);
     }
 }

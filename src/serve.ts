@@ -1,4 +1,4 @@
-import { extname } from "path";
+import { basename, extname } from "path";
 import Act from "./actor";
 import { AppConfig } from "./request";
 import { Parser, Parsers } from "./run";
@@ -16,13 +16,13 @@ export default function Serve(appConfig: AppConfig) {
             return;
         }
         const resourcePath = decodeURI(url.substring(1));
-        const ext = extname(resourcePath).substring(1).toLowerCase();
+        const base = resourcePath.substring(0, resourcePath.length - extname(resourcePath).length);
         const contentType = getContentType(resourcePath);
         console.log("First request", method, resourcePath, contentType);
-        Get(EntityType.Request, resourcePath, "Integrate")
+        Get(EntityType.Request, base, "Integrate") // TODO: Hardcoded environment
             .then((letter) => {
                 tim(letter, letter.Variables);
-                return Act(letter, ext);
+                return Act(letter, appConfig.actor);
             })
             .then((result) => {
                 res.writeHead(200, { "Content-Type": contentType });
@@ -31,7 +31,8 @@ export default function Serve(appConfig: AppConfig) {
             .catch((reason) => {
                 res.writeHead(500, { "Content-Type": "text/plain" });
                 res.write(Parsers.TEXT.stringify(reason));
-            });
+            })
+            .finally(() => res.end());
     }).listen(HTTP_PORT, () => {
         console.info(`App is running on port ${HTTP_PORT}`);
     });
@@ -39,14 +40,14 @@ export default function Serve(appConfig: AppConfig) {
 function getParser(resourcePath: string): Parser {
     const ext = extname(resourcePath).substring(1).toLowerCase();
     switch (ext) {
-        case "application/json":
+        case "json":
         default:
             return Parsers.JSON;
-        case "text/plain":
-            return Parsers.TEXT;
-        case "text/yaml":
-        case "text/yml":
+        case "yml":
+        case "yaml":
             return Parsers.YAML;
+        case "txt":
+            return Parsers.TEXT;
     }
 }
 function getContentType(resourcePath: string): string {

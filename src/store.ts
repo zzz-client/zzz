@@ -15,7 +15,7 @@ export const Stores = {
     JSON: newInstance("json"),
     YAML: newInstance("yaml")
 };
-const instance: IStore = Stores.Postman;
+const instance: IStore = Stores.YAML; // TODO: Make dynamic somehow
 
 export default function Store(key: string, value: string, environmentName: string): any {
     return getInstance().store(key, value, environmentName);

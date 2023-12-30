@@ -9,9 +9,6 @@ export default class ClientActor implements IActor {
     constructor(stringify: Function = defaultStringify) {
         this.stringify = stringify;
     }
-    format(data: any): string {
-        return this.stringify(data, null, 2);
-    }
     async act(letter: Letter): Promise<AxiosResponse> {
         try {
             console.log(`${letter.Method} ${letter.URL}`);
