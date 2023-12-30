@@ -1,10 +1,6 @@
 const http = require("http");
 const port = process.env.PORT || 8000;
-import { IActor } from "./actor";
-import SummaryActor from "./actors/summary";
-import Letter from "./letter";
-import { Load } from "./store";
-import fs = require("node:fs");
+import { EntityType, Get } from "./store";
 import tim from "./tim";
 import Act from "./actor";
 
@@ -18,7 +14,7 @@ http.createServer((req, res) => {
     }
     const resourcePath = decodeURI(url.substring(1));
     console.log("First request", method, resourcePath);
-    const what = Load(resourcePath, "Integrate");
+    const what = Get(EntityType.Request, resourcePath, "Integrate");
     tim(what, what.Variables);
     Act(what, actorType).then((result) => {
         console.log(result);

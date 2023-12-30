@@ -15,16 +15,17 @@ export default function Store(key: string, value: string, environmentName: strin
     return newInstance().store(key, value, environmentName);
 }
 export function Get(entityType: EntityType, entityName: string, environmentName: string): any {
+    if (entityType === EntityType.Request) {
+        return loadLetter(entityName, environmentName);
+    }
     return newInstance().get(entityType, entityName, environmentName);
 }
-export function Load(requestFilePath: string, environmentName: string): any {
-    const letter = new Letter();
-    newInstance().load(letter, requestFilePath, environmentName);
+function loadLetter(requestFilePath: string, environmentName: string): Letter {
+    const letter = newInstance().get(EntityType.Request, requestFilePath, environmentName);
     loadBody(letter, requestFilePath, environmentName);
     return letter;
 }
 export interface IStore {
-    load(letter: Letter, requestFilePath: string, environmentName: string): void;
     get(entityType: EntityType, entityName: string, environmentName: string): any;
     store(key: string, value: any, environmentName: string): void;
 }

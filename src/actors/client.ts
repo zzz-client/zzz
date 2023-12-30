@@ -4,20 +4,12 @@ import Letter from "../letter";
 
 export default class ClientActor implements IActor {
     async act(letter: Letter): Promise<AxiosResponse> {
-        fireBeforeTrigger(letter);
-        const result = await fireRequest(letter);
-        fireAfterTrigger(letter, result);
-        return result;
-    }
-}
-function fireBeforeTrigger(letter: Letter): void {
-    if (letter.Trigger && letter.Trigger.Before) {
-        letter.Trigger.Before();
-    }
-}
-function fireAfterTrigger(letter: Letter, data: any): void {
-    if (letter.Trigger && letter.Trigger.After) {
-        letter.Trigger.After(data);
+        try {
+            console.log(`${letter.Method} ${letter.URL}`);
+            return await doRequest(letter);
+        } catch (error) {
+            throw formatError(error);
+        }
     }
 }
 function formatError(error: any) {
@@ -29,14 +21,7 @@ function formatError(error: any) {
     }
     return error;
 }
-async function fireRequest(letter: Letter): Promise<any> {
-    try {
-        console.log(`${letter.Method} ${letter.URL}`);
-        return await doRequest(letter);
-    } catch (error) {
-        throw formatError(error);
-    }
-}
+
 async function doRequest(letter: Letter): Promise<any> {
     return (
         await axios.request({
