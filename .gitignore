@@ -2,3 +2,5 @@ node_modules/
 dist/
 environments/*.local.*
 ession.yml
+package-lock.json
+PostmanCollection.json
