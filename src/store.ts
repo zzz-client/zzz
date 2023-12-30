@@ -1,6 +1,7 @@
 import * as YAML from "yaml";
 import Letter from "./letter";
 import FileStore from "./stores/file";
+import PostmanStore from "./stores/postman";
 export enum EntityType {
     Default,
     Request = "requests",
@@ -54,5 +55,5 @@ function JsonStore(): IStore {
     return new FileStore("json", JSON.parse, (data: any) => JSON.stringify(data, null, 2));
 }
 function newInstance(): IStore {
-    return YamlStore();
+    return new PostmanStore("PostmanCollection.json");
 }

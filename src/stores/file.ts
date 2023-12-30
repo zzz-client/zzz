@@ -14,7 +14,7 @@ export default class FileStore implements IStore {
         this.stringify = stringifyMethod;
     }
     load(letter: Letter, requestFilePath: string, environmentName: string): void {
-        const defaultFilePaths = getDefaultFilePaths(requestFilePath, this.fileExtension, environmentName);
+        const defaultFilePaths = getDefaultFilePaths("requests/" + requestFilePath, this.fileExtension, environmentName);
         for (const filePath of defaultFilePaths) {
             if (fs.existsSync(filePath)) {
                 const fileContents = this.parse(fs.readFileSync(filePath, "utf8"));
@@ -22,7 +22,7 @@ export default class FileStore implements IStore {
                 applyChanges(letter, fileContents);
             }
         }
-        const fileContents = this.parse(fs.readFileSync(requestFilePath, "utf8"));
+        const fileContents = this.parse(fs.readFileSync("requests/" + requestFilePath + "." + this.fileExtension, "utf8"));
         checkRequired(fileContents);
         applyChanges(letter, fileContents);
         const sessionPath = getEnvironmentPath("session.local", this.fileExtension);

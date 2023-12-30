@@ -3,15 +3,14 @@ import Store, { Load } from "./store";
 import { dirname } from "path";
 import Authorize from "./authorizer";
 import Act from "./actor";
-import Do from "./tim";
 import Letter from "./letter";
+import tim from "./tim";
 
-// const request = "requests/mess/v1/send/Send Emails.yml";
-const request = "requests/Authentication/OAuth/ClientCredentials.yml";
-// const request = "requests/BasicFunctionality.yml";
-// const request = "requests/Authentication/OAuth/ClientCredentials.json";
+// const request = "mess/v1/sendEmails";
+// const request = "BasicFunctionality";
+const request = "Authentication/OAuth Client Credentials";
 const environment = "Integrate";
-const actor = "Client";
+const actor = "Summary";
 
 global.Store = Store;
 
@@ -20,7 +19,7 @@ async function main() {
         const letter = Load(request, environment);
         loadHooks(letter, request);
         await Authorize(letter, letter.Authorization);
-        Do(letter, letter.Variables);
+        tim(letter, letter.Variables);
         const actResult = await Act(letter, actor);
         console.info(actResult);
     } catch (e) {
