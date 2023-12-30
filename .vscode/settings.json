@@ -3,5 +3,8 @@
     "editor.formatOnType": true,
     "editor.insertSpaces": true,
     "editor.detectIndentation": true,
-    "files.insertFinalNewline": true
+    "files.insertFinalNewline": true,
+    "cSpell.words": [
+        "lttr"
+    ]
 }

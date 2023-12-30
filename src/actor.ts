@@ -1,10 +1,10 @@
 import Letter from "./letter";
 
-export default function Act(letter: Letter, actorName: string): void {
-    const result = newInstance(actorName).act(letter);
+export default function Act(letter: Letter, actorName: string): string {
+    return newInstance(actorName).act(letter);
 }
 interface IActor {
-    act(letter: Letter): string | null;
+    act(letter: Letter): string;
 }
 function newInstance(type: string): IActor {
     switch (type) {
@@ -21,14 +21,22 @@ function newInstance(type: string): IActor {
     }
 }
 class SummaryActor implements IActor {
-    act(letter: Letter): null {
-        console.log(JSON.stringify(letter, null, 2));
-        return null;
+    act(letter: Letter): string {
+        return JSON.stringify(letter, null, 2);
     }
 }
 class CurlActor implements IActor {
     act(letter: Letter): string {
-        throw new Error("curl -X " + letter.Method + " " + letter.URL + " " + letter.Headers + "...");
+        let curlCommand = `curl -X ${letter.Method} ${letter.URL}?`;
+        for (const [key, value] of letter.QueryParams) {
+            curlCommand += `${key}=${value}&`;
+        }
+        curlCommand = curlCommand.substring(0, curlCommand.length - 1); // Remove either the '?' or the last '&'
+        console.log(letter.Headers);
+        for (const [key, value] of letter.Headers) {
+            curlCommand += ` -H "${key}: ${value}"`;
+        }
+        return curlCommand;
     }
 }
 class NodeJsActor implements IActor {

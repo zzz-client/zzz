@@ -1,8 +1,8 @@
 import Letter from "./letter";
-import Parse from "./parse";
+import { Get, EntityType } from "./store";
 
 export default function Authorize(letter: Letter, authorizationDefinition: string): void {
-    const authConfig = Parse(`./authorizations/${authorizationDefinition}.yml`);
+    const authConfig = Get(EntityType.Authorization, authorizationDefinition);
     const authType = extractAuthType(authConfig);
     const authValues = authConfig[authType];
     const injection = newInstance(authType);
@@ -40,7 +40,7 @@ class BearerTokenAuthorizer implements IAuthorization {
 }
 class BasicAuthAuthorizer implements IAuthorization {
     apply(letter: Letter, authorizationConfig: any): void {
-        letter.Headers["Authorization"] = `Basic base64 of authorizationConfig.Username + authorizationConfig.Password`;
+        letter.Headers["Authorization"] = "Basic " + Buffer.from(authorizationConfig.Username + authorizationConfig.Password).toString("base64");
     }
 }
 class HeaderAuthorizer implements IAuthorization {
