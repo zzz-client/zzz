@@ -1,8 +1,4 @@
 Variables:
-  url: https://inspirato--integrate.sandbox.my.salesforce.com
+  baseUrl: https://inspirato--test.sandbox.my.salesforce.com
   version: "{{latest_version}}"
-  username: azureapi@inspirato.com.integrate
-  # password: "****"
-  # secretToken: "****"
-  # clientId: 3MVG9jBOyAOWY5bW2ldeqQWvO4Dvp8wBxEZ3BcmRLn4boEqyeVIQgKjBv596oR.3AoKhUbHM.UUV.8_PKVSTO
-  # clientSecret: "****"
+  username: azureapi@inspirato.com.test

@@ -3,6 +3,6 @@ Variables:
   version_path: v{{version}}/
   standard_path: /services/data/{{version}}/
   apexrest_path: /services/apexrest/
-  url: ""
+  baseUrl: ""
   latest_version: "59.0"
   accessToken: undefined

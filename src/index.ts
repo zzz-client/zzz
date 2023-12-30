@@ -7,13 +7,12 @@ import Do from "./templater";
 const request = "requests/Authentication/OAuth/ClientCredentials.yml";
 // const request = "requests/BasicFunctionality.yml";
 const environment = "Integrate";
-const authDefinition = "default";
-const actor = "Curl";
+const actor = "Node";
 
 async function main() {
     try {
         const letter = Load(request, environment);
-        await Authorize(letter, authDefinition);
+        await Authorize(letter, letter.Authorization);
         Do(letter, letter.Variables);
         console.info(await Act(letter, actor));
     } catch (e) {

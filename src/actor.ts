@@ -43,6 +43,14 @@ class CurlActor implements IActor {
         return curlCommand;
     }
 }
+function convertQueryParamsToString(letter: Letter): string {
+    let result = "?";
+    Object.keys(letter.QueryParams).forEach((key) => {
+        const value = letter.QueryParams[key];
+        result += `${key}=${value}&`;
+    });
+    return result.substring(0, result.length - 1); // Remove either the '?' or the last '&'
+}
 class NodeJsActor implements IActor {
     async act(letter: Letter): Promise<string> {
         try {
@@ -50,12 +58,12 @@ class NodeJsActor implements IActor {
                 await axios.request({
                     method: letter.Method,
                     headers: letter.Headers,
-                    url: letter.URL,
+                    url: letter.URL + convertQueryParamsToString(letter),
                     data: letter.Body
                 })
             ).data;
         } catch (error) {
-            console.error(error.response);
+            // console.error(error.response);
             return error.response.data;
         }
     }

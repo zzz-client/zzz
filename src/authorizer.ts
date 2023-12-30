@@ -3,13 +3,13 @@ import Letter from "./letter";
 import { Get, EntityType } from "./store";
 
 export default function Authorize(letter: Letter, authorizationDefinition: string): void {
-    console.log("Authorizing", authorizationDefinition);
-    exit(1);
-    const authConfig = Get(EntityType.Authorization, authorizationDefinition);
-    const authType = extractAuthType(authConfig);
-    const authValues = authConfig[authType];
-    const injection = newInstance(authType);
-    injection.apply(letter, authValues);
+    if (authorizationDefinition) {
+        const authConfig = Get(EntityType.Authorization, authorizationDefinition);
+        const authType = extractAuthType(authConfig);
+        const authValues = authConfig[authType];
+        const injection = newInstance(authType);
+        injection.apply(letter, authValues);
+    }
 }
 
 function newInstance(type: string): IAuthorization {

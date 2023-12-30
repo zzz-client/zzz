@@ -25,7 +25,7 @@ const REQUIRED_ON_REQUEST = ["Method", "URL"];
 const NO_DEFAULT_ALLOWED = ["Method", "URL", "QueryParams", "Body"];
 
 function loadBody(letter: Letter, requestFilePath: string, environmentName: string) {
-    console.log(letter);
+    // console.log(letter);
     if (letter.Body) {
         return;
     }
