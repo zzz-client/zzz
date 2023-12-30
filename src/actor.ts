@@ -17,6 +17,8 @@ function newInstance(type: string): IActor {
             return new NodeJsActor();
         case "Deno":
             return new DenoActor();
+        case "Connect":
+            return new ConnectActor();
         default:
             throw new Error(`Unknown actor type: ${type}`);
     }
@@ -53,11 +55,18 @@ class NodeJsActor implements IActor {
                 })
             ).data;
         } catch (error) {
+            console.error(error.response);
             return error.response.data;
         }
     }
 }
 class DenoActor implements IActor {
+    async act(letter: Letter): Promise<string> {
+        throw new Error("what even is");
+    }
+}
+
+class ConnectActor implements IActor {
     async act(letter: Letter): Promise<string> {
         throw new Error("Method not implemented.");
     }

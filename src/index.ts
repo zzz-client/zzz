@@ -5,9 +5,10 @@ import Do from "./templater";
 
 // const request = "requests/mess/v1/send/Send Emails.yml";
 const request = "requests/Authentication/OAuth/ClientCredentials.yml";
+// const request = "requests/BasicFunctionality.yml";
 const environment = "Integrate";
 const authDefinition = "default";
-const actor = "Node";
+const actor = "Curl";
 
 async function main() {
     try {

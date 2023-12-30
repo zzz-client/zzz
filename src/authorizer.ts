@@ -1,7 +1,10 @@
+import { exit } from "process";
 import Letter from "./letter";
 import { Get, EntityType } from "./store";
 
 export default function Authorize(letter: Letter, authorizationDefinition: string): void {
+    console.log("Authorizing", authorizationDefinition);
+    exit(1);
     const authConfig = Get(EntityType.Authorization, authorizationDefinition);
     const authType = extractAuthType(authConfig);
     const authValues = authConfig[authType];

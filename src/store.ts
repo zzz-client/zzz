@@ -18,11 +18,20 @@ export function Get(entityType: EntityType, entityName: string): any {
 export function Load(requestFilePath: string, environmentName: string): any {
     const letter = new Letter();
     YamlStore().load(letter, requestFilePath, environmentName);
+    loadBody(letter, requestFilePath, environmentName);
     return letter;
 }
 const REQUIRED_ON_REQUEST = ["Method", "URL"];
 const NO_DEFAULT_ALLOWED = ["Method", "URL", "QueryParams", "Body"];
 
+function loadBody(letter: Letter, requestFilePath: string, environmentName: string) {
+    console.log(letter);
+    if (letter.Body) {
+        return;
+    }
+    const bodyFile = dirname(requestFilePath) + "/body.json";
+    // TODO: How
+}
 function YamlStore(): IStore {
     return new FileStore("yml", YAML.parse);
 }
@@ -56,8 +65,10 @@ class FileStore implements IStore {
     }
 }
 function loadSession(letter: Letter, parseFunction: Function, fileExtension: string): void {
-    const sessionContents = parseFunction(fs.readFileSync(`session.${fileExtension}`, "utf8"));
-    applyChanges(letter, sessionContents);
+    if (fs.existsSync(`session.${fileExtension}`)) {
+        const sessionContents = parseFunction(fs.readFileSync(`session.${fileExtension}`, "utf8"));
+        applyChanges(letter, sessionContents);
+    }
 }
 function getEnvironmentPath(environmentName: string, fileExtension: string): string {
     return `${EntityType.Environment}/${environmentName}.${fileExtension}`;
