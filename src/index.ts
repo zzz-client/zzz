@@ -4,7 +4,7 @@ import Act from "./actor";
 
 const request = "requests/mess/v1/send/Send Emails.yml";
 const environment = "Integrate";
-const authDefinition = "BearerToken";
+const authDefinition = "default";
 const actor = "Summary";
 
 try {

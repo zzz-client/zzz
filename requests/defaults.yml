@@ -1,4 +1,4 @@
-Authorization: BearerToken
+Authorization: default
 Headers:
   Cache-Control: no-cache
   Content-Length: 0

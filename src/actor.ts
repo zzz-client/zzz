@@ -2,9 +2,6 @@ import Letter from "./letter";
 
 export default function Act(letter: Letter, actorName: string): void {
     const result = newInstance(actorName).act(letter);
-    if (result) {
-        console.log(result);
-    }
 }
 interface IActor {
     act(letter: Letter): string | null;
@@ -31,7 +28,7 @@ class SummaryActor implements IActor {
 }
 class CurlActor implements IActor {
     act(letter: Letter): string {
-        throw new Error("curl -X " + letter.method + " " + letter.url + " " + letter.headers + "...");
+        throw new Error("curl -X " + letter.Method + " " + letter.URL + " " + letter.Headers + "...");
     }
 }
 class NodeJsActor implements IActor {

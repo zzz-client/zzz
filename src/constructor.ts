@@ -1,6 +1,5 @@
 import Letter from "./letter";
-import fs = require("node:fs");
-import { parse, stringify } from "yaml";
+import Parse from "./parse";
 
 export default function Construct(requestFilePath: string, environmentName: string): Letter {
     const letter = new Letter();
@@ -21,13 +20,11 @@ class DefaultInstance implements IConstruct {
     apply(letter: Letter, filePath: string, environmentName: string) {
         const defaultFiles = this.getFilePaths(filePath, environmentName);
         for (const path of defaultFiles) {
-            const fileContents = this.loadFile(path);
-            console.log(fileContents);
+            const fileContents = Parse(path);
             this.checkForbidden(fileContents);
             this.applyFile(letter, fileContents);
         }
-        const fileContents = this.loadFile(filePath);
-        console.log(fileContents);
+        const fileContents = Parse(filePath);
         this.checkRequired(fileContents);
         this.applyFile(letter, fileContents);
     }
@@ -41,16 +38,8 @@ class DefaultInstance implements IConstruct {
             ...defaultFilePaths
         ];
     }
-    loadFile(filePath: string): any {
-        // TODO
-        // throw new Error('Implement me using node or deno');
-        if (!fs.existsSync(filePath)) {
-            return null;
-        }
-        return parse(fs.readFileSync(filePath, "utf8"));
-    }
     envPath(environmentName: string): string {
-        return `../environments/${environmentName}.yml`;
+        return `./environments/${environmentName}.yml`;
     }
     checkRequired(fileContents: any): void {
         for (const key of REQUIRED_ON_REQUEST) {
