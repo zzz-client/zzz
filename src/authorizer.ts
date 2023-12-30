@@ -8,7 +8,7 @@ import QueryAuthorizer from "./authorizers/query";
 
 export default function Authorize(letter: Letter, authorizationDefinition: string): void {
     if (authorizationDefinition) {
-        const authConfig = Get(EntityType.Authorization, authorizationDefinition);
+        const authConfig = Get(EntityType.Authorization, authorizationDefinition, null);
         const authType = extractAuthType(authConfig);
         const authValues = authConfig[authType];
         const injection = newInstance(authType);

@@ -10,7 +10,7 @@ import tim from "./tim";
 // const request = "BasicFunctionality";
 const request = "Authentication/OAuth Client Credentials";
 const environment = "Integrate";
-const actor = "Server";
+const actor = "Client";
 
 global.Store = Store;
 
@@ -24,7 +24,7 @@ async function main() {
         const actResult = await Act(letter, actor);
         console.info("RESULT", actResult);
     } catch (e) {
-        // console.error(e);
+        console.error(e);
         process.exit(1);
     }
 }

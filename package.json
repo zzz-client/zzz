@@ -5,8 +5,9 @@
     "scripts": {
         "build": "tsc",
         "watch": "tsc -w",
-        "start": "node dist/src/index.js",
+        "start": "node dist/src/run.js",
         "prestart": "npm run build",
+        "serve": "node dist/src/serve.js",
         "test": "jest",
         "clean": "rm -rf junit.xml dist coverage"
     },

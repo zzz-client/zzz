@@ -11,11 +11,11 @@ export enum EntityType {
 const REQUIRED_ON_REQUEST = ["Method", "URL"];
 const NO_DEFAULT_ALLOWED = ["Method", "URL", "QueryParams", "Body"];
 
-export default function Store(key: string, value: string): any {
-    return newInstance().store(key, value);
+export default function Store(key: string, value: string, environmentName: string): any {
+    return newInstance().store(key, value, environmentName);
 }
-export function Get(entityType: EntityType, entityName: string): any {
-    return newInstance().get(entityType, entityName);
+export function Get(entityType: EntityType, entityName: string, environmentName: string): any {
+    return newInstance().get(entityType, entityName, environmentName);
 }
 export function Load(requestFilePath: string, environmentName: string): any {
     const letter = new Letter();
@@ -25,8 +25,8 @@ export function Load(requestFilePath: string, environmentName: string): any {
 }
 export interface IStore {
     load(letter: Letter, requestFilePath: string, environmentName: string): void;
-    get(entityType: EntityType, entityName: string): any;
-    store(key: string, value: any): void;
+    get(entityType: EntityType, entityName: string, environmentName: string): any;
+    store(key: string, value: any, environmentName: string): void;
 }
 export function checkRequired(fileContents: any): void {
     for (const key of REQUIRED_ON_REQUEST) {
