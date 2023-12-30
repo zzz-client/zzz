@@ -5,4 +5,3 @@ Variables:
   apexrest_path: /services/apexrest/
   baseUrl: ""
   latest_version: "59.0"
-  accessToken: undefined

@@ -1,11 +1,11 @@
 import Letter from "./letter";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
-export default async function Act(letter: Letter, actorName: string): Promise<string> {
+export default async function Act(letter: Letter, actorName: string): Promise<any> {
     return newInstance(actorName).act(letter);
 }
 interface IActor {
-    act(letter: Letter): Promise<string>;
+    act(letter: Letter): Promise<any>;
 }
 function newInstance(type: string): IActor {
     switch (type) {
@@ -13,10 +13,8 @@ function newInstance(type: string): IActor {
             return new SummaryActor();
         case "Curl":
             return new CurlActor();
-        case "Node":
-            return new NodeJsActor();
-        case "Deno":
-            return new DenoActor();
+        case "Http":
+            return new HttpActor();
         case "Connect":
             return new ConnectActor();
         default:
@@ -43,22 +41,21 @@ class CurlActor implements IActor {
         return curlCommand;
     }
 }
-function convertQueryParamsToString(letter: Letter): string {
-    let result = "?";
-    Object.keys(letter.QueryParams).forEach((key) => {
-        const value = letter.QueryParams[key];
-        result += `${key}=${value}&`;
-    });
-    return result.substring(0, result.length - 1); // Remove either the '?' or the last '&'
-}
-class NodeJsActor implements IActor {
-    async act(letter: Letter): Promise<string> {
+class HttpActor implements IActor {
+    async act(letter: Letter): Promise<AxiosResponse> {
+        let result;
+        if (letter.Trigger && letter.Trigger.Before) {
+            letter.Trigger.Before();
+        }
         try {
-            return (
+            // const fullUrl = letter.URL + convertQueryParamsToString(letter);
+            // console.log(`${letter.Method} ${fullUrl}`);
+            result = (
                 await axios.request({
                     method: letter.Method,
                     headers: letter.Headers,
-                    url: letter.URL + convertQueryParamsToString(letter),
+                    params: letter.QueryParams,
+                    url: letter.URL,
                     data: letter.Body
                 })
             ).data;
@@ -66,11 +63,10 @@ class NodeJsActor implements IActor {
             // console.error(error.response);
             return error.response.data;
         }
-    }
-}
-class DenoActor implements IActor {
-    async act(letter: Letter): Promise<string> {
-        throw new Error("what even is");
+        if (letter.Trigger && letter.Trigger.After) {
+            letter.Trigger.After(result);
+        }
+        return result;
     }
 }
 

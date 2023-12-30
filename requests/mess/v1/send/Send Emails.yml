@@ -6,12 +6,12 @@ Body:
     - tnetherton@inspirato.com
   EmailAddress: tnetherton@inspirato.com
   NameOnAccount: Darth Vader
-BodyJson: |
-  {
-    "SubscriberKey": "0035600000iFaknAAC",
-    "RecipientAddresses": [
-      "tnetherton@inspirato.com"
-    ],
-    "EmailAddress": "tnetherton@inspirato.com",
-    "NameOnAccount": "Darth Vader"
-  }
+# Body: |
+#   {
+#     "SubscriberKey": "0015600000iFaknAAC",
+#     "RecipientAddresses": [
+#       "tnetherton@inspirato.com"
+#     ],
+#     "EmailAddress": "tnetherton@inspirato.com",
+#     "NameOnAccount": "Darth Vader"
+#   }

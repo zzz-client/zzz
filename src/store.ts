@@ -8,42 +8,62 @@ export enum EntityType {
     Environment = "environments",
     Authorization = "authorizations"
 }
-export interface IStore {
-    load(letter: Letter, requestFilePath: string, environmentName: string): void;
-    get(entityType: EntityType, entityName: string): any;
+export default function Store(key: string, value: string): any {
+    return newInstance().store(key, value);
 }
 export function Get(entityType: EntityType, entityName: string): any {
-    return YamlStore().get(entityType, entityName);
+    return newInstance().get(entityType, entityName);
 }
 export function Load(requestFilePath: string, environmentName: string): any {
     const letter = new Letter();
-    YamlStore().load(letter, requestFilePath, environmentName);
+    newInstance().load(letter, requestFilePath, environmentName);
+    loadHooks(letter, requestFilePath);
     loadBody(letter, requestFilePath, environmentName);
     return letter;
 }
+interface IStore {
+    load(letter: Letter, requestFilePath: string, environmentName: string): void;
+    get(entityType: EntityType, entityName: string): any;
+    store(key: string, value: any): void;
+}
+
 const REQUIRED_ON_REQUEST = ["Method", "URL"];
 const NO_DEFAULT_ALLOWED = ["Method", "URL", "QueryParams", "Body"];
 
 function loadBody(letter: Letter, requestFilePath: string, environmentName: string) {
-    // console.log(letter);
-    if (letter.Body) {
+    if (typeof letter.Body === "string") {
+        letter.Body = JSON.parse(letter.Body);
         return;
     }
-    const bodyFile = dirname(requestFilePath) + "/body.json";
-    // TODO: How
+}
+function loadHooks(letter: Letter, requestFilePath: string) {
+    const beforePath = dirname(requestFilePath) + "/before.js";
+    const afterPath = dirname(requestFilePath) + "/after.js";
+    if (fs.existsSync(afterPath)) {
+        letter.Trigger.After = (response) => eval(fs.readFileSync(afterPath, "utf8"));
+    }
+    if (fs.existsSync(beforePath)) {
+        letter.Trigger.Before = () => eval(fs.readFileSync(beforePath, "utf8"));
+    }
+}
+function newInstance(): IStore {
+    return YamlStore();
+    // return JsonStore();
 }
 function YamlStore(): IStore {
-    return new FileStore("yml", YAML.parse);
+    return new FileStore("yml", YAML.parse, YAML.stringify);
 }
 function JsonStore(): IStore {
-    return new FileStore("json", JSON.parse);
+    return new FileStore("json", JSON.parse, (data: any) => JSON.stringify(data, null, 2));
 }
 class FileStore implements IStore {
     fileExtension: string;
     parse: Function;
-    constructor(fileExtension: string, parseMethod: Function) {
+    stringify: Function;
+    constructor(fileExtension: string, parseMethod: Function, stringifyMethod: Function) {
         this.fileExtension = fileExtension;
         this.parse = parseMethod;
+        this.stringify = stringifyMethod;
     }
     load(letter: Letter, requestFilePath: string, environmentName: string): void {
         const defaultFilePaths = getDefaultFilePaths(requestFilePath, this.fileExtension, environmentName);
@@ -57,17 +77,26 @@ class FileStore implements IStore {
         const fileContents = this.parse(fs.readFileSync(requestFilePath, "utf8"));
         checkRequired(fileContents);
         applyChanges(letter, fileContents);
-        loadSession(letter, this.parse, this.fileExtension);
+        const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
+        if (fs.existsSync(sessionPath)) {
+            const sessionContents = this.parse(fs.readFileSync(sessionPath, "utf8"));
+            applyChanges(letter, sessionContents);
+        }
     }
     get(entityType: EntityType, entityName: string): any {
         const filePath = `${entityType}/${entityName}.${this.fileExtension}`;
         return this.parse(fs.readFileSync(filePath, "utf8"));
     }
-}
-function loadSession(letter: Letter, parseFunction: Function, fileExtension: string): void {
-    if (fs.existsSync(`session.${fileExtension}`)) {
-        const sessionContents = parseFunction(fs.readFileSync(`session.${fileExtension}`, "utf8"));
-        applyChanges(letter, sessionContents);
+    store(key: string, value: any): void {
+        const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
+        let sessionContents: any;
+        if (fs.existsSync(sessionPath)) {
+            sessionContents = this.parse(fs.readFileSync(sessionPath, "utf8"));
+        } else {
+            sessionContents = { Variables: {} };
+        }
+        sessionContents.Variables[key] = value;
+        fs.writeFileSync(sessionPath, this.stringify(sessionContents));
     }
 }
 function getEnvironmentPath(environmentName: string, fileExtension: string): string {

@@ -1,4 +1,6 @@
 Variables:
   baseUrl: https://inspirato--test.sandbox.my.salesforce.com
-  version: "{{latest_version}}"
+  _endpoint: https://inspirato--test.sandbox.my.salesforce.com
+  # version: "v{{latest_version}}"
+  version: "v59.0"
   username: azureapi@inspirato.com.test

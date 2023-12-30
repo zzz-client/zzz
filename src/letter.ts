@@ -5,6 +5,12 @@ export default class Letter {
     Headers: StringToStringMap = {};
     Variables: StringToStringMap | undefined;
     Body: any;
+    Trigger: Trigger;
+}
+
+interface Trigger {
+    Before: Function;
+    After: Function;
 }
 
 interface StringToStringMap {

@@ -1,1 +1,1 @@
-BearerToken: "{{accessToken}}"
+BearerToken: "{{_accessToken}}"
