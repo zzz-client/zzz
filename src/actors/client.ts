@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { IActor } from "../actor";
-import Letter from "../request";
+import Request from "../request";
 
 const defaultStringify = (data) => JSON.stringify(data, null, 2);
 
@@ -9,10 +9,10 @@ export default class ClientActor implements IActor {
     constructor(stringify: Function = defaultStringify) {
         this.stringify = stringify;
     }
-    async act(letter: Letter): Promise<AxiosResponse> {
+    async act(theRequest: Request): Promise<AxiosResponse> {
         try {
-            console.log(`${letter.Method} ${letter.URL}`);
-            return await doRequest(letter);
+            console.log(`${theRequest.Method} ${theRequest.URL}`);
+            return await doRequest(theRequest);
         } catch (error) {
             throw formatError(error);
         }
@@ -27,14 +27,14 @@ function formatError(error: any) {
     }
     return error;
 }
-async function doRequest(letter: Letter): Promise<any> {
+async function doRequest(theRequest: Request): Promise<any> {
     return (
         await axios.request({
-            method: letter.Method,
-            headers: letter.Headers,
-            params: letter.QueryParams,
-            url: letter.URL,
-            data: letter.Body
+            method: theRequest.Method,
+            headers: theRequest.Headers,
+            params: theRequest.QueryParams,
+            url: theRequest.URL,
+            data: theRequest.Body
         })
     ).data;
 }

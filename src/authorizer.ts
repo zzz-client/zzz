@@ -2,20 +2,20 @@ import BasicAuthAuthorizer from "./authorizers/basicAuth";
 import BearerTokenAuthorizer from "./authorizers/bearerToken";
 import HeaderAuthorizer from "./authorizers/header";
 import QueryAuthorizer from "./authorizers/query";
-import Letter from "./request";
+import Request from "./request";
 import { EntityType, Get } from "./store";
 
-export default function Authorize(letter: Letter, authorizationDefinition: string): void {
+export default function Authorize(theRequest: Request, authorizationDefinition: string): void {
     if (authorizationDefinition) {
         const authConfig = Get(EntityType.Authorization, authorizationDefinition, null);
         const authType = extractAuthType(authConfig);
         const authValues = authConfig[authType];
         const injection = newInstance(authType);
-        injection.apply(letter, authValues);
+        injection.apply(theRequest, authValues);
     }
 }
 export interface IAuthorization {
-    apply(letter: Letter, authorizationConfig: any): void;
+    apply(theRequest: Request, authorizationConfig: any): void;
 }
 function newInstance(type: string): IAuthorization {
     switch (type) {

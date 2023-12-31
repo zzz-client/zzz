@@ -1,9 +1,9 @@
 import { IAuthorization } from "../authorizer";
-import Letter from "../request";
+import Request from "../request";
 
 export default class HeaderAuthorizer implements IAuthorization {
-    apply(letter: Letter, authorizationConfig: Config): void {
-        letter.Headers[authorizationConfig.Name] = authorizationConfig.Value;
+    apply(theRequest: Request, authorizationConfig: Config): void {
+        theRequest.Headers[authorizationConfig.Name] = authorizationConfig.Value;
     }
 }
 interface Config {

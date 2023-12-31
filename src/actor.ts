@@ -3,17 +3,17 @@ import CurlActor from "./actors/curl";
 import SummaryActor from "./actors/summary";
 import Request, { AnyNonPromise } from "./request";
 
-export default async function Act(letter: Request, actorName: string): Promise<any> {
+export default async function Act(theRequest: Request, actorName: string): Promise<any> {
     const actor = newInstance(actorName);
-    return await actor.act(letter);
+    return await actor.act(theRequest);
 }
 class PassThruActor implements IActor {
-    act(letter: any): Promise<any> {
-        return letter;
+    act(theRequest: any): Promise<any> {
+        return theRequest;
     }
 }
 export interface IActor {
-    act(letter: Request): Promise<any>;
+    act(theRequest: Request): Promise<any>;
 }
 function newInstance(type: string): IActor {
     switch (type) {

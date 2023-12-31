@@ -1,4 +1,4 @@
-import Letter from "./request";
+import Request from "./request";
 import { Parsers } from "./run";
 import FileStore from "./stores/file";
 import PostmanStore from "./stores/postman";
@@ -23,7 +23,7 @@ export default function Store(key: string, value: string, environmentName: strin
 }
 export async function Get(entityType: EntityType, entityName: string, environmentName: string): Promise<any> {
     if (entityType === EntityType.Request) {
-        return loadLetter(entityName, environmentName);
+        return loadRequest(entityName, environmentName);
     } else {
         return getInstance().get(entityType, entityName, environmentName);
     }
@@ -46,14 +46,14 @@ function newInstance(type: string): IStore {
     }
 }
 
-async function loadLetter(requestFilePath: string, environmentName: string): Promise<Letter> {
-    const letter = await getInstance().get(EntityType.Request, requestFilePath, environmentName);
-    loadBody(letter, requestFilePath, environmentName);
-    return letter;
+async function loadRequest(requestFilePath: string, environmentName: string): Promise<Request> {
+    const theRequest = await getInstance().get(EntityType.Request, requestFilePath, environmentName);
+    loadBody(theRequest, requestFilePath, environmentName);
+    return theRequest;
 }
-function loadBody(letter: Letter, requestFilePath: string, environmentName: string) {
-    if (typeof letter.Body === "string") {
-        letter.Body = Parsers["JSON"].parse(letter.Body); // TODO: Different for different types?
+function loadBody(theRequest: Request, requestFilePath: string, environmentName: string) {
+    if (typeof theRequest.Body === "string") {
+        theRequest.Body = Parsers["JSON"].parse(theRequest.Body); // TODO: Different for different types?
         return;
     }
 }

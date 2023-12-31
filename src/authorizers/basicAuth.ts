@@ -1,9 +1,9 @@
 import { IAuthorization } from "../authorizer";
-import Letter from "../request";
+import Request from "../request";
 
 export default class BasicAuthAuthorizer implements IAuthorization {
-    apply(letter: Letter, authorizationConfig: Config): void {
-        letter.Headers["Authorization"] = "Basic " + Buffer.from(authorizationConfig.Username + authorizationConfig.Password).toString("base64");
+    apply(theRequest: Request, authorizationConfig: Config): void {
+        theRequest.Headers["Authorization"] = "Basic " + Buffer.from(authorizationConfig.Username + authorizationConfig.Password).toString("base64");
     }
 }
 interface Config {

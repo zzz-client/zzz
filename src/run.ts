@@ -48,13 +48,13 @@ async function main() {
             Serve(config);
             return;
         }
-        const letter = await Get(EntityType.Request, config.request, config.environment);
-        await Authorize(letter, letter.Authorization);
-        tim(letter, letter.Variables);
-        // console.log(letter);
-        const [beforeHook, afterHook] = Hooks(config.hooks, config.request, letter);
+        const theRequest = await Get(EntityType.Request, config.request, config.environment);
+        await Authorize(theRequest, theRequest.Authorization);
+        tim(theRequest, theRequest.Variables);
+        // console.log(theRequest);
+        const [beforeHook, afterHook] = Hooks(config.hooks, config.request, theRequest);
         beforeHook();
-        const actResult = await Act(letter, config.actor);
+        const actResult = await Act(theRequest, config.actor);
         afterHook(actResult);
         console.info(actResult);
     } catch (e) {

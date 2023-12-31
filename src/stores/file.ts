@@ -1,5 +1,5 @@
 import { basename, dirname } from "path";
-import Letter, { AnyNonPromise } from "../request";
+import Request, { AnyNonPromise } from "../request";
 import { EntityType, IStore } from "../store";
 import fs = require("node:fs");
 import { Parser, Parsers } from "../run";
@@ -14,9 +14,9 @@ export default class FileStore implements IStore {
     }
     get<T>(entityType: EntityType, entityName: string, environmentName: string): Promise<AnyNonPromise<T>> {
         if (entityType === EntityType.Request) {
-            const letter = new Letter();
-            this.load(letter, entityName, environmentName);
-            return Promise.resolve(letter);
+            const theRequest = new Request();
+            this.load(theRequest, entityName, environmentName);
+            return Promise.resolve(theRequest);
         } else {
             const entityFolder = getDirectoryForEntity(entityType);
             const filePath = `${entityFolder}/${entityName}.${this.fileExtension}`;
@@ -35,23 +35,23 @@ export default class FileStore implements IStore {
         fs.writeFileSync(sessionPath, this.parser().stringify(sessionContents));
         return Promise.resolve();
     }
-    load(letter: Letter, requestId: string, environmentName: string): void {
+    load(theRequest: Request, requestId: string, environmentName: string): void {
         const defaultFilePaths = getDefaultFilePaths("requests/" + requestId, this.fileExtension, environmentName);
         for (const defaultFilePath of defaultFilePaths) {
             if (fs.existsSync(defaultFilePath)) {
                 const fileContents = this.parser().parse(fs.readFileSync(defaultFilePath, "utf8"));
                 checkForbidden(fileContents);
-                applyChanges(letter, fileContents);
+                applyChanges(theRequest, fileContents);
             }
         }
         const X = "requests/" + requestId + "." + this.fileExtension;
         const fileContents = this.parser().parse(fs.readFileSync(X, "utf8"));
         checkRequired(fileContents);
-        applyChanges(letter, fileContents);
+        applyChanges(theRequest, fileContents);
         const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
         if (fs.existsSync(sessionPath)) {
             const sessionContents = this.parser().parse(fs.readFileSync(sessionPath, "utf8"));
-            applyChanges(letter, sessionContents);
+            applyChanges(theRequest, sessionContents);
         }
     }
 }

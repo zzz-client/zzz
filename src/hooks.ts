@@ -1,22 +1,22 @@
 import fs = require("node:fs");
 import { dirname } from "path";
-import Letter from "./request";
+import Request from "./request";
 import Store from "./store";
 
 global.Store = Store; // Must be defined for eval
 
-export default function Hooks(hooksName: string, requestFilePath: string, letter: Letter): [Function, Function] {
+export default function Hooks(hooksName: string, requestFilePath: string, theRequest: Request): [Function, Function] {
     switch (hooksName.toLowerCase()) {
         case "js":
         case "javascript":
         default:
-            return JavaScriptHooks(requestFilePath, letter);
+            return JavaScriptHooks(requestFilePath, theRequest);
         case "ts":
         case "typescript":
-            return TypeScriptHooks(requestFilePath, letter);
+            return TypeScriptHooks(requestFilePath, theRequest);
         case "py":
         case "python":
-            return PythonHooks(requestFilePath, letter);
+            return PythonHooks(requestFilePath, theRequest);
     }
 }
 function noop(filePath): any {}
@@ -24,7 +24,7 @@ function notImplemented(): void {
     throw new Error("Not implemented");
 }
 
-function TypeScriptHooks(requestFilePath: string, letter: Letter): [Function, Function] {
+function TypeScriptHooks(requestFilePath: string, theRequest: Request): [Function, Function] {
     const beforePath = "requests/" + dirname(requestFilePath) + "/before.ts";
     const afterPath = "requests/" + dirname(requestFilePath) + "/after.ts";
     const result = { Before: noop, After: noop };
@@ -36,7 +36,7 @@ function TypeScriptHooks(requestFilePath: string, letter: Letter): [Function, Fu
     }
     return [result.Before, result.After];
 }
-function JavaScriptHooks(requestFilePath: string, letter: Letter): [Function, Function] {
+function JavaScriptHooks(requestFilePath: string, theRequest: Request): [Function, Function] {
     const beforePath = "requests/" + dirname(requestFilePath) + "/before.js";
     const afterPath = "requests/" + dirname(requestFilePath) + "/after.js";
     const result = { Before: noop, After: noop };
@@ -48,7 +48,7 @@ function JavaScriptHooks(requestFilePath: string, letter: Letter): [Function, Fu
     }
     return [result.Before, result.After];
 }
-function PythonHooks(requestFilePath: string, letter: Letter): [Function, Function] {
+function PythonHooks(requestFilePath: string, theRequest: Request): [Function, Function] {
     const beforePath = "requests/" + dirname(requestFilePath) + "/before.py";
     const afterPath = "requests/" + dirname(requestFilePath) + "/after.py";
     const result = { Before: noop, After: noop };

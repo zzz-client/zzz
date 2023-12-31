@@ -1,8 +1,8 @@
 import { IAuthorization } from "../authorizer";
-import Letter from "../request";
+import Request from "../request";
 
 export default class BearerTokenAuthorizer implements IAuthorization {
-    apply(letter: Letter, authorizationConfig: any): void {
-        letter.Headers["Authorization"] = `Bearer ${authorizationConfig}`;
+    apply(theRequest: Request, authorizationConfig: any): void {
+        theRequest.Headers["Authorization"] = `Bearer ${authorizationConfig}`;
     }
 }

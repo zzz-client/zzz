@@ -20,9 +20,9 @@ export default function Serve(appConfig: AppConfig, actorName: string = "Pass") 
         const contentType = getContentType(resourcePath);
         console.log("Received request", method, resourcePath, contentType);
         Get(EntityType.Request, base, "Integrate") // TODO: Hardcoded environment
-            .then((letter) => {
-                tim(letter, letter.Variables);
-                return Act(letter, actorName);
+            .then((theRequest) => {
+                tim(theRequest, theRequest.Variables);
+                return Act(theRequest, actorName);
             })
             .then((result) => {
                 const parser = getParser(resourcePath);
