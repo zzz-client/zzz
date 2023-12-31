@@ -3,4 +3,5 @@ dist/
 environments/*.local.*
 ession.yml
 package-lock.json
+deno.lock
 PostmanCollection.json

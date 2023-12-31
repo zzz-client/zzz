@@ -1,12 +1,12 @@
-import { IAuthorization } from "../authorizer";
-import Request from "../request";
+import { IAuthorization } from "../authorizer.ts";
+import Request from "../request.ts";
 
 export default class QueryAuthorizer implements IAuthorization {
-    apply(theRequest: Request, authorizationConfig: Config): void {
-        theRequest.QueryParams[authorizationConfig.Param] = authorizationConfig.Value;
-    }
+  apply(theRequest: Request, authorizationConfig: Config): void {
+    theRequest.QueryParams[authorizationConfig.Param] = authorizationConfig.Value;
+  }
 }
 interface Config {
-    Param: string;
-    Value: string;
+  Param: string;
+  Value: string;
 }
