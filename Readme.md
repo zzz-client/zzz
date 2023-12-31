@@ -1,4 +1,4 @@
-# (ー。ー) Zzz
+# Zzz (ー。ー)
 
 > Pronounced as "zees" or "zeds" depending on where you live.
 
@@ -78,9 +78,10 @@ An Actor is responsible for taking a fully loaded Request, performing an action 
 
 The supported actors are:
 
-  - Client: Actually makes the HTTP requests!
-  - Summary:
+  - Client: Performs the HTTP request and returns its response. NOTE: just the body for now; nothing else more like headers or status
   - Curl: Outputs an equivalent `curl` command similar to Postman
+  - Summary: Outputs the result as plaintext
+  - Pass: Just passes the Request through
 
 ## Defaults
 

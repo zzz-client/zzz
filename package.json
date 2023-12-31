@@ -1,26 +1,25 @@
 {
-    "name": "zzz",
-    "version": "0.0.1",
-    "description": "Replacement for Postman",
-    "scripts": {
-        "build": "tsc",
-        "watch": "tsc -w",
-        "start": "ts-node src/run.ts",
-        "serve": "ts-node src/run.ts",
-        "prestart": "npm run build",
-        "test": "jest",
-        "clean": "rm -rf junit.xml dist coverage"
-    },
-    "dependencies": {
-        "axios": "^1.6.3",
-        "jstoxml": "^3.2.10",
-        "minimist": "^1.2.8",
-        "reblessed": "^0.2.1",
-        "xml-parse": "^0.4.0",
-        "yaml": "^2.3.4"
-    },
-    "devDependencies": {
-        "@types/node": "^20.10.6",
-        "ts-node": "^10.9.2"
-    }
+  "name": "zzz",
+  "version": "0.0.1",
+  "description": "Replacement for Postman",
+  "scripts": {
+    "build": "tsc",
+    "start": "deno run --allow-env --allow-net --allow-read=. main.ts",
+    "watch": "npm run start -- --watch",
+    "prestartNOT": "npm run build",
+    "test": "jest",
+    "clean": "rm -rf junit.xml dist coverage"
+  },
+  "dependencies": {
+    "axios": "^1.6.3",
+    "jstoxml": "^3.2.10",
+    "minimist": "^1.2.8",
+    "reblessed": "^0.2.1",
+    "xml-parse": "^0.4.0",
+    "yaml": "^2.3.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "ts-node": "^10.9.2"
+  }
 }

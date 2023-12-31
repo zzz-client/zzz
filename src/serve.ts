@@ -1,15 +1,16 @@
 // import { basename, extname } from "path";
-import { AppConfig, StringToStringMap } from "./request.ts";
+import { StringToStringMap } from "./request.ts";
 import { EntityType, Get } from "./store.ts";
 import tim from "./tim.ts";
 import Act from "./actor.ts";
 import { extname, Parser, Parsers, Server } from "./libs.ts";
+import { AppConfig } from "../main.ts";
 
 export interface IServer {
   getUrl(): string;
   getMethod(): string;
   respond(code: number, body: any, headers: StringToStringMap): any;
-  listen(responder: Function): void;
+  listen(responder: Function): void; // TODO: This responder junk is a hideous indirection of control
 }
 
 export default function Serve(appConfig: AppConfig, actorName: string = "Pass") {
