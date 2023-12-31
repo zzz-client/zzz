@@ -16,7 +16,6 @@
         "jstoxml": "^3.2.10",
         "minimist": "^1.2.8",
         "reblessed": "^0.2.1",
-        "table": "^6.8.1",
         "xml-parse": "^0.4.0",
         "yaml": "^2.3.4"
     },
