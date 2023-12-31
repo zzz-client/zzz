@@ -18,6 +18,45 @@ export const Stores = {
 };
 const instance: IStore = Stores.YAML; // TODO: Make dynamic somehow
 
+class Collection {
+  name: string;
+  folders: Folder[];
+  constructor(name: string) {
+    this.name = name;
+    this.folders = [];
+  }
+}
+class Folder {
+  name: string;
+  children: Item[];
+  constructor(name: string) {
+    this.name = name;
+    this.children = [];
+  }
+}
+type Item = Request | Folder | string;
+
+export async function Collections(): Promise<Collection[]> {
+  const result = [] as Collection[];
+  result.push(new Collection("REST API")); // TODO: Hardcoded
+  return result;
+}
+
+export async function Info(folderPath: string): Promise<Item[]> {
+  const result = [] as Item[];
+  const children = await Deno.readDirSync(folderPath); // TODO: libs
+  for (const child of children) {
+    if (child.isDirectory) {
+      result.push(new Folder(child.name));
+    } else if (!child.name.startsWith("defaults.")) {
+      // result.push(child.name);
+      const extensionlessName = child.name.substring(0, child.name.lastIndexOf("."));
+      result.push(await Get(EntityType.Request, folderPath + "/" + extensionlessName, null));
+    }
+  }
+  return result;
+}
+
 export default function Store(key: string, value: string, environmentName: string): any {
   return getInstance().store(key, value, environmentName);
 }

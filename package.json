@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.10.6",
+    "primevue": "^3.45.0",
     "ts-node": "^10.9.2"
   }
 }

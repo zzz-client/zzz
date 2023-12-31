@@ -1,6 +1,6 @@
 // import { basename, extname } from "path";
 import { StringToStringMap } from "./request.ts";
-import { EntityType, Get } from "./store.ts";
+import { EntityType, Get, Info } from "./store.ts";
 import tim from "./tim.ts";
 import Act from "./actor.ts";
 import { extname, Parser, Parsers, Server } from "./libs.ts";
@@ -19,7 +19,7 @@ export default function Serve(appConfig: AppConfig, actorName: string = "Pass") 
   });
 }
 
-function respond(server: IServer, actorName: string = "Pass") {
+async function respond(server: IServer, actorName: string = "Pass") {
   const method = server.getMethod();
   const url = server.getUrl();
   if (url === "/favicon.ico") {
@@ -32,8 +32,16 @@ function respond(server: IServer, actorName: string = "Pass") {
     ext = ext.substring(1);
     base = base.substring(0, base.length - ext.length - 1);
   }
+  console.log("base", base);
   const contentType = getContentType(resourcePath);
   console.log("Received request", method, resourcePath, contentType);
+
+  if (base === "") {
+    const whatever = await Info("REST API");
+    console.log(whatever);
+    return server.respond(200, JSON.stringify(whatever, null, 2), { "Content-Type": contentType });
+  }
+
   return Get(EntityType.Request, base, "Integrate") // TODO: Hardcoded environment
     .then((theRequest) => {
       tim(theRequest, theRequest.Variables);

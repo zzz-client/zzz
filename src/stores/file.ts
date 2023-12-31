@@ -13,7 +13,7 @@ export default class FileStore implements IStore {
   get(entityType: EntityType, entityName: string, environmentName: string): Promise<any> {
     if (entityType === EntityType.Request) {
       const theRequest = new Request("", ""); // TODO: Is this hacky?
-      this.load(theRequest, entityName, environmentName);
+      this._load(theRequest, entityName, environmentName);
       return Promise.resolve(theRequest);
     } else {
       const entityFolder = getDirectoryForEntity(entityType);
@@ -31,8 +31,8 @@ export default class FileStore implements IStore {
     writeTextFileSync(sessionPath, this.parser().stringify(sessionContents));
     return Promise.resolve();
   }
-  load(theRequest: Request, resourceName: string, environmentName: string): void {
-    const defaultFilePaths = getDefaultFilePaths("requests/" + resourceName, this.fileExtension, environmentName);
+  _load(theRequest: Request, resourceName: string, environmentName: string): void {
+    const defaultFilePaths = getDefaultFilePaths(resourceName, this.fileExtension, environmentName); // TODO: collection
     for (const defaultFilePath of defaultFilePaths) {
       if (existsSync(defaultFilePath)) {
         const fileContents = this.parser().parse(readTextFileSync(defaultFilePath));
@@ -40,7 +40,7 @@ export default class FileStore implements IStore {
         applyChanges(theRequest, fileContents);
       }
     }
-    const X = "requests/" + resourceName + "." + this.fileExtension; // TODO: What
+    const X = resourceName + "." + this.fileExtension; // TODO: collection
     console.log("X", X);
     const fileContents = this.parser().parse(readTextFileSync(X));
     console.log(fileContents);
@@ -56,7 +56,7 @@ export default class FileStore implements IStore {
 function getDirectoryForEntity(entityType: EntityType): string {
   switch (entityType) {
     case EntityType.Request:
-      return "requests";
+      throw new Error("No idea what directory to do when not knowing the Collection"); // TODO: Fix
     case EntityType.Environment:
       return "environments";
     case EntityType.Authorization:
