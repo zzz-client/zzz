@@ -1,6 +1,11 @@
 {
+  "name": "zzz",
+  "version": "0.0.10",
+  "description": "Replacement for Postman",
   "tasks": {
-    "dev": "deno run --watch main.ts"
+    "dev": "deno run --allow-env --allow-net --allow-read=. main.ts --listen",
+    "zzz": "deno run --allow-env --allow-net --allow-read=. main.ts",
+    "test": "jest"
   },
   "lock": false,
   "fmt": {

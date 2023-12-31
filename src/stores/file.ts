@@ -31,8 +31,8 @@ export default class FileStore implements IStore {
     writeTextFileSync(sessionPath, this.parser().stringify(sessionContents));
     return Promise.resolve();
   }
-  load(theRequest: Request, requestId: string, environmentName: string): void {
-    const defaultFilePaths = getDefaultFilePaths("requests/" + requestId, this.fileExtension, environmentName);
+  load(theRequest: Request, resourceName: string, environmentName: string): void {
+    const defaultFilePaths = getDefaultFilePaths("requests/" + resourceName, this.fileExtension, environmentName);
     for (const defaultFilePath of defaultFilePaths) {
       if (existsSync(defaultFilePath)) {
         const fileContents = this.parser().parse(readTextFileSync(defaultFilePath));
@@ -40,7 +40,8 @@ export default class FileStore implements IStore {
         applyChanges(theRequest, fileContents);
       }
     }
-    const X = "requests/" + requestId + "." + this.fileExtension; // TODO: What
+    const X = "requests/" + resourceName + "." + this.fileExtension; // TODO: What
+    console.log("X", X);
     const fileContents = this.parser().parse(readTextFileSync(X));
     console.log(fileContents);
     checkRequired(fileContents);
