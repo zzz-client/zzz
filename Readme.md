@@ -48,22 +48,27 @@ Program that stores requests as YAML. Meant to be a sleek modular replacement fo
  - How does cookie jar work?
  - Where should we write to for Postman Store?
  - Where can we store variables for the Postman Store?
+ - Determine parser based on the supplied content-type header instead of having to do extension?
+ - More Stores & parsers; TOML
 
 # Actual Documentation
 
 You can override some implementations using flags:
 
-  - e/environment: The name of the environment inside `environments` to load from
-  - a/actor: The class to perform the action on the parsed request (see below)
-  - a/hooks: TBD
+  - `-e` / `--environment`: The name of the environment inside `environments` to load from
+  - `-a` / `--actor`: The class to perform the action on the parsed request (see below)
+  - `-h` / `--hooks`: TBD
 
 ```shell
-    $ zzz "Folder Name/Request Name" # Makes HTTP request and outputs response
-    $ zzz --environment qa "Folder Name/Request Name" # Load variables and settings from a specific environment
-    $ zzz # Run an HTTP server as an output for the program instead of the CLI
-``
+# Makes HTTP request and outputs response
+$ zzz "Folder Name/Request Name"
 
+# Load variables and settings from a specific environment
+$ zzz --environment qa "Folder Name/Request Name"
 
+# Run an HTTP server as an output for the program instead of the CLI
+$ zzz
+```
 
 ## Stores
 
@@ -96,7 +101,20 @@ The supported actors are:
   - Summary:
   - Curl: Outputs an equivalent `curl` command similar to Postman
 
+## Hooks
+
+TODO
 
 ## Web Server
 
-In addition to
+In addition to acting as a CLI REST client, Zzz also has a built in web server that is run when no specific request is passed as a param. The URL path maps one-to-one with the Store; in other words, the path to retrieve the Request from the Store is the contents of the URL to get it from the server. The Request named "OAuth Client Credentials" in the folder "Authentication" would translate to the URL http://127.0.0.1:8000/Authentication/OAuth%20Client%20Credentials
+
+
+Adding a file extension to the end will change what format is returned. Using the above example, `http://127.0.0.1:8000/MyRequest.json` will yield the result as JSON and `http://127.0.0.1:8000/MyRequest.curl` will do it as the equivalent curl command as plaintext.
+
+  - json
+  - yml
+  - xml
+  - txt
+  - curl
+

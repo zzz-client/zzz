@@ -16,12 +16,21 @@ export default function Serve(appConfig: AppConfig, actorName: string = "Pass") 
             return;
         }
         const resourcePath = decodeURI(url.substring(1));
-        const base = resourcePath.substring(0, resourcePath.length - extname(resourcePath).length);
+        let ext = extname(resourcePath);
+        if (ext.startsWith(".")) {
+            ext = ext.substring(1);
+        }
+        const base = resourcePath.substring(0, resourcePath.length - ext.length - 1);
         const contentType = getContentType(resourcePath);
         console.log("Received request", method, resourcePath, contentType);
         Get(EntityType.Request, base, "Integrate") // TODO: Hardcoded environment
             .then((theRequest) => {
                 tim(theRequest, theRequest.Variables);
+                console.log(ext);
+                if (ext === "curl") {
+                    // TODO: Hardcoded
+                    return Act(theRequest, "Curl");
+                }
                 return Act(theRequest, actorName);
             })
             .then((result) => {
@@ -50,6 +59,7 @@ function getParser(resourcePath: string): Parser {
         case "xml":
             return Parsers.XML;
         case "txt":
+        case "curl":
             return Parsers.TEXT;
         default:
             throw new Error("No known parser for: " + ext);
@@ -64,6 +74,7 @@ function getContentType(resourcePath: string): string {
         case "yml":
         case "yaml":
         case "txt":
+        case "curl":
             return "text/plain";
         case "xml":
             return "text/xml";
