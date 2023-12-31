@@ -1,6 +1,6 @@
 // import { basename, extname } from "path";
 import { StringToStringMap } from "./request.ts";
-import { EntityType, Get, Info } from "./store.ts";
+import { Collections, EntityType, Get } from "./store.ts";
 import tim from "./tim.ts";
 import Act from "./actor.ts";
 import { extname, Parser, Parsers, Server } from "./libs.ts";
@@ -37,7 +37,7 @@ async function respond(server: IServer, actorName: string = "Pass") {
   console.log("Received request", method, resourcePath, contentType);
 
   if (base === "") {
-    const whatever = await Info("REST API");
+    const whatever = await Collections();
     console.log(whatever);
     return server.respond(200, JSON.stringify(whatever, null, 2), { "Content-Type": contentType });
   }

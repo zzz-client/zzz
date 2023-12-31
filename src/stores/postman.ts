@@ -1,5 +1,5 @@
 import Request from "../request.ts";
-import { EntityType, IStore, Stores } from "../store.ts";
+import { EntityType, Get, IStore, Stores } from "../store.ts";
 import { basename, dirname, existsSync, extname, readTextFileSync } from "../libs.ts";
 
 export default class PostmanStore implements IStore {
@@ -15,6 +15,9 @@ export default class PostmanStore implements IStore {
     if (entityType === EntityType.Request) {
       return await loadRequest(this.collection, environmentName, entityName);
     }
+    if (entityType === EntityType.Collection || entityType === EntityType.Folder) {
+      return await Get(entityType, entityName, environmentName);
+    }
     return Stores.YAML.get(entityType, entityName, environmentName);
   }
   async store(key: string, value: any): Promise<void> {
@@ -29,7 +32,7 @@ async function loadRequest(collection: CollectionSchema, environmentName: string
   const requestName = basename(requestFilePath, extension);
   const folder = collection.item.filter((item) => item.name === folderName)[0];
   const request = folder.item.filter((item) => item.name === requestName)[0].request;
-  const theRequest = new Request(request.url.raw.split("?")[0], request.method);
+  const theRequest = new Request(requestName, request.url.raw.split("?")[0], request.method);
   if (request.body) {
     theRequest.Body = request.body.raw;
   }
@@ -51,7 +54,7 @@ async function loadEnvironment(target: string, environmentName: string | null): 
   try {
     return await Stores.YAML.get(EntityType.Environment, target, environmentName);
   } catch (e) {
-    return new Request("", ""); // TODO: WHAT
+    return new Request("", "", ""); // TODO: WHAT
   }
 }
 // TODO: Duplicate code
