@@ -125,7 +125,7 @@ In addition to the standard CLI interface covered in [Usage](#Usage), Zzz can be
 
 A basic REST API is provided that maps URLs one-to-one with Requests; in other words, the path to retrieve the Request from the Store is the contents of the URL to get it from the server. The Request named "OAuth Client Credentials" in the folder "Authentication" would translate to the URL http://127.0.0.1:8000/Authentication/OAuth%20Client%20Credentials
 
-Adding a file extension to the end will change what format is returned. Using the above example, `http://127.0.0.1:8000/MyRequest.json` will yield the result as JSON and `http://127.0.0.1:8000/MyRequest.curl` will do it as the equivalent curl command as plaintext.
+Adding a file extension to the end will change what format is returned: `http://127.0.0.1:8000/MyRequest.json` will yield the result as JSON and `http://127.0.0.1:8000/MyRequest.curl` will do it as the equivalent curl command as plaintext.
 
   - json
   - yml
