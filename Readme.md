@@ -1,4 +1,4 @@
-# lttr
+# Zzz
 
 Program that stores requests as YAML. Meant to be a sleek modular replacement for Postman.
 
