@@ -7,6 +7,11 @@ export default async function Act(letter: Request, actorName: string): Promise<a
     const actor = newInstance(actorName);
     return await actor.act(letter);
 }
+class PassThruActor implements IActor {
+    act(letter: any): Promise<any> {
+        return letter;
+    }
+}
 export interface IActor {
     act(letter: Request): Promise<any>;
 }
@@ -19,5 +24,7 @@ function newInstance(type: string): IActor {
             return new SummaryActor();
         case "Curl":
             return new CurlActor();
+        case "Pass":
+            return new PassThruActor();
     }
 }

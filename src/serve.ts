@@ -3,10 +3,12 @@ import { AppConfig } from "./request";
 import { Parser, Parsers } from "./run";
 import { EntityType, Get } from "./store";
 import tim from "./tim";
+import Act from "./actor";
 
 const http = require("http");
 const HTTP_PORT = process.env.PORT || 8000;
-export default function Serve(appConfig: AppConfig) {
+export default function Serve(appConfig: AppConfig, actorName: string = "Pass") {
+    // Set actorName to "Client" to make it actually make the requests and yield the results!
     http.createServer((req, res) => {
         const { method, url, headers } = req;
         if (url === "/favicon.ico") {
@@ -20,8 +22,7 @@ export default function Serve(appConfig: AppConfig) {
         Get(EntityType.Request, base, "Integrate") // TODO: Hardcoded environment
             .then((letter) => {
                 tim(letter, letter.Variables);
-                return letter;
-                // return Act(letter, 'Client'); // TODO: this actually causes it to making the request!!!
+                return Act(letter, actorName);
             })
             .then((result) => {
                 const parser = getParser(resourcePath);
