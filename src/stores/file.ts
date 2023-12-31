@@ -1,4 +1,4 @@
-import Request, { AnyNonPromise, StringToStringMap } from "../request.ts";
+import Request, { StringToStringMap } from "../request.ts";
 import { EntityType, IStore } from "../store.ts";
 import { dirname, existsSync, Parser, Parsers, readTextFileSync, writeTextFileSync } from "../libs.ts";
 
@@ -10,9 +10,9 @@ export default class FileStore implements IStore {
   parser(): Parser {
     return Parsers[this.fileExtension.toUpperCase()];
   }
-  get<T>(entityType: EntityType, entityName: string, environmentName: string): Promise<AnyNonPromise<T>> {
+  get(entityType: EntityType, entityName: string, environmentName: string): Promise<any> {
     if (entityType === EntityType.Request) {
-      const theRequest = new Request();
+      const theRequest = new Request("", ""); // TODO: Is this hacky?
       this.load(theRequest, entityName, environmentName);
       return Promise.resolve(theRequest);
     } else {
@@ -21,7 +21,7 @@ export default class FileStore implements IStore {
       return this.parser().parse(readTextFileSync(filePath));
     }
   }
-  store<T>(key: string, value: any): Promise<void> {
+  store(key: string, value: any): Promise<void> {
     const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
     let sessionContents = { Variables: {} as StringToStringMap };
     if (existsSync(sessionPath)) {
@@ -77,7 +77,7 @@ function getDefaultFilePaths(requestFilePath: string, fileExtension: string, env
   }
   return [...defaultEnvironments, ...defaultFilePaths.reverse()];
 }
-function applyChanges<T>(destination: any, source: any): void {
+function applyChanges(destination: any, source: any): void {
   if (!source) {
     return;
   }

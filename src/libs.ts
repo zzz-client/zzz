@@ -42,7 +42,7 @@ export const basename = _basename;
 export const encodeUrl = _encodeUrl;
 export const base64 = _base64;
 export const Server = _Server;
-export const http = _httpRequest;
+export const httpRequest = _httpRequest;
 
 // Runtime independent
 export type Parser = {

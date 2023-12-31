@@ -1,4 +1,4 @@
-import Request, { AnyNonPromise } from "../request.ts";
+import Request from "../request.ts";
 import { EntityType, IStore, Stores } from "../store.ts";
 import { basename, dirname, existsSync, extname, readTextFileSync } from "../libs.ts";
 
@@ -17,12 +17,11 @@ export default class PostmanStore implements IStore {
     }
     return Stores.YAML.get(entityType, entityName, environmentName);
   }
-  async store<T>(key: string, value: AnyNonPromise<T>): Promise<void> {
+  async store(key: string, value: any): Promise<void> {
     throw new Error("Method not implemented.");
   }
 }
 async function loadRequest(collection: CollectionSchema, environmentName: string, requestFilePath: string): Promise<Request> {
-  const theRequest = new Request();
   console.debug("Loading theRequest from postman collection: ", requestFilePath);
   // TODO: Write this so it cna work recursively
   const folderName = dirname(requestFilePath);
@@ -30,8 +29,7 @@ async function loadRequest(collection: CollectionSchema, environmentName: string
   const requestName = basename(requestFilePath, extension);
   const folder = collection.item.filter((item) => item.name === folderName)[0];
   const request = folder.item.filter((item) => item.name === requestName)[0].request;
-  theRequest.Method = request.method;
-  theRequest.URL = request.url.raw.split("?")[0];
+  const theRequest = new Request(request.url.raw.split("?")[0], request.method);
   if (request.body) {
     theRequest.Body = request.body.raw;
   }
@@ -41,6 +39,7 @@ async function loadRequest(collection: CollectionSchema, environmentName: string
   for (let query of request.url.query) {
     theRequest.QueryParams[query.key] = query.value;
   }
+
   applyChanges(theRequest, await loadEnvironment("globals", null));
   // applyChanges(theRequest, await loadEnvironment("globals.local", null));
   applyChanges(theRequest, await loadEnvironment(environmentName, environmentName));
@@ -52,12 +51,11 @@ async function loadEnvironment(target: string, environmentName: string | null): 
   try {
     return await Stores.YAML.get(EntityType.Environment, target, environmentName);
   } catch (e) {
-    return new Request();
+    return new Request("", ""); // TODO: WHAT
   }
 }
 // TODO: Duplicate code
-function applyChanges<T>(destination: any, source: any): void {
-  // console.log("Applying", source, "to", destination);
+function applyChanges(destination: any, source: any): void {
   if (!source) {
     return;
   }

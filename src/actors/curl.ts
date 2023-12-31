@@ -1,8 +1,8 @@
 import { IActor } from "../actor.ts";
-import Request, { AnyNonPromise } from "../request.ts";
+import Request from "../request.ts";
 
 export default class CurlActor implements IActor {
-  format<T>(culCommand: AnyNonPromise<T>): string {
+  format(culCommand: any): string {
     return culCommand as string;
   }
   async act(theRequest: Request): Promise<string> {

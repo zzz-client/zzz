@@ -1,4 +1,5 @@
 import { IActor } from "../actor.ts";
+import { httpRequest } from "../libs.ts";
 import Request from "../request.ts";
 
 const defaultStringify = (data: any) => JSON.stringify(data, null, 2);
@@ -28,7 +29,7 @@ function formatError(error: any) {
 }
 async function doRequest(theRequest: Request): Promise<any> {
   return (
-    await axios.request({
+    await httpRequest({
       method: theRequest.Method,
       headers: theRequest.Headers,
       params: theRequest.QueryParams,
