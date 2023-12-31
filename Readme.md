@@ -42,8 +42,61 @@ Program that stores requests as YAML. Meant to be a sleek modular replacement fo
 4. Convert to output
     **Dependency Injection**: implementation to output compiled summary, convert to curl, to make request using node, etc
 
+
 ## TODO
 
- - where are workspace settings stored (e.g. environment)?
  - How does cookie jar work?
- - post-run script?
+ - Where should we write to for Postman Store?
+ - Where can we store variables for the Postman Store?
+
+# Actual Documentation
+
+You can override some implementations using flags:
+
+  - e/environment: The name of the environment inside `environments` to load from
+  - a/actor: The class to perform the action on the parsed request (see below)
+  - a/hooks: TBD
+
+```shell
+    $ zzz "Folder Name/Request Name" # Makes HTTP request and outputs response
+    $ zzz --environment qa "Folder Name/Request Name" # Load variables and settings from a specific environment
+    $ zzz # Run an HTTP server as an output for the program instead of the CLI
+``
+
+
+
+## Stores
+
+The way that Zzz accesses requests, environments, variables and etc are done through an interface called IStore.
+
+  - FileStore: Store each request in separate file; can use yml, json, or xml
+  - Postman: Reads requests from a collection JSON exported from Postman
+    - **NOTE**: This currently does not support writing
+
+## Authorizers
+
+After a request has been loaded from the Store, it will need to be massaged to have whatever changes made to it for authorization. Authorization profiles can be shared across requests and are set via the `Authorization` attribute in Zzz config, which allows a Request to override the Authorization schema of its Collection or Folder.
+
+The form of the file should only have 1 key: the name of the type of Authorization, each of which has an example in the `authorization/types` folder.
+
+Here are the currently supported types:
+
+  - BearerToken
+  - BasicAuth
+  - Header (equivalent to "API Key" in Postman with "Header" selected as "Add to")
+  - Query (equivalent to "API Key" in Postman with "Query Params" selected as "Add to")
+
+## Actors
+
+An Actor is responsible for taking a fully loaded Request, performing an action on it, and yielding a result. Note that Actors are *not* responsible for formatting the result.
+
+The supported actors are:
+
+  - Client: Actually makes the HTTP requests!
+  - Summary:
+  - Curl: Outputs an equivalent `curl` command similar to Postman
+
+
+## Web Server
+
+In addition to
