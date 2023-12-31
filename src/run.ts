@@ -6,6 +6,8 @@ import Serve from "./serve";
 import { EntityType, Get } from "./store";
 import tim from "./tim";
 import * as YAML from "yaml";
+import { toXML } from "jstoxml";
+import { parse as xmlParse } from "xml-parse";
 
 // prettier-ignore
 const testRequests = [
@@ -27,6 +29,10 @@ export const Parsers = {
     JSON: {
         parse: JSON.parse,
         stringify: (input: any) => JSON.stringify(input, null, 2)
+    },
+    XML: {
+        parse: xmlParse,
+        stringify: (input: any) => toXML({ Content: input })
     },
     TEXT: {
         parse: (input: string) => input + "",

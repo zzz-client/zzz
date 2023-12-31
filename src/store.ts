@@ -13,7 +13,8 @@ export function getInstance(): IStore {
 export const Stores = {
     Postman: newInstance("postman"),
     JSON: newInstance("json"),
-    YAML: newInstance("yaml")
+    YAML: newInstance("yaml"),
+    XML: newInstance("xml")
 };
 const instance: IStore = Stores.YAML; // TODO: Make dynamic somehow
 
@@ -38,6 +39,8 @@ function newInstance(type: string): IStore {
         case "yml":
         default:
             return new FileStore("yml");
+        case "xml":
+            return new FileStore("xml");
         case "postman":
             return new PostmanStore("PostmanCollection.json");
     }
