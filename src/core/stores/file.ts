@@ -34,12 +34,14 @@ export default class FileStore implements IStore {
   }
   async get(entityType: EntityType, entityName: string, environmentName: string): Promise<Item> {
     if (entityType === EntityType.Request) {
-      const theRequest = new Request(entityName, "", ""); // TODO: Is this hacky?
+      const theRequest = new Request("", "", ""); // TODO: Is this hacky?
       this._load(theRequest, entityName, environmentName);
+      if (!theRequest.Name) {
+        theRequest.Name = basename(entityName);
+      }
       return theRequest;
     }
     if (entityType === EntityType.Collection || entityType === EntityType.Folder) {
-      const children = Deno.readDirSync(entityName);
       const item = new (entityType === EntityType.Collection ? Collection : Folder)(basename(entityName));
       for await (const child of Deno.readDir(entityName)) {
         if (child.isDirectory) {

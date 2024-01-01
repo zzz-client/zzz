@@ -61,7 +61,6 @@ export interface IStore {
 async function loadRequest(requestFilePath: string, environmentName: string | null): Promise<Request> {
   const theRequest = await getInstance().get(EntityType.Request, requestFilePath, environmentName);
   loadBody(theRequest, requestFilePath, environmentName);
-  theRequest.Name = basename(requestFilePath);
   return theRequest;
 }
 function loadBody(theRequest: Request, _requestFilePath: string, _environmentName: string | null) {
