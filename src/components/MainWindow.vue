@@ -4,6 +4,7 @@ import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
+import Message from "primevue/message";
 import { ref, toRef } from "vue";
 import Collections from "./Collections.vue";
 import RequestTab from "./RequestTab.vue";
@@ -18,6 +19,7 @@ const tabs = ref([
   }
 ]);
 const folders = ref([] as any[]);
+const errorMessage = ref("");
 
 window.addEventListener("hashchange", () => {
   const requestPath = decodeURI(window.location.hash.substring(1));
@@ -31,7 +33,6 @@ function addEntityToNodes(noteList, entity, parentPath = "") {
   if (fullPath.substring(0, 1) == "/") {
     fullPath = fullPath.substring(1);
   }
-  console.log("X", fullPath, entity);
   const newNode = {
     key: fullPath,
     label: basename(entity.Name)
@@ -64,13 +65,16 @@ axios
   })
   // .then(expandAll)
   .catch((error) => {
+    console.log(error);
     console.error("ERROR", error.message, `(${error.code})`);
     console.error(error.stack);
+    errorMessage.value = `An error occured: ${error.message}`;
   });
 </script>
 
 <template>
-  <Splitter class="absolute">
+  <Message severity="error" v-if="!!errorMessage" :closable="false">{{ errorMessage }}</Message>
+  <Splitter class="absolute" v-if="!errorMessage">
     <SplitterPanel :size="15" :minSize="20" class="absolute">
       <Collections :folders="folders" />
     </SplitterPanel>
