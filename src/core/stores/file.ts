@@ -32,13 +32,12 @@ export default class FileStore implements IStore {
   }
   async get(entityType: EntityType, entityName: string, environmentName: string): Promise<Item> {
     if (entityType === EntityType.Request) {
-      const theRequest = new Request("", "", ""); // TODO: Is this hacky?
+      const theRequest = new Request(entityName, "", ""); // TODO: Is this hacky?
       this._load(theRequest, entityName, environmentName);
       return theRequest;
     }
     if (entityType === EntityType.Collection || entityType === EntityType.Folder) {
       const children = Deno.readDirSync(entityName);
-      console.log(entityName, children);
       const item = new (entityType === EntityType.Collection ? Collection : Folder)(basename(entityName));
       for await (const child of Deno.readDir(entityName)) {
         if (child.isDirectory) {
@@ -80,9 +79,7 @@ export default class FileStore implements IStore {
       }
     }
     const filePath = resourceName + "." + this.fileExtension; // TODO: collection
-    console.log("filePath to read", filePath);
     const fileContents = this._parser().parse(readTextFileSync(filePath));
-    console.log(fileContents);
     checkRequired(fileContents);
     applyChanges(theRequest, fileContents);
     const sessionPath = getEnvironmentPath("session.local", this.fileExtension);

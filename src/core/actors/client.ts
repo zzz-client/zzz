@@ -1,8 +1,8 @@
 import { IActor } from "../actor.ts";
-import { httpRequest } from "../libs.ts";
+import { httpRequest, Parsers } from "../libs.ts";
 import Request from "../request.ts";
 
-const defaultStringify = (data: any) => JSON.stringify(data, null, 2);
+const defaultStringify = Parsers.JSON.stringify;
 
 export default class ClientActor implements IActor {
   stringify: Function;

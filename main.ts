@@ -2,13 +2,14 @@ import Serve from "./src/serve.ts";
 import { argv, exit } from "./src/libs.ts";
 import Cli from "./src/cli.ts";
 
+
 export const appConfigDefaults = {
   environment: "Integrate",
   actor: "Client",
   hooks: "YAML",
 };
 
-export default async function main() {
+export default async function main(): Promise<void> {
   try {
     const config = parseAppConfig();
     if (config.listen) {

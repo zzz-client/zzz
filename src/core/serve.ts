@@ -41,7 +41,7 @@ async function respond(server: IServer, actorName: string = "Pass") {
 
   if (base === "") {
     const whatever = await Collections();
-    return server.respond(200, JSON.stringify(whatever, null, 2), { "Content-Type": contentType });
+    return server.respond(200, JSON.stringify(whatever, null, 2), { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });
   }
   return Stat(base)
     .then((stats) => {
@@ -70,13 +70,18 @@ async function respond(server: IServer, actorName: string = "Pass") {
       return Act(theRequest, actorName);
     })
     .then((result) => {
+      console.log("result2", result);
       const parser = getParser(resourcePath);
       const parsedResult = parser.stringify(result);
-      return server.respond(200, parsedResult, { "Content-Type": contentType });
+      return server.respond(200, parsedResult, { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });
     })
     .catch((reason) => {
+      console.error(reason.message);
       console.error(reason);
-      return server.respond(500, Parsers.TEXT.stringify(reason), { "Content-Type": "text/plain" });
+      const parser = getParser(resourcePath);
+      const parsedResult = parser.stringify(reason);
+      console.error(parsedResult);
+      return server.respond(500, parsedResult, { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });
     });
 }
 function getParser(resourcePath: string): Parser {
