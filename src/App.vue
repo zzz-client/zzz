@@ -8,7 +8,6 @@ const toast = useToast();
 
 console.log("toast");
 toast.add({ severity: "warn", summary: "X", detail: "Y", life: 1000 });
-console.log("toast");
 </script>
 
 <template>

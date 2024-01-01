@@ -6,17 +6,16 @@ import ZzzRequest from "./request.ts";
 import { IStore } from "./factories.ts";
 const DEFAULT_MARKER = "_defaults";
 
-export async function Load(entityName: string, environmentName: string, fileExtension: string): Promise<ZzzRequest> {
+export async function Load(folderName: string, environmentName: string, fileExtension: string): Promise<ZzzRequest> {
   const resultRequest = new ZzzRequest("", "", ""); // TODO: Is this hacky?
   const store = Stores[fileExtension.toUpperCase()];
   const variables = new FileVariables() as IVariables;
-  // const globals = await variables.globals(store);
-  console.log("env name?", environmentName);
+  const globals = await variables.globals(store);
   const environment = await variables.environment(environmentName, store);
-  // const defaults = await variables.defaults(dirname(entityName), store);
-  // Meld(resultRequest, globals);
+  const defaults = await variables.defaults(folderName, store);
+  Meld(resultRequest, globals);
   Meld(resultRequest, environment);
-  // Meld(resultRequest, defaults);
+  Meld(resultRequest, defaults);
   return resultRequest;
 }
 
@@ -41,7 +40,6 @@ interface IVariables {
 
 class FileVariables implements IVariables {
   globals(store: IStore): Promise<ZzzRequest> {
-    console.log("store", store);
     return store.get(EntityType.Environment, "globals", "Integrate"); // TODO: Hardcoded
   }
   environment(environmentName: string, store: IStore): Promise<ZzzRequest> {

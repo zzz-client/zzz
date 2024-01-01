@@ -30,6 +30,7 @@ async function fetchRequest(value: string): Promise<any> {
   return axios
     .get("http://localhost:8000/" + value)
     .then((res) => {
+      console.log("request fetched", res.data);
       return res.data;
     })
     .catch((error) => {
@@ -53,7 +54,7 @@ function doTheThing(newValue: string) {
   breadcrumbs.value = newBreadcrumbs;
   fetchRequest(newValue)
     .then((data) => {
-      console.log("tab loaded request", data);
+      console.log("tab loaded", data);
       if (data.Type == "Request") {
         requestData.value = data;
       }
@@ -75,7 +76,6 @@ async function send() {
         statusText: what.statusText,
         headers: what.headers as StringToStringMap
       };
-      console.log("WHAT", response);
     })
     .catch((error) => {
       response.value = {

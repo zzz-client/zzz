@@ -59,6 +59,7 @@ let keys = [] as string[];
 axios
   .get("http://localhost:8000/")
   .then((res) => {
+    console.log("Got initial data", res.data);
     res.data.forEach((entity) => {
       addEntityToNodes(folders.value, entity);
     });
