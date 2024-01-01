@@ -1,8 +1,9 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import Request, { Collection, Folder, Item, StringToStringMap } from "../request.ts";
-import { EntityType, IStore, Stats } from "../storage.ts";
+import { EntityType } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
-import { Parser, Parsers } from "../format.ts";
+import { Parser, Parsers } from "../render.ts";
+import { IStore, Stats } from "../factories.ts";
 
 export default class FileStore implements IStore {
   fileExtension: string;

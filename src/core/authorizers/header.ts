@@ -1,4 +1,4 @@
-import { IAuthorization } from "../authorizer.ts";
+import { IAuthorization } from "../factories.ts";
 import Request from "../request.ts";
 
 export default class HeaderAuthorizer implements IAuthorization {

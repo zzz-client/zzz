@@ -1,4 +1,4 @@
-import { IActor } from "../actor.ts";
+import { IActor } from "../factories.ts";
 
 export default class PassThruActor implements IActor {
   act(theRequest: any): Promise<any> {

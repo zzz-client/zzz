@@ -3,9 +3,9 @@ import ZzzRequest, { StringToStringMap } from "../core/request.ts";
 import { Collections, EntityType, Get, Stat } from "../core/storage.ts";
 import { AppConfig } from "../main.ts";
 import tim from "../core/tim.ts";
-import Act from "../core/actor.ts";
+import { Act } from "../core/factories.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
-import { Parser, Parsers } from "../core/format.ts";
+import { Parser, Parsers } from "../core/render.ts";
 
 export interface IServer {
   getUrl(): string;

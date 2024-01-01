@@ -2,7 +2,6 @@ import { parse as yamlParse, stringify as yamlStringify } from "https://deno.lan
 import { parse as xmlParse } from "https://deno.land/x/xml/mod.ts";
 const xmlStringify = (x: any) => Deno.exit(1); // TODO: xmlStringify
 
-// Runtime independent
 export type Parser = {
   parse: (input: string) => any;
   stringify: (input: any) => string;

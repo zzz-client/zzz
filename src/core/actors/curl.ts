@@ -1,4 +1,4 @@
-import { IActor } from "../actor.ts";
+import { IActor } from "../factories.ts";
 import Request from "../request.ts";
 
 export default class CurlActor implements IActor {

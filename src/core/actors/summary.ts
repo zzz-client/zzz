@@ -1,5 +1,5 @@
-import { IActor } from "../actor.ts";
-import { Parsers } from "../format.ts";
+import { IActor } from "../factories.ts";
+import { Parsers } from "../render.ts";
 
 export default class SummaryActor implements IActor {
   format(data: any): string {

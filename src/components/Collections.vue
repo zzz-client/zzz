@@ -9,13 +9,14 @@ import { MenuItem } from "primevue/menuitem";
 
 let keys = [] as string[];
 function addEntityToNodes(noteList, entity, parentPath = "") {
+  const fullPath = parentPath + "/" + entity.Name;
   const newNode = {
-    key: parentPath + "/" + entity.Name,
+    key: fullPath,
     label: basename(entity.Name)
   } as MenuItem;
   if (entity.Type == "Request") {
     // newNode.type = "url"; // for Tree
-    newNode.url = "#" + entity.Name;
+    newNode.url = "#" + fullPath;
     newNode.command = () => {
       window.location.hash = newNode.url!;
     };

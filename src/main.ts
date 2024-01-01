@@ -1,5 +1,5 @@
 import Serve from "./api/serve.ts";
-import Cli from "./core/cli.ts";
+import Cli from "./cli.ts";
 import { parseArgs } from "https://deno.land/std/cli/parse_args.ts";
 export const argv = parseArgs(Deno.args);
 

@@ -1,7 +1,8 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import Request from "../request.ts";
-import { EntityType, Get, IStore, Stores } from "../storage.ts";
+import { EntityType, Get } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
+import { IStore, Stores } from "../factories.ts";
 
 export default class PostmanStore implements IStore {
   collection: CollectionSchema;
@@ -12,6 +13,7 @@ export default class PostmanStore implements IStore {
       this.collection = {} as CollectionSchema; // TODO: Bad but why is this happening
     }
   }
+  // TODO: stat
   async get(entityType: EntityType, entityName: string, environmentName: string): Promise<any> {
     if (entityType === EntityType.Request) {
       return await loadRequest(this.collection, environmentName, entityName);

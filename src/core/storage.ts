@@ -1,8 +1,7 @@
-import { basename } from "https://deno.land/std/path/mod.ts";
-import { Parsers } from "./format.ts";
+import { Parsers } from "./render.ts";
 import Request, { Collection } from "./request.ts";
-import FileStore from "./stores/file.ts";
-import PostmanStore from "./stores/postman.ts";
+import { newStore, Stats } from "./factories.ts";
+
 export enum EntityType {
   Authorization,
   Environment,
@@ -10,17 +9,6 @@ export enum EntityType {
   Folder,
   Collection,
 }
-export function getInstance(): IStore {
-  return instance;
-}
-export const Stores = {
-  JSON: new FileStore("json"),
-  YAML: new FileStore("yml"),
-  XML: new FileStore("xml"),
-  Postman: new PostmanStore("PostmanCollection.json"),
-};
-const instance: IStore = Stores.YAML; // TODO: Make dynamic somehow
-
 export async function Collections(): Promise<Collection[]> {
   const result = [] as Collection[];
   const collections = ["REST API"]; // TODO: Hardcoded
@@ -29,39 +17,18 @@ export async function Collections(): Promise<Collection[]> {
   }
   return result;
 }
-
 export default function Store(key: string, value: string, environmentName: string): any {
-  return getInstance().store(key, value, environmentName);
+  return newStore().store(key, value, environmentName);
 }
 export async function Get(entityType: EntityType, entityName: string, environmentName: string | null): Promise<any> {
+  const theRequest = await newStore().get(entityType, entityName, environmentName);
   if (entityType === EntityType.Request) {
-    return loadRequest(entityName, environmentName);
-  } else {
-    return getInstance().get(entityType, entityName, environmentName);
+    loadBody(theRequest, entityName, environmentName);
   }
+  return theRequest;
 }
 export async function Stat(itemName: string): Promise<Stats> {
-  return getInstance().stat(itemName);
-}
-
-export interface Stats {
-  Type: string;
-  Name: string;
-  Size: number;
-  Created: Date;
-  Modified: Date;
-}
-
-export interface IStore {
-  get(entityType: EntityType, entityName: string, environmentName: string | null): Promise<any>;
-  store(key: string, value: any, environmentName: string): Promise<void>;
-  stat(entityName: string): Promise<Stats>;
-}
-
-async function loadRequest(requestFilePath: string, environmentName: string | null): Promise<Request> {
-  const theRequest = await getInstance().get(EntityType.Request, requestFilePath, environmentName);
-  loadBody(theRequest, requestFilePath, environmentName);
-  return theRequest;
+  return newStore().stat(itemName);
 }
 function loadBody(theRequest: Request, _requestFilePath: string, _environmentName: string | null) {
   if (typeof theRequest.Body === "string") {
