@@ -3,7 +3,7 @@ import BearerTokenAuthorizer from "./authorizers/bearerToken.ts";
 import HeaderAuthorizer from "./authorizers/header.ts";
 import QueryAuthorizer from "./authorizers/query.ts";
 import Request from "./request.ts";
-import { EntityType, Get } from "./store.ts";
+import { EntityType, Get } from "./storage.ts";
 
 export default function Authorize(theRequest: Request, authorizationDefinition: string): void {
   if (authorizationDefinition) {

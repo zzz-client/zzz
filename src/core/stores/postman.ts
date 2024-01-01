@@ -1,6 +1,6 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import Request from "../request.ts";
-import { EntityType, Get, IStore, Stores } from "../store.ts";
+import { EntityType, Get, IStore, Stores } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 
 export default class PostmanStore implements IStore {

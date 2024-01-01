@@ -1,6 +1,6 @@
 // import { basename, extname } from "path";
 import ZzzRequest, { StringToStringMap } from "../core/request.ts";
-import { Collections, EntityType, Get, Stat } from "../core/store.ts";
+import { Collections, EntityType, Get, Stat } from "../core/storage.ts";
 import { AppConfig } from "../main.ts";
 import tim from "../core/tim.ts";
 import Act from "../core/actor.ts";

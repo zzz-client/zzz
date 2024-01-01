@@ -1,6 +1,6 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import Request, { Collection, Folder, Item, StringToStringMap } from "../request.ts";
-import { EntityType, IStore, Stats } from "../store.ts";
+import { EntityType, IStore, Stats } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 import { Parser, Parsers } from "../format.ts";
 

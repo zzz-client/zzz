@@ -1,9 +1,9 @@
-import { EntityType } from "./store.ts";
+import { EntityType } from "./storage.ts";
 import { AppConfig } from "../main.ts";
 import Act from "./actor.ts";
 import Authorize from "./authorizer.ts";
 import Hooks from "./hooks.ts";
-import { Get } from "./store.ts";
+import { Get } from "./storage.ts";
 import tim from "./tim.ts";
 import { Parsers } from "./format.ts";
 
