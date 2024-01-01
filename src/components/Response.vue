@@ -15,8 +15,17 @@ const bodyType = ref(bodyTypes[0]);
 const statusSeverity = ref("");
 
 console.log("har", data.value);
-if (data.value?.status?.substring(0, 1) == "2") {
+if (data.value?.status >= 200 && data.value?.status < 300) {
   statusSeverity.value = "success";
+}
+if (data.value?.status >= 300) {
+  statusSeverity.value = "warning";
+}
+if (data.value?.status >= 400) {
+  statusSeverity.value = "danger";
+}
+if (data.value?.status >= 500) {
+  statusSeverity.value = "danger";
 }
 </script>
 

@@ -58,7 +58,7 @@ axios
   .catch((error) => {
     console.error("ERROR", error.message, `(${error.code})`);
     console.error(error.stack);
-    throw error;
+    toast.add(error);
   });
 </script>
 <template>

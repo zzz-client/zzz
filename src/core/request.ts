@@ -3,7 +3,7 @@ export interface Entity {
   Name: string;
 }
 
-export interface Response {
+export interface ZzzResponse {
   status: number;
   statusText: string;
   headers: StringToStringMap;

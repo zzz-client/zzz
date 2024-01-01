@@ -88,7 +88,7 @@ async function respond(server: IServer, actorName: string = "Pass") {
     .then((result) => {
       const theRequest = result as ZzzRequest;
       theRequest.Method = server.getMethod(); // TODO: HATE THIS
-      // tim(theRequest, theRequest.Variables); // TODO: Tim should be called in the formatter?? renderer???
+      tim(theRequest, theRequest.Variables); // TODO: Tim should be called in the formatter?? renderer???
       if (ext === "curl") {
         // TODO: Hardcoded
         return Act(theRequest, "Curl");

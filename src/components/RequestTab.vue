@@ -14,6 +14,7 @@ import Authorization from "./Authorization.vue";
 import Response from "./Response.vue";
 import Body from "./Body.vue";
 import { ref, toRef, toRefs } from "vue";
+import ZzzRequest, { ZzzResponse, StringToStringMap } from "../core/request";
 const basename = (path) => path.split("/").reverse()[0];
 
 const props = defineProps(["value"]);
@@ -23,7 +24,7 @@ const method = ref("GET");
 const requestData = ref({} as any);
 const breadcrumbs = ref([] as MenuItem[]);
 const authorization = ref("None");
-const response = ref({} as Result);
+const response = ref({} as ZzzResponse);
 
 async function fetchRequest(value: string): Promise<any> {
   return axios
@@ -65,15 +66,6 @@ function doTheThing(newValue: string) {
       throw error;
     });
 }
-
-if (value) {
-  doTheThing(value.value);
-}
-
-interface StringToStringMap {
-  [key: string]: string;
-}
-
 async function send() {
   const theRequest = requestData.value;
   // const what = (
@@ -92,8 +84,12 @@ async function send() {
     status: what.status,
     statusText: what.statusText,
     headers: what.headers as StringToStringMap
-  } as Result;
+  };
   console.log("WHAT", response);
+}
+
+if (value) {
+  doTheThing(value.value);
 }
 </script>
 
