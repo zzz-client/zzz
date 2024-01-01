@@ -3,7 +3,9 @@ import { ref, toRef, toRefs, watch } from "vue";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
 import Dropdown from "primevue/dropdown";
+import DataTable from "primevue/datatable";
 import Badge from "primevue/badge";
+import KeyValueTable from "./KeyValueTable.vue";
 const props = defineProps(["data"]);
 
 const { data } = toRefs(props);
@@ -11,6 +13,8 @@ const { data } = toRefs(props);
 const bodyTypes = ["Auto", "Text", "JSON", "XML", "HTML"];
 
 const bodyType = ref(bodyTypes[0]);
+
+const headers = ref([] as any[]);
 
 const statusSeverity = ref("");
 
@@ -27,8 +31,8 @@ function getStatusSeverity(value: number): string {
 watch(
   () => props.data,
   (newValue) => {
-    console.log("watching", newValue);
     statusSeverity.value = getStatusSeverity(newValue);
+    headers.value = newValue.headers;
   }
 );
 </script>
@@ -45,13 +49,11 @@ watch(
       <Dropdown v-model="bodyType" :options="bodyTypes" style="min-width: 6em" />
     </TabPanel>
     <TabPanel header="Cookies">fewawef</TabPanel>
-    <TabPanel header="Headers">fewawef</TabPanel>
+    <TabPanel header="Headers">
+      <KeyValueTable :data="headers" :readOnly="true"></KeyValueTable>
+    </TabPanel>
   </TabView>
   <pre>{{ data }}</pre>
 </template>
 
-<style scoped>
-div {
-  color: red;
-}
-</style>
+<style scoped></style>

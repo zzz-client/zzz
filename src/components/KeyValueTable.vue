@@ -4,7 +4,10 @@ import InputText from "primevue/inputtext";
 import Column from "primevue/column";
 import { ref, watch } from "vue";
 
-const props = defineProps(["data"]);
+const props = defineProps<{
+  data: any;
+  readOnly?: boolean;
+}>();
 
 const data = ref([]);
 
@@ -12,15 +15,15 @@ watch(
   () => props.data,
   (newValue) => {
     // const newParams = [] as { key: string; value: string; description: string }[];
-    const newParams = [] as any;
+    const newValues = [] as any;
     Object.keys(newValue).forEach((param) => {
-      newParams.push({
+      newValues.push({
         key: param,
         value: newValue[param]
         // description: ""
       });
     });
-    data.value = newParams;
+    data.value = newValues;
   }
 );
 
@@ -31,28 +34,13 @@ function onCellEditComplete(change) {
 
 <template>
   <div class="uwu">
-    <DataTable
-      :value="data"
-      editMode="cell"
-      @cell-edit-complete="onCellEditComplete"
-      :pt="{
-        table: { style: 'min-width: 50rem' },
-        column: {
-          bodycell: ({ state }) => ({
-            class: [{ 'pt-0 pb-0': state['d_editing'] }]
-          })
-        }
-      }"
-    >
+    <DataTable :value="data" :editMode="props.readOnly ? 'row' : 'cell'">
+      <!-- editMode="cell"-->
       <Column key="key" field="key" header="Key">
-        <!-- <template #editor="{ data, field }"
-          ><InputText v-model="data[field]" autofocus
-        /></template> -->
+        <template #editor="{ data, field }"><InputText v-model="data[field]" autofocus /></template>
       </Column>
       <Column key="value" field="value" header="Value" style="width: 75%">
-        <!-- <template #editor="{ data, field }"
-          ><InputText v-model="data[field]" autofocus
-        /></template> -->
+        <template #editor="{ data, field }"><InputText v-model="data[field]" autofocus /></template>
       </Column>
     </DataTable>
   </div>

@@ -2,6 +2,8 @@ Method: GET
 URL: "{{_endpoint}}{{standard_path}}query"
 QueryParams:
   q: SELECT name FROM Lead LIMIT 10
+Headers:
+  foo: bar
 # # Ideas on how to store the various body types
 # Body:
 #   ContentType: Text | JsonObject | JsonList | Form | DataUrlEncoded

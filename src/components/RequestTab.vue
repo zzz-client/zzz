@@ -9,7 +9,7 @@ import Dropdown from "primevue/dropdown";
 import { MenuItem } from "primevue/menuitem";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
-import EditableTable from "./EditableTable.vue";
+import KeyValueTable from "./KeyValueTable.vue";
 import Authorization from "./Authorization.vue";
 import Response from "./Response.vue";
 import Body from "./Body.vue";
@@ -33,9 +33,8 @@ async function fetchRequest(value: string): Promise<any> {
       return res.data;
     })
     .catch((error) => {
-      console.error("ERROR", error.message, `(${error.code})`);
-      console.error(error.stack);
-      throw error;
+      console.log("ERROR", error.message, `(${error.code})`);
+      console.log(error.stack);
     });
 }
 function doTheThing(newValue: string) {
@@ -61,8 +60,8 @@ function doTheThing(newValue: string) {
       method.value = data.Method;
     })
     .catch((error) => {
-      console.error("ERROR", error.message, `(${error.code})`);
-      console.error(error.stack);
+      console.log("ERROR", error.message, `(${error.code})`);
+      console.log(error.stack);
     });
 }
 async function send() {
@@ -103,11 +102,11 @@ if (value) {
         <Button id="zxcvb" label="Send" @click="send">Send</Button>
       </div>
       <TabView>
-        <TabPanel header="Params"><EditableTable :data="requestData.QueryParams"></EditableTable></TabPanel>
+        <TabPanel header="Params"><KeyValueTable :data="requestData.QueryParams"></KeyValueTable></TabPanel>
         <TabPanel header="Authorization">
           <Authorization :type="authorization"></Authorization>
         </TabPanel>
-        <TabPanel header="Headers"><EditableTable :data="requestData.Headers"></EditableTable></TabPanel>
+        <TabPanel header="Headers"><KeyValueTable :data="requestData.Headers"></KeyValueTable></TabPanel>
         <TabPanel header="Body">
           <Body :body="requestData.Body"></Body>
         </TabPanel>
