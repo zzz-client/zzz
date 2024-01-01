@@ -3,11 +3,11 @@
   "version": "0.0.10",
   "description": "Replacement for Postman",
   "tasks": {
-    "api": "deno run --allow-env --allow-net --allow-read=. main.ts --listen",
+    "zzz": "deno run --allow-env --allow-net --allow-read=. src/main.ts",
+    "api": "deno task zzz --listen",
     "web": "deno run -A --unstable --node-modules-dir npm:vite",
     "web:build": "deno run -A --unstable --node-modules-dir npm:vite build",
     "preview": "deno run -A --unstable --node-modules-dir npm:vite preview",
-    "zzz": "deno run --allow-env --allow-net --allow-read=. main.ts",
     "test": "jest"
   },
   "lock": false,

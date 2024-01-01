@@ -1,7 +1,7 @@
-import Serve from "./src/serve.ts";
-import { argv, exit } from "./src/libs.ts";
-import Cli from "./src/cli.ts";
-
+import Serve from "./core/serve.ts";
+import Cli from "./core/cli.ts";
+import { parseArgs } from "https://deno.land/std/cli/parse_args.ts";
+export const argv = parseArgs(Deno.args);
 
 export const appConfigDefaults = {
   environment: "Integrate",
@@ -19,7 +19,7 @@ export default async function main(): Promise<void> {
     }
   } catch (e) {
     console.error("!!!", e);
-    exit(1);
+    Deno.exit(1);
   }
 }
 export function parseAppConfig(): AppConfig {

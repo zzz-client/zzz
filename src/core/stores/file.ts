@@ -1,6 +1,8 @@
+import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import Request, { Collection, Folder, Item, StringToStringMap } from "../request.ts";
-import { EntityType, Get, IStore, Stats } from "../store.ts";
-import { basename, dirname, existsSync, extname, Parser, Parsers, readDirSync, readTextFileSync, writeTextFileSync } from "../libs.ts";
+import { EntityType, IStore, Stats } from "../store.ts";
+import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
+import { Parser, Parsers } from "../format.ts";
 
 export default class FileStore implements IStore {
   fileExtension: string;
@@ -22,7 +24,7 @@ export default class FileStore implements IStore {
     } else if (entType == EntityType.Collection || entType == EntityType.Folder) {
       stats.Size = (() => {
         let s = 0;
-        for (const _ in readDirSync(entityName)) {
+        for (const _ in Deno.readDirSync(entityName)) {
           s++;
         }
         return s;
@@ -52,7 +54,7 @@ export default class FileStore implements IStore {
     if (entityType === EntityType.Environment || entityType === EntityType.Authorization) {
       const entityFolder = getDirectoryForEntity(entityType);
       const filePath = `${entityFolder}/${entityName}.${this.fileExtension}`;
-      return this._parser().parse(readTextFileSync(filePath)) as Item; // TODO: Is this a naughty cast?
+      return this._parser().parse(Deno.readTextFileSync(filePath)) as Item; // TODO: Is this a naughty cast?
     }
     throw new Error(`Unknown type of entity: ${entityType}`);
   }
@@ -60,10 +62,10 @@ export default class FileStore implements IStore {
     const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
     let sessionContents = { Variables: {} as StringToStringMap };
     if (existsSync(sessionPath)) {
-      sessionContents = this._parser().parse(readTextFileSync(sessionPath));
+      sessionContents = this._parser().parse(Deno.readTextFileSync(sessionPath));
     }
     sessionContents.Variables[key] = value;
-    writeTextFileSync(sessionPath, this._parser().stringify(sessionContents));
+    Deno.writeTextFileSync(sessionPath, this._parser().stringify(sessionContents));
     return Promise.resolve();
   }
   _parser(): Parser {
@@ -73,18 +75,18 @@ export default class FileStore implements IStore {
     const defaultFilePaths = getDefaultFilePaths(resourceName, this.fileExtension, environmentName);
     for (const defaultFilePath of defaultFilePaths) {
       if (existsSync(defaultFilePath)) {
-        const fileContents = this._parser().parse(readTextFileSync(defaultFilePath));
+        const fileContents = this._parser().parse(Deno.readTextFileSync(defaultFilePath));
         checkForbidden(fileContents);
         applyChanges(theRequest, fileContents);
       }
     }
     const filePath = resourceName + "." + this.fileExtension; // TODO: collection
-    const fileContents = this._parser().parse(readTextFileSync(filePath));
+    const fileContents = this._parser().parse(Deno.readTextFileSync(filePath));
     checkRequired(fileContents);
     applyChanges(theRequest, fileContents);
     const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
     if (existsSync(sessionPath)) {
-      const sessionContents = this._parser().parse(readTextFileSync(sessionPath));
+      const sessionContents = this._parser().parse(Deno.readTextFileSync(sessionPath));
       applyChanges(theRequest, sessionContents);
     }
   }

@@ -1,4 +1,4 @@
-import { EntityType } from "../src/store.ts";
+import { EntityType } from "./store.ts";
 import { AppConfig } from "../main.ts";
 import Act from "./actor.ts";
 import Authorize from "./authorizer.ts";

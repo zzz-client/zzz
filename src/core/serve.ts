@@ -1,10 +1,11 @@
 // import { basename, extname } from "path";
-import Request, { StringToStringMap } from "./request.ts";
+import ZzzRequest, { StringToStringMap } from "./request.ts";
 import { Collections, EntityType, Get, Stat } from "./store.ts";
-import { extname, Parser, Parsers, Server } from "./libs.ts";
 import { AppConfig } from "../main.ts";
 import tim from "./tim.ts";
 import Act from "./actor.ts";
+import { extname } from "https://deno.land/std/path/mod.ts";
+import { Parser, Parsers } from "./format.ts";
 
 export interface IServer {
   getUrl(): string;
@@ -17,6 +18,26 @@ export default function Serve(appConfig: AppConfig, actorName: string = "Pass") 
   new Server().listen((server: IServer) => {
     return respond(server, actorName);
   });
+}
+
+export class Server implements IServer {
+  request: Request | null = null;
+  respond(status: number, body: any, headers: StringToStringMap): Response {
+    return new Response(body, { status, headers });
+  }
+  getUrl(): string {
+    return new URL(this.request!.url).pathname.substring(0);
+  }
+  getMethod(): string {
+    return this.request!.method;
+  }
+  listen(responder: Function): void {
+    const HTTP_PORT = Deno.env.get("PORT") as number | undefined || 8000;
+    Deno.serve({ port: HTTP_PORT }, (request: Request): Response => {
+      this.request = request;
+      return responder(this);
+    });
+  }
 }
 
 async function respond(server: IServer, actorName: string = "Pass") {
@@ -61,7 +82,7 @@ async function respond(server: IServer, actorName: string = "Pass") {
       }
     })
     .then((result) => {
-      const theRequest = result as Request;
+      const theRequest = result as ZzzRequest;
       tim(theRequest, theRequest.Variables);
       if (ext === "curl") {
         // TODO: Hardcoded

@@ -65,43 +65,39 @@ function doTheThing(newValue: string) {
 if (value) {
   doTheThing(value.value);
 }
-
-import ClientActor from "../../../../dist/src/core/actors/client";
-
-function send() {
-  console.log("HERE WE GO???");
-  const c = new ClientActor();
-  // c.act(requestData.value)
-  console.log("Yay!", JSON.stringify(requestData.value, null, 2));
-}
-
 const authorization = ref("None");
+
+async function send() {
+  const theRequest = requestData.value;
+  console.log("HERE WE GO???");
+  const what = (
+    await axios({
+      method: theRequest.Method,
+      headers: theRequest.Headers,
+      params: theRequest.QueryParams,
+      url: theRequest.URL,
+      data: theRequest.Body
+    })
+  ).data;
+  console.log("what", what);
+  return what;
+}
 </script>
 
 <template>
   <Breadcrumb :model="breadcrumbs" />
   <div class="flex">
-    <Dropdown
-      id="asdf"
-      disabled
-      v-model="method"
-      :options="methods"
-      class="w-full md:w-14rem"
-    />
+    <Dropdown id="asdf" disabled v-model="method" :options="methods" class="w-full md:w-14rem" />
     <InputText disabled type="text" :value="(requestData as any).URL" />
     <Button label="Send" @click="send">Send</Button>
   </div>
   <div class="">
     <TabView>
-      <TabPanel header="Params"
-        ><EditableTable :data="requestData.QueryParams"></EditableTable
-      ></TabPanel>
+      <TabPanel header="Params"><EditableTable :data="requestData.QueryParams"></EditableTable></TabPanel>
       <TabPanel header="Authorization">
         <Authorization :type="authorization"></Authorization>
       </TabPanel>
-      <TabPanel header="Headers"
-        ><EditableTable :data="requestData.Headers"></EditableTable
-      ></TabPanel>
+      <TabPanel header="Headers"><EditableTable :data="requestData.Headers"></EditableTable></TabPanel>
       <TabPanel header="Body">
         <Body :body="requestData.Body"></Body>
       </TabPanel>

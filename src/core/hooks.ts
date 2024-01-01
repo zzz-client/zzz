@@ -1,4 +1,5 @@
-import { dirname, existsSync, readTextFileSync } from "./libs.ts";
+import { dirname } from "https://deno.land/std/path/mod.ts";
+import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import Request from "./request.ts";
 
 export default function Hooks(
@@ -41,10 +42,10 @@ function JavaScriptHooks(requestFilePath: string, _theRequest: Request): [Functi
   const afterPath = dirname(requestFilePath) + "/after.js";
   const result = { Before: noop, After: noop };
   if (existsSync(afterPath)) {
-    result.After = (_data) => eval(readTextFileSync(afterPath));
+    result.After = (_data) => eval(Deno.readTextFileSync(afterPath));
   }
   if (existsSync(beforePath)) {
-    result.Before = () => eval(readTextFileSync(beforePath));
+    result.Before = () => eval(Deno.readTextFileSync(beforePath));
   }
   return [result.Before, result.After];
 }
@@ -54,10 +55,10 @@ function PythonHooks(requestFilePath: string, _theRequest: Request): [Function, 
   const result = { Before: noop, After: noop };
   if (existsSync(afterPath)) {
     result.After = (_data) => {
-      eval(readTextFileSync(afterPath));
+      eval(Deno.readTextFileSync(afterPath));
     };
     if (existsSync(beforePath)) {
-      result.Before = () => eval(readTextFileSync(beforePath));
+      result.Before = () => eval(Deno.readTextFileSync(beforePath));
     }
   }
   return [result.Before, result.After];

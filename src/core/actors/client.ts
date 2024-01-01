@@ -1,5 +1,6 @@
+import axiod from "https://deno.land/x/axiod/mod.ts";
 import { IActor } from "../actor.ts";
-import { httpRequest, Parsers } from "../libs.ts";
+import { Parsers } from "../format.ts";
 import Request from "../request.ts";
 
 const defaultStringify = Parsers.JSON.stringify;
@@ -29,7 +30,7 @@ function formatError(error: any) {
 }
 async function doRequest(theRequest: Request): Promise<any> {
   return (
-    await httpRequest({
+    await axiod({
       method: theRequest.Method,
       headers: theRequest.Headers,
       params: theRequest.QueryParams,

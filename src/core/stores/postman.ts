@@ -1,12 +1,13 @@
+import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import Request from "../request.ts";
 import { EntityType, Get, IStore, Stores } from "../store.ts";
-import { basename, dirname, existsSync, extname, readTextFileSync } from "../libs.ts";
+import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 
 export default class PostmanStore implements IStore {
   collection: CollectionSchema;
   constructor(collectionJsonFilePath: string) {
     if (existsSync(collectionJsonFilePath)) {
-      this.collection = JSON.parse(readTextFileSync(collectionJsonFilePath));
+      this.collection = JSON.parse(Deno.readTextFileSync(collectionJsonFilePath));
     } else {
       this.collection = {} as CollectionSchema; // TODO: Bad but why is this happening
     }
@@ -43,16 +44,16 @@ async function loadRequest(collection: CollectionSchema, environmentName: string
     theRequest.QueryParams[query.key] = query.value;
   }
 
-  applyChanges(theRequest, await loadEnvironment("globals", null));
+  applyChanges(theRequest, await loadEnvironment("globals"));
   // applyChanges(theRequest, await loadEnvironment("globals.local", null));
-  applyChanges(theRequest, await loadEnvironment(environmentName, environmentName));
-  applyChanges(theRequest, await loadEnvironment(environmentName + ".local", environmentName));
-  applyChanges(theRequest, await loadEnvironment("session.local", null));
+  applyChanges(theRequest, await loadEnvironment(environmentName));
+  applyChanges(theRequest, await loadEnvironment(environmentName + ".local"));
+  applyChanges(theRequest, await loadEnvironment("session.local"));
   return theRequest;
 }
-async function loadEnvironment(target: string, environmentName: string | null): Promise<Request> {
+async function loadEnvironment(target: string): Promise<Request> {
   try {
-    return await Stores.YAML.get(EntityType.Environment, target, environmentName);
+    return (await Stores.YAML.get(EntityType.Environment, target, "Integrate")) as Request;
   } catch (e) {
     return new Request("", "", ""); // TODO: WHAT
   }
