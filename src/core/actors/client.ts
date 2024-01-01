@@ -12,8 +12,6 @@ export default class ClientActor implements IActor {
   }
   async act(theRequest: Request): Promise<any> {
     try {
-      console.log(theRequest);
-      console.log(`${theRequest.Method} ${theRequest.URL}`);
       return await doRequest(theRequest);
     } catch (error) {
       throw formatError(error);

@@ -62,7 +62,7 @@ async function respond(server: IServer, actorName: string = "Pass") {
     base = base.substring(0, base.length - 1);
   }
   const contentType = getContentType(resourcePath);
-  console.log("Received request", server.getMethod(), base, resourcePath, contentType);
+  // console.log("Received request", server.getMethod(), base, resourcePath, contentType);
 
   if (base === "") {
     const whatever = await Collections();
@@ -88,7 +88,7 @@ async function respond(server: IServer, actorName: string = "Pass") {
     .then((result) => {
       const theRequest = result as ZzzRequest;
       theRequest.Method = server.getMethod(); // TODO: HATE THIS
-      tim(theRequest, theRequest.Variables);
+      // tim(theRequest, theRequest.Variables);
       if (ext === "curl") {
         // TODO: Hardcoded
         return Act(theRequest, "Curl");

@@ -41,6 +41,7 @@ function JavaScriptHooks(requestFilePath: string, _theRequest: Request): [Functi
   const beforePath = dirname(requestFilePath) + "/before.js";
   const afterPath = dirname(requestFilePath) + "/after.js";
   const result = { Before: noop, After: noop };
+
   if (existsSync(afterPath)) {
     result.After = (_data) => eval(Deno.readTextFileSync(afterPath));
   }

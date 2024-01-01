@@ -2,7 +2,7 @@
 
 > Pronounced as "zees" or "zeds" depending on where you live.
 
-Zzz came out of the desire for a light replacement to Postman with generally the same features list. From there the idea expanded modularity for how requests are stored, what actions are taken for the request instead of just performing the request, and how to format the output.
+Zzz came out of the desire for a light replacement to Postman with generally the same features list. From there came the idea of making it be both storage- and user interface-agnostic. Lastly, different renderers can be used to alter the output
 
 ![Zzz web interface](./screenshots/web.png)
 
@@ -51,7 +51,7 @@ $ zzz --environment qa "Folder Name/Request Name"
 $ zzz
 ```
 
-## Stores
+## Storage
 
 The way that Zzz accesses requests, environments, variables and etc are done through an interface called IStore.
 
@@ -120,11 +120,52 @@ TODO
 
 # Interfaces
 
-In addition to the standard CLI interface covered in [Usage](#Usage), Zzz can be accessed in other ways
+
+
+## Web
+
+![Zzz web interface](./screenshots/web.png)
+
+Currently read only and still a work in progress but coming along very nicely!
+
+Response panel needs a lot of attention;
+
+breadcrumbs shouldn't actually be clickable until there's a tab for configuring folder settings. Also, the ability to see folder settings.
+
+
+## CLI
+
+![Zzz web interface](./screenshots/cli.png)
+
+Passing in the name of a request (i.e. the path to the file with or without extension) will perform it and output the response.
+
+
+Outside of the sense of a workspace of requests, for the file storage driver, a request can contain every bit of information it needs due to the way melding the files works. That means you can store a request as YAML and run it on demand.
+
+```yaml
+Method: POST
+URL: "{{baseUrl}}{{auth_path}}token"
+Authorization:
+  BasicAuth: 32tersgvzfwt45g54=
+QueryParams:
+  grant_type: client_credentials
+  client_id: "{{clientId}}"
+  client_secret: "{{clientSecret}}"
+  content: application/x-www-form-urlencoded
+Variables:
+  clientId: XXXXXXX
+  clientSecret: XXXXXXXX
+  baseUrl: https://test.salesforce.com
+  auth_path: /services/oauth2/
+```
+
 
 ## REST
 
-A basic REST API is provided that maps URLs one-to-one with Requests; in other words, the path to retrieve the Request from the Store is the contents of the URL to get it from the server. The Request named "OAuth Client Credentials" in the folder "Authentication" would translate to the URL http://127.0.0.1:8000/Authentication/OAuth%20Client%20Credentials
+![Zzz REST API](./screenshots/api.png)
+
+
+This is itself an API that serves up the Zzz resources so that they can be used for other applications, like the web frontend. It is a basic REST API that maps URLs one-to-one with Requests; in other words, the path to retrieve the Request from the Store is the contents of the URL to get it from the server. The Request named "OAuth Client Credentials" in the folder "Authentication" would translate to the URL http://127.0.0.1:8000/Authentication/OAuth%20Client%20Credentials
 
 Adding a file extension to the end will change what format is returned: `http://127.0.0.1:8000/MyRequest.json` will yield the result as JSON and `http://127.0.0.1:8000/MyRequest.curl` will do it as the equivalent curl command as plaintext.
 
@@ -133,10 +174,6 @@ Adding a file extension to the end will change what format is returned: `http://
 - xml
 - txt
 - curl
-
-## Web
-
-TODO: I'm thinking utilize the above API server with something like React and shove it into an interface. Will also need to write some kind of client-side "actor" to translate the API results into an XHR call in the browser. And update it in the view. I dunno, I'm not a frontend dude.
 
 ## TUI
 
