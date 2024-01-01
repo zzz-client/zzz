@@ -72,6 +72,9 @@ export default class FileStore implements IStore {
     Deno.writeTextFileSync(sessionPath, this._parser().stringify(sessionContents));
     return Promise.resolve();
   }
+  setEnvironment(environmentName: string): void {
+    throw new Error("Not implemented");
+  }
   _parser(): Parser {
     return Parsers[this.fileExtension.toUpperCase()];
   }

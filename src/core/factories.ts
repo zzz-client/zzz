@@ -7,9 +7,7 @@ import BearerTokenAuthorizer from "./authorizers/bearerToken.ts";
 import HeaderAuthorizer from "./authorizers/header.ts";
 import QueryAuthorizer from "./authorizers/query.ts";
 import ZzzRequest from "./request.ts";
-import { EntityType, Get } from "./storage.ts";
-import FileStore from "./stores/file.ts";
-import PostmanStore from "./stores/postman.ts";
+import { EntityType, Get, Stores } from "./storage.ts";
 
 export interface Stats {
   Type: string;
@@ -18,12 +16,6 @@ export interface Stats {
   Created: Date;
   Modified: Date;
 }
-export const Stores = {
-  JSON: new FileStore("json"),
-  YAML: new FileStore("yml"),
-  XML: new FileStore("xml"),
-  Postman: new PostmanStore("PostmanCollection.json"),
-};
 // Interfaces
 export interface IActor {
   act(theRequest: ZzzRequest): Promise<any>;
@@ -32,9 +24,10 @@ export interface IAuthorization {
   apply(theRequest: ZzzRequest, authorizationConfig: any): void;
 }
 export interface IStore {
-  get(entityType: EntityType, entityName: string, environmentName: string | null): Promise<any>;
-  store(key: string, value: any, environmentName: string): Promise<void>;
+  get(entityType: EntityType, entityName: string): Promise<any>;
+  store(key: string, value: any): Promise<void>;
   stat(entityName: string): Promise<Stats>;
+  setEnvironment(environmentName: string): void;
 }
 // Facade methods
 export async function Act(theRequest: ZzzRequest, actorName: string): Promise<any> {
@@ -54,8 +47,12 @@ export function Authorize(theRequest: ZzzRequest, authorizationDefinition: strin
   }
 }
 // Factories
-const storeInstance: IStore = Stores.YAML; // TODO: Make dynamic somehow
-export function newStore(): IStore {
+let storeInstance: IStore;
+export function newStore(environmentName: string): IStore {
+  if (storeInstance == null) {
+    storeInstance = Stores.YAML;
+    storeInstance.setEnvironment(environmentName);
+  }
   return storeInstance;
 }
 function newActor(type: string): IActor {

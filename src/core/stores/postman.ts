@@ -1,8 +1,8 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import ZzzRequest from "../request.ts";
-import { EntityType, Get } from "../storage.ts";
+import { EntityType, Get, Stores } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
-import { IStore, Stores } from "../factories.ts";
+import { IStore } from "../factories.ts";
 
 export default class PostmanStore implements IStore {
   collection: CollectionSchema;
@@ -25,6 +25,9 @@ export default class PostmanStore implements IStore {
   }
   async store(key: string, value: any): Promise<void> {
     throw new Error("Method not implemented.");
+  }
+  setEnvironment(environmentName: string): void {
+    throw new Error("Not implemented");
   }
 }
 async function loadRequest(collection: CollectionSchema, environmentName: string, requestFilePath: string): Promise<ZzzRequest> {

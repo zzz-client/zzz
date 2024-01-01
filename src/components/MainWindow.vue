@@ -7,6 +7,8 @@ import TabView from "primevue/tabview";
 import { ref, toRef } from "vue";
 import Collections from "./Collections.vue";
 import RequestTab from "./RequestTab.vue";
+import axios from "axios";
+import { MenuItem } from "primevue/menuitem";
 const basename = (path) => path.split("/").reverse()[0];
 
 const tab1RequestPath = ref("");
@@ -15,18 +17,62 @@ const tabs = ref([
     value: toRef(tab1RequestPath)
   }
 ]);
+const folders = ref([] as any[]);
 
 window.addEventListener("hashchange", () => {
   const requestPath = decodeURI(window.location.hash.substring(1));
   tab1RequestPath.value = requestPath;
+  document.title = `Zzz - ${basename(requestPath)}`;
   console.log("#", tab1RequestPath.value);
 });
+
+function addEntityToNodes(noteList, entity, parentPath = "") {
+  let fullPath = parentPath + "/" + entity.Name;
+  if (fullPath.substring(0, 1) == "/") {
+    fullPath = fullPath.substring(1);
+  }
+  console.log("X", fullPath, entity);
+  const newNode = {
+    key: fullPath,
+    label: basename(entity.Name)
+  } as MenuItem;
+  if (entity.Type == "Request") {
+    // newNode.type = "url"; // for Tree
+    newNode.url = "#" + fullPath;
+    newNode.command = () => {
+      window.location.hash = newNode.url!;
+    };
+  }
+  if (entity.Children) {
+    newNode.items = [];
+    entity.Children.forEach((child) => {
+      addEntityToNodes(newNode.items, child, fullPath);
+    });
+  }
+  noteList.push(newNode);
+  keys.push(newNode.key!);
+}
+
+let keys = [] as string[];
+
+axios
+  .get("http://localhost:8000/")
+  .then((res) => {
+    res.data.forEach((entity) => {
+      addEntityToNodes(folders.value, entity);
+    });
+  })
+  // .then(expandAll)
+  .catch((error) => {
+    console.error("ERROR", error.message, `(${error.code})`);
+    console.error(error.stack);
+  });
 </script>
 
 <template>
   <Splitter class="absolute">
     <SplitterPanel :size="15" :minSize="20" class="absolute">
-      <Collections />
+      <Collections :folders="folders" />
     </SplitterPanel>
     <SplitterPanel :size="75" class="absolute">
       <TabView class="absolute">

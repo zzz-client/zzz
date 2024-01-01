@@ -1,64 +1,25 @@
 <script setup lang="ts">
 import PanelMenu from "primevue/panelmenu";
-import axios from "axios";
-import { ref } from "vue";
-const folders = ref([]).value;
+import { ref, toRefs } from "vue";
 const expandedKeys = ref({});
-const basename = (path) => path.split("/").reverse()[0];
-import { MenuItem } from "primevue/menuitem";
 
-let keys = [] as string[];
-function addEntityToNodes(noteList, entity, parentPath = "") {
-  let fullPath = parentPath + "/" + entity.Name;
-  if (fullPath.substring(0, 1) == "/") {
-    fullPath = fullPath.substring(1);
-  }
-  console.log("X", fullPath, entity);
-  const newNode = {
-    key: fullPath,
-    label: basename(entity.Name)
-  } as MenuItem;
-  if (entity.Type == "Request") {
-    // newNode.type = "url"; // for Tree
-    newNode.url = "#" + fullPath;
-    newNode.command = () => {
-      window.location.hash = newNode.url!;
-    };
-  }
-  if (entity.Children) {
-    newNode.items = [];
-    entity.Children.forEach((child) => {
-      addEntityToNodes(newNode.items, child, fullPath);
-    });
-  }
-  noteList.push(newNode);
-  keys.push(newNode.key!);
-}
-function expandAll() {
-  // TODO: Broken since switching from Tree to PanelMenu
-  for (const key of keys) {
-    expandedKeys.value[key] = true;
-  }
-}
+const props = defineProps(["folders"]);
+
+const { folders } = toRefs(props);
+
 function collapseAll() {
   // TODO: Broken since switching from Tree to PanelMenu
-  for (const key of keys) {
-    expandedKeys.value[key] = true;
-  }
+  // for (const key of keys) {
+  //   expandedKeys.value[key] = true;
+  // }
 }
-
-axios
-  .get("http://localhost:8000/")
-  .then((res) => {
-    res.data.forEach((entity) => {
-      addEntityToNodes(folders, entity);
-    });
-  })
-  .then(expandAll)
-  .catch((error) => {
-    console.error("ERROR", error.message, `(${error.code})`);
-    console.error(error.stack);
-  });
+function expandAll() {
+  //   // TODO: Broken since switching from Tree to PanelMenu
+  //   for (const key of keys) {
+  //     expandedKeys.value[key] = true;
+  //   }
+  // }
+}
 </script>
 <template>
   <div class="justify-content-right" style="display: flex">
