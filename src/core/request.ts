@@ -3,7 +3,13 @@ export interface Entity {
   Name: string;
 }
 
-export default class Request implements Entity {
+export interface Response {
+  status: number;
+  statusText: string;
+  headers: StringToStringMap;
+  data: any;
+}
+export default class ZzzRequest implements Entity {
   Type = "Request";
   Name: string;
   URL: string;
@@ -39,7 +45,7 @@ export class Folder {
     this.Children = [];
   }
 }
-export type Item = Request | Folder | string;
+export type Item = ZzzRequest | Folder | string;
 
 export interface StringToStringMap {
   [key: string]: string;

@@ -1,5 +1,5 @@
 import { Parsers } from "./render.ts";
-import Request, { Collection } from "./request.ts";
+import ZzzRequest, { Collection } from "./request.ts";
 import { newStore, Stats } from "./factories.ts";
 
 export enum EntityType {
@@ -30,7 +30,7 @@ export async function Get(entityType: EntityType, entityName: string, environmen
 export async function Stat(itemName: string): Promise<Stats> {
   return newStore().stat(itemName);
 }
-function loadBody(theRequest: Request, _requestFilePath: string, _environmentName: string | null) {
+function loadBody(theRequest: ZzzRequest, _requestFilePath: string, _environmentName: string | null) {
   if (typeof theRequest.Body === "string") {
     theRequest.Body = Parsers.JSON.parse(theRequest.Body); // TODO: Different for different types?
   }

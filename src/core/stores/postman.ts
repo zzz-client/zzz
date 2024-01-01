@@ -1,5 +1,5 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
-import Request from "../request.ts";
+import ZzzRequest from "../request.ts";
 import { EntityType, Get } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 import { IStore, Stores } from "../factories.ts";
@@ -27,7 +27,7 @@ export default class PostmanStore implements IStore {
     throw new Error("Method not implemented.");
   }
 }
-async function loadRequest(collection: CollectionSchema, environmentName: string, requestFilePath: string): Promise<Request> {
+async function loadRequest(collection: CollectionSchema, environmentName: string, requestFilePath: string): Promise<ZzzRequest> {
   console.debug("Loading theRequest from postman collection: ", requestFilePath);
   // TODO: Write this so it cna work recursively
   const folderName = dirname(requestFilePath);
@@ -35,7 +35,7 @@ async function loadRequest(collection: CollectionSchema, environmentName: string
   const requestName = basename(requestFilePath, extension);
   const folder = collection.item.filter((item) => item.name === folderName)[0];
   const request = folder.item.filter((item) => item.name === requestName)[0].request;
-  const theRequest = new Request(requestName, request.url.raw.split("?")[0], request.method);
+  const theRequest = new ZzzRequest(requestName, request.url.raw.split("?")[0], request.method);
   if (request.body) {
     theRequest.Body = request.body.raw;
   }
@@ -53,11 +53,11 @@ async function loadRequest(collection: CollectionSchema, environmentName: string
   applyChanges(theRequest, await loadEnvironment("session.local"));
   return theRequest;
 }
-async function loadEnvironment(target: string): Promise<Request> {
+async function loadEnvironment(target: string): Promise<ZzzRequest> {
   try {
-    return (await Stores.YAML.get(EntityType.Environment, target, "Integrate")) as Request;
+    return (await Stores.YAML.get(EntityType.Environment, target, "Integrate")) as ZzzRequest;
   } catch (e) {
-    return new Request("", "", ""); // TODO: WHAT
+    return new ZzzRequest("", "", ""); // TODO: WHAT
   }
 }
 // TODO: Duplicate code

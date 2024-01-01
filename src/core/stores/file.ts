@@ -1,5 +1,5 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
-import Request, { Collection, Folder, Item, StringToStringMap } from "../request.ts";
+import ZzzRequest, { Collection, Folder, Item, StringToStringMap } from "../request.ts";
 import { EntityType } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 import { Parser, Parsers } from "../render.ts";
@@ -36,7 +36,7 @@ export default class FileStore implements IStore {
   }
   async get(entityType: EntityType, entityName: string, environmentName: string): Promise<Item> {
     if (entityType === EntityType.Request) {
-      const theRequest = new Request("", "", ""); // TODO: Is this hacky?
+      const theRequest = new ZzzRequest("", "", ""); // TODO: Is this hacky?
       this._load(theRequest, entityName, environmentName);
       if (!theRequest.Name) {
         theRequest.Name = basename(entityName);
@@ -75,7 +75,7 @@ export default class FileStore implements IStore {
   _parser(): Parser {
     return Parsers[this.fileExtension.toUpperCase()];
   }
-  _load(theRequest: Request, resourceName: string, environmentName: string): void {
+  _load(theRequest: ZzzRequest, resourceName: string, environmentName: string): void {
     const defaultFilePaths = getDefaultFilePaths(resourceName, this.fileExtension, environmentName);
     for (const defaultFilePath of defaultFilePaths) {
       if (existsSync(defaultFilePath)) {

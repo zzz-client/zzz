@@ -1,7 +1,7 @@
 import axiod from "https://deno.land/x/axiod/mod.ts";
 import { IActor } from "../factories.ts";
 import { Parsers } from "../render.ts";
-import Request from "../request.ts";
+import ZzzRequest from "../request.ts";
 
 const defaultStringify = Parsers.JSON.stringify;
 
@@ -10,7 +10,7 @@ export default class ClientActor implements IActor {
   constructor(stringify: Function = defaultStringify) {
     this.stringify = stringify;
   }
-  async act(theRequest: Request): Promise<any> {
+  async act(theRequest: ZzzRequest): Promise<any> {
     try {
       return await doRequest(theRequest);
     } catch (error) {
@@ -27,7 +27,7 @@ function formatError(error: any) {
   }
   return error;
 }
-async function doRequest(theRequest: Request): Promise<any> {
+async function doRequest(theRequest: ZzzRequest): Promise<any> {
   return (
     await axiod({
       method: theRequest.Method,

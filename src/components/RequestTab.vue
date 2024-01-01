@@ -17,12 +17,13 @@ import { ref, toRef, toRefs } from "vue";
 const basename = (path) => path.split("/").reverse()[0];
 
 const props = defineProps(["value"]);
-
 const { value } = toRefs(props);
-const requestData = ref({} as any);
-const breadcrumbs = ref([] as MenuItem[]);
 const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 const method = ref("GET");
+const requestData = ref({} as any);
+const breadcrumbs = ref([] as MenuItem[]);
+const authorization = ref("None");
+const response = ref({} as Result);
 
 async function fetchRequest(value: string): Promise<any> {
   return axios
@@ -68,9 +69,10 @@ function doTheThing(newValue: string) {
 if (value) {
   doTheThing(value.value);
 }
-const authorization = ref("None");
 
-const response = ref({} as any);
+interface StringToStringMap {
+  [key: string]: string;
+}
 
 async function send() {
   const theRequest = requestData.value;
@@ -84,8 +86,14 @@ async function send() {
   //   })
   // ).data;
   const what = await axios.post("http://localhost:8000/" + value.value + ".json");
-  response.value = what.data;
-  return what;
+
+  response.value = {
+    data: what.data,
+    status: what.status,
+    statusText: what.statusText,
+    headers: what.headers as StringToStringMap
+  } as Result;
+  console.log("WHAT", response);
 }
 </script>
 

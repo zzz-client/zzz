@@ -1,11 +1,11 @@
 import { IActor } from "../factories.ts";
-import Request from "../request.ts";
+import ZzzRequest from "../request.ts";
 
 export default class CurlActor implements IActor {
   format(culCommand: any): string {
     return culCommand as string;
   }
-  async act(theRequest: Request): Promise<string> {
+  async act(theRequest: ZzzRequest): Promise<string> {
     let curlCommand = `curl -X ${theRequest.Method} ${theRequest.URL}?`;
     Object.keys(theRequest.QueryParams).forEach((key) => {
       const value = theRequest.QueryParams[key];

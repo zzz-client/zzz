@@ -1,11 +1,11 @@
 import { dirname } from "https://deno.land/std/path/mod.ts";
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
-import Request from "./request.ts";
+import ZzzRequest from "./request.ts";
 
 export default function Hooks(
   hooksName: string,
   requestFilePath: string,
-  theRequest: Request,
+  theRequest: ZzzRequest,
 ): [Function, Function] {
   switch (hooksName.toLowerCase()) {
     case "js":
@@ -25,7 +25,7 @@ function notImplemented(): void {
   throw new Error("Not implemented");
 }
 
-function TypeScriptHooks(requestFilePath: string, _theRequest: Request): [Function, Function] {
+function TypeScriptHooks(requestFilePath: string, _theRequest: ZzzRequest): [Function, Function] {
   const beforePath = dirname(requestFilePath) + "/before.ts";
   const afterPath = dirname(requestFilePath) + "/after.ts";
   const result = { Before: noop, After: noop };
@@ -37,7 +37,7 @@ function TypeScriptHooks(requestFilePath: string, _theRequest: Request): [Functi
   }
   return [result.Before, result.After];
 }
-function JavaScriptHooks(requestFilePath: string, _theRequest: Request): [Function, Function] {
+function JavaScriptHooks(requestFilePath: string, _theRequest: ZzzRequest): [Function, Function] {
   const beforePath = dirname(requestFilePath) + "/before.js";
   const afterPath = dirname(requestFilePath) + "/after.js";
   const result = { Before: noop, After: noop };
@@ -50,7 +50,7 @@ function JavaScriptHooks(requestFilePath: string, _theRequest: Request): [Functi
   }
   return [result.Before, result.After];
 }
-function PythonHooks(requestFilePath: string, _theRequest: Request): [Function, Function] {
+function PythonHooks(requestFilePath: string, _theRequest: ZzzRequest): [Function, Function] {
   const beforePath = dirname(requestFilePath) + "/before.py";
   const afterPath = dirname(requestFilePath) + "/after.py";
   const result = { Before: noop, After: noop };

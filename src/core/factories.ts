@@ -6,7 +6,7 @@ import BasicAuthAuthorizer from "./authorizers/basicAuth.ts";
 import BearerTokenAuthorizer from "./authorizers/bearerToken.ts";
 import HeaderAuthorizer from "./authorizers/header.ts";
 import QueryAuthorizer from "./authorizers/query.ts";
-import Request from "./request.ts";
+import ZzzRequest from "./request.ts";
 import { EntityType, Get } from "./storage.ts";
 import FileStore from "./stores/file.ts";
 import PostmanStore from "./stores/postman.ts";
@@ -26,10 +26,10 @@ export const Stores = {
 };
 // Interfaces
 export interface IActor {
-  act(theRequest: Request): Promise<any>;
+  act(theRequest: ZzzRequest): Promise<any>;
 }
 export interface IAuthorization {
-  apply(theRequest: Request, authorizationConfig: any): void;
+  apply(theRequest: ZzzRequest, authorizationConfig: any): void;
 }
 export interface IStore {
   get(entityType: EntityType, entityName: string, environmentName: string | null): Promise<any>;
@@ -37,10 +37,10 @@ export interface IStore {
   stat(entityName: string): Promise<Stats>;
 }
 // Facade methods
-export async function Act(theRequest: Request, actorName: string): Promise<any> {
+export async function Act(theRequest: ZzzRequest, actorName: string): Promise<any> {
   return await newActor(actorName).act(theRequest);
 }
-export function Authorize(theRequest: Request, authorizationDefinition: string): void {
+export function Authorize(theRequest: ZzzRequest, authorizationDefinition: string): void {
   if (authorizationDefinition) {
     const authConfig = Get(
       EntityType.Authorization,
