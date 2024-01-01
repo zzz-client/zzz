@@ -32,7 +32,7 @@ async function respond(server: IServer, actorName: string = "Pass") {
     ext = ext.substring(1);
     base = base.substring(0, base.length - ext.length - 1);
   }
-  if (base.endsWith("/")) {
+  if ((base as string).endsWith("/")) {
     base = base.substring(0, base.length - 1);
   }
   console.log("base", base);
