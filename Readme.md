@@ -4,6 +4,8 @@
 
 Zzz came out of the desire for a light replacement to Postman with generally the same features list. From there the idea expanded modularity for how requests are stored, what actions are taken for the request instead of just performing the request, and how to format the output.
 
+![Zzz web interface](./screenshots/web.png)
+
 **Postman feature parity:**
 
 - Request attributes:
