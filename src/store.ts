@@ -1,13 +1,13 @@
 import { basename, Parsers } from "./libs.ts";
-import Request, { Collection, Folder, Item } from "./request.ts";
+import Request, { Collection } from "./request.ts";
 import FileStore from "./stores/file.ts";
 import PostmanStore from "./stores/postman.ts";
 export enum EntityType {
+  Authorization,
+  Environment,
   Request,
   Folder,
   Collection,
-  Environment,
-  Authorization,
 }
 export function getInstance(): IStore {
   return instance;
@@ -39,9 +39,22 @@ export async function Get(entityType: EntityType, entityName: string, environmen
     return getInstance().get(entityType, entityName, environmentName);
   }
 }
+export async function Stat(itemName: string): Promise<Stats> {
+  return getInstance().stat(itemName);
+}
+
+export interface Stats {
+  Type: string;
+  Name: string;
+  Size: number;
+  Created: Date;
+  Modified: Date;
+}
+
 export interface IStore {
   get(entityType: EntityType, entityName: string, environmentName: string | null): Promise<any>;
   store(key: string, value: any, environmentName: string): Promise<void>;
+  stat(entityName: string): Promise<Stats>;
 }
 
 async function loadRequest(requestFilePath: string, environmentName: string | null): Promise<Request> {

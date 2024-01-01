@@ -15,7 +15,7 @@ export default async function Cli(config: AppConfig) {
   );
   await Authorize(theRequest, theRequest.Authorization);
   tim(theRequest, theRequest.Variables);
-  // console.log(theRequest);
+  console.log("theRequest", theRequest);
   const [beforeHook, afterHook] = Hooks(
     config.hooks,
     config.request,
@@ -23,6 +23,7 @@ export default async function Cli(config: AppConfig) {
   );
   beforeHook();
   const actResult = await Act(theRequest, config.actor);
+  console.log("actResult", actResult);
   afterHook(actResult);
-  console.info(actResult);
+  console.info("after hook", actResult);
 }

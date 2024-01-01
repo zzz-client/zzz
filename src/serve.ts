@@ -1,10 +1,10 @@
 // import { basename, extname } from "path";
-import { StringToStringMap } from "./request.ts";
-import { Collections, EntityType, Get } from "./store.ts";
-import tim from "./tim.ts";
-import Act from "./actor.ts";
+import Request, { StringToStringMap } from "./request.ts";
+import { Collections, EntityType, Get, Stat } from "./store.ts";
 import { extname, Parser, Parsers, Server } from "./libs.ts";
 import { AppConfig } from "../main.ts";
+import tim from "./tim.ts";
+import Act from "./actor.ts";
 
 export interface IServer {
   getUrl(): string;
@@ -32,18 +32,36 @@ async function respond(server: IServer, actorName: string = "Pass") {
     ext = ext.substring(1);
     base = base.substring(0, base.length - ext.length - 1);
   }
+  if (base.endsWith("/")) {
+    base = base.substring(0, base.length - 1);
+  }
   console.log("base", base);
   const contentType = getContentType(resourcePath);
   console.log("Received request", method, resourcePath, contentType);
 
   if (base === "") {
     const whatever = await Collections();
-    console.log(whatever);
     return server.respond(200, JSON.stringify(whatever, null, 2), { "Content-Type": contentType });
   }
-
-  return Get(EntityType.Request, base, "Integrate") // TODO: Hardcoded environment
-    .then((theRequest) => {
+  return Stat(base)
+    .then((stats) => {
+      switch (stats.Type) {
+        case "Request":
+          return Get(EntityType.Request, base, "Integrate");
+        case "Collection":
+          return Get(EntityType.Collection, base, "Integrate");
+        case "Folder":
+          return Get(EntityType.Folder, base, "Integrate");
+        // case "Environment":
+        //   return Get(EntityType.Environment, base, "Integrate");
+        // case "Authorization":
+        //   return Get(EntityType.Authorization, base, "Integrate");
+        default:
+          throw new Error(`Unsupported type of entity for Stat: ${stats.Type}`);
+      }
+    })
+    .then((result) => {
+      const theRequest = result as Request;
       tim(theRequest, theRequest.Variables);
       if (ext === "curl") {
         // TODO: Hardcoded

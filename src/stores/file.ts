@@ -1,28 +1,59 @@
 import Request, { Collection, Folder, Item, StringToStringMap } from "../request.ts";
-import { EntityType, Get, IStore } from "../store.ts";
-import { dirname, existsSync, Parser, Parsers, readTextFileSync, writeTextFileSync } from "../libs.ts";
+import { EntityType, Get, IStore, Stats } from "../store.ts";
+import { basename, dirname, existsSync, extname, Parser, Parsers, readDirSync, readTextFileSync, writeTextFileSync } from "../libs.ts";
 
 export default class FileStore implements IStore {
   fileExtension: string;
   constructor(fileExtension: string) {
     this.fileExtension = fileExtension;
   }
-  parser(): Parser {
-    return Parsers[this.fileExtension.toUpperCase()];
+  async stat(entityName: string): Promise<Stats> {
+    const filePath = existsSync(entityName, { isDirectory: true }) ? entityName : `${entityName}.${this.fileExtension}`;
+    const entType = await determineType(filePath);
+    const file = await Deno.stat(filePath); // TODO: libs
+    const stats = {
+      Type: EntityType[entType],
+      Name: entityName,
+      Created: file.birthtime!,
+      Modified: file.mtime!,
+    } as Stats;
+    if (entType == EntityType.Request) {
+      stats.Size = (await Deno.stat(filePath)).size;
+    } else if (entType == EntityType.Collection || entType == EntityType.Folder) {
+      stats.Size = (() => {
+        let s = 0;
+        for (const _ in readDirSync(entityName)) {
+          s++;
+        }
+        return s;
+      })();
+    }
+    return stats;
   }
-  get(entityType: EntityType, entityName: string, environmentName: string): Promise<any> {
+  async get(entityType: EntityType, entityName: string, environmentName: string): Promise<Item> {
     if (entityType === EntityType.Request) {
       const theRequest = new Request("", "", ""); // TODO: Is this hacky?
       this._load(theRequest, entityName, environmentName);
-      return Promise.resolve(theRequest);
+      return theRequest;
     }
-    if (entityType == EntityType.Collection || entityType == EntityType.Folder) {
-      return getInfo(entityType, entityName, environmentName);
+    if (entityType === EntityType.Collection || entityType === EntityType.Folder) {
+      const children = Deno.readDirSync(entityName);
+      console.log(entityName, children);
+      const item = new (entityType === EntityType.Collection ? Collection : Folder)(basename(entityName));
+      for await (const child of Deno.readDir(entityName)) {
+        if (child.isDirectory) {
+          item.Children.push(await this.get(EntityType.Folder, `${entityName}/${child.name}`, environmentName));
+        } else if (child.isFile && filetypeSupported(child.name) && !excludeFromInfo(child.name)) {
+          const baseless = basename(child.name, extname(child.name));
+          item.Children.push(await this.get(EntityType.Request, `${entityName}/${baseless}`, environmentName));
+        }
+      }
+      return item;
     }
-    if (entityType == EntityType.Environment || entityType == EntityType.Authorization) {
+    if (entityType === EntityType.Environment || entityType === EntityType.Authorization) {
       const entityFolder = getDirectoryForEntity(entityType);
       const filePath = `${entityFolder}/${entityName}.${this.fileExtension}`;
-      return this.parser().parse(readTextFileSync(filePath));
+      return this._parser().parse(readTextFileSync(filePath)) as Item; // TODO: Is this a naughty cast?
     }
     throw new Error(`Unknown type of entity: ${entityType}`);
   }
@@ -30,30 +61,33 @@ export default class FileStore implements IStore {
     const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
     let sessionContents = { Variables: {} as StringToStringMap };
     if (existsSync(sessionPath)) {
-      sessionContents = this.parser().parse(readTextFileSync(sessionPath));
+      sessionContents = this._parser().parse(readTextFileSync(sessionPath));
     }
     sessionContents.Variables[key] = value;
-    writeTextFileSync(sessionPath, this.parser().stringify(sessionContents));
+    writeTextFileSync(sessionPath, this._parser().stringify(sessionContents));
     return Promise.resolve();
   }
+  _parser(): Parser {
+    return Parsers[this.fileExtension.toUpperCase()];
+  }
   _load(theRequest: Request, resourceName: string, environmentName: string): void {
-    const defaultFilePaths = getDefaultFilePaths(resourceName, this.fileExtension, environmentName); // TODO: collection
+    const defaultFilePaths = getDefaultFilePaths(resourceName, this.fileExtension, environmentName);
     for (const defaultFilePath of defaultFilePaths) {
       if (existsSync(defaultFilePath)) {
-        const fileContents = this.parser().parse(readTextFileSync(defaultFilePath));
+        const fileContents = this._parser().parse(readTextFileSync(defaultFilePath));
         checkForbidden(fileContents);
         applyChanges(theRequest, fileContents);
       }
     }
-    const X = resourceName + "." + this.fileExtension; // TODO: collection
-    console.log("X", X);
-    const fileContents = this.parser().parse(readTextFileSync(X));
+    const filePath = resourceName + "." + this.fileExtension; // TODO: collection
+    console.log("filePath to read", filePath);
+    const fileContents = this._parser().parse(readTextFileSync(filePath));
     console.log(fileContents);
     checkRequired(fileContents);
     applyChanges(theRequest, fileContents);
     const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
     if (existsSync(sessionPath)) {
-      const sessionContents = this.parser().parse(readTextFileSync(sessionPath));
+      const sessionContents = this._parser().parse(readTextFileSync(sessionPath));
       applyChanges(theRequest, sessionContents);
     }
   }
@@ -70,22 +104,21 @@ function getDefaultsFilePath(folderPath: string, fileExtension: string): string 
 function excludeFromInfo(name: string): boolean {
   return name.startsWith(`${DEFAULT_MARKER}.`);
 }
-async function getInfo(entityType: EntityType, entityName: string, environmentName: string): Promise<Item> {
-  const item = entityType === EntityType.Collection ? new Collection(entityName) : new Folder(entityName);
-  const children = await Deno.readDirSync(entityName); // TODO: libs
-  for (const child of children) {
-    console.log("Child", child);
-    if (child.isDirectory) {
-      item.Children.push(await Get(EntityType.Folder, entityName + "/" + child.name, environmentName));
-    }
-    if (child.isFile) {
-      if (!excludeFromInfo(child.name) && filetypeSupported(child.name)) {
-        const extensionlessName = child.name.substring(0, child.name.lastIndexOf("."));
-        item.Children.push(await Get(EntityType.Request, entityName + "/" + extensionlessName, environmentName));
-      }
-    }
+// TODO: Exported should be taken away ASAP
+export async function determineType(entityName: string): Promise<EntityType> {
+  if (entityName.startsWith(getDirectoryForEntity(EntityType.Authorization))) {
+    return EntityType.Authorization;
   }
-  return item;
+  if (entityName.startsWith(getDirectoryForEntity(EntityType.Environment))) {
+    return EntityType.Environment;
+  }
+  if (existsSync(entityName, { isFile: true })) {
+    return EntityType.Request;
+  } else if (entityName.includes("/")) {
+    return EntityType.Folder;
+  } else {
+    return EntityType.Collection;
+  }
 }
 function getDirectoryForEntity(entityType: EntityType): string {
   switch (entityType) {
@@ -94,7 +127,7 @@ function getDirectoryForEntity(entityType: EntityType): string {
     case EntityType.Authorization:
       return "authorizations";
     default:
-      throw `Unknown entity type ${entityType}`;
+      throw new Error(`Unknown entity type ${EntityType[entityType]}`);
   }
 }
 function getEnvironmentPath(environmentName: string, fileExtension: string): string {

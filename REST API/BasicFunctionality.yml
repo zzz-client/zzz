@@ -2,26 +2,25 @@ Method: GET
 URL: "{{_endpoint}}{{standard_path}}query"
 QueryParams:
   q: SELECT name FROM Lead LIMIT 10
-
-# Ideas on how to store the various body types
-Body:
-  ContentType: Text | JsonObject | JsonList | Form | DataUrlEncoded
-  Content: # the stuff below this line
-Text: "A text body - can use `|` for multiline"
-JsonObject:
-  SubscriberKey: "0035600000iFaknAAC"
-  RecipientAddresses:
-    - tnetherton@inspirato.com
-  EmailAddress: tnetherton@inspirato.com
-  NameOnAccount: Darth Vader
-JsonList:
-  - Item1:
-      Name: "foo"
-  - Item2:
-      Name: "bar"
-Form: # translates to `--form 'scott=pilgrim&ramona=flowers'`
-  scott: pilgrim
-  ramona: flowers
-DataUrlEncoded: # translates to `--data-urlencode 'name=daniel&nick=wozniak'`
-  name: daniel
-  nick: wozniak
+# # Ideas on how to store the various body types
+# Body:
+#   ContentType: Text | JsonObject | JsonList | Form | DataUrlEncoded
+#   Content: # the stuff below this line
+# Text: "A text body - can use `|` for multiline"
+# JsonObject:
+#   SubscriberKey: "0035600000iFaknAAC"
+#   RecipientAddresses:
+#     - tnetherton@inspirato.com
+#   EmailAddress: tnetherton@inspirato.com
+#   NameOnAccount: Darth Vader
+# JsonList:
+#   - Item1:
+#       Name: "foo"
+#   - Item2:
+#       Name: "bar"
+# Form: # translates to `--form 'scott=pilgrim&ramona=flowers'`
+#   scott: pilgrim
+#   ramona: flowers
+# DataUrlEncoded: # translates to `--data-urlencode 'name=daniel&nick=wozniak'`
+#   name: daniel
+#   nick: wozniak
