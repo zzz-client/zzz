@@ -63,29 +63,29 @@ function doTheThing(newValue: string) {
     .catch((error) => {
       console.error("ERROR", error.message, `(${error.code})`);
       console.error(error.stack);
-      throw error;
     });
 }
 async function send() {
-  const theRequest = requestData.value;
-  // const what = (
-  //   await axios({
-  //     method: theRequest.Method,
-  //     headers: theRequest.Headers,
-  //     params: theRequest.QueryParams,
-  //     url: theRequest.URL,
-  //     data: theRequest.Body
-  //   })
-  // ).data;
-  const what = await axios.post("http://localhost:8000/" + value.value + ".json");
-
-  response.value = {
-    data: what.data,
-    status: what.status,
-    statusText: what.statusText,
-    headers: what.headers as StringToStringMap
-  };
-  console.log("WHAT", response);
+  // const what = (await axios({method: requestData.value.Method, headers: requestData.value.Headers, params: requestData.value.QueryParams, url: requestData.value.URL, data: requestData.value.Body})).data;
+  axios
+    .post("http://localhost:8000/" + value.value + ".json")
+    .then((what) => {
+      response.value = {
+        data: what.data,
+        status: what.status,
+        statusText: what.statusText,
+        headers: what.headers as StringToStringMap
+      };
+      console.log("WHAT", response);
+    })
+    .catch((error) => {
+      response.value = {
+        data: error.response.data,
+        status: error.response.status,
+        statusText: error.response.statusText,
+        headers: error.response.headers as StringToStringMap
+      };
+    });
 }
 
 if (value) {

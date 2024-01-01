@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, toRef, toRefs } from "vue";
+import { ref, toRef, toRefs, watch } from "vue";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
 import Dropdown from "primevue/dropdown";
@@ -14,25 +14,31 @@ const bodyType = ref(bodyTypes[0]);
 
 const statusSeverity = ref("");
 
-console.log("har", data.value);
-if (data.value?.status >= 200 && data.value?.status < 300) {
-  statusSeverity.value = "success";
+function getStatusSeverity(value: number): string {
+  if (data.value?.status >= 300 && data.value?.status < 400) {
+    return "warning";
+  } else if (data.value?.status >= 200 && data.value?.status < 300) {
+    return "success";
+  } else {
+    return "danger";
+  }
 }
-if (data.value?.status >= 300) {
-  statusSeverity.value = "warning";
-}
-if (data.value?.status >= 400) {
-  statusSeverity.value = "danger";
-}
-if (data.value?.status >= 500) {
-  statusSeverity.value = "danger";
-}
+
+watch(
+  () => props.data,
+  (newValue) => {
+    console.log("watching", newValue);
+    statusSeverity.value = getStatusSeverity(newValue);
+  }
+);
 </script>
 
 <template>
-  <a style="float: right">
-    <Badge :value="data.statusText" :severity="statusSeverity"></Badge>
-  </a>
+  <div style="position: relative">
+    <a style="float: right; position: absolute; top: 0.5em; right: 0.5em">
+      <Badge :severity="statusSeverity">{{ data.status }} {{ data.statusText }}</Badge>
+    </a>
+  </div>
 
   <TabView>
     <TabPanel header="Body">

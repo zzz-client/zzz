@@ -1,18 +1,19 @@
 <script setup lang="ts">
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from "./components/HelloWorld.vue";
+import MainWindow from "./components/MainWindow.vue";
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 const toast = useToast();
 
 console.log("toast");
-toast.add({ message: "no" });
+toast.add({ severity: "warn", summary: "X", detail: "Y", life: 1000 });
+console.log("toast");
 </script>
 
 <template>
-  <HelloWorld />
-  <Toast />
+  <Toast position="top-left" group="tl" />
+  <MainWindow />
 </template>
 
 <style>
