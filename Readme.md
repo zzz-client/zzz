@@ -1,4 +1,4 @@
-# Zzz (ー。ー)
+# (ー。ー) Zzz
 
 > Pronounced as "zees" or "zeds" depending on where you live.
 
