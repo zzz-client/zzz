@@ -1,6 +1,6 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import ZzzRequest from "../request.ts";
-import { EntityType, Get, Stores } from "../storage.ts";
+import { applyChanges, EntityType, Get, Stores } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 import { IStore } from "../factories.ts";
 
@@ -10,10 +10,10 @@ export default class PostmanStore implements IStore {
     if (existsSync(collectionJsonFilePath)) {
       this.collection = JSON.parse(Deno.readTextFileSync(collectionJsonFilePath));
     } else {
-      this.collection = {} as CollectionSchema; // TODO: Bad but why is this happening
+      console.warn("Invalid JSON file path??? " + collectionJsonFilePath);
+      this.collection = {} as CollectionSchema;
     }
   }
-  // TODO: stat
   async get(entityType: EntityType, entityName: string, environmentName: string): Promise<any> {
     if (entityType === EntityType.Request) {
       return await loadRequest(this.collection, environmentName, entityName);
@@ -61,19 +61,6 @@ async function loadEnvironment(target: string): Promise<ZzzRequest> {
     return (await Stores.YAML.get(EntityType.Environment, target, "Integrate")) as ZzzRequest;
   } catch (e) {
     return new ZzzRequest("", "", ""); // TODO: WHAT
-  }
-}
-// TODO: Duplicate code
-function applyChanges(destination: any, source: any): void {
-  if (!source) {
-    return;
-  }
-  for (const key of Object.keys(source)) {
-    if (destination[key] !== undefined && typeof destination[key] === "object") {
-      applyChanges(destination[key], source[key]);
-    } else {
-      destination[key] = source[key];
-    }
   }
 }
 interface CollectionSchema {

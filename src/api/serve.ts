@@ -11,7 +11,7 @@ export interface IServer {
   getUrl(): string;
   getMethod(): string;
   respond(code: number, body: any, headers: StringToStringMap): any;
-  listen(responder: Function): void; // TODO: This responder junk is a hideous indirection of control
+  listen(responder: Function): void;
 }
 
 export default function Serve(appConfig: AppConfig, actorName: string = "Pass") {

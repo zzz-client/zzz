@@ -39,7 +39,7 @@ export function Authorize(theRequest: ZzzRequest, authorizationDefinition: strin
       EntityType.Authorization,
       authorizationDefinition,
       null,
-    ) as any; // TODO: any
+    ) as any;
     const authType = extractAuthType(authConfig);
     const authValues = authConfig[authType];
     const injection = newAuthorization(authType);

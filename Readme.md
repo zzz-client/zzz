@@ -108,7 +108,7 @@ Adding a file extension to the end will change what format is returned: `http://
 
 ## TUI
 
-TODO: This would be SO sick and I think it should just be a matter of finding an ncurses-like library for Node and then getting the UI right
+This would be SO sick and I think it should just be a matter of finding an ncurses-like library for Node and then getting the UI right
 
 
 # Structure
@@ -180,13 +180,29 @@ This allows `v1/Foo/defaults.yml` to use an `Authorization` like BearerToken whe
 
 ## Hooks
 
-TODO
+Needs its own modularity, or part of the Store?
 
 ## TODO
 
-- How does cookie jar work?
-- Where should we write to for Postman Store?
-- Where can we store variables for the Postman Store?
+backend:
+  - Sweet mother of god, fix the design pattern in serve.ts
+  - Split Store
+    - Where should we write to for Postman Store?
+    - Add workspace entity for Get, and some command to get all workspaces
+  - Finish auth UI per-request
+    - Create auth UI for bulk edit and creation (using above component)
+  - Cookie jar
+  - Redo Hooks so it's not only file-based
+  - find xmlStringify
+
+Frontend:
+  - form-* Body
+  - binary Body
+  - Settings tab
+
+### Bonus
+
+- Expand & Collapse All
+- TUI
 - Determine parser based on the supplied content-type header instead of having to do extension?
-- More Stores & parsers; TOML
-- Hooks readme
+- More Stores & parsers; TOML, SQLite

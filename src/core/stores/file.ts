@@ -1,6 +1,6 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import ZzzRequest, { Collection, Folder, Item, StringToStringMap } from "../request.ts";
-import { EntityType } from "../storage.ts";
+import { applyChanges, EntityType } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 import { Parser, Parsers } from "../render.ts";
 import { IStore, Stats } from "../factories.ts";
@@ -87,7 +87,7 @@ export default class FileStore implements IStore {
         applyChanges(theRequest, fileContents);
       }
     }
-    const filePath = resourceName + "." + this.fileExtension; // TODO: collection
+    const filePath = resourceName + "." + this.fileExtension;
     const fileContents = this._parser().parse(Deno.readTextFileSync(filePath));
     checkRequired(fileContents);
     applyChanges(theRequest, fileContents);
@@ -110,8 +110,7 @@ function getDefaultsFilePath(folderPath: string, fileExtension: string): string 
 function excludeFromInfo(name: string): boolean {
   return name.startsWith(`${DEFAULT_MARKER}.`);
 }
-// TODO: Exported should be taken away ASAP
-export async function determineType(entityName: string): Promise<EntityType> {
+async function determineType(entityName: string): Promise<EntityType> {
   if (entityName.startsWith(getDirectoryForEntity(EntityType.Authorization))) {
     return EntityType.Authorization;
   }
@@ -148,18 +147,6 @@ function getDefaultFilePaths(requestFilePath: string, fileExtension: string, env
     currentDirectory = dirname(currentDirectory);
   }
   return [...defaultEnvironments, ...defaultFilePaths.reverse()];
-}
-function applyChanges(destination: any, source: any): void {
-  if (!source) {
-    return;
-  }
-  for (const key of Object.keys(source)) {
-    if (destination[key] !== undefined && typeof destination[key] === "object") {
-      applyChanges(destination[key], source[key]);
-    } else {
-      destination[key] = source[key];
-    }
-  }
 }
 
 const REQUIRED_ON_REQUEST = ["Method", "URL"];

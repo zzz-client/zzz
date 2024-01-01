@@ -47,8 +47,8 @@ watch(
   <div id="rawBody" v-if="bodyType == 'raw'">
     <pre>{{ body }}</pre>
   </div>
-  <div id="formBody" v-if="bodyType.includes('form-')">TODO: Translate body to table-friendly form</div>
-  <div id="binaryBody" v-if="bodyType == 'binary'">TODO: File selection?</div>
+  <div id="formBody" v-if="bodyType.includes('form-')"></div>
+  <div id="binaryBody" v-if="bodyType == 'binary'"></div>
 </template>
 
 <style scoped>

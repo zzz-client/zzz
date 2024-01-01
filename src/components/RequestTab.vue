@@ -110,7 +110,7 @@ if (value) {
         <TabPanel header="Body">
           <Body :body="requestData.Body"></Body>
         </TabPanel>
-        <TabPanel header="Settings">TODO</TabPanel>
+        <TabPanel header="Settings"></TabPanel>
         <TabPanel header="Source">
           <pre>{{ requestData }}</pre>
         </TabPanel>

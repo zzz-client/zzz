@@ -8,13 +8,11 @@ const props = defineProps(["folders"]);
 const { folders } = toRefs(props);
 
 function collapseAll() {
-  // TODO: Broken since switching from Tree to PanelMenu
   // for (const key of keys) {
   //   expandedKeys.value[key] = true;
   // }
 }
 function expandAll() {
-  //   // TODO: Broken since switching from Tree to PanelMenu
   //   for (const key of keys) {
   //     expandedKeys.value[key] = true;
   //   }
