@@ -11,9 +11,10 @@ export default class FileStore implements IStore {
     this.fileExtension = fileExtension;
   }
   async stat(entityName: string): Promise<Stats> {
+    console.log("entityName", entityName);
     const filePath = existsSync(entityName, { isDirectory: true }) ? entityName : `${entityName}.${this.fileExtension}`;
     const entType = await determineType(filePath);
-    const file = await Deno.stat(filePath); // TODO: libs
+    const file = await Deno.stat(filePath);
     const stats = {
       Type: EntityType[entType],
       Name: entityName,

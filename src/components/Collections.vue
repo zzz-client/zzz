@@ -9,7 +9,11 @@ import { MenuItem } from "primevue/menuitem";
 
 let keys = [] as string[];
 function addEntityToNodes(noteList, entity, parentPath = "") {
-  const fullPath = parentPath + "/" + entity.Name;
+  let fullPath = parentPath + "/" + entity.Name;
+  if (fullPath.substring(0, 1) == "/") {
+    fullPath = fullPath.substring(1);
+  }
+  console.log("X", fullPath, entity);
   const newNode = {
     key: fullPath,
     label: basename(entity.Name)
@@ -24,7 +28,7 @@ function addEntityToNodes(noteList, entity, parentPath = "") {
   if (entity.Children) {
     newNode.items = [];
     entity.Children.forEach((child) => {
-      addEntityToNodes(newNode.items, child, entity.Name);
+      addEntityToNodes(newNode.items, child, fullPath);
     });
   }
   noteList.push(newNode);

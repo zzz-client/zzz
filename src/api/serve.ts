@@ -62,7 +62,7 @@ async function respond(server: IServer, actorName: string = "Pass") {
     base = base.substring(0, base.length - 1);
   }
   const contentType = getContentType(resourcePath);
-  // console.log("Received request", server.getMethod(), base, resourcePath, contentType);
+  console.log("Received request", server.getMethod(), "base=" + base, resourcePath, contentType);
 
   if (base === "") {
     const whatever = await Collections();
