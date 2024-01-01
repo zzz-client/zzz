@@ -7,8 +7,11 @@ import Button from "primevue/button";
 import Breadcrumb from "primevue/breadcrumb";
 import Dropdown from "primevue/dropdown";
 import { MenuItem } from "primevue/menuitem";
+import Splitter from "primevue/splitter";
+import SplitterPanel from "primevue/splitterpanel";
 import EditableTable from "./EditableTable.vue";
 import Authorization from "./Authorization.vue";
+import Response from "./Response.vue";
 import Body from "./Body.vue";
 import { ref, toRef, toRefs } from "vue";
 const basename = (path) => path.split("/").reverse()[0];
@@ -67,6 +70,8 @@ if (value) {
 }
 const authorization = ref("None");
 
+const response = ref({} as any);
+
 async function send() {
   const theRequest = requestData.value;
   // const what = (
@@ -79,34 +84,39 @@ async function send() {
   //   })
   // ).data;
   const what = await axios.post("http://localhost:8000/" + value.value + ".json");
-  console.log("result of Send", what.data);
+  response.value = what.data;
   return what;
 }
 </script>
 
 <template>
-  <Breadcrumb :model="breadcrumbs" />
-  <div class="flex">
-    <Dropdown id="asdf" disabled v-model="method" :options="methods" class="w-full md:w-14rem" />
-    <InputText disabled type="text" :value="(requestData as any).URL" />
-    <Button label="Send" @click="send">Send</Button>
-  </div>
-  <div class="">
-    <TabView>
-      <TabPanel header="Params"><EditableTable :data="requestData.QueryParams"></EditableTable></TabPanel>
-      <TabPanel header="Authorization">
-        <Authorization :type="authorization"></Authorization>
-      </TabPanel>
-      <TabPanel header="Headers"><EditableTable :data="requestData.Headers"></EditableTable></TabPanel>
-      <TabPanel header="Body">
-        <Body :body="requestData.Body"></Body>
-      </TabPanel>
-      <TabPanel header="Settings">TODO</TabPanel>
-      <TabPanel header="Source">
-        <pre>{{ requestData }}</pre>
-      </TabPanel>
-    </TabView>
-  </div>
+  <Splitter layout="vertical">
+    <SplitterPanel :minSize="10">
+      <Breadcrumb :model="breadcrumbs" />
+      <div class="flex">
+        <Dropdown id="qwerty" disabled v-model="method" :options="methods" class="w-full md:w-14rem" />
+        <InputText id="asdf" disabled type="text" :value="(requestData as any).URL" />
+        <Button id="zxcvb" label="Send" @click="send">Send</Button>
+      </div>
+      <TabView>
+        <TabPanel header="Params"><EditableTable :data="requestData.QueryParams"></EditableTable></TabPanel>
+        <TabPanel header="Authorization">
+          <Authorization :type="authorization"></Authorization>
+        </TabPanel>
+        <TabPanel header="Headers"><EditableTable :data="requestData.Headers"></EditableTable></TabPanel>
+        <TabPanel header="Body">
+          <Body :body="requestData.Body"></Body>
+        </TabPanel>
+        <TabPanel header="Settings">TODO</TabPanel>
+        <TabPanel header="Source">
+          <pre>{{ requestData }}</pre>
+        </TabPanel>
+      </TabView>
+    </SplitterPanel>
+    <SplitterPanel :minSize="10">
+      <Response :data="response"></Response>
+    </SplitterPanel>
+  </Splitter>
 </template>
 
 <style scoped>

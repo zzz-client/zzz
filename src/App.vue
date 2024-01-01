@@ -8,16 +8,32 @@ import HelloWorld from "./components/HelloWorld.vue";
   <HelloWorld />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
+<style>
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+#app {
+  width: 100%;
+  height: 100%;
+  padding: 0.5em;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.absolute {
+  width: 100%;
+  height: 100%;
+  /* position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; */
+}
+pre {
+  border: 1px #333 solid;
+  background: #222;
+  padding: 0.5rem;
 }
 </style>

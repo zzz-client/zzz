@@ -24,31 +24,24 @@ window.addEventListener("hashchange", () => {
 </script>
 
 <template>
-  <div class="card flex justify-content-center" style="padding: 0.5em">
-    <Splitter>
-      <SplitterPanel
-        class="flex align-items-center justify-content-center"
-        :size="25"
-        :minSize="10"
-      >
-        <Collections />
-      </SplitterPanel>
-      <SplitterPanel
-        class="flex align-items-center justify-content-center"
-        :size="75"
-      >
-        <TabView>
-          <TabPanel
-            v-for="tab in tabs"
-            :key="tab.value"
-            :header="basename(tab.value)"
-          >
-            <RequestTab :value="tab.value"></RequestTab>
-          </TabPanel>
-        </TabView>
-      </SplitterPanel>
-    </Splitter>
-  </div>
+  <Splitter class="absolute">
+    <SplitterPanel :size="15" :minSize="20" class="absolute">
+      <Collections />
+    </SplitterPanel>
+    <SplitterPanel :size="75" class="absolute">
+      <TabView class="absolute">
+        <TabPanel v-for="tab in tabs" :key="tab.value" :header="basename(tab.value)" class="absolute">
+          <RequestTab :value="tab.value" class="absolute"></RequestTab>
+        </TabPanel>
+      </TabView>
+    </SplitterPanel>
+  </Splitter>
 </template>
 
-<style scoped></style>
+<style>
+.p-tabview-panel,
+.p-tabview-panels {
+  width: 100%;
+  height: 100%;
+}
+</style>

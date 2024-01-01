@@ -2,7 +2,6 @@
 import Dropdown from "primevue/dropdown";
 import { ref, toRef, toRefs, watch } from "vue";
 
-console.log("So it begins");
 const props = defineProps(["type"]);
 
 const { type } = toRefs(props);
@@ -29,7 +28,6 @@ const methods = [
     value: "Query"
   }
 ];
-console.log("HERE", type);
 
 watch(
   () => props.type,
@@ -41,13 +39,7 @@ watch(
 </script>
 
 <template>
-  <Dropdown
-    v-model="type"
-    :options="methods"
-    optionLabel="label"
-    optionValue="value"
-    class="w-full md:w-14rem"
-  />
+  <Dropdown v-model="type" :options="methods" optionLabel="label" optionValue="value" class="w-full md:w-14rem" />
   <div>Basic Auth: username & password</div>
   <div>Bearer Token: input field (masked?)</div>
   <div>Header: Key/Value</div>
