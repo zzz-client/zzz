@@ -5,9 +5,10 @@ import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 import { parse as yamlParse, stringify as yamlStringify } from "https://deno.land/std/yaml/mod.ts";
 import { parse as xmlParse } from "https://deno.land/x/xml/mod.ts";
 const xmlStringify = (x: any) => Deno.exit(1);
-
 import { IStore, Stats } from "../factories.ts";
-import { getEnvironmentPath } from "../environment.ts";
+import { getEnvironmentPath, Load, Meld } from "../variables.ts";
+
+const SESSION_FILE = "session.local";
 
 export default class FileStore implements IStore {
   fileExtension: string;
@@ -15,7 +16,6 @@ export default class FileStore implements IStore {
     this.fileExtension = fileExtension;
   }
   async stat(entityName: string): Promise<Stats> {
-    console.log("entityName", entityName);
     const filePath = existsSync(entityName, { isDirectory: true }) ? entityName : `${entityName}.${this.fileExtension}`;
     const entType = await determineType(filePath);
     const file = await Deno.stat(filePath);
@@ -39,35 +39,43 @@ export default class FileStore implements IStore {
     return stats;
   }
   async get(entityType: EntityType, entityName: string, environmentName: string): Promise<Item> {
+    console.log("entering get for environment", entityType, entityName, environmentName);
     if (entityType === EntityType.Request) {
       const theRequest = new ZzzRequest("", "", ""); // TODO: Is this hacky?
-      this._load(theRequest, entityName, environmentName);
+      const meldedDefaults = await Load(entityName, environmentName, this.fileExtension);
+      Meld(theRequest, meldedDefaults);
       if (!theRequest.Name) {
         theRequest.Name = basename(entityName);
       }
       return theRequest;
-    }
-    if (entityType === EntityType.Collection || entityType === EntityType.Folder) {
+    } else if (entityType === EntityType.Collection || entityType === EntityType.Folder) {
       const item = new (entityType === EntityType.Collection ? Collection : Folder)(basename(entityName));
       for await (const child of Deno.readDir(entityName)) {
         if (child.isDirectory) {
+          console.log(">>> going GHOST");
           item.Children.push(await this.get(EntityType.Folder, `${entityName}/${child.name}`, environmentName));
         } else if (child.isFile && filetypeSupported(child.name) && !excludeFromInfo(child.name)) {
           const baseless = basename(child.name, extname(child.name));
+          console.log(">> Going ghost", baseless);
           item.Children.push(await this.get(EntityType.Request, `${entityName}/${baseless}`, environmentName));
         }
       }
       return item;
     }
     if (entityType === EntityType.Environment || entityType === EntityType.Authorization) {
+      if (entityType === EntityType.Environment) {
+        console.log("here", entityType, entityName);
+      }
       const entityFolder = getDirectoryForEntity(entityType);
+      console.log("entityFolder", entityFolder);
       const filePath = `${entityFolder}/${entityName}.${this.fileExtension}`;
+      console.log("filePath", filePath);
       return this._parser().parse(Deno.readTextFileSync(filePath)) as Item; // TODO: Is this a naughty cast?
     }
     throw new Error(`Unknown type of entity: ${entityType}`);
   }
   store(key: string, value: any): Promise<void> {
-    const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
+    const sessionPath = getEnvironmentPath(SESSION_FILE, this.fileExtension);
     let sessionContents = { Variables: {} as StringToStringMap };
     if (existsSync(sessionPath)) {
       sessionContents = this._parser().parse(Deno.readTextFileSync(sessionPath));
@@ -82,17 +90,14 @@ export default class FileStore implements IStore {
   _parser(): Parser {
     return Parsers[this.fileExtension.toUpperCase()];
   }
-  _load(theRequest: ZzzRequest, resourceName: string, environmentName: string): void {
-  }
 }
 
 function filetypeSupported(filePath: string): boolean {
   const fileExtension = filePath.substring(filePath.lastIndexOf(".") + 1);
   return Parsers[fileExtension.toUpperCase()] !== undefined;
 }
-export const DEFAULT_MARKER = "defaults";
 function excludeFromInfo(name: string): boolean {
-  return name.startsWith(`${DEFAULT_MARKER}.`);
+  return name.startsWith("_");
 }
 async function determineType(entityName: string): Promise<EntityType> {
   if (entityName.startsWith(getDirectoryForEntity(EntityType.Authorization))) {
@@ -117,23 +122,6 @@ export function getDirectoryForEntity(entityType: EntityType): string {
       return "authorizations";
     default:
       throw new Error(`Unknown entity type ${EntityType[entityType]}`);
-  }
-}
-
-const REQUIRED_ON_REQUEST = ["Method", "URL"];
-const NO_DEFAULT_ALLOWED = ["Method", "URL", "QueryParams", "Body"];
-function checkRequired(fileContents: any): void {
-  for (const key of REQUIRED_ON_REQUEST) {
-    if (!fileContents[key]) {
-      throw new Error(`Missing required key ${key}`);
-    }
-  }
-}
-function checkForbidden(fileContents: any): void {
-  for (const key of NO_DEFAULT_ALLOWED) {
-    if (fileContents[key]) {
-      throw new Error(`Forbidden key ${key}`);
-    }
   }
 }
 

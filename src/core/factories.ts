@@ -24,10 +24,9 @@ export interface IAuthorization {
   apply(theRequest: ZzzRequest, authorizationConfig: any): void;
 }
 export interface IStore {
-  get(entityType: EntityType, entityName: string): Promise<any>;
-  store(key: string, value: any): Promise<void>;
+  get(entityType: EntityType, entityName: string, environmentName: string): Promise<any>;
+  store(key: string, value: any, environmentName: string): Promise<void>;
   stat(entityName: string): Promise<Stats>;
-  setEnvironment(environmentName: string): void;
 }
 // Facade methods
 export async function Act(theRequest: ZzzRequest, actorName: string): Promise<any> {
@@ -48,10 +47,9 @@ export function Authorize(theRequest: ZzzRequest, authorizationDefinition: strin
 }
 // Factories
 let storeInstance: IStore;
-export function newStore(environmentName: string): IStore {
+export function newStore(): IStore {
   if (storeInstance == null) {
     storeInstance = Stores.YAML;
-    storeInstance.setEnvironment(environmentName);
   }
   return storeInstance;
 }

@@ -157,10 +157,10 @@ When constructing a request, Zzz will apply the following in order:
 - globals (local)
 - environment
 - environment (local)
-- defaults.yml anywhere in the directory tree
+- defaults
 - the request itself
 
-At the `defaults.yml` stage, Zzz will check every directory down in the path to the Request for a file named `defaults.yml`.
+At the defaults stage, Zzz will check every directory down in the path to the Request for a file named `_defaults.yml`.
 
 For example, supposed you had the following:
 

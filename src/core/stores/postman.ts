@@ -1,6 +1,6 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import ZzzRequest from "../request.ts";
-import { applyChanges, EntityType, Get, Stores } from "../storage.ts";
+import { EntityType, Get, Stores } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 import { IStore } from "../factories.ts";
 
@@ -58,7 +58,7 @@ async function loadRequest(collection: CollectionSchema, environmentName: string
 }
 async function loadEnvironment(target: string): Promise<ZzzRequest> {
   try {
-    return (await Stores.YAML.get(EntityType.Environment, target, "Integrate")) as ZzzRequest;
+    return (await Stores.YAML.get(EntityType.Environment, target, "Integrate")) as ZzzRequest; // TODO: Hardcoded
   } catch (e) {
     return new ZzzRequest("", "", ""); // TODO: WHAT
   }
