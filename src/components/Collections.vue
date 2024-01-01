@@ -27,7 +27,6 @@ function addEntityToNodes(noteList, entity, parentPath = "") {
     });
   }
   noteList.push(newNode);
-  // console.log("knew node", newNode);
   keys.push(newNode.key!);
 }
 function expandAll() {
@@ -60,20 +59,8 @@ axios
 <template>
   <div class="justify-content-right" style="display: flex">
     <h1 class="logo">(ー。ー) Zzz</h1>
-    <Button
-      type="button"
-      icon="pi pi-plus"
-      label="Expand All"
-      @click="expandAll"
-      >+</Button
-    >
-    <Button
-      type="button"
-      icon="pi pi-minus"
-      label="Collapse All"
-      @click="collapseAll"
-      >-</Button
-    >
+    <Button type="button" icon="pi pi-plus" label="Expand All" @click="expandAll">+</Button>
+    <Button type="button" icon="pi pi-minus" label="Collapse All" @click="collapseAll">-</Button>
   </div>
   <PanelMenu v-model:expandedKeys="expandedKeys" :model="folders"> </PanelMenu>
 </template>

@@ -49,7 +49,7 @@ function doTheThing(newValue: string) {
   breadcrumbs.value = newBreadcrumbs;
   fetchRequest(newValue)
     .then((data) => {
-      console.log("data", data);
+      console.log("tab loaded request", data);
       if (data.Type == "Request") {
         requestData.value = data;
       }
@@ -69,17 +69,17 @@ const authorization = ref("None");
 
 async function send() {
   const theRequest = requestData.value;
-  console.log("HERE WE GO???");
-  const what = (
-    await axios({
-      method: theRequest.Method,
-      headers: theRequest.Headers,
-      params: theRequest.QueryParams,
-      url: theRequest.URL,
-      data: theRequest.Body
-    })
-  ).data;
-  console.log("what", what);
+  // const what = (
+  //   await axios({
+  //     method: theRequest.Method,
+  //     headers: theRequest.Headers,
+  //     params: theRequest.QueryParams,
+  //     url: theRequest.URL,
+  //     data: theRequest.Body
+  //   })
+  // ).data;
+  const what = await axios.post("http://localhost:8000/" + value.value + ".json");
+  console.log("result of Send", what.data);
   return what;
 }
 </script>

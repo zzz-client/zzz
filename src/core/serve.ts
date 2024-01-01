@@ -16,7 +16,13 @@ export interface IServer {
 
 export default function Serve(appConfig: AppConfig, actorName: string = "Pass") {
   new Server().listen((server: IServer) => {
-    return respond(server, actorName);
+    if (server.getMethod() === "GET") {
+      return respond(server, actorName);
+    }
+    if (server.getMethod() === "POST") {
+      return respond(server, "Client");
+    }
+    throw new Error(`Unsupported method: ${server.getMethod()}`);
   });
 }
 
@@ -41,7 +47,6 @@ export class Server implements IServer {
 }
 
 async function respond(server: IServer, actorName: string = "Pass") {
-  const method = server.getMethod();
   const url = server.getUrl();
   if (url === "/favicon.ico") {
     return server.respond(200, {}, {});
@@ -56,9 +61,8 @@ async function respond(server: IServer, actorName: string = "Pass") {
   if ((base as string).endsWith("/")) {
     base = base.substring(0, base.length - 1);
   }
-  console.log("base", base);
   const contentType = getContentType(resourcePath);
-  console.log("Received request", method, resourcePath, contentType);
+  console.log("Received request", server.getMethod(), base, resourcePath, contentType);
 
   if (base === "") {
     const whatever = await Collections();
@@ -83,6 +87,7 @@ async function respond(server: IServer, actorName: string = "Pass") {
     })
     .then((result) => {
       const theRequest = result as ZzzRequest;
+      theRequest.Method = server.getMethod(); // TODO: HATE THIS
       tim(theRequest, theRequest.Variables);
       if (ext === "curl") {
         // TODO: Hardcoded
@@ -91,7 +96,6 @@ async function respond(server: IServer, actorName: string = "Pass") {
       return Act(theRequest, actorName);
     })
     .then((result) => {
-      console.log("result2", result);
       const parser = getParser(resourcePath);
       const parsedResult = parser.stringify(result);
       return server.respond(200, parsedResult, { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });

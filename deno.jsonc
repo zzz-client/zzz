@@ -5,9 +5,9 @@
   "tasks": {
     "zzz": "deno run --allow-env --allow-net --allow-read=. src/main.ts",
     "api": "deno task zzz --listen",
-    "web": "deno run -A --unstable --node-modules-dir npm:vite",
+    "web": "deno run -A --unstable --node-modules-dir npm:vite --host 127.0.0.1",
     "web:build": "deno run -A --unstable --node-modules-dir npm:vite build",
-    "preview": "deno run -A --unstable --node-modules-dir npm:vite preview",
+    "preview": "deno run -A --unstable --node-modules-dir npm:vite --host 127.0.0.1 preview",
     "test": "jest"
   },
   "lock": false,
