@@ -5,7 +5,6 @@ import { AppConfig } from "../main.ts";
 import tim from "../core/tim.ts";
 import { Act } from "../core/factories.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
-import { Parser, Parsers } from "../core/render.ts";
 
 export interface IServer {
   getUrl(): string;

@@ -1,7 +1,7 @@
 import axiod from "https://deno.land/x/axiod/mod.ts";
 import { IActor } from "../factories.ts";
-import { Parsers } from "../render.ts";
 import ZzzRequest from "../request.ts";
+import { Parsers } from "../stores/file.ts";
 
 const defaultStringify = Parsers.JSON.stringify;
 

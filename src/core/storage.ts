@@ -11,12 +11,16 @@ export enum EntityType {
   Folder,
   Collection,
 }
-export const Stores = {
-  JSON: new FileStore("json"),
-  YAML: new FileStore("yml"),
-  XML: new FileStore("xml"),
-  Postman: new PostmanStore("PostmanCollection.json"),
-};
+
+interface StoreMap {
+  [key: string]: IStore;
+}
+export const Stores = { // TODO: Why do I have to do this dirty casting
+  JSON: new FileStore("json") as unknown as IStore,
+  YAML: new FileStore("yml") as unknown as IStore,
+  XML: new FileStore("xml") as unknown as IStore,
+  Postman: new PostmanStore("PostmanCollection.json") as unknown as IStore,
+} as StoreMap;
 export async function Collections(): Promise<Collection[]> {
   const result = [] as Collection[];
   const collections = ["REST API"];
@@ -37,18 +41,6 @@ export async function Get(entityType: EntityType, entityName: string, environmen
 }
 export async function Stat(itemName: string): Promise<Stats> {
   return newStore().stat(itemName);
-}
-export function applyChanges(destination: any, source: any): void {
-  if (!source) {
-    return;
-  }
-  for (const key of Object.keys(source)) {
-    if (destination[key] !== undefined && typeof destination[key] === "object") {
-      applyChanges(destination[key], source[key]);
-    } else {
-      destination[key] = source[key];
-    }
-  }
 }
 function loadBody(theRequest: ZzzRequest, _requestFilePath: string) {
   if (typeof theRequest.Body === "string") {

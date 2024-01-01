@@ -1,9 +1,13 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import ZzzRequest, { Collection, Folder, Item, StringToStringMap } from "../request.ts";
-import { applyChanges, EntityType } from "../storage.ts";
+import { EntityType } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
-import { Parser, Parsers } from "../render.ts";
+import { parse as yamlParse, stringify as yamlStringify } from "https://deno.land/std/yaml/mod.ts";
+import { parse as xmlParse } from "https://deno.land/x/xml/mod.ts";
+const xmlStringify = (x: any) => Deno.exit(1);
+
 import { IStore, Stats } from "../factories.ts";
+import { getEnvironmentPath } from "../environment.ts";
 
 export default class FileStore implements IStore {
   fileExtension: string;
@@ -79,34 +83,14 @@ export default class FileStore implements IStore {
     return Parsers[this.fileExtension.toUpperCase()];
   }
   _load(theRequest: ZzzRequest, resourceName: string, environmentName: string): void {
-    const defaultFilePaths = getDefaultFilePaths(resourceName, this.fileExtension, environmentName);
-    for (const defaultFilePath of defaultFilePaths) {
-      if (existsSync(defaultFilePath)) {
-        const fileContents = this._parser().parse(Deno.readTextFileSync(defaultFilePath));
-        checkForbidden(fileContents);
-        applyChanges(theRequest, fileContents);
-      }
-    }
-    const filePath = resourceName + "." + this.fileExtension;
-    const fileContents = this._parser().parse(Deno.readTextFileSync(filePath));
-    checkRequired(fileContents);
-    applyChanges(theRequest, fileContents);
-    const sessionPath = getEnvironmentPath("session.local", this.fileExtension);
-    if (existsSync(sessionPath)) {
-      const sessionContents = this._parser().parse(Deno.readTextFileSync(sessionPath));
-      applyChanges(theRequest, sessionContents);
-    }
   }
 }
 
-const DEFAULT_MARKER = "defaults";
 function filetypeSupported(filePath: string): boolean {
   const fileExtension = filePath.substring(filePath.lastIndexOf(".") + 1);
   return Parsers[fileExtension.toUpperCase()] !== undefined;
 }
-function getDefaultsFilePath(folderPath: string, fileExtension: string): string {
-  return `${folderPath}/${DEFAULT_MARKER}.${fileExtension}`;
-}
+export const DEFAULT_MARKER = "defaults";
 function excludeFromInfo(name: string): boolean {
   return name.startsWith(`${DEFAULT_MARKER}.`);
 }
@@ -125,7 +109,7 @@ async function determineType(entityName: string): Promise<EntityType> {
     return EntityType.Collection;
   }
 }
-function getDirectoryForEntity(entityType: EntityType): string {
+export function getDirectoryForEntity(entityType: EntityType): string {
   switch (entityType) {
     case EntityType.Environment:
       return "environments";
@@ -134,19 +118,6 @@ function getDirectoryForEntity(entityType: EntityType): string {
     default:
       throw new Error(`Unknown entity type ${EntityType[entityType]}`);
   }
-}
-function getEnvironmentPath(environmentName: string, fileExtension: string): string {
-  return getDirectoryForEntity(EntityType.Environment) + `/${environmentName}.${fileExtension}`;
-}
-function getDefaultFilePaths(requestFilePath: string, fileExtension: string, environmentName: string): string[] {
-  const defaultEnvironments = ["globals.local", "globals", `${environmentName}.local`, environmentName].map((name) => getEnvironmentPath(name, fileExtension));
-  const defaultFilePaths = [];
-  let currentDirectory = dirname(requestFilePath);
-  while (currentDirectory !== "." && currentDirectory !== "") {
-    defaultFilePaths.push(getDefaultsFilePath(currentDirectory + "/" + currentDirectory, fileExtension));
-    currentDirectory = dirname(currentDirectory);
-  }
-  return [...defaultEnvironments, ...defaultFilePaths.reverse()];
 }
 
 const REQUIRED_ON_REQUEST = ["Method", "URL"];
@@ -165,3 +136,19 @@ function checkForbidden(fileContents: any): void {
     }
   }
 }
+
+// TODO: This should be private eventually I believe
+export type Parser = {
+  parse: (input: string) => any;
+  stringify: (input: any) => string;
+};
+export const Parsers = {
+  YAML: { parse: yamlParse, stringify: yamlStringify },
+  YML: { parse: yamlParse, stringify: yamlStringify },
+  XML: { parse: xmlParse, stringify: xmlStringify },
+  JSON: { parse: JSON.parse, stringify: (s: any) => JSON.stringify(s, null, 2) },
+  TEXT: {
+    parse: (input: string) => input + "",
+    stringify: (input: any) => input + "",
+  },
+} as { [key: string]: Parser };

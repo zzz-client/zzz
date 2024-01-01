@@ -4,7 +4,6 @@ import { Act, Authorize } from "./core/factories.ts";
 import Hooks from "./core/hooks.ts";
 import { Get } from "./core/storage.ts";
 import tim from "./core/tim.ts";
-import { Parsers } from "./core/render.ts";
 
 export default async function Cli(config: AppConfig) {
   const theRequest = await Get(
