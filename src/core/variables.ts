@@ -14,7 +14,6 @@ const BLANK_ENTITY = {
 } as Entity;
 
 export async function Load(subjectRequest: ZzzRequest, entityName: string, environmentName: string, store: IStore): Promise<ZzzRequest> {
-  checkRequired(subjectRequest);
   const resultRequest = new ZzzRequest(entityName, subjectRequest.Name, subjectRequest.URL, subjectRequest.Method);
   const variables = new FileVariables() as IVariables;
   const globals = await variables.globals(store);
@@ -23,10 +22,10 @@ export async function Load(subjectRequest: ZzzRequest, entityName: string, envir
   const environmentLocal = await variables.local(environmentName, store);
   const defaults = await variables.defaults(dirname(entityName), store);
   const sessionLocal = await variables.local(SESSION_FILE, store);
-  for (const item of [globals, globalsLocal, environment, environmentLocal, defaults, resultRequest, sessionLocal]) {
+  for (const item of [globals, globalsLocal, environment, environmentLocal, defaults, subjectRequest, sessionLocal]) {
     Meld(resultRequest, item);
   }
-  console.log("Melded", JSON.stringify(resultRequest.Variables, null, 2));
+  console.log("Melded Variables:", JSON.stringify(resultRequest.Variables, null, 2));
   return resultRequest;
 }
 
@@ -70,7 +69,7 @@ class FileVariables implements IVariables {
       const result = store.get(EntityType.Environment, environmentName, environmentName);
       return result;
     } catch (e) {
-      console.log("error loading environment");
+      console.log("error loading environment", environmentName, e);
       return Promise.resolve(BLANK_ENTITY);
     }
   }
@@ -106,15 +105,7 @@ function getDefaultsFilePath(folderPath: string, fileExtension: string): string 
   return `${folderPath}/${DEFAULT_MARKER}.${fileExtension}`;
 }
 
-const REQUIRED_ON_REQUEST = ["Method", "URL"];
 const NO_DEFAULT_ALLOWED = ["Method", "URL", "QueryParams", "Body"];
-function checkRequired(fileContents: any): void {
-  for (const key of REQUIRED_ON_REQUEST) {
-    if (!fileContents[key]) {
-      throw new Error(`Missing required key ${key}`);
-    }
-  }
-}
 function checkForbidden(fileContents: any): void {
   for (const key of NO_DEFAULT_ALLOWED) {
     if (fileContents[key]) {

@@ -36,8 +36,17 @@ export async function Get(entityType: EntityType, entityName: string, environmen
   const theRequest = await newStore().get(entityType, entityName, environmentName);
   if (entityType === EntityType.Request) {
     loadBody(theRequest, entityName);
+    checkRequired(theRequest);
   }
   return theRequest;
+}
+const REQUIRED_ON_REQUEST = ["Method", "URL"];
+function checkRequired(fileContents: any): void {
+  for (const key of REQUIRED_ON_REQUEST) {
+    if (!fileContents[key]) {
+      throw new Error(`Missing required key ${key}`);
+    }
+  }
 }
 export async function Stat(entityName: string): Promise<Stats> {
   return newStore().stat(entityName);

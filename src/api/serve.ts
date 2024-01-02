@@ -80,12 +80,7 @@ async function respond(server: IServer, actorName: string = "Pass") {
     .then((stats) => {
       switch (stats.Type) {
         case "Request":
-          if (server.getQueryParams().has("full")) {
-            console.log("Loading full");
-            return Load(new ZzzRequest(base, "", "", ""), base, "integrate", Stores.YAML); // TODO Hardcoded
-          } else {
-            return Get(EntityType.Request, base, "integrate");
-          }
+          return Get(EntityType.Request, base, "integrate");
         case "Collection":
           return Get(EntityType.Collection, base, "integrate");
         case "Folder":
@@ -99,7 +94,13 @@ async function respond(server: IServer, actorName: string = "Pass") {
       }
     })
     .then((result) => {
-      console.log("HERE WE GO", result);
+      if (result.Type === EntityType[EntityType.Request]) {
+        return Load(result, base, "integrate", Stores.YAML); // TODO Hardcoded
+      } else {
+        return result;
+      }
+    })
+    .then((result) => {
       const theRequest = result as ZzzRequest;
       theRequest.Method = server.getMethod(); // TODO: HATE THIS
       if (server.getQueryParams().has("format")) {

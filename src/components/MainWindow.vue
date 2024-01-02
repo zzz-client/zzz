@@ -57,10 +57,18 @@ function addEntityToNodes(noteList, entity, parentPath = "") {
 
 let keys = [] as string[];
 
-const fullOutput = ref(false);
+const viewSecrets = ref(false);
+
+function addQueryParams(base: string): string {
+  if (viewSecrets.value) {
+    return base + "?format";
+  } else {
+    return base;
+  }
+}
 
 axios
-  .get("http://localhost:8000" + (fullOutput.value ? "?full" : ""))
+  .get(addQueryParams("http://localhost:8000"))
   .then((res) => {
     console.log("Got initial data", res.data);
     res.data.forEach((entity) => {
@@ -79,12 +87,9 @@ axios
 <template>
   <Message severity="error" v-if="!!errorMessage" :closable="false">{{ errorMessage }}</Message>
   <div style="position: relative">
-    <ToggleButton
-      v-model="fullOutput"
-      onLabel="Applied variables"
-      offLabel="No variables"
-      style="float: right; position: absolute; top: 0.5em; right: 0.5em; z-index: 100"
-    />
+    <div style="float: right; position: absolute; top: 0.5em; right: 0.5em; z-index: 100">
+      <ToggleButton v-model="viewSecrets" onLabel="Show secrets" offLabel="Hide secrets" />
+    </div>
   </div>
   <Splitter class="absolute" v-if="!errorMessage">
     <SplitterPanel :size="15" :minSize="20" class="absolute">
@@ -93,7 +98,7 @@ axios
     <SplitterPanel :size="75" class="absolute">
       <TabView class="absolute">
         <TabPanel v-for="tab in tabs" :key="tab.value" :header="basename(tab.value)" class="absolute">
-          <RequestTab :value="tab.value" :fullOutput="fullOutput" class="absolute"></RequestTab>
+          <RequestTab :value="tab.value" :viewSecrets="viewSecrets" class="absolute"></RequestTab>
         </TabPanel>
       </TabView>
     </SplitterPanel>
