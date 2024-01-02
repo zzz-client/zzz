@@ -13,7 +13,7 @@ export interface IServer {
   getMethod(): string;
   getQueryParams(): URLSearchParams;
   respond(code: number, body: any, headers: StringToStringMap): any;
-  listen(responder: Function): void;
+  listen(callback: Function): void;
 }
 
 export default function Serve(appConfig: AppConfig, actorName: string = "Pass") {
@@ -44,11 +44,11 @@ export class Server implements IServer {
   getQueryParams(): URLSearchParams {
     return new URL(this.request!.url).searchParams;
   }
-  listen(responder: Function): void {
+  listen(callback: Function): void {
     const HTTP_PORT = Deno.env.get("PORT") as number | undefined || 8000;
     Deno.serve({ port: HTTP_PORT }, (request: Request): Response => {
       this.request = request;
-      return responder(this);
+      return callback(this);
     });
   }
 }

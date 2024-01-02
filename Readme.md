@@ -186,8 +186,6 @@ Needs its own modularity, or part of the Store?
 
 backend:
   - Sweet mother of god, fix the design pattern in serve.ts
-  - Split Store
-    - Where should we write to for Postman Store?
     - Add workspace entity for Get, and some command to get all workspaces
   - Finish auth UI per-request
     - Create auth UI for bulk edit and creation (using above component)
@@ -205,4 +203,5 @@ Frontend:
 - Expand & Collapse All
 - TUI
 - Determine parser based on the supplied content-type header instead of having to do extension?
+- Where should we write to for Postman Store?
 - More Stores & parsers; TOML, SQLite
