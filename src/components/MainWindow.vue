@@ -7,7 +7,7 @@ import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
 import Message from "primevue/message";
 import ToggleButton from "primevue/togglebutton";
-import { ref, toRef } from "vue";
+import { ref, toRef, toRefs } from "vue";
 import Collections from "./Collections.vue";
 import RequestTab from "./RequestTab.vue";
 import axios from "axios";
@@ -16,6 +16,7 @@ const basename = (path) => path.split("/").reverse()[0];
 
 const tabs = ref([] as { value: string }[]);
 const folders = ref([] as any[]);
+const dirty = ref([] as boolean[]);
 const errorMessage = ref("");
 
 let lastClick = -1;
@@ -72,7 +73,11 @@ function addQueryParams(base: string): string {
 }
 
 axios
-  .get(addQueryParams("http://localhost:8000"))
+  .get(addQueryParams("http://localhost:8000"), {
+    headers: {
+      "X-Zzz-Workspace": ""
+    }
+  })
   .then((res) => {
     console.log("Got initial data", res.data);
     res.data.forEach((entity) => {
@@ -92,7 +97,8 @@ function onTabChange(event: any) {
   const tab = tabs.value[event.index];
   console.log(tab);
   if (event.index === tabs.value.length) {
-    tabs.value.push({ value: "New Request" });
+    tabs.value.push({ value: "Untitled Request" });
+    dirty.value[event.index] = true;
     activeTab.value = event.index;
     // document.title = `Zzz - ${basename(requestPath)}`;
   }
@@ -116,11 +122,12 @@ function clickBadge(tabIndex) {
     </SplitterPanel>
     <SplitterPanel :size="75" class="absolute">
       <TabView class="absolute" @tab-click="onTabChange" v-model:activeIndex="activeTab">
-        <TabPanel v-for="(tab, i) in tabs" :key="tab.value" :header="basename(tab.value)" class="absolute">
-          <template #header>
-            <Badge style="margin-left: 5px" value="x" @click="clickBadge(i)"></Badge>
-          </template>
+        <TabPanel v-for="(tab, i) in tabs" :key="tab.value.Name" :header="basename(tab.value)" class="absolute">
           <RequestTab :value="tab.value" :viewSecrets="viewSecrets" class="absolute"></RequestTab>
+          <template #header>
+            <Badge v-if="dirty[i]" style="margin-left: 0.5em; margin-right: 0.5em"></Badge>
+            <Badge style="" value="x" @click="clickBadge(i)"></Badge>
+          </template>
         </TabPanel>
         <TabPanel header="+" />
       </TabView>

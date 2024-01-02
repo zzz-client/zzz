@@ -37,10 +37,14 @@ function onCellEditComplete(change) {
     <DataTable :value="data" :editMode="props.readOnly ? 'row' : 'cell'">
       <!-- editMode="cell"-->
       <Column key="key" field="key" header="Key">
-        <template #editor="{ data, field }"><InputText v-model="data[field]" autofocus /></template>
+        <template #editor="{ data, field }">
+          <InputText v-model="data[field]" autofocus placeholder="Key" />
+        </template>
       </Column>
       <Column key="value" field="value" header="Value" style="width: 75%">
-        <template #editor="{ data, field }"><InputText v-model="data[field]" autofocus /></template>
+        <template #editor="{ data, field }">
+          <InputText v-model="data[field]" autofocus placeholder="Value" />
+        </template>
       </Column>
     </DataTable>
   </div>

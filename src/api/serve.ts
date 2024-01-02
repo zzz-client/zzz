@@ -18,13 +18,28 @@ export interface IServer {
 
 export default function Serve(appConfig: AppConfig, actorName: string = "Pass") {
   new Server().listen((server: IServer) => {
-    if (server.getMethod() === "GET") {
-      return respond(server, actorName);
+    switch (server.getMethod()) {
+      case "GET":
+        return respond(server, actorName);
+      case "POST":
+        return respond(server, "Client");
+      case "OPTIONS":
+        console.log("Responding to OPTIONS", server.getUrl());
+        const headers = {
+          "Allow": ["OPTIONS", "GET"],
+          "Access-Control-Allow-Headers": ["X-Zzz-Workspace"],
+          ...getHeaders("application/JSON"),
+        };
+        if (server.getUrl() !== "/") {
+          headers.Allow.PUSH("POST");
+        }
+        return new Response(null, {
+          status: 204,
+          headers: headers,
+        });
+      default:
+        throw new Error(`Unsupported method: ${server.getMethod()}`);
     }
-    if (server.getMethod() === "POST") {
-      return respond(server, "Client");
-    }
-    throw new Error(`Unsupported method: ${server.getMethod()}`);
   });
 }
 
@@ -74,7 +89,7 @@ async function respond(server: IServer, actorName: string = "Pass") {
 
   if (base === "") {
     const whatever = await Collections();
-    return server.respond(200, JSON.stringify(whatever, null, 2), { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });
+    return server.respond(200, JSON.stringify(whatever, null, 2), getHeaders(contentType));
   }
   return Stat(base)
     .then((stats) => {
@@ -130,7 +145,6 @@ function getParser(resourcePath: string): Parser {
   const ext = extname(resourcePath).substring(1).toLowerCase();
   switch (ext) {
     case "json":
-    default:
       return Parsers.JSON;
     case "yml":
     case "yaml":
@@ -140,8 +154,12 @@ function getParser(resourcePath: string): Parser {
     case "txt":
     case "curl":
       return Parsers.TEXT;
+    default:
+      throw new Error("No known parser for: " + ext);
   }
-  // throw new Error("No known parser for: " + ext);
+}
+function getHeaders(contentType: string): any {
+  return { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" };
 }
 function getContentType(resourcePath: string): string {
   const ext = extname(resourcePath).substring(1).toLowerCase();

@@ -3,7 +3,6 @@ import { ref, toRef, toRefs, watch } from "vue";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
 import Dropdown from "primevue/dropdown";
-import DataTable from "primevue/datatable";
 import Badge from "primevue/badge";
 import KeyValueTable from "./KeyValueTable.vue";
 const props = defineProps(["data"]);

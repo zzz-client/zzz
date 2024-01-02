@@ -1,3 +1,4 @@
+Name: Basic Functionality
 Method: GET
 URL: "{{_endpoint}}{{standard_path}}query"
 QueryParams:

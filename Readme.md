@@ -186,7 +186,7 @@ Needs its own modularity, or part of the Store?
 
 backend:
   - Sweet mother of god, fix the design pattern in serve.ts
-    - Add workspace entity for Get, and some command to get all workspaces
+  - Add workspace entity for Get, and some command to get all workspaces
   - Create auth UI for bulk edit and creation
   - Cookie jar
   - Redo Hooks so it's not only file-based
