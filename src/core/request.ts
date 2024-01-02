@@ -1,4 +1,5 @@
 export interface Entity {
+  Id: string;
   Type: string;
   Name: string;
 }
@@ -10,6 +11,7 @@ export interface ZzzResponse {
   data: any;
 }
 export default class ZzzRequest implements Entity {
+  Id: string;
   Type = "Request";
   Name: string;
   URL: string;
@@ -18,7 +20,8 @@ export default class ZzzRequest implements Entity {
   Headers: StringToStringMap;
   Variables: StringToStringMap;
   Body: any;
-  constructor(name: string, url: string, method: string) {
+  constructor(id: string, name: string, url: string, method: string) {
+    this.Id = id;
     this.Name = name;
     this.URL = url;
     this.Method = method;
@@ -27,21 +30,25 @@ export default class ZzzRequest implements Entity {
     this.Variables = {} as StringToStringMap;
   }
 }
-export class Collection {
+export class Collection implements Entity {
+  Id: string;
   Type = "Collection";
   Name: string;
   Children: Folder[];
-  constructor(name: string) {
+  constructor(id: string, name: string) {
+    this.Id = id;
     this.Name = name;
     this.Children = [];
   }
 }
-export class Folder {
+export class Folder implements Entity {
+  Id: string;
   Type = "Folder";
   Name: string;
   Children: Item[];
-  constructor(name: string) {
+  constructor(id: string, name: string) {
     this.Name = name;
+    this.Id = id;
     this.Children = [];
   }
 }

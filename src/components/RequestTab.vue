@@ -17,8 +17,8 @@ import { ref, toRef, toRefs } from "vue";
 import ZzzRequest, { ZzzResponse, StringToStringMap } from "../core/request";
 const basename = (path) => path.split("/").reverse()[0];
 
-const props = defineProps(["value"]);
-const { value } = toRefs(props);
+const props = defineProps(["value", "fullOutput"]);
+const { value, fullOutput } = toRefs(props);
 const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 const method = ref("GET");
 const requestData = ref({} as any);
@@ -28,9 +28,9 @@ const response = ref({} as ZzzResponse);
 
 async function fetchRequest(value: string): Promise<any> {
   return axios
-    .get("http://localhost:8000/" + value)
+    .get("http://localhost:8000/" + value + (fullOutput.value ? "?full=1" : ""))
     .then((res) => {
-      console.log("request fetched", res.data);
+      console.log("request fetched", fullOutput.value, res.data);
       return res.data;
     })
     .catch((error) => {
@@ -68,7 +68,7 @@ function doTheThing(newValue: string) {
 async function send() {
   // const what = (await axios({method: requestData.value.Method, headers: requestData.value.Headers, params: requestData.value.QueryParams, url: requestData.value.URL, data: requestData.value.Body})).data;
   axios
-    .post("http://localhost:8000/" + value.value + ".json")
+    .get("http://localhost:8000/" + value.value + ".json" + (fullOutput.value ? "?full" : ""))
     .then((what) => {
       response.value = {
         data: what.data,

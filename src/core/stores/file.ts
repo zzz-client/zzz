@@ -1,6 +1,6 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import ZzzRequest, { Collection, Folder, Item, StringToStringMap } from "../request.ts";
-import { EntityType } from "../storage.ts";
+import { EntityType, Stores } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 import { parse as yamlParse, stringify as yamlStringify } from "https://deno.land/std/yaml/mod.ts";
 import { parse as xmlParse } from "https://deno.land/x/xml/mod.ts";
@@ -37,9 +37,16 @@ export default class FileStore implements IStore {
   }
   async get(entityType: EntityType, entityName: string, environmentName: string): Promise<Item> {
     if (entityType === EntityType.Request) {
-      return await Load(entityName, environmentName, this.fileExtension);
+      const requestPath = entityName + "." + this.fileExtension;
+      const resultRequest = Parsers.YAML.parse(Deno.readTextFileSync(requestPath)) as ZzzRequest;
+      resultRequest.Id = requestPath;
+      resultRequest.Type = EntityType[entityType];
+      if (!resultRequest.Name) {
+        resultRequest.Name = basename(entityName);
+      }
+      return resultRequest;
     } else if (entityType === EntityType.Collection || entityType === EntityType.Folder) {
-      const item = new (entityType === EntityType.Collection ? Collection : Folder)(basename(entityName));
+      const item = new (entityType === EntityType.Collection ? Collection : Folder)(entityName, basename(entityName));
       for await (const child of Deno.readDir(entityName)) {
         if (child.isDirectory) {
           item.Children.push(await this.get(EntityType.Folder, `${entityName}/${child.name}`, environmentName));

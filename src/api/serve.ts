@@ -1,15 +1,17 @@
 // import { basename, extname } from "path";
-import ZzzRequest, { StringToStringMap } from "../core/request.ts";
-import { Collections, EntityType, Get, Stat } from "../core/storage.ts";
+import ZzzRequest, { Entity, StringToStringMap } from "../core/request.ts";
+import { Collections, EntityType, Get, Stat, Stores } from "../core/storage.ts";
 import { AppConfig } from "../main.ts";
 import tim from "../core/tim.ts";
 import { Act } from "../core/factories.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
 import { Parser, Parsers } from "../core/stores/file.ts";
+import { Load } from "../core/variables.ts";
 
 export interface IServer {
   getUrl(): string;
   getMethod(): string;
+  getQueryParams(): URLSearchParams;
   respond(code: number, body: any, headers: StringToStringMap): any;
   listen(responder: Function): void;
 }
@@ -32,10 +34,15 @@ export class Server implements IServer {
     return new Response(body, { status, headers });
   }
   getUrl(): string {
-    return new URL(this.request!.url).pathname.substring(0);
+    const x = new URL(this.request!.url).pathname;
+    console.log("getting url from", this.request!.url, x);
+    return x;
   }
   getMethod(): string {
     return this.request!.method;
+  }
+  getQueryParams(): URLSearchParams {
+    return new URL(this.request!.url).searchParams;
   }
   listen(responder: Function): void {
     const HTTP_PORT = Deno.env.get("PORT") as number | undefined || 8000;
@@ -48,6 +55,7 @@ export class Server implements IServer {
 
 async function respond(server: IServer, actorName: string = "Pass") {
   const url = server.getUrl();
+  console.log("Responding to", url);
   if (url === "/favicon.ico") {
     return server.respond(200, {}, {});
   }
@@ -72,7 +80,12 @@ async function respond(server: IServer, actorName: string = "Pass") {
     .then((stats) => {
       switch (stats.Type) {
         case "Request":
-          return Get(EntityType.Request, base, "integrate");
+          if (server.getQueryParams().has("full")) {
+            console.log("Loading full");
+            return Load(new ZzzRequest(base, "", "", ""), base, "integrate", Stores.YAML); // TODO Hardcoded
+          } else {
+            return Get(EntityType.Request, base, "integrate");
+          }
         case "Collection":
           return Get(EntityType.Collection, base, "integrate");
         case "Folder":
@@ -86,9 +99,12 @@ async function respond(server: IServer, actorName: string = "Pass") {
       }
     })
     .then((result) => {
+      console.log("HERE WE GO", result);
       const theRequest = result as ZzzRequest;
       theRequest.Method = server.getMethod(); // TODO: HATE THIS
-      tim(theRequest, theRequest.Variables); // TODO: Tim should be called in the formatter?? renderer???
+      if (server.getQueryParams().has("format")) {
+        tim(theRequest, theRequest.Variables);
+      }
       if (ext === "curl") {
         // TODO: Hardcoded
         return Act(theRequest, "Curl");

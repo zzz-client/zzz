@@ -2,18 +2,20 @@ import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
 import { EntityType, Stores } from "./storage.ts";
 import { getDirectoryForEntity, Parser, Parsers } from "./stores/file.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
-import ZzzRequest from "./request.ts";
+import ZzzRequest, { Entity } from "./request.ts";
 import { IStore } from "./factories.ts";
 const DEFAULT_MARKER = "_defaults";
 const SESSION_FILE = "session";
 const GLOBALS_FILE = "globals";
+const BLANK_ENTITY = {
+  Id: "",
+  Type: "",
+  Name: "",
+} as Entity;
 
-export async function Load(entityName: string, environmentName: string, fileExtension: string): Promise<ZzzRequest> {
-  const requestPath = entityName + "." + fileExtension;
-  const requestContents = Parsers.YAML.parse(Deno.readTextFileSync(requestPath)) as ZzzRequest;
-  checkRequired(requestContents);
-  const resultRequest = new ZzzRequest(requestContents.Name, requestContents.URL, requestContents.Method);
-  const store = Stores[fileExtension.toUpperCase()];
+export async function Load(subjectRequest: ZzzRequest, entityName: string, environmentName: string, store: IStore): Promise<ZzzRequest> {
+  checkRequired(subjectRequest);
+  const resultRequest = new ZzzRequest(entityName, subjectRequest.Name, subjectRequest.URL, subjectRequest.Method);
   const variables = new FileVariables() as IVariables;
   const globals = await variables.globals(store);
   const globalsLocal = await variables.local(GLOBALS_FILE, store);
@@ -21,21 +23,18 @@ export async function Load(entityName: string, environmentName: string, fileExte
   const environmentLocal = await variables.local(environmentName, store);
   const defaults = await variables.defaults(dirname(entityName), store);
   const sessionLocal = await variables.local(SESSION_FILE, store);
-  for (const item of [globals, globalsLocal, environment, environmentLocal, defaults, requestContents, sessionLocal]) {
+  for (const item of [globals, globalsLocal, environment, environmentLocal, defaults, resultRequest, sessionLocal]) {
     Meld(resultRequest, item);
-  }
-  if (!resultRequest.Name) {
-    resultRequest.Name = basename(entityName);
   }
   console.log("Melded", JSON.stringify(resultRequest.Variables, null, 2));
   return resultRequest;
 }
 
-async function optionalEnvironment(variables: IVariables, environmentName: string, store: IStore): Promise<ZzzRequest> {
+async function optionalEnvironment(variables: IVariables, environmentName: string, store: IStore): Promise<Entity> {
   try {
     return await variables.environment(environmentName, store);
   } catch (e) {
-    return new ZzzRequest("", "", "");
+    return BLANK_ENTITY;
   }
 }
 
@@ -72,11 +71,11 @@ class FileVariables implements IVariables {
       return result;
     } catch (e) {
       console.log("error loading environment");
-      return Promise.resolve(new ZzzRequest("", "", ""));
+      return Promise.resolve(BLANK_ENTITY);
     }
   }
   async defaults(folderPath: string, store: IStore): Promise<ZzzRequest> {
-    const theRequest = new ZzzRequest("", "", ""); // TODO: Is this hacky?
+    const theRequest = new ZzzRequest("", "", "", "");
     const fileExtension = "JSON"; // TODO: Hardcoded
     const parser = Parsers[fileExtension.toUpperCase()];
     const defaultFilePaths = getDefaultFilePaths(folderPath, fileExtension);
