@@ -4,7 +4,7 @@ import { parseArgs } from "https://deno.land/std/cli/parse_args.ts";
 export const argv = parseArgs(Deno.args);
 
 export const appConfigDefaults = {
-  environment: "Integrate",
+  environment: "integrate",
   actor: "Client",
   hooks: "YAML",
 };

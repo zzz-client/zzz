@@ -72,15 +72,15 @@ async function respond(server: IServer, actorName: string = "Pass") {
     .then((stats) => {
       switch (stats.Type) {
         case "Request":
-          return Get(EntityType.Request, base, "Integrate");
+          return Get(EntityType.Request, base, "integrate");
         case "Collection":
-          return Get(EntityType.Collection, base, "Integrate");
+          return Get(EntityType.Collection, base, "integrate");
         case "Folder":
-          return Get(EntityType.Folder, base, "Integrate");
+          return Get(EntityType.Folder, base, "integrate");
         // case "Environment":
-        //   return Get(EntityType.Environment, base, "Integrate");
+        //   return Get(EntityType.Environment, base, "integrate");
         // case "Authorization":
-        //   return Get(EntityType.Authorization, base, "Integrate");
+        //   return Get(EntityType.Authorization, base, "integrate");
         default:
           throw new Error(`Unsupported type of entity for Stat: ${stats.Type}`);
       }

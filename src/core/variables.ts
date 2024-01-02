@@ -10,20 +10,24 @@ const GLOBALS_FILE = "globals";
 
 export async function Load(entityName: string, environmentName: string, fileExtension: string): Promise<ZzzRequest> {
   const requestPath = entityName + "." + fileExtension;
-  const requestContents = Parsers.YAML.parse(Deno.readTextFileSync(requestPath));
+  const requestContents = Parsers.YAML.parse(Deno.readTextFileSync(requestPath)) as ZzzRequest;
   checkRequired(requestContents);
-  const resultRequest = new ZzzRequest("", "", ""); // TODO: Is this hacky?
+  const resultRequest = new ZzzRequest(requestContents.Name, requestContents.URL, requestContents.Method);
   const store = Stores[fileExtension.toUpperCase()];
   const variables = new FileVariables() as IVariables;
   const globals = await variables.globals(store);
   const globalsLocal = await variables.local(GLOBALS_FILE, store);
   const environment = await variables.environment(environmentName, store);
-  const environmentLocal = await optionalEnvironment(variables, environmentName, store);
+  const environmentLocal = await variables.local(environmentName, store);
   const defaults = await variables.defaults(dirname(entityName), store);
   const sessionLocal = await variables.local(SESSION_FILE, store);
-  for (const item in [globals, globalsLocal, environment, environmentLocal, defaults, requestContents, sessionLocal]) {
+  for (const item of [globals, globalsLocal, environment, environmentLocal, defaults, requestContents, sessionLocal]) {
     Meld(resultRequest, item);
   }
+  if (!resultRequest.Name) {
+    resultRequest.Name = basename(entityName);
+  }
+  console.log("Melded", JSON.stringify(resultRequest.Variables, null, 2));
   return resultRequest;
 }
 

@@ -37,11 +37,7 @@ export default class FileStore implements IStore {
   }
   async get(entityType: EntityType, entityName: string, environmentName: string): Promise<Item> {
     if (entityType === EntityType.Request) {
-      const theRequest = await Load(entityName, environmentName, this.fileExtension);
-      if (!theRequest.Name) {
-        theRequest.Name = basename(entityName);
-      }
-      return theRequest;
+      return await Load(entityName, environmentName, this.fileExtension);
     } else if (entityType === EntityType.Collection || entityType === EntityType.Folder) {
       const item = new (entityType === EntityType.Collection ? Collection : Folder)(basename(entityName));
       for await (const child of Deno.readDir(entityName)) {

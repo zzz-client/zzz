@@ -58,7 +58,7 @@ async function loadRequest(collection: CollectionSchema, environmentName: string
 }
 async function loadEnvironment(target: string): Promise<ZzzRequest> {
   try {
-    return (await Stores.YAML.get(EntityType.Environment, target, "Integrate")) as ZzzRequest; // TODO: Hardcoded
+    return (await Stores.YAML.get(EntityType.Environment, target, "integrate")) as ZzzRequest; // TODO: Hardcoded
   } catch (e) {
     return new ZzzRequest("", "", ""); // TODO: WHAT
   }

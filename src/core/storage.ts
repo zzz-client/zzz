@@ -25,7 +25,7 @@ export async function Collections(): Promise<Collection[]> {
   const result = [] as Collection[];
   const collections = ["REST API"];
   for (const collection of collections) {
-    result.push(await Get(EntityType.Collection, collection, "Integrate")); // TODO: Hardcoded
+    result.push(await Get(EntityType.Collection, collection, "integrate")); // TODO: Hardcoded
   }
   return result;
 }
