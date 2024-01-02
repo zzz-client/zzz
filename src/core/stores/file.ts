@@ -7,9 +7,6 @@ import { parse as xmlParse } from "https://deno.land/x/xml/mod.ts";
 const xmlStringify = (x: any) => Deno.exit(1);
 import { IStore, Stats } from "../factories.ts";
 import { getEnvironmentPath, Load, Meld } from "../variables.ts";
-
-const SESSION_FILE = "session.local";
-
 export default class FileStore implements IStore {
   fileExtension: string;
   constructor(fileExtension: string) {
@@ -40,13 +37,7 @@ export default class FileStore implements IStore {
   }
   async get(entityType: EntityType, entityName: string, environmentName: string): Promise<Item> {
     if (entityType === EntityType.Request) {
-      const theRequest = new ZzzRequest("", "", ""); // TODO: Is this hacky?
-      console.log("Pre-pre-meld", dirname(entityName));
-      const meldedDefaults = await Load(dirname(entityName), environmentName, this.fileExtension);
-      console.log("Pre-meld", theRequest.URL);
-      Meld(theRequest, meldedDefaults);
-      // Meld actual request?
-      console.log("Post-meld", theRequest.URL);
+      const theRequest = await Load(entityName, environmentName, this.fileExtension);
       if (!theRequest.Name) {
         theRequest.Name = basename(entityName);
       }

@@ -5,18 +5,34 @@ import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 import ZzzRequest from "./request.ts";
 import { IStore } from "./factories.ts";
 const DEFAULT_MARKER = "_defaults";
+const SESSION_FILE = "session";
+const GLOBALS_FILE = "globals";
 
-export async function Load(folderName: string, environmentName: string, fileExtension: string): Promise<ZzzRequest> {
+export async function Load(entityName: string, environmentName: string, fileExtension: string): Promise<ZzzRequest> {
+  const requestPath = entityName + "." + fileExtension;
+  const requestContents = Parsers.YAML.parse(Deno.readTextFileSync(requestPath));
+  checkRequired(requestContents);
   const resultRequest = new ZzzRequest("", "", ""); // TODO: Is this hacky?
   const store = Stores[fileExtension.toUpperCase()];
   const variables = new FileVariables() as IVariables;
   const globals = await variables.globals(store);
+  const globalsLocal = await variables.local(GLOBALS_FILE, store);
   const environment = await variables.environment(environmentName, store);
-  const defaults = await variables.defaults(folderName, store);
-  Meld(resultRequest, globals);
-  Meld(resultRequest, environment);
-  Meld(resultRequest, defaults);
+  const environmentLocal = await optionalEnvironment(variables, environmentName, store);
+  const defaults = await variables.defaults(dirname(entityName), store);
+  const sessionLocal = await variables.local(SESSION_FILE, store);
+  for (const item in [globals, globalsLocal, environment, environmentLocal, defaults, requestContents, sessionLocal]) {
+    Meld(resultRequest, item);
+  }
   return resultRequest;
+}
+
+async function optionalEnvironment(variables: IVariables, environmentName: string, store: IStore): Promise<ZzzRequest> {
+  try {
+    return await variables.environment(environmentName, store);
+  } catch (e) {
+    return new ZzzRequest("", "", "");
+  }
 }
 
 export function Meld(destination: any, source: any): void {
@@ -36,37 +52,36 @@ interface IVariables {
   globals(store: IStore): Promise<ZzzRequest>;
   environment(environmentName: string, store: IStore): Promise<ZzzRequest>;
   defaults(folderPath: string, store: IStore): Promise<ZzzRequest>;
+  local(environmentName: string, store: IStore): Promise<ZzzRequest>;
 }
 
 class FileVariables implements IVariables {
-  globals(store: IStore): Promise<ZzzRequest> {
-    return store.get(EntityType.Environment, "globals", "Integrate"); // TODO: Hardcoded
+  async globals(store: IStore): Promise<ZzzRequest> {
+    return await optionalEnvironment(this, GLOBALS_FILE, store);
+  }
+  async local(environmentName: string, store: IStore): Promise<ZzzRequest> {
+    return await optionalEnvironment(this, environmentName + ".local", store);
   }
   environment(environmentName: string, store: IStore): Promise<ZzzRequest> {
-    console.error("Loading env", environmentName);
-    return store.get(EntityType.Environment, environmentName, environmentName);
+    try {
+      const result = store.get(EntityType.Environment, environmentName, environmentName);
+      return result;
+    } catch (e) {
+      console.log("error loading environment");
+      return Promise.resolve(new ZzzRequest("", "", ""));
+    }
   }
   async defaults(folderPath: string, store: IStore): Promise<ZzzRequest> {
-    const resourceName = basename(folderPath);
     const theRequest = new ZzzRequest("", "", ""); // TODO: Is this hacky?
-    const fileExtension = "JSON";
+    const fileExtension = "JSON"; // TODO: Hardcoded
     const parser = Parsers[fileExtension.toUpperCase()];
-    const defaultFilePaths = getDefaultFilePaths(resourceName, fileExtension);
+    const defaultFilePaths = getDefaultFilePaths(folderPath, fileExtension);
     for (const defaultFilePath of defaultFilePaths) {
       if (existsSync(defaultFilePath)) {
         const fileContents = parser.parse(Deno.readTextFileSync(defaultFilePath));
         checkForbidden(fileContents);
         Meld(theRequest, fileContents);
       }
-    }
-    const filePath = resourceName + "." + fileExtension;
-    const fileContents = parser.parse(Deno.readTextFileSync(filePath));
-    checkRequired(fileContents);
-    Meld(theRequest, fileContents);
-    const sessionPath = getEnvironmentPath("session.local", fileExtension);
-    if (existsSync(sessionPath)) {
-      const sessionContents = parser.parse(Deno.readTextFileSync(sessionPath));
-      Meld(theRequest, sessionContents);
     }
     return theRequest;
   }
