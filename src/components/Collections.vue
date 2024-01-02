@@ -1,11 +1,19 @@
 <script setup lang="ts">
+import { MenuItem, MenuItemCommandEvent } from "primevue/menuitem";
 import PanelMenu from "primevue/panelmenu";
-import { ref, toRefs } from "vue";
+import { ref, toRefs, watch } from "vue";
 const expandedKeys = ref({});
 
 const props = defineProps(["folders"]);
 
 const { folders } = toRefs(props);
+
+for (const folder of folders.value) {
+  folder.command = (event: MenuItemCommandEvent) => {
+    console.log("butts lol", event);
+  };
+  folder.url = null;
+}
 
 function collapseAll() {
   // for (const key of keys) {

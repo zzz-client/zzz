@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import "primevue/resources/themes/arya-purple/theme.css";
+import Badge from "primevue/badge";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import TabPanel from "primevue/tabpanel";
@@ -13,22 +14,33 @@ import axios from "axios";
 import { MenuItem } from "primevue/menuitem";
 const basename = (path) => path.split("/").reverse()[0];
 
-const tab1RequestPath = ref("");
-const tabs = ref([
-  {
-    value: toRef(tab1RequestPath)
-  }
-]);
+const tabs = ref([] as { value: string }[]);
 const folders = ref([] as any[]);
 const errorMessage = ref("");
 
-window.addEventListener("hashchange", () => {
-  const requestPath = decodeURI(window.location.hash.substring(1));
-  tab1RequestPath.value = requestPath;
-  document.title = `Zzz - ${basename(requestPath)}`;
-  console.log("#", tab1RequestPath.value);
-});
+let lastClick = -1;
+function clickRequest(uwu) {
+  const currentClick = Date.now();
+  if (lastClick >= 0 && currentClick - lastClick < 500) {
+    console.log(lastClick, currentClick, uwu);
+    console.log("uwu", uwu.item);
+    openTab(uwu.item.key);
+  }
+  lastClick = currentClick;
+}
+function openTab(key: string) {
+  for (let i = 0; i < tabs.value.length; i++) {
+    if (tabs.value[i].value == key) {
+      activeTab.value = i;
+      return;
+    }
+  }
+  console.log("not open", key);
+  tabs.value.push({ value: key });
+  activeTab.value = tabs.value.length - 1;
+}
 
+let keys = [] as string[];
 function addEntityToNodes(noteList, entity, parentPath = "") {
   let fullPath = parentPath + "/" + entity.Name;
   if (fullPath.substring(0, 1) == "/") {
@@ -39,11 +51,7 @@ function addEntityToNodes(noteList, entity, parentPath = "") {
     label: basename(entity.Name)
   } as MenuItem;
   if (entity.Type == "Request") {
-    // newNode.type = "url"; // for Tree
-    newNode.url = "#" + fullPath;
-    newNode.command = () => {
-      window.location.hash = newNode.url!;
-    };
+    newNode.command = clickRequest;
   }
   if (entity.Children) {
     newNode.items = [];
@@ -54,11 +62,7 @@ function addEntityToNodes(noteList, entity, parentPath = "") {
   noteList.push(newNode);
   keys.push(newNode.key!);
 }
-
-let keys = [] as string[];
-
 const viewSecrets = ref(false);
-
 function addQueryParams(base: string): string {
   if (viewSecrets.value) {
     return base + "?format";
@@ -82,6 +86,21 @@ axios
     console.error(error.stack);
     errorMessage.value = `An error occured: ${error.message}`;
   });
+
+function onTabChange(event: any) {
+  console.log("tab change", event);
+  const tab = tabs.value[event.index];
+  console.log(tab);
+  if (event.index === tabs.value.length) {
+    tabs.value.push({ value: "New Request" });
+    activeTab.value = event.index;
+    // document.title = `Zzz - ${basename(requestPath)}`;
+  }
+}
+const activeTab = ref(0);
+function clickBadge(tabIndex) {
+  tabs.value.splice(tabIndex, 1);
+}
 </script>
 
 <template>
@@ -96,10 +115,14 @@ axios
       <Collections :folders="folders" />
     </SplitterPanel>
     <SplitterPanel :size="75" class="absolute">
-      <TabView class="absolute">
-        <TabPanel v-for="tab in tabs" :key="tab.value" :header="basename(tab.value)" class="absolute">
+      <TabView class="absolute" @tab-click="onTabChange" v-model:activeIndex="activeTab">
+        <TabPanel v-for="(tab, i) in tabs" :key="tab.value" :header="basename(tab.value)" class="absolute">
+          <template #header>
+            <Badge style="margin-left: 5px" value="x" @click="clickBadge(i)"></Badge>
+          </template>
           <RequestTab :value="tab.value" :viewSecrets="viewSecrets" class="absolute"></RequestTab>
         </TabPanel>
+        <TabPanel header="+" />
       </TabView>
     </SplitterPanel>
   </Splitter>

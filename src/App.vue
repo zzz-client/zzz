@@ -6,7 +6,6 @@ import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 const toast = useToast();
 
-console.log("toast");
 toast.add({ severity: "warn", summary: "X", detail: "Y", life: 1000 });
 </script>
 

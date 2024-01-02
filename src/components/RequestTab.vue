@@ -55,7 +55,7 @@ function doTheThing(newValue: string) {
     }
     newBreadcrumbs.push({
       label: basename(pathPart),
-      url: "#" + href
+      command: () => alert("Fix breadcrumbs, yo dolt")
     });
   }
   breadcrumbs.value = newBreadcrumbs;
