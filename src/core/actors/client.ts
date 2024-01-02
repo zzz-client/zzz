@@ -1,4 +1,4 @@
-import axiod from "https://deno.land/x/axiod/mod.ts";
+import axios from "https://deno.land/x/redaxios/mod.ts";
 import { IActor } from "../factories.ts";
 import ZzzRequest from "../request.ts";
 import { Parsers } from "../stores/file.ts";
@@ -29,7 +29,7 @@ function formatError(error: any) {
 }
 async function doRequest(theRequest: ZzzRequest): Promise<any> {
   return (
-    await axiod({
+    await axios({
       method: theRequest.Method,
       headers: theRequest.Headers,
       params: theRequest.QueryParams,
