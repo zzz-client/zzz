@@ -47,13 +47,13 @@ watch(
   <TabView>
     <TabPanel header="Body">
       <Dropdown v-model="bodyType" :options="bodyTypes" style="min-width: 6em" />
+      <pre>{{ data }}</pre>
     </TabPanel>
     <TabPanel header="Cookies">fewawef</TabPanel>
     <TabPanel header="Headers">
       <KeyValueTable :data="headers" :readOnly="true"></KeyValueTable>
     </TabPanel>
   </TabView>
-  <pre>{{ data }}</pre>
 </template>
 
 <style scoped></style>

@@ -36,7 +36,7 @@ function addQueryParams(base: string): string {
 
 async function fetchRequest(value: string): Promise<any> {
   return axios
-    .get(addQueryParams("http://localhost:8000/" + value + ".json"))
+    .get(addQueryParams("http://localhost:8000/" + value))
     .then((res) => {
       return res.data;
     })
@@ -75,7 +75,7 @@ function doTheThing(newValue: string) {
 async function send() {
   // const what = (await axios({method: requestData.value.Method, headers: requestData.value.Headers, params: requestData.value.QueryParams, url: requestData.value.URL, data: requestData.value.Body})).data;
   axios
-    .get(addQueryParams("http://localhost:8000/" + value.value + ".json"))
+    .get(addQueryParams("http://localhost:8000/" + value.value))
     .then((what) => {
       response.value = {
         data: what.data,
@@ -109,10 +109,10 @@ if (value) {
         <Button id="zxcvb" label="Send" @click="send">Send</Button>
       </div>
       <TabView>
-        <TabPanel header="Params"><KeyValueTable :data="requestData.QueryParams"></KeyValueTable></TabPanel>
         <TabPanel header="Authorization">
-          <Authorization :type="authorization"></Authorization>
+          <Authorization :method="authorization"></Authorization>
         </TabPanel>
+        <TabPanel header="Params"><KeyValueTable :data="requestData.QueryParams"></KeyValueTable></TabPanel>
         <TabPanel header="Headers"><KeyValueTable :data="requestData.Headers"></KeyValueTable></TabPanel>
         <TabPanel header="Body">
           <Body :body="requestData.Body"></Body>
