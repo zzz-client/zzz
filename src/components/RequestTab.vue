@@ -17,8 +17,8 @@ import { ref, toRef, toRefs } from "vue";
 import ZzzRequest, { ZzzResponse, StringToStringMap } from "../core/request";
 const basename = (path) => path.split("/").reverse()[0];
 
-const props = defineProps(["value", "fullOutput"]);
-const { value, fullOutput } = toRefs(props);
+const props = defineProps(["value", "viewSecrets"]);
+const { value, viewSecrets } = toRefs(props);
 const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 const method = ref("GET");
 const requestData = ref({} as any);
@@ -26,11 +26,18 @@ const breadcrumbs = ref([] as MenuItem[]);
 const authorization = ref("None");
 const response = ref({} as ZzzResponse);
 
+function addQueryParams(base: string): string {
+  if (viewSecrets.value) {
+    return base + "?format";
+  } else {
+    return base;
+  }
+}
+
 async function fetchRequest(value: string): Promise<any> {
   return axios
-    .get("http://localhost:8000/" + value + (fullOutput.value ? "?full=1" : ""))
+    .get(addQueryParams("http://localhost:8000/" + value + ".json"))
     .then((res) => {
-      console.log("request fetched", fullOutput.value, res.data);
       return res.data;
     })
     .catch((error) => {
@@ -68,7 +75,7 @@ function doTheThing(newValue: string) {
 async function send() {
   // const what = (await axios({method: requestData.value.Method, headers: requestData.value.Headers, params: requestData.value.QueryParams, url: requestData.value.URL, data: requestData.value.Body})).data;
   axios
-    .get("http://localhost:8000/" + value.value + ".json" + (fullOutput.value ? "?full" : ""))
+    .get(addQueryParams("http://localhost:8000/" + value.value + ".json"))
     .then((what) => {
       response.value = {
         data: what.data,
@@ -98,7 +105,7 @@ if (value) {
       <Breadcrumb :model="breadcrumbs" />
       <div class="flex">
         <Dropdown id="qwerty" disabled v-model="method" :options="methods" class="w-full md:w-14rem" />
-        <InputText id="asdf" disabled type="text" :value="(requestData as any).URL" />
+        <InputText id="asdf" disabled type="text" :value="requestData.URL" />
         <Button id="zxcvb" label="Send" @click="send">Send</Button>
       </div>
       <TabView>
