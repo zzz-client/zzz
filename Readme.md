@@ -31,13 +31,28 @@ Zzz came out of the desire for a light replacement to Postman with generally the
   - Maximum number of redirects
 
 
-# Interfaces
+# Usage
 
+Run `--help` for more detail on flag usages and shorthands.
+
+- `--environment <name>`: The name of the environment to load from
+- `--workspace <name>`: The name of the workspace to load from
+- `--http`: Start the HTTP server, defaults to port 8000
+- `--web`: Start the Web (Vite) server, defaults to port 5173
 
 
 ## Web
 
 ![Zzz web interface](./screenshots/web.png)
+
+```shell
+# Starts the web server (Vite)
+$ zzz --web
+
+# ...is how we want to do it,
+# but right now we have to do
+$ deno task web
+```
 
 Currently read only and still a work in progress but coming along very nicely!
 
@@ -50,23 +65,9 @@ breadcrumbs shouldn't actually be clickable until there's a tab for configuring 
 
 ![Zzz web interface](./screenshots/cli.png)
 
-Passing in the name of a request (i.e. the path to the file with or without extension) will perform it and output the response.
-
-You can override some implementations using flags:
-
-- `-e` / `--environment`: The name of the environment inside `environments` to load from
-- `-a` / `--actor`: The class to perform the action on the parsed request (see below)
-- `-h` / `--hooks`: TBD
-
 ```shell
 # Makes HTTP request and outputs response
 $ zzz "Folder Name/Request Name"
-
-# Load variables and settings from a specific environment
-$ zzz --environment qa "Folder Name/Request Name"
-
-# Run an HTTP server as an output for the program instead of the CLI
-$ zzz
 ```
 
 ---
@@ -95,10 +96,26 @@ Variables:
 
 ![Zzz REST API](./screenshots/api.png)
 
-
 This is itself an API that serves up the Zzz resources so that they can be used for other applications, like the web frontend. It is a basic REST API that maps URLs one-to-one with Requests; in other words, the path to retrieve the Request from the Store is the contents of the URL to get it from the server. The Request named "OAuth Client Credentials" in the folder "Authentication" would translate to the URL http://127.0.0.1:8000/Authentication/OAuth%20Client%20Credentials
 
-Adding a file extension to the end will change what format is returned: `http://127.0.0.1:8000/MyRequest.json` will yield the result as JSON and `http://127.0.0.1:8000/MyRequest.curl` will do it as the equivalent curl command as plaintext.
+This API can behave in one of two ways:
+
+  - GET: Responds with information about the subject Request
+  - POST: Performs the subject Request and responds with its results
+
+That is to say, performing a GET on `http://127.0.0.1:8000/Duck.json` would give you the JSON with the definition of the request, something like
+
+```json
+{
+  "Id": "ddg"
+  "URL": "https://ddg.gg",
+  "METHOD": "GET"
+}
+```
+
+Meanwhile, performing a POST on `http://127.0.0.1:8000/Duck.json` - that same endpoint - would actually perform `GET https://ddg.gg` and pass along its results.
+
+Adding a file extension to the end will change what format is returned: `http://127.0.0.1:8000/Duck.json` will yield the result as JSON and `http://127.0.0.1:8000/Duck.curl` will do it as the equivalent curl command as plaintext.
 
 - json
 - yml
@@ -106,12 +123,14 @@ Adding a file extension to the end will change what format is returned: `http://
 - txt
 - curl
 
+### POST
+
 ## TUI
 
 This would be SO sick and I think it should just be a matter of finding an ncurses-like library for Node and then getting the UI right
 
 
-# Structure
+# Architecture
 
 > NOTE: This is gonna change a lot
 
