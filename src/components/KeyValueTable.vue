@@ -2,14 +2,19 @@
 import DataTable from "primevue/datatable";
 import InputText from "primevue/inputtext";
 import Column from "primevue/column";
-import { ref, watch } from "vue";
+import { ref, toRef, watch } from "vue";
+
+interface KeyValue {
+  key: string;
+  value: string;
+}
 
 const props = defineProps<{
-  data: any;
+  data: KeyValue[];
   readOnly?: boolean;
 }>();
 
-const data = ref([]);
+const data = toRef(props.data);
 
 watch(
   () => props.data,

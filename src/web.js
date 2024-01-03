@@ -5,8 +5,13 @@ import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
 import Badge from "primevue/badge";
 import BadgeDirective from "primevue/badgedirective";
+import mitt from "mitt";
+export const emitter = mitt();
 
 const app = createApp(App);
+window.emitter = emitter;
+app.config.globalProperties.$mitt = emitter;
+
 app.use(PrimeVue);
 app.use(ToastService);
 

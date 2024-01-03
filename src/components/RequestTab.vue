@@ -17,8 +17,8 @@ import { ref, toRef, toRefs } from "vue";
 import ZzzRequest, { ZzzResponse, StringToStringMap } from "../core/request";
 const basename = (path) => path.split("/").reverse()[0];
 
-const props = defineProps(["value", "viewSecrets"]);
-const { value, viewSecrets } = toRefs(props);
+const props = defineProps(["value", "viewSecrets", "title"]);
+const { value, viewSecrets, title } = toRefs(props);
 const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 const method = ref("GET");
 const requestData = ref({} as any);
@@ -65,6 +65,7 @@ function doTheThing(newValue: string) {
       if (data.Type == "Request") {
         requestData.value = data;
       }
+      title.value = data.Name;
       method.value = data.Method;
     })
     .catch((error) => {
@@ -72,7 +73,7 @@ function doTheThing(newValue: string) {
       console.log(error.stack);
     });
 }
-async function send() {
+function send(): void {
   // const what = (await axios({method: requestData.value.Method, headers: requestData.value.Headers, params: requestData.value.QueryParams, url: requestData.value.URL, data: requestData.value.Body})).data;
   axios
     .get(addQueryParams("http://localhost:8000/" + value.value))
@@ -108,20 +109,23 @@ if (value) {
         <InputText id="asdf" disabled type="text" :value="requestData.URL" />
         <Button id="zxcvb" label="Send" @click="send">Send</Button>
       </div>
-      <TabView>
-        <TabPanel header="Authorization">
-          <Authorization :method="authorization"></Authorization>
-        </TabPanel>
-        <TabPanel header="Params"><KeyValueTable :data="requestData.QueryParams"></KeyValueTable></TabPanel>
-        <TabPanel header="Headers"><KeyValueTable :data="requestData.Headers"></KeyValueTable></TabPanel>
-        <TabPanel header="Body">
-          <Body :body="requestData.Body"></Body>
-        </TabPanel>
-        <TabPanel header="Settings"></TabPanel>
-        <TabPanel header="Source">
-          <pre>{{ requestData }}</pre>
-        </TabPanel>
-      </TabView>
+      <div class="flex">
+        <TabView style="flex: 1">
+          <TabPanel header="Authorization">
+            <Authorization :method="authorization"></Authorization>
+          </TabPanel>
+          <TabPanel header="Params"><KeyValueTable :data="requestData.QueryParams"></KeyValueTable></TabPanel>
+          <TabPanel header="Headers"><KeyValueTable :data="requestData.Headers"></KeyValueTable></TabPanel>
+          <TabPanel header="Body">
+            <Body :body="requestData.Body"></Body>
+          </TabPanel>
+          <TabPanel header="Settings"></TabPanel>
+          <TabPanel header="Source">
+            <pre>{{ requestData }}</pre>
+          </TabPanel>
+        </TabView>
+        <a style="font-weight: bold; margin: 1em; cursor: pointer" v-on:click="emitter.emit('show-cookies')">Cookies</a>
+      </div>
     </SplitterPanel>
     <SplitterPanel :minSize="10">
       <Response :data="response"></Response>

@@ -23,6 +23,7 @@ export default function Serve(appConfig: AppConfig, actorName: string = "Pass") 
         return respond(server, actorName);
       case "POST":
         return respond(server, "Client");
+      // deno-lint-ignore no-case-declarations
       case "OPTIONS":
         console.log("Responding to OPTIONS", server.getUrl());
         const headers = {
@@ -110,7 +111,7 @@ async function respond(server: IServer, actorName: string = "Pass") {
     })
     .then((result) => {
       if (result.Type === EntityType[EntityType.Request]) {
-        return Load(result, base, "integrate", Stores.YAML); // TODO Hardcoded
+        return Load(result, "integrate", Stores.YAML); // TODO Hardcoded
       } else {
         return result;
       }
@@ -145,6 +146,8 @@ function getParser(resourcePath: string): Parser {
   const ext = extname(resourcePath).substring(1).toLowerCase();
   switch (ext) {
     case "json":
+    default:
+      // throw new Error("No known parser for: " + ext);
       return Parsers.JSON;
     case "yml":
     case "yaml":
@@ -154,8 +157,6 @@ function getParser(resourcePath: string): Parser {
     case "txt":
     case "curl":
       return Parsers.TEXT;
-    default:
-      throw new Error("No known parser for: " + ext);
   }
 }
 function getHeaders(contentType: string): any {

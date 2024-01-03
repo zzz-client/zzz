@@ -199,8 +199,14 @@ Frontend:
 
 ### Bonus
 
-- Expand & Collapse All
 - TUI
 - Determine parser based on the supplied content-type header instead of having to do extension?
 - Where should we write to for Postman Store?
 - More Stores & parsers; TOML, SQLite
+- GET Image
+
+
+### Polish
+- Expand & Collapse All
+- Remove in all tables
+- Remove in accordions

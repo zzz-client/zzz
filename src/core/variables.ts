@@ -13,14 +13,14 @@ const BLANK_ENTITY = {
   Name: "",
 } as Entity;
 
-export async function Load(subjectRequest: ZzzRequest, entityName: string, environmentName: string, store: IStore): Promise<ZzzRequest> {
-  const resultRequest = new ZzzRequest(entityName, subjectRequest.Name, subjectRequest.URL, subjectRequest.Method);
+export async function Load(subjectRequest: ZzzRequest, environmentName: string, store: IStore): Promise<ZzzRequest> {
+  const resultRequest = new ZzzRequest(subjectRequest.Id, subjectRequest.Name, subjectRequest.URL, subjectRequest.Method);
   const variables = new FileVariables() as IVariables;
   const globals = await variables.globals(store);
   const globalsLocal = await variables.local(GLOBALS_FILE, store);
   const environment = await variables.environment(environmentName, store);
   const environmentLocal = await variables.local(environmentName, store);
-  const defaults = await variables.defaults(dirname(entityName), store);
+  const defaults = await variables.defaults(dirname(subjectRequest.Id), store);
   const sessionLocal = await variables.local(SESSION_FILE, store);
   for (const item of [globals, globalsLocal, environment, environmentLocal, defaults, subjectRequest, sessionLocal]) {
     Meld(resultRequest, item);

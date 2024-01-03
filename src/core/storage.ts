@@ -32,10 +32,11 @@ export async function Collections(): Promise<Collection[]> {
 export default function Store(key: string, value: string, environmentName: string): any {
   return newStore().store(key, value, environmentName);
 }
-export async function Get(entityType: EntityType, entityName: string, environmentName: string): Promise<any> {
-  const theRequest = await newStore().get(entityType, entityName, environmentName);
+export async function Get(entityType: EntityType, entityId: string, environmentName: string): Promise<any> {
+  const theRequest = await newStore().get(entityType, entityId, environmentName);
+
   if (entityType === EntityType.Request) {
-    loadBody(theRequest, entityName);
+    loadBody(theRequest, entityId);
     checkRequired(theRequest);
   }
   return theRequest;
@@ -48,8 +49,8 @@ function checkRequired(fileContents: any): void {
     }
   }
 }
-export async function Stat(entityName: string): Promise<Stats> {
-  return newStore().stat(entityName);
+export async function Stat(entityId: string): Promise<Stats> {
+  return newStore().stat(entityId);
 }
 function loadBody(theRequest: ZzzRequest, _requestFilePath: string) {
   if (typeof theRequest.Body === "string") {

@@ -7,36 +7,12 @@ export default function Hooks(
   requestFilePath: string,
   theRequest: ZzzRequest,
 ): [Function, Function] {
-  switch (hooksName.toLowerCase()) {
-    case "js":
-    case "javascript":
-    default:
-      return JavaScriptHooks(requestFilePath, theRequest);
-    case "ts":
-    case "typescript":
-      return TypeScriptHooks(requestFilePath, theRequest);
-    case "py":
-    case "python":
-      return PythonHooks(requestFilePath, theRequest);
+  if (!["js", "javascript"].includes(hooksName.toLowerCase())) {
+    throw new Error('Only hooks supported presently is "javascript" (or "js"');
   }
+  return JavaScriptHooks(requestFilePath, theRequest);
 }
-function noop(filePath: string): any {}
-function notImplemented(): void {
-  throw new Error("Not implemented");
-}
-
-function TypeScriptHooks(requestFilePath: string, _theRequest: ZzzRequest): [Function, Function] {
-  const beforePath = dirname(requestFilePath) + "/before.ts";
-  const afterPath = dirname(requestFilePath) + "/after.ts";
-  const result = { Before: noop, After: noop };
-  if (existsSync(afterPath)) {
-    result.After = notImplemented;
-  }
-  if (existsSync(beforePath)) {
-    result.Before = notImplemented;
-  }
-  return [result.Before, result.After];
-}
+function noop(_filePath: string): any {}
 function JavaScriptHooks(requestFilePath: string, _theRequest: ZzzRequest): [Function, Function] {
   const beforePath = dirname(requestFilePath) + "/before.js";
   const afterPath = dirname(requestFilePath) + "/after.js";
@@ -47,20 +23,6 @@ function JavaScriptHooks(requestFilePath: string, _theRequest: ZzzRequest): [Fun
   }
   if (existsSync(beforePath)) {
     result.Before = () => eval(Deno.readTextFileSync(beforePath));
-  }
-  return [result.Before, result.After];
-}
-function PythonHooks(requestFilePath: string, _theRequest: ZzzRequest): [Function, Function] {
-  const beforePath = dirname(requestFilePath) + "/before.py";
-  const afterPath = dirname(requestFilePath) + "/after.py";
-  const result = { Before: noop, After: noop };
-  if (existsSync(afterPath)) {
-    result.After = (_data) => {
-      eval(Deno.readTextFileSync(afterPath));
-    };
-    if (existsSync(beforePath)) {
-      result.Before = () => eval(Deno.readTextFileSync(beforePath));
-    }
   }
   return [result.Before, result.After];
 }

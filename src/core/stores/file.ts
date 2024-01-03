@@ -12,13 +12,13 @@ export default class FileStore implements IStore {
   constructor(fileExtension: string) {
     this.fileExtension = fileExtension;
   }
-  async stat(entityName: string): Promise<Stats> {
-    const filePath = existsSync(entityName, { isDirectory: true }) ? entityName : `${entityName}.${this.fileExtension}`;
+  async stat(entityId: string): Promise<Stats> {
+    const filePath = existsSync(entityId, { isDirectory: true }) ? entityId : `${entityId}.${this.fileExtension}`;
     const entType = await determineType(filePath);
     const file = await Deno.stat(filePath);
     const stats = {
       Type: EntityType[entType],
-      Name: entityName,
+      Name: entityId,
       Created: file.birthtime!,
       Modified: file.mtime!,
     } as Stats;
@@ -27,7 +27,7 @@ export default class FileStore implements IStore {
     } else if (entType == EntityType.Collection || entType == EntityType.Folder) {
       stats.Size = (() => {
         let s = 0;
-        for (const _ in Deno.readDirSync(entityName)) {
+        for (const _ in Deno.readDirSync(entityId)) {
           s++;
         }
         return s;
@@ -35,31 +35,31 @@ export default class FileStore implements IStore {
     }
     return stats;
   }
-  async get(entityType: EntityType, entityName: string, environmentName: string): Promise<Item> {
+  async get(entityType: EntityType, entityId: string, environmentName: string): Promise<Item> {
     if (entityType === EntityType.Request) {
-      const requestPath = entityName + "." + this.fileExtension;
+      const requestPath = entityId + "." + this.fileExtension;
       const resultRequest = Parsers.YAML.parse(Deno.readTextFileSync(requestPath)) as ZzzRequest;
-      resultRequest.Id = requestPath;
+      resultRequest.Id = entityId;
       resultRequest.Type = EntityType[entityType];
       if (!resultRequest.Name) {
-        resultRequest.Name = basename(entityName);
+        resultRequest.Name = basename(entityId);
       }
       return resultRequest;
     } else if (entityType === EntityType.Collection || entityType === EntityType.Folder) {
-      const item = new (entityType === EntityType.Collection ? Collection : Folder)(entityName, basename(entityName));
-      for await (const child of Deno.readDir(entityName)) {
+      const item = new (entityType === EntityType.Collection ? Collection : Folder)(entityId, basename(entityId));
+      for await (const child of Deno.readDir(entityId)) {
         if (child.isDirectory) {
-          item.Children.push(await this.get(EntityType.Folder, `${entityName}/${child.name}`, environmentName));
+          item.Children.push(await this.get(EntityType.Folder, `${entityId}/${child.name}`, environmentName));
         } else if (child.isFile && filetypeSupported(child.name) && !excludeFromInfo(child.name)) {
           const baseless = basename(child.name, extname(child.name));
-          item.Children.push(await this.get(EntityType.Request, `${entityName}/${baseless}`, environmentName));
+          item.Children.push(await this.get(EntityType.Request, `${entityId}/${baseless}`, environmentName));
         }
       }
       return item;
     }
     if (entityType === EntityType.Environment || entityType === EntityType.Authorization) {
       const entityFolder = getDirectoryForEntity(entityType);
-      const filePath = `${entityFolder}/${entityName}.${this.fileExtension}`;
+      const filePath = `${entityFolder}/${entityId}.${this.fileExtension}`;
       return this._parser().parse(Deno.readTextFileSync(filePath)) as Item; // TODO: Is this a naughty cast?
     }
     throw new Error(`Unknown type of entity: ${entityType}`);
@@ -89,16 +89,16 @@ function filetypeSupported(filePath: string): boolean {
 function excludeFromInfo(name: string): boolean {
   return name.startsWith("_");
 }
-async function determineType(entityName: string): Promise<EntityType> {
-  if (entityName.startsWith(getDirectoryForEntity(EntityType.Authorization))) {
+async function determineType(entityId: string): Promise<EntityType> {
+  if (entityId.startsWith(getDirectoryForEntity(EntityType.Authorization))) {
     return EntityType.Authorization;
   }
-  if (entityName.startsWith(getDirectoryForEntity(EntityType.Environment))) {
+  if (entityId.startsWith(getDirectoryForEntity(EntityType.Environment))) {
     return EntityType.Environment;
   }
-  if (existsSync(entityName, { isFile: true })) {
+  if (existsSync(entityId, { isFile: true })) {
     return EntityType.Request;
-  } else if (entityName.includes("/")) {
+  } else if (entityId.includes("/")) {
     return EntityType.Folder;
   } else {
     return EntityType.Collection;

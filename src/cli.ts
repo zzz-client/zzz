@@ -5,7 +5,6 @@ import Hooks from "./core/hooks.ts";
 import { Get } from "./core/storage.ts";
 import tim from "./core/tim.ts";
 import { Parsers } from "./core/stores/file.ts";
-import axios from "https://deno.land/x/redaxios/mod.ts";
 
 export default async function Cli(config: AppConfig) {
   const theRequest = await Get(

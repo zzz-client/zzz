@@ -24,9 +24,9 @@ export interface IAuthorization {
   apply(theRequest: ZzzRequest, authorizationConfig: any): void;
 }
 export interface IStore {
-  get(entityType: EntityType, entityName: string, environmentName: string): Promise<any>;
+  get(entityType: EntityType, entityId: string, environmentName: string): Promise<any>;
   store(key: string, value: any, environmentName: string): Promise<void>;
-  stat(entityName: string): Promise<Stats>;
+  stat(entityId: string): Promise<Stats>;
 }
 // Facade methods
 export async function Act(theRequest: ZzzRequest, actorName: string): Promise<any> {

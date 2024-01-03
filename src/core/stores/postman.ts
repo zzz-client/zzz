@@ -14,14 +14,14 @@ export default class PostmanStore implements IStore {
       this.collection = {} as CollectionSchema;
     }
   }
-  async get(entityType: EntityType, entityName: string, environmentName: string): Promise<any> {
+  async get(entityType: EntityType, entityId: string, environmentName: string): Promise<any> {
     if (entityType === EntityType.Request) {
-      return await loadRequest(this.collection, environmentName, entityName);
+      return await loadRequest(this.collection, environmentName, entityId);
     }
     if (entityType === EntityType.Collection || entityType === EntityType.Folder) {
-      return await Get(entityType, entityName, environmentName);
+      return await Get(entityType, entityId, environmentName);
     }
-    return Stores.YAML.get(entityType, entityName, environmentName);
+    return Stores.YAML.get(entityType, entityId, environmentName);
   }
   async store(key: string, value: any): Promise<void> {
     throw new Error("Method not implemented.");
