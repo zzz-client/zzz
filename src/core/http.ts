@@ -1,7 +1,7 @@
 // import { basename, extname } from "path";
 import ZzzRequest, { Entity, StringToStringMap } from "./models.ts";
 import { Collections, EntityType, Get, Stat, Stores } from "./storage.ts";
-import { AppConfig } from "../main.ts";
+import { AppConfig, argv, DEFAULT_HTTP_PORT } from "../main.ts";
 import tim from "./tim.ts";
 import { Act } from "./factories.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
@@ -61,8 +61,7 @@ export class Server implements IServer {
     return new URL(this.request!.url).searchParams;
   }
   http(callback: Function): void {
-    const HTTP_PORT = Deno.env.get("PORT") as number | undefined || 8000;
-    Deno.serve({ port: HTTP_PORT }, (request: Request): Response => {
+    Deno.serve({ port: argv.http || DEFAULT_HTTP_PORT }, (request: Request): Response => {
       this.request = request;
       return callback(this);
     });

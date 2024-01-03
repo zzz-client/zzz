@@ -14,7 +14,7 @@ import Authorization from "./Authorization.vue";
 import Response from "./Response.vue";
 import Body from "./Body.vue";
 import { ref, toRef, toRefs } from "vue";
-import ZzzRequest, { ZzzResponse, StringToStringMap } from "../core/request";
+import ZzzRequest, { ZzzResponse, StringToStringMap } from "../core/models";
 const basename = (path) => path.split("/").reverse()[0];
 
 const props = defineProps(["value", "viewSecrets", "title"]);
