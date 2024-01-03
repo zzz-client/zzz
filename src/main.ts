@@ -24,7 +24,7 @@ const options = {
     environment: "e",
     workspace: "w",
   },
-  string: ["environment", "workspace", "http"],
+  string: ["environment", "workspace", "http", "web"],
   default: {
     http: DEFAULT_HTTP_PORT,
     web: 5173,
@@ -36,17 +36,16 @@ export const argv = processFlags(Deno.args, options);
 export default async function main(): Promise<void> {
   try {
     const config = parseAppConfig(argv);
-    let didAtLeastOneThing = false;
-    if (Deno.args.includes("--http")) {
-      Serve(config);
-      didAtLeastOneThing = true;
-    }
-    if (Deno.args.includes("--web")) {
-      didAtLeastOneThing = true;
-    }
-    if (!didAtLeastOneThing) {
-      await Cli(config);
-    }
+    await Promise.all([
+      Deno.args.includes("--http") ? Serve(config) : null,
+      Deno.args.includes("--web") ? Deno.run({ cmd: ["deno", "task", "web"] }).status() : null,
+      Deno.args.includes("--tui")
+        ? (() => {
+          throw new Error("No TUI yet");
+        })()
+        : null,
+      (!Deno.args.includes("--http") && !Deno.args.includes("--web") && !Deno.args.includes("--tui")) ? Cli(config) : null,
+    ]);
   } catch (e) {
     console.error("!!!", e);
     Deno.exit(1);

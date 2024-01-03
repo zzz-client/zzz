@@ -1,12 +1,12 @@
 // import { basename, extname } from "path";
-import ZzzRequest, { Entity, StringToStringMap } from "./models.ts";
-import { Collections, EntityType, Get, Stat, Stores } from "./storage.ts";
-import { AppConfig, argv, DEFAULT_HTTP_PORT } from "../main.ts";
-import tim from "./tim.ts";
-import { Act } from "./factories.ts";
+import ZzzRequest, { Entity, StringToStringMap } from "./core/models.ts";
+import { Collections, EntityType, Get, Stat, Stores } from "./core/storage.ts";
+import { AppConfig, argv, DEFAULT_HTTP_PORT } from "./main.ts";
+import tim from "./core/tim.ts";
+import { Act } from "./core/factories.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
-import { Parser, Parsers } from "./stores/file.ts";
-import { Load } from "./variables.ts";
+import { Parser, Parsers } from "./core/stores/file.ts";
+import { Load } from "./core/variables.ts";
 
 export interface IServer {
   getUrl(): string;

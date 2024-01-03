@@ -7,9 +7,8 @@ import tim from "./core/tim.ts";
 import { Parsers } from "./core/stores/file.ts";
 
 export default async function Cli(config: AppConfig) {
-  console.log(config);
   if (!config.request) {
-    // lol
+    // get workspaces?
     return;
   }
   const theRequest = await Get(
