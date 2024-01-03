@@ -1,8 +1,0 @@
-Method: POST
-URL: "{{baseUrl}}{{apexrest_path}}mess/v1/send/PurchaseTransactionForReservation"
-Body:
-  SubscriberKey: "0035600000iFaknAAC"
-  RecipientAddresses:
-    - rshackleford@rusty-shackleford.com
-  EmailAddress: rshackleford@rusty-shackleford.com
-  NameOnAccount: Rusty Shackleford
