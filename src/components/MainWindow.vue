@@ -32,12 +32,12 @@ function clickRequest(uwu) {
 function openTab(key: string) {
   for (let i = 0; i < tabs.value.length; i++) {
     if (tabs.value[i].value == key) {
-      activeTab.value = i;
+      // activeTab.value = i;
       return;
     }
   }
   tabs.value.push({ title: "...", value: key });
-  activeTab.value = tabs.value.length - 1;
+  // activeTab.value = tabs.value.length - 1;
 }
 
 window.emitter.on("set-tab-title", (result) => {
@@ -92,7 +92,6 @@ axios
       addEntityToNodes(folders.value, entity);
     });
   })
-  // .then(expandAll)
   .catch((error) => {
     console.log(error);
     console.error("ERROR", error.message, `(${error.code})`);
@@ -100,18 +99,22 @@ axios
     errorMessage.value = `An error occured: ${error.message}`;
   });
 
+function newTab(): void {
+  tabs.value.push({ title: "Untitled Request", value: "" });
+  const index = tabs.value.length - 1;
+  dirty.value[index] = true;
+}
+
 function onTabChange(event: any) {
-  const tab = tabs.value[event.index];
-  if (event.index === tabs.value.length) {
-    tabs.value.push({ title: "Untitled Request", value: "" });
-    dirty.value[event.index] = true;
-    activeTab.value = event.index;
-    // document.title = `Zzz - ${basename(requestPath)}`;
+  console.log(event.originalEvent.target.textContent);
+  const tab = tabs.value[event.index - 1];
+  console.log("tab", tabs.value, event.index, tab);
+  if (event.index === tabs.value.length && tab !== null) {
+    newTab();
   }
 }
 
-const activeTab = ref(0);
-function clickBadge(tabIndex) {
+function closeTab(tabIndex) {
   tabs.value.splice(tabIndex, 1);
 }
 </script>
@@ -129,12 +132,12 @@ function clickBadge(tabIndex) {
     </SplitterPanel>
 
     <SplitterPanel :size="75" class="absolute">
-      <TabView class="absolute" @tab-click="onTabChange" v-model:activeIndex="activeTab">
+      <TabView class="absolute" @tab-click="onTabChange">
         <TabPanel v-for="(tab, i) in tabs" :key="tab.value" :header="tab.title" class="absolute">
           <RequestTab :value="tab.value" :viewSecrets="viewSecrets" class="absolute"></RequestTab>
           <template #header>
             <Badge v-if="dirty[i]" style="margin-left: 0.5em; margin-right: 0.5em"></Badge>
-            <Badge style="" value="x" @click="clickBadge(i)"></Badge>
+            <Badge style="" value="x" @click="closeTab(i)"></Badge>
           </template>
         </TabPanel>
         <TabPanel header="+" />

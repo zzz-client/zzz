@@ -22,7 +22,7 @@ function expand(items: [], value: boolean) {
     }
   }
 }
-function expandAll(items: []) {
+function expandAll() {
   expand(folders.value, true);
 }
 function collapseAll() {

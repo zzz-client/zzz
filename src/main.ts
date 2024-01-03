@@ -36,9 +36,15 @@ export const argv = processFlags(Deno.args, options);
 export default async function main(): Promise<void> {
   try {
     const config = parseAppConfig(argv);
+    let didAtLeastOneThing = false;
     if (Deno.args.includes("--http")) {
-      await Serve(config);
-    } else {
+      Serve(config);
+      didAtLeastOneThing = true;
+    }
+    if (Deno.args.includes("--web")) {
+      didAtLeastOneThing = true;
+    }
+    if (!didAtLeastOneThing) {
       await Cli(config);
     }
   } catch (e) {
