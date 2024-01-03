@@ -1,23 +1,23 @@
 // import { basename, extname } from "path";
-import ZzzRequest, { Entity, StringToStringMap } from "../core/request.ts";
-import { Collections, EntityType, Get, Stat, Stores } from "../core/storage.ts";
+import ZzzRequest, { Entity, StringToStringMap } from "./request.ts";
+import { Collections, EntityType, Get, Stat, Stores } from "./storage.ts";
 import { AppConfig } from "../main.ts";
-import tim from "../core/tim.ts";
-import { Act } from "../core/factories.ts";
+import tim from "./tim.ts";
+import { Act } from "./factories.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
-import { Parser, Parsers } from "../core/stores/file.ts";
-import { Load } from "../core/variables.ts";
+import { Parser, Parsers } from "./stores/file.ts";
+import { Load } from "./variables.ts";
 
 export interface IServer {
   getUrl(): string;
   getMethod(): string;
   getQueryParams(): URLSearchParams;
   respond(code: number, body: any, headers: StringToStringMap): any;
-  listen(callback: Function): void;
+  http(callback: Function): void;
 }
 
 export default function Serve(appConfig: AppConfig, actorName: string = "Pass") {
-  new Server().listen((server: IServer) => {
+  new Server().http((server: IServer) => {
     switch (server.getMethod()) {
       case "GET":
         return respond(server, actorName);
@@ -60,7 +60,7 @@ export class Server implements IServer {
   getQueryParams(): URLSearchParams {
     return new URL(this.request!.url).searchParams;
   }
-  listen(callback: Function): void {
+  http(callback: Function): void {
     const HTTP_PORT = Deno.env.get("PORT") as number | undefined || 8000;
     Deno.serve({ port: HTTP_PORT }, (request: Request): Response => {
       this.request = request;

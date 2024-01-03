@@ -4,7 +4,7 @@
   "description": "Replacement for Postman",
   "tasks": {
     "zzz": "deno run --allow-env --allow-net --allow-read=. src/main.ts",
-    "api": "deno run --allow-env --allow-net --allow-read=. src/main.ts  --allow-write --listen",
+    "api": "deno run --allow-env --allow-net --allow-read=. src/main.ts  --allow-write --http",
     "web": "deno run -A --unstable --node-modules-dir npm:vite --host 127.0.0.1",
     "web:build": "deno run -A --unstable --node-modules-dir npm:vite build",
     "preview": "deno run -A --unstable --node-modules-dir npm:vite --host 127.0.0.1 preview",

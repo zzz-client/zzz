@@ -1,4 +1,4 @@
-import Serve from "./api/serve.ts";
+import Serve from "./core/http.ts";
 import Cli from "./cli.ts";
 import { parseArgs } from "https://deno.land/std/cli/parse_args.ts";
 export const argv = parseArgs(Deno.args);
@@ -12,7 +12,7 @@ export const appConfigDefaults = {
 export default async function main(): Promise<void> {
   try {
     const config = parseAppConfig();
-    if (config.listen) {
+    if (config.http) {
       await Serve(config);
     } else {
       await Cli(config);
@@ -31,7 +31,7 @@ export function parseAppConfig(): AppConfig {
     actor,
     request: (argv._.length === 0) ? "" : `${argv._[0]}`,
     hooks,
-    listen: argv.listen,
+    http: argv.http,
   };
 }
 export type AppConfig = {
@@ -39,7 +39,7 @@ export type AppConfig = {
   actor: string;
   request: string | "serve";
   hooks: string;
-  listen: boolean;
+  http: boolean;
 };
 
 function getArgv(minimist: any, short: string, full: string, defaultVal: string): string {
