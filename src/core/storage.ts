@@ -20,7 +20,7 @@ export const Stores = { // TODO: Why do I have to do this dirty casting
   YML: new FileStore("yml") as unknown as IStore,
   YAML: new FileStore("yml") as unknown as IStore,
   XML: new FileStore("xml") as unknown as IStore,
-  Postman: new PostmanStore("PostmanCollection.json") as unknown as IStore,
+  // Postman: new PostmanStore("PostmanCollection.json") as unknown as IStore,
 } as StoreMap;
 export async function Collections(): Promise<Collection[]> {
   const result = [] as Collection[];

@@ -8,7 +8,6 @@ import HeaderAuthorizer from "./authorizers/header.ts";
 import QueryAuthorizer from "./authorizers/query.ts";
 import ZzzRequest from "./models.ts";
 import { EntityType, Get, Stores } from "./storage.ts";
-import SqliteStore from "./stores/sqlite.ts";
 
 export interface Stats {
   Type: string;
