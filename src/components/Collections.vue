@@ -14,6 +14,8 @@ for (const folder of folders.value) {
   };
 }
 
+expandedKeys.value["REST API"] = true;
+
 function expand(items: [], value: boolean) {
   for (const item of items) {
     expandedKeys.value[item.key] = value;
