@@ -38,7 +38,7 @@ async function loadRequest(collection: CollectionSchema, environmentName: string
   const requestName = basename(requestFilePath, extension);
   const folder = collection.item.filter((item) => item.name === folderName)[0];
   const request = folder.item.filter((item) => item.name === requestName)[0].request;
-  const theRequest = new ZzzRequest(requestName, request.url.raw.split("?")[0], request.method);
+  const theRequest = new ZzzRequest(requestFilePath, requestName, request.url.raw.split("?")[0], request.method);
   if (request.body) {
     theRequest.Body = request.body.raw;
   }
