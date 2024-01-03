@@ -1,4 +1,4 @@
-import Serve from "./core/http.ts";
+import Serve from "./http.ts";
 import Cli from "./cli.ts";
 import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
 import { Args } from "https://deno.land/std/flags/mod.ts";
