@@ -14,7 +14,7 @@ for (const folder of folders.value) {
   };
 }
 
-expandedKeys.value["REST API"] = true;
+expandedKeys.value["Inspirato Salesforce REST API"] = true;
 
 function expand(items: [], value: boolean) {
   for (const item of items) {
