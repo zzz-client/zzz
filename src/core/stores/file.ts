@@ -22,17 +22,6 @@ export default class FileStore implements IStore {
       Created: file.birthtime!,
       Modified: file.mtime!,
     } as Stats;
-    if (entType == EntityType.Request) {
-      stats.Size = (await Deno.stat(filePath)).size;
-    } else if (entType == EntityType.Collection || entType == EntityType.Folder) {
-      stats.Size = (() => {
-        let s = 0;
-        for (const _ in Deno.readDirSync(entityId)) {
-          s++;
-        }
-        return s;
-      })();
-    }
     return stats;
   }
   async get(entityType: EntityType, entityId: string, environmentName: string): Promise<Item> {

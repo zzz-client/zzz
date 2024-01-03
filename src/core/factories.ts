@@ -8,11 +8,11 @@ import HeaderAuthorizer from "./authorizers/header.ts";
 import QueryAuthorizer from "./authorizers/query.ts";
 import ZzzRequest from "./request.ts";
 import { EntityType, Get, Stores } from "./storage.ts";
+import SqliteStore from "./stores/sqlite.ts";
 
 export interface Stats {
   Type: string;
   Name: string;
-  Size: number;
   Created: Date;
   Modified: Date;
 }
@@ -49,7 +49,8 @@ export function Authorize(theRequest: ZzzRequest, authorizationDefinition: strin
 let storeInstance: IStore;
 export function newStore(): IStore {
   if (storeInstance == null) {
-    storeInstance = Stores.YAML;
+    storeInstance = new SqliteStore("zzz.db") as unknown as IStore;
+    // storeInstance = Stores.YAML;
   }
   return storeInstance;
 }

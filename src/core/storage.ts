@@ -2,6 +2,7 @@ import ZzzRequest, { Collection } from "./request.ts";
 import { IStore, newStore, Stats } from "./factories.ts";
 import FileStore, { Parsers } from "./stores/file.ts";
 import PostmanStore from "./stores/postman.ts";
+import SqliteStore from "./stores/sqlite.ts";
 
 export enum EntityType {
   Authorization,
