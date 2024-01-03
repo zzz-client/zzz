@@ -1,5 +1,5 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
-import ZzzRequest, { Collection, Folder, Item, StringToStringMap } from "../request.ts";
+import ZzzRequest, { Collection, Folder, Item, StringToStringMap } from "../models.ts";
 import { EntityType, Stores } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 import { parse as yamlParse, stringify as yamlStringify } from "https://deno.land/std/yaml/mod.ts";

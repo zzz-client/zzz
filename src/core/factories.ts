@@ -6,7 +6,7 @@ import BasicAuthAuthorizer from "./authorizers/basicAuth.ts";
 import BearerTokenAuthorizer from "./authorizers/bearerToken.ts";
 import HeaderAuthorizer from "./authorizers/header.ts";
 import QueryAuthorizer from "./authorizers/query.ts";
-import ZzzRequest from "./request.ts";
+import ZzzRequest from "./models.ts";
 import { EntityType, Get, Stores } from "./storage.ts";
 import SqliteStore from "./stores/sqlite.ts";
 

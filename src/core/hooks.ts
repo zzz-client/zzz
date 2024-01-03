@@ -1,6 +1,6 @@
 import { dirname } from "https://deno.land/std/path/mod.ts";
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
-import ZzzRequest from "./request.ts";
+import ZzzRequest from "./models.ts";
 
 export default function Hooks(
   hooksName: string,

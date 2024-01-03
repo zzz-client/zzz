@@ -1,6 +1,6 @@
 import axios from "https://deno.land/x/redaxios/mod.ts";
 import { IActor } from "../factories.ts";
-import ZzzRequest from "../request.ts";
+import ZzzRequest from "../models.ts";
 import { Parsers } from "../stores/file.ts";
 
 const defaultStringify = Parsers.JSON.stringify;

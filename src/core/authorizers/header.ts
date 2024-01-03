@@ -1,5 +1,5 @@
 import { IAuthorization } from "../factories.ts";
-import ZzzRequest from "../request.ts";
+import ZzzRequest from "../models.ts";
 
 export default class HeaderAuthorizer implements IAuthorization {
   apply(theRequest: ZzzRequest, authorizationConfig: Config): void {

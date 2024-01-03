@@ -1,6 +1,6 @@
 import { encode64 } from "https://deno.land/x/base64to@v0.0.2/mod.ts";
 import { IAuthorization } from "../factories.ts";
-import ZzzRequest from "../request.ts";
+import ZzzRequest from "../models.ts";
 
 export default class BasicAuthAuthorizer implements IAuthorization {
   apply(theRequest: ZzzRequest, authorizationConfig: Config): void {

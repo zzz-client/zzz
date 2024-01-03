@@ -2,7 +2,7 @@ import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
 import { EntityType, Stores } from "./storage.ts";
 import { getDirectoryForEntity, Parser, Parsers } from "./stores/file.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
-import ZzzRequest, { Entity } from "./request.ts";
+import ZzzRequest, { Entity } from "./models.ts";
 import { IStore } from "./factories.ts";
 const DEFAULT_MARKER = "_defaults";
 const SESSION_FILE = "session";

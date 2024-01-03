@@ -1,5 +1,5 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
-import ZzzRequest from "../request.ts";
+import ZzzRequest from "../models.ts";
 import { EntityType, Get, Stores } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 import { IStore } from "../factories.ts";

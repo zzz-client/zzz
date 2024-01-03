@@ -1,5 +1,5 @@
 // import { basename, extname } from "path";
-import ZzzRequest, { Entity, StringToStringMap } from "./request.ts";
+import ZzzRequest, { Entity, StringToStringMap } from "./models.ts";
 import { Collections, EntityType, Get, Stat, Stores } from "./storage.ts";
 import { AppConfig } from "../main.ts";
 import tim from "./tim.ts";
