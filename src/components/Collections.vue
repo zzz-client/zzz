@@ -2,7 +2,7 @@
 import { MenuItem, MenuItemCommandEvent } from "primevue/menuitem";
 import PanelMenu from "primevue/panelmenu";
 import { ref, toRefs, watch } from "vue";
-const expandedKeys = ref({});
+const expandedKeys = ref({} as [string: boolean]);
 
 const props = defineProps(["folders"]);
 
@@ -12,19 +12,21 @@ for (const folder of folders.value) {
   folder.command = (event: MenuItemCommandEvent) => {
     console.log("butts lol", event);
   };
-  folder.url = null;
 }
 
-function collapseAll() {
-  // for (const key of keys) {
-  //   expandedKeys.value[key] = true;
-  // }
+function expand(items: [], value: boolean) {
+  for (const item of items) {
+    expandedKeys.value[item.key] = value;
+    if (item.items) {
+      expand(item.items, value);
+    }
+  }
 }
-function expandAll() {
-  //   for (const key of keys) {
-  //     expandedKeys.value[key] = true;
-  //   }
-  // }
+function expandAll(items: []) {
+  expand(folders.value, true);
+}
+function collapseAll() {
+  expand(folders.value, false);
 }
 
 function callMe() {

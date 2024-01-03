@@ -49,8 +49,8 @@ export function Authorize(theRequest: ZzzRequest, authorizationDefinition: strin
 let storeInstance: IStore;
 export function newStore(): IStore {
   if (storeInstance == null) {
-    storeInstance = new SqliteStore("zzz.db") as unknown as IStore;
-    // storeInstance = Stores.YAML;
+    // storeInstance = new SqliteStore("zzz.db") as unknown as IStore;
+    storeInstance = Stores.YAML;
   }
   return storeInstance;
 }
