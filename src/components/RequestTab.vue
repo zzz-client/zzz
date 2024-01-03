@@ -128,7 +128,7 @@ if (value) {
       </div>
     </SplitterPanel>
     <SplitterPanel :minSize="10">
-      <Response :data="response"></Response>
+      <Response :v-if="response != {}" :data="response"></Response>
     </SplitterPanel>
   </Splitter>
 </template>

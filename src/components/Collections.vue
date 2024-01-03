@@ -28,10 +28,6 @@ function expandAll(items: []) {
 function collapseAll() {
   expand(folders.value, false);
 }
-
-function callMe() {
-  window.emitter.emit("show-cookies");
-}
 </script>
 <template>
   <div class="justify-content-right" style="display: flex">
@@ -40,7 +36,6 @@ function callMe() {
     <Button type="button" icon="pi pi-minus" label="Collapse All" @click="collapseAll">-</Button>
   </div>
   <PanelMenu v-model:expandedKeys="expandedKeys" :model="folders"> </PanelMenu>
-  <a style="font-weight: bold; margin: 1em; cursor: pointer" @click="callMe">Cookies</a>
 </template>
 
 <style scoped>
