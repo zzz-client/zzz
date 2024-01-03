@@ -34,6 +34,10 @@ function addQueryParams(base: string): string {
   }
 }
 
+function refreshTabTitle() {
+  console.log("refresh", requestData.value);
+  window.emitter.emit("set-tab-title", requestData.value as ZzzRequest);
+}
 async function fetchRequest(value: string): Promise<any> {
   return axios
     .get(addQueryParams("http://localhost:8000/" + value))
@@ -64,6 +68,7 @@ function doTheThing(newValue: string) {
       console.log("tab loaded", data);
       if (data.Type == "Request") {
         requestData.value = data;
+        refreshTabTitle();
       }
       title.value = data.Name;
       method.value = data.Method;

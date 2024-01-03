@@ -36,9 +36,18 @@ function openTab(key: string) {
       return;
     }
   }
-  tabs.value.push({ title: key, value: key });
+  tabs.value.push({ title: "...", value: key });
   activeTab.value = tabs.value.length - 1;
 }
+
+window.emitter.on("set-tab-title", (result) => {
+  const { Id, Name } = result;
+  tabs.value.forEach((tab) => {
+    if (tab.value == Id) {
+      tab.title = Name;
+    }
+  });
+});
 
 let keys = [] as string[];
 function addEntityToNodes(noteList, entity) {
@@ -122,7 +131,7 @@ function clickBadge(tabIndex) {
     <SplitterPanel :size="75" class="absolute">
       <TabView class="absolute" @tab-click="onTabChange" v-model:activeIndex="activeTab">
         <TabPanel v-for="(tab, i) in tabs" :key="tab.value" :header="tab.title" class="absolute">
-          <RequestTab :value="tab.value" :title="tab.title" :viewSecrets="viewSecrets" class="absolute"></RequestTab>
+          <RequestTab :value="tab.value" :viewSecrets="viewSecrets" class="absolute"></RequestTab>
           <template #header>
             <Badge v-if="dirty[i]" style="margin-left: 0.5em; margin-right: 0.5em"></Badge>
             <Badge style="" value="x" @click="clickBadge(i)"></Badge>
