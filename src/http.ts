@@ -22,6 +22,7 @@ export default function Serve(appConfig: AppConfig, actorName: string = "Pass") 
       case "GET":
         return respond(server, actorName);
       case "POST":
+        console.log("Responding to POST");
         return respond(server, "Client");
       // deno-lint-ignore no-case-declarations
       case "OPTIONS":
@@ -32,7 +33,7 @@ export default function Serve(appConfig: AppConfig, actorName: string = "Pass") 
           ...getHeaders("application/JSON"),
         };
         if (server.getUrl() !== "/") {
-          headers.Allow.PUSH("POST");
+          headers.Allow.push("POST");
         }
         return new Response(null, {
           status: 204,
