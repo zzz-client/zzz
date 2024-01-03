@@ -119,7 +119,7 @@ async function respond(server: IServer, actorName: string = "Pass") {
     .then((result) => {
       const theRequest = result as ZzzRequest;
       theRequest.Method = server.getMethod(); // TODO: HATE THIS
-      if (server.getQueryParams().has("format")) {
+      if (server.getQueryParams().has("format") || server.getMethod() === "POST") {
         tim(theRequest, theRequest.Variables);
       }
       if (ext === "curl") {

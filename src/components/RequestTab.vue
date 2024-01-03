@@ -81,7 +81,7 @@ function doTheThing(newValue: string) {
 function send(): void {
   // const what = (await axios({method: requestData.value.Method, headers: requestData.value.Headers, params: requestData.value.QueryParams, url: requestData.value.URL, data: requestData.value.Body})).data;
   axios
-    .post(addQueryParams("http://localhost:8000/" + value.value))
+    .post("http://localhost:8000/" + value.value)
     .then((what) => {
       response.value = {
         data: what.data,
