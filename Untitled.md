@@ -1,20 +1,5 @@
 # Models
 
-1. A Collection has many Collections and/or Entities
-2. A Collection can have defaults
-3. A Collection can have an Authorization
-4. An Context can have defaults
-10. Globals is a special Context that is always loaded
-11. An Authorization can be associated to a Collection, a Collection, or a Entity
-12. Authorization supports:
-    - BasicAuth
-    - BearerToken
-    - Header
-    - Query
-    - etc. see authorizations/types for definitions
-13. A Session is a key/value variable store (aka defaults)
-14. Each Context can have Local default overrides
-
 ## Scope
 
 Replaces Workspace; e.g. "Salesforce Primary"
@@ -111,59 +96,64 @@ Query:
   Value: "{{_apiToken}}"
 ```
 
-# Storage
-
-1. Get Scopes
-2. Get Scope (returns Collections)
-3. Get Collection (returns Collections/Entities)
-4. Get Entity
-5. Get Context (Globals is just a special context)
-6. Get Authorizations
-7. Get Authorization
-
 # Interfaces
 
-## REST & Act Server
+1. Set Scope
+2. CRUD
+  - Get Scopes
+  - Get Scope (returns Collections)
+  - Get Collection (returns Collections/Entities)
+  - Get Entity
+  - Get Context (Globals is just a special context)
+  - Get Authorizations
+  - Get Authorization
+3. Format (GET with applying variable values)
+4. Act (perform request as passthrough)
 
-1. GET only supported method for now
-2. Passing "format" as a query parameter with GET will apply variable values
-3. PATCH performs the request (Acts on the Entity) and passes back its results
-4. OPTIONS works because of CORS
-5. The file extension used in the request determines the return format
+## REST/Act Server
+
+1. Set Scope - X-Zzz-Scope header?
+2. CRUD
+3. Format = "format" query param
+4. Act on Entity = PATCH
+
+1. OPTIONS works because of CORS
+2. The file extension used in the request determines the return format
     - json
     - yml
     - xml
     - txt
     - curl
-6. Get squashed defaults for any Workspace, Collection, or Entity
 
 ## Web
 
-1. Change Scopes TODO
-2. List Collections
-3. List Contexts TODO
+1. Set Scope = Dropdown TODO
+2. CRUD
+3. Format = Show Variables
+4. Act on Entity = Send
+
+1. Navigate Collections to select a child
+2. Navigate Contexts TODO
+3. View Response
 4. Tabbed Entities
-5. Act on Entity
-6. View Response
 
 
 ## CLI
 
-1. Act on an Entity
-2. --show = print out an Entity
-3. --reveal = print out a formatted Entity
-4. --create
-  - --scope
-  - --context
+1. Set Scope = ZZZ_SCOPE environment variable
+  - TODO How will this work with Scopes being a repo?
+2. CRUD = --show [--type entity|collection|scope|auth] <id>
+  - defaults to Entity
+3. Format = Add --format to --show
+4. Act on Entity
 
-Create an entity via prompts
-  --scope
-  --context
-  --
 
-Edit an entity using EDITOR?
-
---
 
 ## TUI
 
+TODO
+
+1. Set Scope
+2. CRUD
+3. Format
+4. Act on Entity
