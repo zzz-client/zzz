@@ -80,6 +80,16 @@ TODO: How will it know this being different from the above?
 Body: filepath ???
 ```
 
+## Context
+
+Replaces Environment
+
+```yml
+Name: string
+Defaults?:
+  key: value
+```
+
 ## Authorization
 
 ```yml
@@ -140,13 +150,20 @@ Query:
 ## CLI
 
 1. Act on an Entity
-2. Print out a formatted Entity
+2. --show = print out an Entity
+3. --reveal = print out a formatted Entity
+4. --create
+  - --scope
+  - --context
 
 Create an entity via prompts
   --scope
   --context
   --
-Edit an entity using EDITOR? Delete
+
+Edit an entity using EDITOR?
+
+--
 
 ## TUI
 
