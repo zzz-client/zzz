@@ -15,11 +15,15 @@
 13. A Session is a key/value variable store (aka defaults)
 14. Each Environment can have Local default overrides
 
-## Project
+## Scopes
 
- - Name
- - defaults
+Replaces Workspace; e.g. "Salesforce Primary"
 
+```yml
+Name: string
+Defaults:
+  key: value
+```
 ## Collection
 
 ```yml
@@ -27,7 +31,8 @@ WorkspaceId: id
 ParentCollectionId: id
 AuthorizationId: Id
 Name: string
-Defaults: defaults[]
+Defaults:
+  key: value
 ```
 
 ## Entity
@@ -75,8 +80,8 @@ Body: filepath?
 
 ```yml
 BasicAuth:
-  Username: ""
-  Password: ""
+  Username: "{{_username}}"
+  Password: "{{_password}}"
 BearerToken: "{{_accessToken}}"
 Header:
   Name: "X-API-TOKEN"
@@ -88,19 +93,21 @@ Query:
 
 # Storage
 
-1. Get Projects
-2. Get Project (returns Collections)
+1. Get Scopes
+2. Get Scope (returns Collections)
 3. Get Collection (returns Collections/Entities)
 4. Get Entity
 5. Get Environment (Globals is just a special environment)
 6. Get Authorizations
 7. Get Authorization
 
-# HTTP Server
+# Interfaces
+
+## REST & Run Server
 
 1. GET only supported method for now
 2. Passing "format" as a query parameter with GET will apply variable values
-3. PATCH performs the request and passes back its results
+3. PATCH performs (runs) the request and passes back its results
 4. OPTIONS works because of CORS
 5. The file extension used in the request determines the return format
     - json
@@ -109,3 +116,16 @@ Query:
     - txt
     - curl
 6. Get squashed defaults for any Workspace, Collection, or Entity
+
+## Web
+
+1. Change Scopes TODO
+2. List Collections
+3. View Entity
+4.
+
+
+## CLI
+
+## TUI
+
