@@ -3,8 +3,8 @@
 1. A Collection has many Collections and/or Entities
 2. A Collection can have defaults
 3. A Collection can have an Authorization
-4. An Environment can have defaults
-10. Globals is a special Environment that is always loaded
+4. An Context can have defaults
+10. Globals is a special Context that is always loaded
 11. An Authorization can be associated to a Collection, a Collection, or a Entity
 12. Authorization supports:
     - BasicAuth
@@ -13,29 +13,33 @@
     - Query
     - etc. see authorizations/types for definitions
 13. A Session is a key/value variable store (aka defaults)
-14. Each Environment can have Local default overrides
+14. Each Context can have Local default overrides
 
-## Scopes
+## Scope
 
 Replaces Workspace; e.g. "Salesforce Primary"
 
 ```yml
 Name: string
-Defaults:
+Defaults?:
   key: value
 ```
+
 ## Collection
 
+Represents both Collections and Folders
+
 ```yml
-WorkspaceId: id
-ParentCollectionId: id
-AuthorizationId: Id
+WorkspaceOrCollectionId?: id
+AuthorizationId?: id
 Name: string
-Defaults:
+Defaults?:
   key: value
 ```
 
 ## Entity
+
+Replaces Request
 
 ```yml
 CollectionId: id
@@ -73,7 +77,7 @@ Body: '{ "Key": "Value" }'
 TODO: How will it know this being different from the above?
 
 ```yml
-Body: filepath?
+Body: filepath ???
 ```
 
 ## Authorization
@@ -82,13 +86,19 @@ Body: filepath?
 BasicAuth:
   Username: "{{_username}}"
   Password: "{{_password}}"
+```
+```yml
 BearerToken: "{{_accessToken}}"
+```
+```yml
 Header:
-  Name: "X-API-TOKEN"
-  Value: "{{_api_token}}"
+  Name: "{{_authHeader}}"
+  Value: "{{_apiToken}}"
+```
+```yml
 Query:
-  Param: "X-API-TOKEN"
-  Value: "{{_api_token}}"
+  Param: "{{_authParam}}"
+  Value: "{{_apiToken}}"
 ```
 
 # Storage
@@ -97,17 +107,17 @@ Query:
 2. Get Scope (returns Collections)
 3. Get Collection (returns Collections/Entities)
 4. Get Entity
-5. Get Environment (Globals is just a special environment)
+5. Get Context (Globals is just a special context)
 6. Get Authorizations
 7. Get Authorization
 
 # Interfaces
 
-## REST & Run Server
+## REST & Act Server
 
 1. GET only supported method for now
 2. Passing "format" as a query parameter with GET will apply variable values
-3. PATCH performs (runs) the request and passes back its results
+3. PATCH performs the request (Acts on the Entity) and passes back its results
 4. OPTIONS works because of CORS
 5. The file extension used in the request determines the return format
     - json
@@ -121,11 +131,22 @@ Query:
 
 1. Change Scopes TODO
 2. List Collections
-3. View Entity
-4.
+3. List Contexts TODO
+4. Tabbed Entities
+5. Act on Entity
+6. View Response
 
 
 ## CLI
+
+1. Act on an Entity
+2. Print out a formatted Entity
+
+Create an entity via prompts
+  --scope
+  --context
+  --
+Edit an entity using EDITOR? Delete
 
 ## TUI
 
