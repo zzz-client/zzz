@@ -24,7 +24,7 @@ export const Stores = { // TODO: Why do I have to do this dirty casting
 } as StoreMap;
 export async function Collections(): Promise<Collection[]> {
   const result = [] as Collection[];
-  const collections = ["Inspirato Salesforce REST API"];
+  const collections = ["Salesforce Primary"];
   for (const collection of collections) {
     result.push(await Get(EntityType.Collection, collection, "integrate")); // TODO: Hardcoded
   }

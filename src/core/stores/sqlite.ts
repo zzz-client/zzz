@@ -68,8 +68,8 @@ export default class SqliteStore implements IStore {
         Variables TEXT
       )
     `);
-    if (this.database.query("SELECT Id FROM Collection WHERE Id = (?)", ["Inspirato Salesforce REST API"]).length === 0) {
-      this.database.query('INSERT INTO Collection (Id, Name) VALUES ("Inspirato Salesforce REST API", "Inspirato Salesforce REST API")', []);
+    if (this.database.query("SELECT Id FROM Collection WHERE Id = (?)", ["Salesforce Primary"]).length === 0) {
+      this.database.query('INSERT INTO Collection (Id, Name) VALUES ("Salesforce Primary", "Salesforce Primary")', []);
     }
     return Promise.resolve();
   }
