@@ -183,3 +183,17 @@ TODO
 3. CRUD
 4. Format
 5. Act on Entity
+
+
+# Alternatives
+
+  - [Bruno](https://github.com/usebruno/bruno) (MIT) - Desktop & CLI
+    - VS Code extension
+    - Declarative scripting...though Bru files appear to have Javascript?
+    - Declarative tests?
+  - Hello HTTP
+  - [Restfox](https://github.com/flawiddsouza/Restfox) (MIT) - Web & Desktop (via Tauri & Electron)
+    - [Try live](restfox.dev)
+    - Browser extension
+    - Plugins (Javascript)
+    - Similar technology (Vue, JS/TS)

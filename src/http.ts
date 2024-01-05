@@ -5,7 +5,7 @@ import { extname } from "https://deno.land/std/path/mod.ts";
 import { Load } from "./core/variables.ts";
 import { DefaultFlags } from "./core/flags.ts";
 import { Args } from "https://deno.land/std/flags/mod.ts";
-import { getContentType, getParser } from "./core/files/files.ts";
+import { getContentType, getDriver } from "./core/files/drivers.ts";
 import Application from "./core/app.ts";
 
 interface IServer {
@@ -106,14 +106,14 @@ export class Server implements IServer {
         return Act(theRequest, actorName);
       })
       .then((result) => {
-        const parser = getParser(resourcePath);
+        const parser = getDriver(resourcePath);
         const parsedResult = parser.stringify(result);
         return server.respond(200, parsedResult, { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });
       })
       .catch((reason) => {
         console.error(reason.message);
         console.error(reason);
-        const parser = getParser(resourcePath);
+        const parser = getDriver(resourcePath);
         const parsedResult = parser.stringify(reason);
         console.error(parsedResult);
         return server.respond(500, parsedResult, { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });

@@ -1,4 +1,4 @@
-import { Parser } from "./files.ts";
+import { Driver } from "./drivers.ts";
 
 function readBruBlock(lines: string[], index: number): [any, number] {
   while (!lines[index].endsWith("{") || lines[index].trim() === "") {
@@ -110,5 +110,5 @@ function stringify(input: string): any {
 const BRU = {
   parse,
   stringify,
-} as Parser;
+} as Driver;
 export default BRU;
