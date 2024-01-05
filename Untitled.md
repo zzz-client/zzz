@@ -188,7 +188,7 @@ TODO
 
 TODO
 
-# Comparison
+# Comparison / Inspiratos
 
 ## Zzz
   - License: OSL
@@ -267,21 +267,64 @@ TODO
     - CLI
     - TUI
 
+
+
+## Yaade
+
+TODO
+
+## RecipeUI
+
+TODO
+
+# Hoppscotch
+
+TODO
+
+
 ## [Hello HTTP](https://github.com/sunny-chung/hello-http)
 
-- License: Apache 2.0
-- Platforms: Desktop
+  - License: Apache 2.0
+  - Platforms: Desktop
   - Technologies:
     - Runtime: JVM
     - Language: Kotlin
     - Front end: [Jetpack](https://developer.android.com/jetpack/androidx/)
     - Desktop: Jetpack
-- Notable Features:
-  - Websockets
-  - GraphQL
-- Storage: [ExperimentalSerializationApi](https://kotlinlang.org/api/kotlinx.serialization/kotlinx-serialization-core/kotlinx.serialization/-experimental-serialization-api/)?
-- Pros of Zzz:
-  - CLI
-  - TUI
-  - Web
-  - REST/Act
+  - Notable Features:
+    - Websockets
+    - GraphQL
+  - Storage: [ExperimentalSerializationApi](https://kotlinlang.org/api/kotlinx.serialization/kotlinx-serialization-core/kotlinx.serialization/-experimental-serialization-api/)?
+  - Pros of Zzz:
+    - CLI
+    - TUI
+    - Web
+    - REST/Act
+
+
+
+## [Advanced REST Client](https://github.com/advanced-rest-client/arc-electron)
+
+TODO
+
+  - License: Apache 2.0
+  - Platforms: Desktop
+  - Technologies:
+    - Runtime: Nodejs?
+    - Language: Javascript
+    - Server: ???
+    - Front end: ???
+    - Desktop: Electron
+  - Notable Features:
+  - Storage
+  - Pros of Zzz:
+
+
+## Another...
+
+  - License:
+  - Platforms:
+  - Technologies:
+  - Notable Features:
+  - Storage
+  - Pros of Zzz:
