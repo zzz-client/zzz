@@ -1,9 +1,9 @@
 import axios from "https://deno.land/x/redaxios/mod.ts";
 import { IActor } from "../app.ts";
-import Entity from "../models.ts";
-import { Parsers } from "../stores/file.ts";
+import { Entity } from "../models.ts";
+import { getDriver } from "../files/drivers.ts";
 
-const defaultStringify = Parsers.JSON.stringify;
+const defaultStringify = getDriver(".json").stringify;
 
 export default class ClientActor implements IActor {
   stringify: Function;

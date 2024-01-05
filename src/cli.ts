@@ -5,14 +5,13 @@ import Hooks from "./core/hooks.ts";
 import { Get } from "./core/storage.ts";
 import tim from "./core/tim.ts";
 import { Parsers } from "./core/stores/file.ts";
+import { getDriver } from "./core/files/drivers.ts";
 
 export default async function Cli(config: AppConfig) {
   if (!config.arg) {
     // get workspaces?
     return;
   }
-  const store = newStore("context???", config.context);
-
   const theRequest = await Get(
     ModelType.Entity,
     config.arg,
@@ -28,5 +27,5 @@ export default async function Cli(config: AppConfig) {
   beforeHook();
   const actResult = await Act(theRequest, config.actor);
   afterHook(actResult);
-  console.info(Parsers.JSON.stringify(actResult));
+  console.info(getDriver(".json").stringify(actResult));
 }
