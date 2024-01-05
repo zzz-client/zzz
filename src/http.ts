@@ -5,7 +5,7 @@ import { extname } from "https://deno.land/std/path/mod.ts";
 import { Load } from "./core/variables.ts";
 import { DefaultFlags } from "./core/flags.ts";
 import { Args } from "https://deno.land/std/flags/mod.ts";
-import { getContentType, getParser } from "./core/files.ts";
+import { getContentType, getParser } from "./core/files/files.ts";
 import Application from "./core/app.ts";
 
 interface IServer {
