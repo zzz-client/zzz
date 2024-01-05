@@ -17,9 +17,9 @@ Represents both Collections and Folders
 
 ```yml
 Id: string
+Name: string
 WorkspaceOrCollectionId: id
 AuthorizationId?: id
-Name: string
 Defaults?:
   key: value
 ```
@@ -30,8 +30,8 @@ Replaces Request
 
 ```yml
 Id: string
-CollectionId: id
 Name: string
+CollectionId: id
 Method: GET | POST | PUT | PATCH | DELETE | OPTIONS
 URL: string
 Headers?:
@@ -112,26 +112,29 @@ Query:
 
 ## Interface Definition
 
-1. Set Scope
-2. Set Environment
-3. CRUD
-    - Get Scopes
-    - Get Scope (returns Collections)
+1. Specify Context
+2. CRUD
     - Get Collection (returns Collections/Entities)
     - Get Entity
-    - Get Context (Globals is just a special context. maybe I should rename it to "All"?)
+    - Get Contexts (Globals is just a special context. maybe I should rename it to "All"?)
     - Get Authorizations
     - Get Authorization
 4. Format (GET with applying variable values)
-5. Act (perform request as passthrough)
+5. Act (execute) - perform request as passthrough
 
 ## REST/Act Server
 
-1. Set Scope - X-Zzz-Scope header?
-2. Set Environment
-3. CRUD
-4. Format = "format" query param
-5. Act on Entity = PATCH
+1. Specify Context
+  - Header: `X-Zzz-Context`
+  - QueryParam: `?context`
+2. CRUD
+  - POST `/:id`
+  - GET `/:id`
+  - PUT `/:id`
+  - DELETE `/:id`
+  - Authorizations = TODO
+3. Format = "format" query param
+4. Act on Entity = PATCH
 
 1. OPTIONS works because of CORS
 2. The file extension used in the request determines the return format
@@ -143,11 +146,10 @@ Query:
 
 ## Web
 
-1. Set Scope = Dropdown TODO
-2. Set Environment
-3. CRUD
-4. Format = Show Variables
-5. Act on Entity = Send
+1. Specify Context
+2. CRUD
+3. Format = Show Variables
+4. Act on Entity = Send
 
 1. Navigate Collections to select a child
 2. Navigate Contexts TODO
@@ -157,13 +159,16 @@ Query:
 
 ## CLI
 
-1. Set Scope = ZZZ_SCOPE environment variable
-  - TODO How will this work with Scopes being a repo?
-2. Set Environment
-3. CRUD = --show [--type entity|collection|scope|auth] <id>
-  - defaults to Entity
-4. Format = Add --format to --show
-5. Act on Entity
+1. Specify Context = ZZZ_CONTEXT environment variable
+2. CRUD - `[--type entity|collection|auth] <id>`
+  - `zzz --create ...`
+  - `zzz <id>`
+  - `zzz --edit <id> ...`
+  - `zzz --delete <id>`
+  - Context = TODO
+  - Authorization = TODO
+3. Format = Add --format to --show
+4. Act on Entity
 
 
 

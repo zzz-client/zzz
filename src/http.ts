@@ -1,25 +1,25 @@
 // import { basename, extname } from "path";
-import { Collection, Entity, HttpMethod, Model, ModelType, StringToStringMap } from "./core/models.ts";
+import { Entity, Model, ModelType, StringToStringMap } from "./core/models.ts";
 import tim from "./core/tim.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
 import { Load } from "./core/variables.ts";
 import { DefaultFlags } from "./core/flags.ts";
 import { Args } from "https://deno.land/std/flags/mod.ts";
 import { getContentType, getParser } from "./core/files.ts";
+import Application from "./core/app.ts";
 
 interface IServer {
-  getUrl(): string;
-  getMethod(): HttpMethod;
-  getQueryParams(): URLSearchParams;
   respond(code: number, body: any, headers: StringToStringMap): any;
-  http(callback: Function): void;
+  listen(actorName: string): void;
 }
 
 export class Server implements IServer {
   request?: Request;
   port: number;
-  constructor(argv: Args) {
+  app: Application;
+  constructor(argv: Args, app: Application) {
     this.port = argv.http || DefaultFlags.HTTP_PORT;
+    this.app = app;
   }
 
   listen(actorName: string): void {
@@ -34,7 +34,7 @@ export class Server implements IServer {
           return pls._respond("Client");
         case "OPTIONS":
           console.log("Responding to OPTIONS", request.url);
-          return this.handleOptions(request);
+          return this._handleOptions(request);
         default:
           return new Response("", {
             status: 400,
@@ -47,7 +47,7 @@ export class Server implements IServer {
   respond(status: number, body: any, headers: StringToStringMap): Response {
     return new Response(body, { status, headers });
   }
-  handleOptions(request: Request): Response {
+  _handleOptions(request: Request): Response {
     const headers = {
       "Allow": ["OPTIONS", "GET"],
       "Access-Control-Allow-Headers": ["X-Zzz-Workspace"],
@@ -60,8 +60,6 @@ export class Server implements IServer {
       status: 204,
       headers: headers,
     });
-  }
-  http(callback: Function): void {
   }
   async _respond(actorName: string = "Pass"): Promise<Response> {
     const url = this.getUrl();
@@ -83,7 +81,8 @@ export class Server implements IServer {
     console.log("Received request", this.getMethod(), "base=" + base, resourcePath, contentType);
 
     if (base === "") {
-      const whatever = await Collections();
+      const whatever = await this.app.get(ModelType.Collection);
+      this.Collections();
       return this.respond(200, JSON.stringify(whatever, null, 2), getHeaders(contentType));
     }
     return Get(ModelType.Entity, base, "integrate")
@@ -123,12 +122,4 @@ export class Server implements IServer {
 }
 function getHeaders(contentType: string): any {
   return { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" };
-}
-async function Collections(): Promise<Collection[]> {
-  const result = [] as Collection[];
-  const collections = ["Salesforce Primary"];
-  for (const collection of collections) {
-    // result.push(await Get(ModelType.Collection, collection, "integrate")); // TODO: Hardcoded
-  }
-  return result;
 }
