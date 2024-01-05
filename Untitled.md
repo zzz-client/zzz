@@ -114,12 +114,12 @@ Query:
 
 1. Specify Context
 2. CRUD
-    - Get Collection (returns Collections/Entities)
     - Get Entity
+    - Get Collection (returns Collections/Entities)
     - Get Contexts (Globals is just a special context. maybe I should rename it to "All"?)
     - Get Authorizations
     - Get Authorization
-4. Format (GET with applying variable values)
+4. Format
 5. Act (execute) - perform request as passthrough
 
 ## REST/Act Server
@@ -146,8 +146,12 @@ Query:
 
 ## Web
 
-1. Specify Context
+1. Specify Context = dropdown TODO
 2. CRUD
+  - Entity
+  - Collection
+  - Context
+  - Authorization
 3. Format = Show Variables
 4. Act on Entity = Send
 
@@ -160,15 +164,13 @@ Query:
 ## CLI
 
 1. Specify Context = ZZZ_CONTEXT environment variable
-2. CRUD - `[--type entity|collection|auth] <id>`
+2. CRUD - `[--type entity|collection|context|auth] <id>`
   - `zzz --create ...`
   - `zzz <id>`
   - `zzz --edit <id> ...`
   - `zzz --delete <id>`
-  - Context = TODO
-  - Authorization = TODO
-3. Format = Add --format to --show
-4. Act on Entity
+3. Format = `--format`
+4. Act on Entity = `zzz --execute <id>` or `zzz -x <id>`
 
 
 
