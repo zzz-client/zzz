@@ -1,3 +1,0 @@
-Query:
-  Param: "X-API-TOKEN"
-  Value: "{{_api_token}}"

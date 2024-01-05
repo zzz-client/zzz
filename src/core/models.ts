@@ -1,26 +1,29 @@
-export interface Entity {
+interface Model {
   Id: string;
   Type: string;
   Name: string;
 }
-
-export interface ZzzResponse {
-  status: number;
-  statusText: string;
-  headers: StringToStringMap;
-  data: any;
+enum ModelType {
+  Authorization,
+  Context,
+  Entity,
+  Collection,
 }
-export default class ZzzRequest implements Entity {
-  Id: string;
+
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
+
+class Entity implements Model {
   Type = "Request";
+  Id: string;
   Name: string;
   URL: string;
-  Method: string;
+  Method: HttpMethod;
   QueryParams: StringToStringMap;
   Headers: StringToStringMap;
   Variables: StringToStringMap;
-  Body: any;
-  constructor(id: string, name: string, url: string, method: string) {
+  Body: string | any;
+  Authorization?: Auth;
+  constructor(id: string, name: string, url: string, method: HttpMethod) {
     this.Id = id;
     this.Name = name;
     this.URL = url;
@@ -30,30 +33,36 @@ export default class ZzzRequest implements Entity {
     this.Variables = {} as StringToStringMap;
   }
 }
-export class Collection implements Entity {
-  Id: string;
+type CollectionChild = Model | Collection;
+class Collection implements Model {
   Type = "Collection";
-  Name: string;
-  Children: Folder[];
-  constructor(id: string, name: string) {
-    this.Id = id;
-    this.Name = name;
-    this.Children = [];
-  }
-}
-export class Folder implements Entity {
   Id: string;
-  Type = "Folder";
   Name: string;
-  Children: Item[];
+  Children: CollectionChild[];
   constructor(id: string, name: string) {
-    this.Name = name;
     this.Id = id;
+    this.Name = name;
     this.Children = [];
   }
 }
-export type Item = ZzzRequest | Folder | string;
+class Context implements Model {
+  Type = "Context";
+  Id: string;
+  Name: string;
+  Collections: Collection[];
+  constructor(id: string, name: string) {
+    this.Id = id;
+    this.Name = name;
+    this.Collections = [];
+  }
+}
 
+interface Auth {
+  Type: string;
+}
 export interface StringToStringMap {
   [key: string]: string;
 }
+
+export { Collection, Context, Entity, ModelType };
+export type { Auth, HttpMethod, Model };
