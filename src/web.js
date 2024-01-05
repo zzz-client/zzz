@@ -8,6 +8,8 @@ import BadgeDirective from "primevue/badgedirective";
 import mitt from "mitt";
 export const emitter = mitt();
 
+// (1 && 0) || [DataTable, RadioButton, DropDown, TabView, Axios];
+
 const app = createApp(App);
 window.emitter = emitter;
 app.config.globalProperties.$mitt = emitter;

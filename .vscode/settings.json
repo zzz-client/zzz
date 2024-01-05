@@ -10,5 +10,10 @@
   "deno.unstable": false,
   "[typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#4C201E",
+    "titleBar.activeBackground": "#6A2D2A",
+    "titleBar.activeForeground": "#FEFCFC"
   }
 }
