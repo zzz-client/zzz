@@ -15,60 +15,53 @@ interface IServer {
   http(callback: Function): void;
 }
 
-export default function Serve(argv: Args, actorName: string = "Pass") {
-  new Server(argv).http((server: IServer) => {
-    switch (server.getMethod()) {
-      case "GET":
-        return (server as Server)._respond(actorName);
-      case "POST":
-        console.log("Responding to POST");
-        return (server as Server)._respond("Client");
-      // deno-lint-ignore no-case-declarations
-      case "OPTIONS":
-        console.log("Responding to OPTIONS", server.getUrl());
-        const headers = {
-          "Allow": ["OPTIONS", "GET"],
-          "Access-Control-Allow-Headers": ["X-Zzz-Workspace"],
-          ...getHeaders("application/JSON"),
-        };
-        if (server.getUrl() !== "/") {
-          headers.Allow.push("POST");
-        }
-        return new Response(null, {
-          status: 204,
-          headers: headers,
-        });
-      default:
-        throw new Error(`Unsupported method: ${server.getMethod()}`);
-    }
-  });
-}
-
-class Server implements IServer {
+export class Server implements IServer {
   request?: Request;
   port: number;
   constructor(argv: Args) {
     this.port = argv.http || DefaultFlags.HTTP_PORT;
   }
+
+  listen(actorName: string): void {
+    const pls = this;
+    const callback = (request: Request): Response => {
+      switch (request.method) {
+        case "GET":
+          console.log("Responding to PGETOST");
+          return pls._respond(actorName);
+        case "POST":
+          console.log("Responding to POST");
+          return pls._respond("Client");
+        case "OPTIONS":
+          console.log("Responding to OPTIONS", request.url);
+          return this.handleOptions(request);
+        default:
+          return new Response("", {
+            status: 400,
+            headers: getHeaders("application/JSON"),
+          });
+      }
+    };
+    Deno.serve({ port: this.port }, callback);
+  }
   respond(status: number, body: any, headers: StringToStringMap): Response {
     return new Response(body, { status, headers });
   }
-  getUrl(): string {
-    const x = new URL(this.request!.url).pathname;
-    console.log("getting url from", this.request!.url, x);
-    return x;
-  }
-  getMethod(): HttpMethod {
-    return this.request!.method as HttpMethod;
-  }
-  getQueryParams(): URLSearchParams {
-    return new URL(this.request!.url).searchParams;
+  handleOptions(request: Request): Response {
+    const headers = {
+      "Allow": ["OPTIONS", "GET"],
+      "Access-Control-Allow-Headers": ["X-Zzz-Workspace"],
+      ...getHeaders("application/json"),
+    };
+    if (request.url !== "/") {
+      headers.Allow.push("POST");
+    }
+    return new Response(null, {
+      status: 204,
+      headers: headers,
+    });
   }
   http(callback: Function): void {
-    Deno.serve({ port: this.port }, (request: Request): Response => {
-      this.request = request;
-      return callback(this);
-    });
   }
   async _respond(actorName: string = "Pass"): Promise<Response> {
     const url = this.getUrl();
