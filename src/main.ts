@@ -2,6 +2,8 @@ import Serve from "./http.ts";
 import Cli from "./cli.ts";
 import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
 import { Args } from "https://deno.land/std/flags/mod.ts";
+import { Application } from "./core/app.ts";
+import AuthorizationModule from "./modules/authorization.ts";
 
 export const DEFAULT_HTTP_PORT = 8000;
 export const DEFAULT_WEB_PORT = 5173;
@@ -32,6 +34,12 @@ const options = {
 };
 
 export const argv = processFlags(Deno.args, options);
+
+const app = new Application({
+  store: "FileStore",
+  actor: "Client",
+  modules: [AuthorizationModule],
+});
 
 export default async function main(): Promise<void> {
   try {

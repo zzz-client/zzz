@@ -1,6 +1,6 @@
 import { EntityType } from "./core/storage.ts";
 import { AppConfig } from "./main.ts";
-import { Act, Authorize } from "./core/factories.ts";
+import { Act, Authorize, newStore } from "./core/app.ts";
 import Hooks from "./core/hooks.ts";
 import { Get } from "./core/storage.ts";
 import tim from "./core/tim.ts";
@@ -11,6 +11,8 @@ export default async function Cli(config: AppConfig) {
     // get workspaces?
     return;
   }
+  const store = newStore("context???", config.environment);
+
   const theRequest = await Get(
     EntityType.Request,
     config.request,

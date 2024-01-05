@@ -15,11 +15,12 @@ export default class ZzzRequest implements Entity {
   Type = "Request";
   Name: string;
   URL: string;
-  Method: string;
+  Method: "GET" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
   QueryParams: StringToStringMap;
   Headers: StringToStringMap;
   Variables: StringToStringMap;
   Body: any;
+  Authorization?: Auth;
   constructor(id: string, name: string, url: string, method: string) {
     this.Id = id;
     this.Name = name;
@@ -56,4 +57,29 @@ export type Item = ZzzRequest | Folder | string;
 
 export interface StringToStringMap {
   [key: string]: string;
+}
+
+interface Auth {
+  Type: string;
+}
+interface BearerTokenAuth extends Auth {
+  BearerToken: string;
+}
+interface BasicAuthAuth extends Auth {
+  BasicAuth: {
+    username: string;
+    password: string;
+  };
+}
+interface HeaderAuth extends Auth {
+  Header: {
+    name: string; // e.g. X-API-TOKEN
+    value: string; // e.g. {{_api_token}}
+  };
+}
+interface QueryAuth extends Auth {
+  Query: {
+    name: string; // e.g. X-API-TOKEN
+    value: string; // e.g. {{_api_token}}
+  };
 }

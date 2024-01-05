@@ -1,4 +1,4 @@
-import { IActor } from "../factories.ts";
+import { IActor } from "../app.ts";
 import ZzzRequest from "../models.ts";
 
 export default class CurlActor implements IActor {

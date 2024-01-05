@@ -3,7 +3,7 @@ import ZzzRequest, { Entity, StringToStringMap } from "./core/models.ts";
 import { Collections, EntityType, Get, Stat, Stores } from "./core/storage.ts";
 import { AppConfig, argv, DEFAULT_HTTP_PORT } from "./main.ts";
 import tim from "./core/tim.ts";
-import { Act } from "./core/factories.ts";
+import { Act } from "./core/app.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
 import { Parser, Parsers } from "./core/stores/file.ts";
 import { Load } from "./core/variables.ts";
@@ -46,7 +46,7 @@ export default function Serve(appConfig: AppConfig, actorName: string = "Pass") 
 }
 
 export class Server implements IServer {
-  request: Request | null = null;
+  request?: Request;
   respond(status: number, body: any, headers: StringToStringMap): Response {
     return new Response(body, { status, headers });
   }

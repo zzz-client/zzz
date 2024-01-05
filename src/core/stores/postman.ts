@@ -2,7 +2,7 @@ import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import ZzzRequest from "../models.ts";
 import { EntityType, Get, Stores } from "../storage.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
-import { IStore } from "../factories.ts";
+import { IStore } from "../app.ts";
 
 export default class PostmanStore implements IStore {
   collection: CollectionSchema;

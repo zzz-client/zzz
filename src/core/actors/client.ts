@@ -1,5 +1,5 @@
 import axios from "https://deno.land/x/redaxios/mod.ts";
-import { IActor } from "../factories.ts";
+import { IActor } from "../app.ts";
 import ZzzRequest from "../models.ts";
 import { Parsers } from "../stores/file.ts";
 

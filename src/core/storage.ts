@@ -1,5 +1,5 @@
 import ZzzRequest, { Collection } from "./models.ts";
-import { IStore, newStore, Stats } from "./factories.ts";
+import { IStore, newStore, Stats } from "./app.ts";
 import FileStore, { Parsers } from "./stores/file.ts";
 import PostmanStore from "./stores/postman.ts";
 import SqliteStore from "./stores/sqlite.ts";
@@ -11,7 +11,6 @@ export enum EntityType {
   Folder,
   Collection,
 }
-
 interface StoreMap {
   [key: string]: IStore;
 }

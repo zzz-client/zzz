@@ -1,4 +1,4 @@
-import { IActor } from "../factories.ts";
+import { IActor } from "../app.ts";
 import { Parsers } from "../stores/file.ts";
 
 export default class SummaryActor implements IActor {

@@ -1,28 +1,16 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import ZzzRequest, { Collection, Folder, Item, StringToStringMap } from "../models.ts";
-import { EntityType, Stores } from "../storage.ts";
-import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
+import { EntityType } from "../storage.ts";
+import { basename, extname } from "https://deno.land/std/path/mod.ts";
 import { parse as yamlParse, stringify as yamlStringify } from "https://deno.land/std/yaml/mod.ts";
 import { parse as xmlParse } from "https://deno.land/x/xml/mod.ts";
 const xmlStringify = (x: any) => Deno.exit(1);
-import { IStore, Stats } from "../factories.ts";
-import { getEnvironmentPath, Load, Meld } from "../variables.ts";
+import { IStore } from "../app.ts";
+import { getEnvironmentPath, SESSION_FILE } from "../variables.ts";
 export default class FileStore implements IStore {
   fileExtension: string;
   constructor(fileExtension: string) {
     this.fileExtension = fileExtension;
-  }
-  async stat(entityId: string): Promise<Stats> {
-    const filePath = existsSync(entityId, { isDirectory: true }) ? entityId : `${entityId}.${this.fileExtension}`;
-    const entType = await determineType(filePath);
-    const file = await Deno.stat(filePath);
-    const stats = {
-      Type: EntityType[entType],
-      Name: entityId,
-      Created: file.birthtime!,
-      Modified: file.mtime!,
-    } as Stats;
-    return stats;
   }
   async get(entityType: EntityType, entityId: string, environmentName: string): Promise<Item> {
     if (entityType === EntityType.Request) {
