@@ -1,5 +1,5 @@
 import { ApplicationConfig } from "../core/app.ts";
-import ZzzRequest from "../core/models.ts";
+import Entity from "../core/models.ts";
 
 export interface ModuleConfig extends ApplicationConfig {}
 export default class ModuleManager {
@@ -11,12 +11,12 @@ export default class ModuleManager {
       this.modules.push(module.newInstance(config));
     }
   }
-  async mod(theRequest: ZzzRequest) {
+  async mod(theRequest: Entity) {
     for (const module of this.modules) {
       module.mod(theRequest, this.config);
     }
   }
 }
-interface IModule {
-  mod(theRequest: ZzzRequest, config: ModuleConfig): Promise<void>;
+export interface IModule {
+  mod(theRequest: Entity, config: ModuleConfig): Promise<void>;
 }

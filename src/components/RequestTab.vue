@@ -14,7 +14,7 @@ import Authorization from "./Authorization.vue";
 import Response from "./Response.vue";
 import Body from "./Body.vue";
 import { ref, toRef, toRefs } from "vue";
-import ZzzRequest, { ZzzResponse, StringToStringMap } from "../core/models";
+import ZzzRequest, { StringToStringMap } from "../core/models";
 const basename = (path) => path.split("/").reverse()[0];
 
 const props = defineProps(["value", "viewSecrets", "title"]);
@@ -24,7 +24,14 @@ const method = ref("GET");
 const requestData = ref({} as any);
 const breadcrumbs = ref([] as MenuItem[]);
 const authorization = ref("None");
-const response = ref({} as ZzzResponse);
+const response = ref(
+  {} as {
+    status: number;
+    statusText: string;
+    headers: StringToStringMap;
+    data: any;
+  }
+);
 
 function addQueryParams(base: string): string {
   if (viewSecrets.value) {

@@ -4,12 +4,12 @@ import PanelMenu from "primevue/panelmenu";
 import { ref, toRefs, watch } from "vue";
 const expandedKeys = ref({} as [string: boolean]);
 
-const props = defineProps(["folders"]);
+const props = defineProps(["collections"]);
 
-const { folders } = toRefs(props);
+const { collections } = toRefs(props);
 
-for (const folder of folders.value) {
-  folder.command = (event: MenuItemCommandEvent) => {
+for (const collection of collections.value) {
+  collection.command = (event: MenuItemCommandEvent) => {
     console.log("butts lol", event);
   };
 }
@@ -25,10 +25,10 @@ function expand(items: [], value: boolean) {
   }
 }
 function expandAll() {
-  expand(folders.value, true);
+  expand(collections.value, true);
 }
 function collapseAll() {
-  expand(folders.value, false);
+  expand(collections.value, false);
 }
 </script>
 <template>
@@ -37,7 +37,7 @@ function collapseAll() {
     <Button type="button" icon="pi pi-plus" label="Expand All" @click="expandAll">+</Button>
     <Button type="button" icon="pi pi-minus" label="Collapse All" @click="collapseAll">-</Button>
   </div>
-  <PanelMenu v-model:expandedKeys="expandedKeys" :model="folders"> </PanelMenu>
+  <PanelMenu v-model:expandedKeys="expandedKeys" :model="collections"> </PanelMenu>
 </template>
 
 <style scoped>

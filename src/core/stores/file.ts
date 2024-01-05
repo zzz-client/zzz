@@ -1,45 +1,40 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
-import ZzzRequest, { Collection, Folder, Item, StringToStringMap } from "../models.ts";
-import { EntityType } from "../storage.ts";
+import { Collection, Entity, Model, ModelType, StringToStringMap } from "../models.ts";
 import { basename, extname } from "https://deno.land/std/path/mod.ts";
-import { parse as yamlParse, stringify as yamlStringify } from "https://deno.land/std/yaml/mod.ts";
-import { parse as xmlParse } from "https://deno.land/x/xml/mod.ts";
-const xmlStringify = (x: any) => Deno.exit(1);
 import { IStore } from "../app.ts";
-import { getEnvironmentPath, SESSION_FILE } from "../variables.ts";
 export default class FileStore implements IStore {
   fileExtension: string;
   constructor(fileExtension: string) {
     this.fileExtension = fileExtension;
   }
-  async get(entityType: EntityType, entityId: string, environmentName: string): Promise<Item> {
-    if (entityType === EntityType.Request) {
+  async get(modelType: ModelType, entityId: string, context: string): Promise<Model> {
+    if (modelType === ModelType.Entity) {
       const requestPath = entityId + "." + this.fileExtension;
-      const resultRequest = Parsers.YAML.parse(Deno.readTextFileSync(requestPath)) as ZzzRequest;
+      const resultRequest = Parsers.YAML.parse(Deno.readTextFileSync(requestPath)) as Entity;
       resultRequest.Id = entityId;
-      resultRequest.Type = EntityType[entityType];
+      resultRequest.Type = ModelType[modelType];
       if (!resultRequest.Name) {
         resultRequest.Name = basename(entityId);
       }
       return resultRequest;
-    } else if (entityType === EntityType.Collection || entityType === EntityType.Folder) {
-      const item = new (entityType === EntityType.Collection ? Collection : Folder)(entityId, basename(entityId));
+    } else if (modelType === ModelType.Collection) {
+      const item = new (modelType === ModelType.Collection ? Collection : Collection)(entityId, basename(entityId));
       for await (const child of Deno.readDir(entityId)) {
         if (child.isDirectory) {
-          item.Children.push(await this.get(EntityType.Folder, `${entityId}/${child.name}`, environmentName));
+          item.Children.push(await this.get(ModelType.Collection, `${entityId}/${child.name}`, context));
         } else if (child.isFile && filetypeSupported(child.name) && !excludeFromInfo(child.name)) {
           const baseless = basename(child.name, extname(child.name));
-          item.Children.push(await this.get(EntityType.Request, `${entityId}/${baseless}`, environmentName));
+          item.Children.push(await this.get(ModelType.Entity, `${entityId}/${baseless}`, context));
         }
       }
       return item;
     }
-    if (entityType === EntityType.Environment || entityType === EntityType.Authorization) {
-      const entityFolder = getDirectoryForEntity(entityType);
+    if (modelType === ModelType.Context || modelType === ModelType.Authorization) {
+      const entityFolder = getDirectoryForModel(modelType);
       const filePath = `${entityFolder}/${entityId}.${this.fileExtension}`;
-      return this._parser().parse(Deno.readTextFileSync(filePath)) as Item; // TODO: Is this a naughty cast?
+      return this._parser().parse(Deno.readTextFileSync(filePath)) as Model; // TODO: Is this a naughty cast?
     }
-    throw new Error(`Unknown type of entity: ${entityType}`);
+    throw new Error(`Unknown type of entity: ${modelType}`);
   }
   store(key: string, value: any): Promise<void> {
     const sessionPath = getEnvironmentPath(SESSION_FILE, this.fileExtension);
@@ -51,7 +46,7 @@ export default class FileStore implements IStore {
     Deno.writeTextFileSync(sessionPath, this._parser().stringify(sessionContents));
     return Promise.resolve();
   }
-  setEnvironment(environmentName: string): void {
+  setContext(context: string): void {
     throw new Error("Not implemented");
   }
   _parser(): Parser {
@@ -66,44 +61,26 @@ function filetypeSupported(filePath: string): boolean {
 function excludeFromInfo(name: string): boolean {
   return name.startsWith("_");
 }
-async function determineType(entityId: string): Promise<EntityType> {
-  if (entityId.startsWith(getDirectoryForEntity(EntityType.Authorization))) {
-    return EntityType.Authorization;
-  }
-  if (entityId.startsWith(getDirectoryForEntity(EntityType.Environment))) {
-    return EntityType.Environment;
-  }
-  if (existsSync(entityId, { isFile: true })) {
-    return EntityType.Request;
-  } else if (entityId.includes("/")) {
-    return EntityType.Folder;
-  } else {
-    return EntityType.Collection;
-  }
-}
-export function getDirectoryForEntity(entityType: EntityType): string {
-  switch (entityType) {
-    case EntityType.Environment:
-      return "environments";
-    case EntityType.Authorization:
+// async function determineType(modelId: string): Promise<ModelType> {
+//   if (modelId.startsWith(getDirectoryForModel(ModelType.Authorization))) {
+//     return ModelType.Authorization;
+//   }
+//   if (modelId.startsWith(getDirectoryForModel(ModelType.Context))) {
+//     return ModelType.Context;
+//   }
+//   if (existsSync(modelId, { isFile: true })) {
+//     return ModelType.Entity;
+//   } else if (modelId.includes("/")) {
+//     return ModelType.Collection;
+//   }
+// }
+export function getDirectoryForModel(modelType: ModelType): string {
+  switch (modelType) {
+    case ModelType.Context:
+      return "context";
+    case ModelType.Authorization:
       return "authorizations";
     default:
-      throw new Error(`Unknown entity type ${EntityType[entityType]}`);
+      throw new Error(`Unknown entity type ${ModelType[modelType]}`);
   }
 }
-
-// TODO: This should be private eventually I believe
-export type Parser = {
-  parse: (input: string) => any;
-  stringify: (input: any) => string;
-};
-export const Parsers = {
-  YAML: { parse: yamlParse, stringify: yamlStringify },
-  YML: { parse: yamlParse, stringify: yamlStringify },
-  XML: { parse: xmlParse, stringify: xmlStringify },
-  JSON: { parse: JSON.parse, stringify: (s: any) => JSON.stringify(s, null, 2) },
-  TEXT: {
-    parse: (input: string) => input + "",
-    stringify: (input: any) => input + "",
-  },
-} as { [key: string]: Parser };

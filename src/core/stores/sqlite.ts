@@ -1,6 +1,6 @@
 import { DB } from "https://deno.land/x/sqlite/mod.ts";
 import { IStore, Stats } from "../app.ts";
-import { EntityType } from "../storage.ts";
+import { ModelType } from "../storage.ts";
 
 export default class SqliteStore implements IStore {
   database: DB;
@@ -8,8 +8,8 @@ export default class SqliteStore implements IStore {
     this.database = new DB(filePath);
     this._init();
   }
-  get(entityType: EntityType, entityId: string, environmentName: string): Promise<any> {
-    const x = this.database.query("SELECT Id, Name FROM " + EntityType[entityType] + " WHERE Id = (?)", [entityId])[0];
+  get(modelType: ModelType, entityId: string, environmentName: string): Promise<any> {
+    const x = this.database.query("SELECT Id, Name FROM " + ModelType[modelType] + " WHERE Id = (?)", [entityId])[0];
     console.log(x);
     return Promise.resolve({
       Id: x[0],

@@ -2,9 +2,10 @@ import BasicAuthAuthorizer from "./authorizers/basicAuth.ts";
 import BearerTokenAuthorizer from "./authorizers/bearerToken.ts";
 import HeaderAuthorizer from "./authorizers/header.ts";
 import QueryAuthorizer from "./authorizers/query.ts";
-import { ApplicationConfig, IAuthorizer, IModule } from "../core/app.ts";
-import ZzzRequest from "../core/models.ts";
-import { EntityType, Get } from "../core/storage.ts";
+import { ApplicationConfig, IAuthorizer } from "../core/app.ts";
+import Entity, { Auth } from "../core/models.ts";
+import { Get, ModelType } from "../core/storage.ts";
+import { IModule } from "./manager.ts";
 
 export default class AuthorizationModule implements IModule {
   config: ApplicationConfig;
@@ -14,10 +15,10 @@ export default class AuthorizationModule implements IModule {
   constructor(config: ApplicationConfig) {
     this.config = config;
   }
-  async mod(theRequest: ZzzRequest): Promise<void> {
+  async mod(theRequest: Entity): Promise<void> {
     if (theRequest.Authorization) {
       const authConfig = Get(
-        EntityType.Authorization,
+        ModelType.Authorization,
         theRequest.Authorization.Type,
         null,
       ) as any;
@@ -39,4 +40,26 @@ export default class AuthorizationModule implements IModule {
         throw new Error(`Unknown authorization type: $type`);
     }
   }
+}
+
+export interface BearerTokenAuth extends Auth {
+  BearerToken: string;
+}
+export interface BasicAuthAuth extends Auth {
+  BasicAuth: {
+    username: string;
+    password: string;
+  };
+}
+export interface HeaderAuth extends Auth {
+  Header: {
+    name: string; // e.g. X-API-TOKEN
+    value: string; // e.g. {{_api_token}}
+  };
+}
+export interface QueryAuth extends Auth {
+  Query: {
+    name: string; // e.g. X-API-TOKEN
+    value: string; // e.g. {{_api_token}}
+  };
 }

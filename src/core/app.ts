@@ -3,19 +3,19 @@ import ClientActor from "./actors/client.ts";
 import CurlActor from "./actors/curl.ts";
 import PassThruActor from "./actors/pass.ts";
 import SummaryActor from "./actors/summary.ts";
-import ZzzRequest from "./models.ts";
-import { EntityType } from "./storage.ts";
+import { Entity, ModelType } from "./models.ts";
 import FileStore from "./stores/file.ts";
 
 interface IActor {
-  act(theRequest: ZzzRequest): Promise<any>;
+  act(theRequest: Entity): Promise<any>;
 }
 interface IStore {
-  get(entityType: EntityType, entityId: string, environmentName: string): Promise<any>;
-  store(key: string, value: any, environmentName: string): Promise<void>;
+  get(modelType: ModelType, entityId: string, contextName: string): Promise<any>;
+  store(key: string, value: any, contextName: string): Promise<void>;
+  setContext(context: string): void;
 }
 interface IAuthorizer {
-  authorize(theRequest: ZzzRequest, authorizationConfig: any): void;
+  authorize(theRequest: Entity, authorizationConfig: any): void;
 }
 class Factory {
   async newStore(fileExtension: string): Promise<IStore> {
@@ -63,7 +63,7 @@ class Application {
     }
     return this.actor;
   }
-  async applyModules(theRequest: ZzzRequest): Promise<void> {
+  async applyModules(theRequest: Entity): Promise<void> {
     this.modules.mod(theRequest);
   }
 }
