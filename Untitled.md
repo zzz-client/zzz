@@ -100,13 +100,13 @@ Query:
 
 1. Set Scope
 2. CRUD
-  - Get Scopes
-  - Get Scope (returns Collections)
-  - Get Collection (returns Collections/Entities)
-  - Get Entity
-  - Get Context (Globals is just a special context)
-  - Get Authorizations
-  - Get Authorization
+    - Get Scopes
+    - Get Scope (returns Collections)
+    - Get Collection (returns Collections/Entities)
+    - Get Entity
+    - Get Context (Globals is just a special context)
+    - Get Authorizations
+    - Get Authorization
 3. Format (GET with applying variable values)
 4. Act (perform request as passthrough)
 
