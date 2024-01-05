@@ -232,6 +232,7 @@ Frontend:
 - Where should we write to for Postman Store?
 - More Stores & parsers; TOML, SQLite
 - GET Image
+- Tooltip over variables to show their resolved values
 
 
 ### Polish

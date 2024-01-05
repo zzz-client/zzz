@@ -1,5 +1,4 @@
 import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
-import { Parsers } from "./stores/file.ts";
 import { dirname } from "https://deno.land/std/path/mod.ts";
 import { Entity, Model, ModelType } from "./models.ts";
 import { IStore } from "./app.ts";

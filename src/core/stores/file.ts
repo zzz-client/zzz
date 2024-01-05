@@ -2,6 +2,7 @@ import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import { Collection, Entity, Model, ModelType, StringToStringMap } from "../models.ts";
 import { basename, extname } from "https://deno.land/std/path/mod.ts";
 import { IStore } from "../app.ts";
+import { getDriver } from "../files/drivers.ts";
 export default class FileStore implements IStore {
   fileExtension: string;
   constructor(fileExtension: string) {
@@ -10,7 +11,7 @@ export default class FileStore implements IStore {
   async get(modelType: ModelType, entityId: string, context: string): Promise<Model> {
     if (modelType === ModelType.Entity) {
       const requestPath = entityId + "." + this.fileExtension;
-      const resultRequest = Parsers.YAML.parse(Deno.readTextFileSync(requestPath)) as Entity;
+      const resultRequest = getDriver(requestPath).parse(Deno.readTextFileSync(requestPath)) as Entity;
       resultRequest.Id = entityId;
       resultRequest.Type = ModelType[modelType];
       if (!resultRequest.Name) {

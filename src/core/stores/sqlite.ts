@@ -1,9 +1,10 @@
 import { DB } from "https://deno.land/x/sqlite/mod.ts";
-import { IStore, Stats } from "../app.ts";
-import { ModelType } from "../storage.ts";
+import { IStore } from "../app.ts";
+import { ModelType } from "../models.ts";
 
 export default class SqliteStore implements IStore {
   database: DB;
+  context?: string;
   constructor(filePath: string) {
     this.database = new DB(filePath);
     this._init();
@@ -19,19 +20,8 @@ export default class SqliteStore implements IStore {
   store(key: string, value: any, environmentName: string): Promise<void> {
     throw new Error("Method not implemented.");
   }
-  stat(entityId: string): Promise<Stats> {
-    for (const table of ["Request", "Collection", "Folder", "Environment"]) {
-      const queryRows = this.database.query("SELECT id, name FROM (?) WHERE Id = (?)", [table, entityId]);
-      if (queryRows.length > 0) {
-        return Promise.resolve({
-          Type: table,
-          Name: queryRows[0][1] as string,
-          Created: new Date(),
-          Modified: new Date(),
-        });
-      }
-    }
-    throw new Error("Not found: " + entityId);
+  setContext(context: string): void {
+    this.context = context;
   }
   _init(): Promise<void> {
     this.database.execute(`
