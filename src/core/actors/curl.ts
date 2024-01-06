@@ -1,5 +1,5 @@
 import { IActor } from "../app.ts";
-import Entity from "../models.ts";
+import { Entity } from "../models.ts";
 
 export default class CurlActor implements IActor {
   format(culCommand: any): string {

@@ -4,7 +4,6 @@ import { Act, Authorize, newStore } from "./core/app.ts";
 import Hooks from "./core/hooks.ts";
 import { Get } from "./core/storage.ts";
 import tim from "./core/tim.ts";
-import { Parsers } from "./core/stores/file.ts";
 import { getDriver } from "./core/files/drivers.ts";
 
 export default async function Cli(config: AppConfig) {
