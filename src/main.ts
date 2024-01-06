@@ -1,31 +1,46 @@
-import Serve from "./http.ts";
 import Cli from "./cli.ts";
-import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
-import { Args } from "https://deno.land/std/flags/mod.ts";
 import Application from "./core/app.ts";
 import AuthorizationModule from "./modules/authorization.ts";
 import BodyModule from "./modules/body.ts";
-import Flags from "./core/flags.ts";
+import { Server } from "./http.ts";
 
-const app = new Application({
-  store: "FileStore",
-  actor: "Client",
-  modules: [AuthorizationModule, BodyModule],
-});
+function httpPromise(app: Application): Promise<void> {
+  if (Deno.args.includes("--http")) {
+    new Server(app).listen("Client");
+  }
+  return Promise.resolve();
+}
+function webPromise(app: Application): Promise<void> {
+  if (Deno.args.includes("--web")) {
+    Promise.resolve(Deno.run({ cmd: ["deno", "task", "web"] }).status());
+  }
+  return Promise.resolve();
+}
+function tuiPromise(app: Application): Promise<void> {
+  if (Deno.args.includes("--tui")) {
+    return Promise.reject("No TUI yet");
+  }
+  return Promise.resolve();
+}
+function cliPromise(app: Application) {
+  if ((!Deno.args.includes("--http") && !Deno.args.includes("--web") && !Deno.args.includes("--tui"))) {
+    return Cli(app);
+  }
+  return Promise.resolve();
+}
 
 export default async function main(): Promise<void> {
   try {
-    const argv = processFlags(Deno.args, Flags);
-
+    const app = new Application({
+      store: "FileStore",
+      actor: "Client",
+      modules: [AuthorizationModule, BodyModule],
+    });
     await Promise.all([
-      Deno.args.includes("--http") ? Serve(argv) : null,
-      Deno.args.includes("--web") ? Deno.run({ cmd: ["deno", "task", "web"] }).status() : null,
-      Deno.args.includes("--tui")
-        ? (() => {
-          throw new Error("No TUI yet");
-        })()
-        : null,
-      (!Deno.args.includes("--http") && !Deno.args.includes("--web") && !Deno.args.includes("--tui")) ? Cli(argv) : null,
+      httpPromise(app),
+      webPromise(app),
+      tuiPromise(app),
+      cliPromise(app),
     ]);
   } catch (e) {
     console.error("!!!", e);

@@ -17,8 +17,8 @@ export class Server implements IServer {
   request?: Request;
   port: number;
   app: Application;
-  constructor(argv: Args, app: Application) {
-    this.port = argv.http || DefaultFlags.HTTP_PORT;
+  constructor(app: Application) {
+    this.port = app.argv.http || DefaultFlags.HTTP_PORT;
     this.app = app;
   }
 

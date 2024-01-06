@@ -1,3 +1,4 @@
+import { processFlags } from "https://deno.land/x/flags_usage@2.0.0/mod.ts";
 import ModuleManager from "../modules/manager.ts";
 import ClientActor from "./actors/client.ts";
 import CurlActor from "./actors/curl.ts";
@@ -5,6 +6,7 @@ import PassThruActor from "./actors/pass.ts";
 import SummaryActor from "./actors/summary.ts";
 import { Entity, ModelType } from "./models.ts";
 import FileStore from "./stores/file.ts";
+import Flags from "./flags.ts";
 
 interface IActor {
   act(theRequest: Entity): Promise<any>;
@@ -47,6 +49,7 @@ class Application {
   factory = new Factory();
   store?: IStore;
   actor?: IActor;
+  argv = processFlags(Deno.args, Flags);
   constructor(config: ApplicationConfig) {
     this.config = config;
     this.modules = new ModuleManager(config);
