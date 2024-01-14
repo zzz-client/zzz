@@ -11,6 +11,8 @@ interface IServer {
   listen(actorName: string): void;
 }
 
+const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+
 export class Server implements IServer {
   port: number;
   app: Application;
@@ -36,7 +38,7 @@ export class Server implements IServer {
           return Promise.resolve(
             new Response("", {
               status: 400,
-              headers: getHeaders("application/JSON"),
+              headers: STANDARD_HEADERS
             }),
           );
       }
@@ -50,7 +52,7 @@ export class Server implements IServer {
     const headers = {
       "Allow": ["OPTIONS", "GET"],
       "Access-Control-Allow-Headers": ["X-Zzz-Workspace"],
-      ...getHeaders("application/json"),
+      ...STANDARD_HEADERS
     };
     if (request.url !== "/") {
       headers.Allow.push("POST");
@@ -61,6 +63,7 @@ export class Server implements IServer {
     });
   }
   async _respond(request: Request, actorName: string = "Pass"): Promise<Response> {
+    const store = await this.app.getStore();
     const { pathname: url } = new URL(request.url);
     console.log(`Respond to ${url}`);
     if (url === "/favicon.ico") {
@@ -69,6 +72,12 @@ export class Server implements IServer {
     const resourcePath = decodeURI(url.substring(1));
     let base = resourcePath;
     let ext = extname(resourcePath);
+    if (base === "") {
+      return this.respond(200, getDriver(".json").stringify(await Collections(store)), STANDARD_HEADERS);
+    }
+    if (ext === "") {
+      return this.respond(404, "",   STANDARD_HEADERS)
+    }
     if (ext.startsWith(".")) {
       ext = ext.substring(1);
       base = base.substring(0, base.length - ext.length - 1);
@@ -76,13 +85,7 @@ export class Server implements IServer {
     if ((base as string).endsWith("/")) {
       base = base.substring(0, base.length - 1);
     }
-    const contentType = getContentType(resourcePath);
-    console.log("Received request", request.method, "base=" + base, resourcePath, contentType);
-
-    const store = await this.app.getStore();
-    if (base === "") {
-      return this.respond(200, getDriver(".json").stringify(await Collections(store)), { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });
-    }
+    console.log("Received request", request.method, "base=" + base, resourcePath);
     console.log;
     return store.get(ModelType.Entity, base, "integrate")
       .then((result: Model) => {
@@ -101,17 +104,14 @@ export class Server implements IServer {
       .then((result: any) => {
         const driver = getDriver(resourcePath);
         const parsedResult = driver.stringify(result);
-        return this.respond(200, parsedResult, { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });
+        return this.respond(200, parsedResult, STANDARD_HEADERS);
       })
       .catch((reason: any) => {
         console.error(reason.message);
         console.error(reason);
-        return this.respond(500, reason, { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });
+        return this.respond(500, reason, STANDARD_HEADERS);
       });
   }
-}
-function getHeaders(contentType: string): any {
-  return { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" };
 }
 async function Collections(store: IStore): Promise<Collection[]> {
   const result = [] as Collection[];

@@ -68,7 +68,6 @@ function addEntityToNodes(noteList, entity) {
       addEntityToNodes(newNode.items, child);
     });
   }
-  console.log("new node", newNode);
   noteList.push(newNode);
   keys.push(newNode.Id!);
 }

@@ -13,8 +13,8 @@ import KeyValueTable from "./KeyValueTable.vue";
 import Authorization from "./Authorization.vue";
 import Response from "./Response.vue";
 import Body from "./Body.vue";
-import { ref, toRef, toRefs } from "vue";
-import ZzzRequest, { StringToStringMap } from "../core/models";
+import { ref, toRefs } from "vue";
+import { Entity, StringToStringMap } from "../core/models";
 const basename = (path) => path.split("/").reverse()[0];
 
 const props = defineProps(["value", "viewSecrets", "title"]);
@@ -43,11 +43,11 @@ function addQueryParams(base: string): string {
 
 function refreshTabTitle() {
   console.log("refresh", requestData.value);
-  window.emitter.emit("set-tab-title", requestData.value as ZzzRequest);
+  window.emitter.emit("set-tab-title", requestData.value as Entity);
 }
 async function fetchRequest(value: string): Promise<any> {
   return axios
-    .get(addQueryParams("http://localhost:8000/" + value))
+    .get(addQueryParams("http://localhost:8000/" + value + ".json"))
     .then((res) => {
       return res.data;
     })
@@ -88,7 +88,7 @@ function doTheThing(newValue: string) {
 function send(): void {
   // const what = (await axios({method: requestData.value.Method, headers: requestData.value.Headers, params: requestData.value.QueryParams, url: requestData.value.URL, data: requestData.value.Body})).data;
   axios
-    .post("http://localhost:8000/" + value.value)
+    .post("http://localhost:8000/" + value.value + ".json")
     .then((what) => {
       response.value = {
         data: what.data,
