@@ -44,12 +44,17 @@ export default class FileStore implements IStore {
           item.Children.push(await this.get(EntityType.Request, `${entityId}/${baseless}`, environmentName));
         }
       }
+      item.Id = entityId;
+      item.Type = EntityType[entityType];
       return item;
     }
     if (entityType === EntityType.Environment || entityType === EntityType.Authorization) {
       const entityFolder = getDirectoryForEntity(entityType);
       const filePath = `${entityFolder}/${entityId}.${this.fileExtension}`;
-      return this._parser().parse(Deno.readTextFileSync(filePath)) as Item; // TODO: Is this a naughty cast?
+      const item = this._parser().parse(Deno.readTextFileSync(filePath)) as Item;
+      item.Id = entityId;
+      item.Type = EntityType[entityType];
+      return 
     }
     throw new Error(`Unknown type of entity: ${entityType}`);
   }
