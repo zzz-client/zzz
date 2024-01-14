@@ -24,7 +24,7 @@ let lastClick = -1;
 function clickRequest(uwu) {
   const currentClick = Date.now();
   if (lastClick >= 0 && currentClick - lastClick < 500) {
-    console.log(lastClick, currentClick, uwu);
+    console.log("lastClick", lastClick, currentClick, uwu);
     openTab(uwu.item.key);
   }
   lastClick = currentClick;
@@ -59,7 +59,7 @@ function addEntityToNodes(noteList, entity) {
     key: fullPath,
     label: entity.Name
   } as MenuItem;
-  if (entity.Type == "Request") {
+  if (entity.Type == "Entity") {
     newNode.command = clickRequest;
   }
   if (entity.Children) {
@@ -68,6 +68,7 @@ function addEntityToNodes(noteList, entity) {
       addEntityToNodes(newNode.items, child);
     });
   }
+  console.log("new node", newNode);
   noteList.push(newNode);
   keys.push(newNode.Id!);
 }

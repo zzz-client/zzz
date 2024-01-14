@@ -73,7 +73,7 @@ function doTheThing(newValue: string) {
   fetchRequest(newValue)
     .then((data) => {
       console.log("tab loaded", data);
-      if (data.Type == "Request") {
+      if (data.Type == "Entity") {
         requestData.value = data;
         refreshTabTitle();
       }
