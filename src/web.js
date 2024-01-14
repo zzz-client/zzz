@@ -5,7 +5,7 @@ import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
 import Badge from "primevue/badge";
 import BadgeDirective from "primevue/badgedirective";
-import mitt from "libs/mitt";
+import mitt from "mitt";
 export const emitter = mitt();
 
 // (1 && 0) || [DataTable, RadioButton, DropDown, TabView, Axios];
