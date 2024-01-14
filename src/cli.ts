@@ -7,8 +7,8 @@ import BodyModule from "./modules/body.ts";
 import { ModelType } from "./core/models.ts";
 
 const app = new Application({
-  store: "FileStore",
-  actor: "summary",
+  store: "yml",
+  actor: "Summary",
   modules: [AuthorizationModule, BodyModule],
 });
 

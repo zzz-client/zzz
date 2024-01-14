@@ -1,7 +1,8 @@
 import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
 import { dirname } from "https://deno.land/std/path/mod.ts";
-import { Entity, Model, ModelType } from "./models.ts";
+import { Context, Entity, Model, ModelType } from "./models.ts";
 import { IStore } from "./app.ts";
+import { getDriver } from "./files/drivers.ts";
 const DEFAULT_MARKER = "_defaults";
 export const SESSION_FILE = "session";
 const GLOBALS_FILE = "globals";
@@ -9,7 +10,7 @@ const BLANK_ENTITY = {
   Id: "",
   Type: "",
   Name: "",
-} as Model;
+} as Context;
 
 export { Load, Meld };
 
@@ -29,7 +30,7 @@ async function Load(subjectRequest: Entity, contextName: string, store: IStore):
   return resultRequest;
 }
 
-async function optionalContext(variables: IVariables, contextName: string, store: IStore): Promise<Model> {
+async function optionalContext(variables: IVariables, contextName: string, store: IStore): Promise<Context> {
   try {
     return await variables.context(contextName, store);
   } catch (e) {
@@ -51,20 +52,20 @@ function Meld(destination: any, source: any): void {
 }
 
 interface IVariables {
-  globals(store: IStore): Promise<Entity>;
-  context(contextName: string, store: IStore): Promise<Entity>;
-  defaults(collectionPath: string, store: IStore): Promise<Entity>;
-  local(contextName: string, store: IStore): Promise<Entity>;
+  globals(store: IStore): Promise<Context>;
+  context(contextName: string, store: IStore): Promise<Context>;
+  defaults(collectionPath: string, store: IStore): Promise<Context>;
+  local(contextName: string, store: IStore): Promise<Context>;
 }
 
 class FileVariables implements IVariables {
-  async globals(store: IStore): Promise<Entity> {
+  async globals(store: IStore): Promise<Context> {
     return await optionalContext(this, GLOBALS_FILE, store);
   }
-  async local(contextName: string, store: IStore): Promise<Entity> {
+  async local(contextName: string, store: IStore): Promise<Context> {
     return await optionalContext(this, contextName + ".local", store);
   }
-  context(contextName: string, store: IStore): Promise<Entity> {
+  context(contextName: string, store: IStore): Promise<Context> {
     try {
       const result = store.get(ModelType.Context, contextName, contextName);
       return result;
@@ -73,10 +74,10 @@ class FileVariables implements IVariables {
       return Promise.resolve(BLANK_ENTITY);
     }
   }
-  async defaults(collectionPath: string, store: IStore): Promise<Entity> {
-    const theRequest = new Entity("", "", "", "");
+  async defaults(collectionPath: string, store: IStore): Promise<Context> {
+    const theRequest = new Context("", "");
     const fileExtension = "JSON"; // TODO: Hardcoded
-    const parser = Parsers[fileExtension.toUpperCase()];
+    const parser = await getDriver(fileExtension.toUpperCase());
     const defaultFilePaths = getDefaultFilePaths(collectionPath, fileExtension);
     for (const defaultFilePath of defaultFilePaths) {
       if (existsSync(defaultFilePath)) {

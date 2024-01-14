@@ -32,8 +32,7 @@ function cliPromise(app: Application) {
 export default async function main(): Promise<void> {
   try {
     const app = new Application({
-      store: "FileStore",
-      actor: "Client",
+      store: "yml",
       modules: [AuthorizationModule, BodyModule],
     });
     await Promise.all([

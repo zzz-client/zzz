@@ -1,12 +1,10 @@
 // import { basename, extname } from "path";
-import { Entity, Model, ModelType, StringToStringMap } from "./core/models.ts";
+import { Collection, Entity, Model, ModelType, StringToStringMap } from "./core/models.ts";
 import tim from "./core/tim.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
-import { Load } from "./core/variables.ts";
 import { DefaultFlags } from "./core/flags.ts";
-import { Args } from "https://deno.land/std/flags/mod.ts";
-import { getContentType, getDriver } from "./core/files/drivers.ts";
-import Application from "./core/app.ts";
+import { Driver, getContentType, getDriver } from "./core/files/drivers.ts";
+import Application, { IActor, IStore } from "./core/app.ts";
 
 interface IServer {
   respond(code: number, body: any, headers: StringToStringMap): any;
@@ -14,7 +12,6 @@ interface IServer {
 }
 
 export class Server implements IServer {
-  request?: Request;
   port: number;
   app: Application;
   constructor(app: Application) {
@@ -24,22 +21,24 @@ export class Server implements IServer {
 
   listen(actorName: string): void {
     const pls = this;
-    const callback = (request: Request): Response => {
+    const callback = async (request: Request): Promise<Response> => {
       switch (request.method) {
         case "GET":
-          console.log("Responding to PGETOST");
-          return pls._respond(actorName);
+          console.log("Responding to GET");
+          return pls._respond(request, actorName);
         case "POST":
           console.log("Responding to POST");
-          return pls._respond("Client");
+          return pls._respond(request, "Client");
         case "OPTIONS":
           console.log("Responding to OPTIONS", request.url);
-          return this._handleOptions(request);
+          return Promise.resolve(this._handleOptions(request));
         default:
-          return new Response("", {
-            status: 400,
-            headers: getHeaders("application/JSON"),
-          });
+          return Promise.resolve(
+            new Response("", {
+              status: 400,
+              headers: getHeaders("application/JSON"),
+            }),
+          );
       }
     };
     Deno.serve({ port: this.port }, callback);
@@ -61,9 +60,9 @@ export class Server implements IServer {
       headers: headers,
     });
   }
-  async _respond(actorName: string = "Pass"): Promise<Response> {
-    const url = this.getUrl();
-    console.log("Responding to", url);
+  async _respond(request: Request, actorName: string = "Pass"): Promise<Response> {
+    const { pathname: url } = new URL(request.url);
+    console.log(`Respond to ${url}`);
     if (url === "/favicon.ico") {
       return this.respond(200, {}, {});
     }
@@ -78,48 +77,47 @@ export class Server implements IServer {
       base = base.substring(0, base.length - 1);
     }
     const contentType = getContentType(resourcePath);
-    console.log("Received request", this.getMethod(), "base=" + base, resourcePath, contentType);
+    console.log("Received request", request.method, "base=" + base, resourcePath, contentType);
 
+    const store = await this.app.getStore();
     if (base === "") {
-      const whatever = await this.app.get(ModelType.Collection);
-      this.Collections();
-      return this.respond(200, JSON.stringify(whatever, null, 2), getHeaders(contentType));
+      return this.respond(200, getDriver(".json").stringify(await Collections(store)), { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });
     }
-    return Get(ModelType.Entity, base, "integrate")
-      .then((result: Model) => {
-        if (result.Type === "Entity") {
-          return Load(result as Entity, "integrate", Stores.YAML); // TODO Hardcoded
-        } else {
-          return result;
-        }
-      })
+    console.log;
+    return store.get(ModelType.Entity, base, "integrate")
       .then((result: Model) => {
         const theRequest = result as Entity;
-        theRequest.Method = this.getMethod(); // TODO: HATE THIS
-        if (this.getQueryParams().has("format") || this.getMethod() === "POST") {
+        const { searchParams } = new URL(theRequest.URL);
+        if (searchParams.has("format") || request.method === "POST") {
           tim(theRequest, theRequest.Variables);
         }
-        if (ext === "curl") {
-          // TODO: Hardcoded
-          return Act(theRequest, "Curl");
-        }
-        return Act(theRequest, actorName);
+        return theRequest;
       })
-      .then((result) => {
-        const parser = getDriver(resourcePath);
-        const parsedResult = parser.stringify(result);
-        return server.respond(200, parsedResult, { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });
+      .then((theRequest: Entity) => {
+        return this.app.getActor("Pass").then((actor: IActor) => {
+          return actor.act(theRequest);
+        });
       })
-      .catch((reason) => {
+      .then((result: any) => {
+        const driver = getDriver(resourcePath);
+        const parsedResult = driver.stringify(result);
+        return this.respond(200, parsedResult, { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });
+      })
+      .catch((reason: any) => {
         console.error(reason.message);
         console.error(reason);
-        const parser = getDriver(resourcePath);
-        const parsedResult = parser.stringify(reason);
-        console.error(parsedResult);
-        return server.respond(500, parsedResult, { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });
+        return this.respond(500, reason, { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" });
       });
   }
 }
 function getHeaders(contentType: string): any {
   return { "Content-Type": contentType, "Access-Control-Allow-Origin": "*" };
+}
+async function Collections(store: IStore): Promise<Collection[]> {
+  const result = [] as Collection[];
+  const collections = ["Salesforce Primary"];
+  for (const collection of collections) {
+    result.push(await store.get(ModelType.Collection, collection, "integrate")); // TODO: Hardcoded
+  }
+  return result;
 }

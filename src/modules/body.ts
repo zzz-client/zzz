@@ -1,7 +1,11 @@
+import Application from "../core/app.ts";
 import { Entity, Model } from "../core/models.ts";
 import { IModule, ModuleConfig } from "./manager.ts";
 
 export default class BodyModule implements IModule {
+  static newInstance(app: Application): IModule {
+    return new BodyModule();
+  }
   async mod(entity: Model, config: ModuleConfig): Promise<void> {
     if (entity.Type == "Request") {
       await this.loadBody(entity as Entity, entity.Id);

@@ -45,14 +45,13 @@ interface ApplicationConfig {
 class Application {
   config: ApplicationConfig;
   modules: ModuleManager;
-  actorType = "Client";
   factory = new Factory();
   store?: IStore;
   actor?: IActor;
   argv = processFlags(Deno.args, Flags);
   constructor(config: ApplicationConfig) {
     this.config = config;
-    this.modules = new ModuleManager(config);
+    this.modules = new ModuleManager(this);
   }
   async getStore(): Promise<IStore> {
     if (!this.store) {
@@ -60,9 +59,9 @@ class Application {
     }
     return this.store;
   }
-  async getActor(): Promise<IActor> {
+  async getActor(actorType: string): Promise<IActor> {
     if (!this.actor) {
-      this.actor = await this.factory.newActor(this.actorType);
+      this.actor = await this.factory.newActor(actorType);
     }
     return this.actor;
   }

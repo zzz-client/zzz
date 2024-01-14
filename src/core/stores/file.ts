@@ -14,7 +14,7 @@ export default class FileStore implements IStore {
   async get(modelType: ModelType, entityId: string, context: string): Promise<Model> {
     if (modelType === ModelType.Entity) {
       const requestPath = entityId + "." + this.fileExtension;
-      const resultRequest = getDriver(requestPath).parse(Deno.readTextFileSync(requestPath)) as Entity;
+      const resultRequest = await (await getDriver(requestPath)).parse(Deno.readTextFileSync(requestPath)) as Entity;
       resultRequest.Id = entityId;
       resultRequest.Type = ModelType[modelType];
       if (!resultRequest.Name) {
@@ -64,8 +64,12 @@ export default class FileStore implements IStore {
 }
 
 function filetypeSupported(filePath: string): boolean {
-  const fileExtension = filePath.substring(filePath.lastIndexOf(".") + 1);
-  return !!getDriver(fileExtension);
+  try {
+    getDriver(filePath);
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 function excludeFromInfo(name: string): boolean {
   return name.startsWith("_");
