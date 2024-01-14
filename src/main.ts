@@ -38,7 +38,7 @@ export default async function main(): Promise<void> {
     const config = parseAppConfig(argv);
     await Promise.all([
       Deno.args.includes("--http") ? Serve(config) : null,
-      Deno.args.includes("--web") ? Deno.run({ cmd: ["deno", "task", "web"] }).status() : null,
+      Deno.args.includes("--web") ? Deno.run({ cmd: ["deno", "task", "web"] }).status() : null, // TODO THis will not work once it is a compiled program
       Deno.args.includes("--tui")
         ? (() => {
           throw new Error("No TUI yet");
