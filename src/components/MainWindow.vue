@@ -16,7 +16,7 @@ import { MenuItem } from "primevue/menuitem";
 const basename = (path) => path.split("/").reverse()[0];
 
 const tabs = ref([] as { title: string; value: string }[]);
-const folders = ref([] as any[]);
+const collections = ref([] as any[]);
 const dirty = ref([] as boolean[]);
 const errorMessage = ref("");
 
@@ -89,7 +89,7 @@ axios
   .then((res) => {
     console.log("Got initial data", res.data);
     res.data.forEach((entity) => {
-      addEntityToNodes(folders.value, entity);
+      addEntityToNodes(collections.value, entity);
     });
   })
   .catch((error) => {
@@ -128,7 +128,7 @@ function closeTab(tabIndex) {
   </div>
   <Splitter class="absolute" v-if="!errorMessage">
     <SplitterPanel :size="15" :minSize="20" class="absolute">
-      <Collections :folders="folders" />
+      <Collections :collections="collections" />
     </SplitterPanel>
 
     <SplitterPanel :size="75" class="absolute">

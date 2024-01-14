@@ -1,15 +1,16 @@
 import { DB } from "https://deno.land/x/sqlite/mod.ts";
-import { IStore, Stats } from "../factories.ts";
-import { EntityType } from "../storage.ts";
+import { IStore } from "../app.ts";
+import { ModelType } from "../models.ts";
 
 export default class SqliteStore implements IStore {
   database: DB;
+  context?: string;
   constructor(filePath: string) {
     this.database = new DB(filePath);
     this._init();
   }
-  get(entityType: EntityType, entityId: string, environmentName: string): Promise<any> {
-    const x = this.database.query("SELECT Id, Name FROM " + EntityType[entityType] + " WHERE Id = (?)", [entityId])[0];
+  get(modelType: ModelType, entityId: string, environmentName: string): Promise<any> {
+    const x = this.database.query("SELECT Id, Name FROM " + ModelType[modelType] + " WHERE Id = (?)", [entityId])[0];
     console.log(x);
     return Promise.resolve({
       Id: x[0],
@@ -19,19 +20,8 @@ export default class SqliteStore implements IStore {
   store(key: string, value: any, environmentName: string): Promise<void> {
     throw new Error("Method not implemented.");
   }
-  stat(entityId: string): Promise<Stats> {
-    for (const table of ["Request", "Collection", "Folder", "Environment"]) {
-      const queryRows = this.database.query("SELECT id, name FROM (?) WHERE Id = (?)", [table, entityId]);
-      if (queryRows.length > 0) {
-        return Promise.resolve({
-          Type: table,
-          Name: queryRows[0][1] as string,
-          Created: new Date(),
-          Modified: new Date(),
-        });
-      }
-    }
-    throw new Error("Not found: " + entityId);
+  setContext(context: string): void {
+    this.context = context;
   }
   _init(): Promise<void> {
     this.database.execute(`
@@ -68,8 +58,8 @@ export default class SqliteStore implements IStore {
         Variables TEXT
       )
     `);
-    if (this.database.query("SELECT Id FROM Collection WHERE Id = (?)", ["Inspirato Salesforce REST API"]).length === 0) {
-      this.database.query('INSERT INTO Collection (Id, Name) VALUES ("Inspirato Salesforce REST API", "Inspirato Salesforce REST API")', []);
+    if (this.database.query("SELECT Id FROM Collection WHERE Id = (?)", ["Salesforce Primary"]).length === 0) {
+      this.database.query('INSERT INTO Collection (Id, Name) VALUES ("Salesforce Primary", "Salesforce Primary")', []);
     }
     return Promise.resolve();
   }

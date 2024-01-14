@@ -1,43 +1,43 @@
 import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
-import { EntityType, Stores } from "./storage.ts";
-import { getDirectoryForEntity, Parser, Parsers } from "./stores/file.ts";
-import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
-import ZzzRequest, { Entity } from "./models.ts";
-import { IStore } from "./factories.ts";
+import { dirname } from "https://deno.land/std/path/mod.ts";
+import { Entity, Model, ModelType } from "./models.ts";
+import { IStore } from "./app.ts";
 const DEFAULT_MARKER = "_defaults";
-const SESSION_FILE = "session";
+export const SESSION_FILE = "session";
 const GLOBALS_FILE = "globals";
 const BLANK_ENTITY = {
   Id: "",
   Type: "",
   Name: "",
-} as Entity;
+} as Model;
 
-export async function Load(subjectRequest: ZzzRequest, environmentName: string, store: IStore): Promise<ZzzRequest> {
-  const resultRequest = new ZzzRequest(subjectRequest.Id, subjectRequest.Name, subjectRequest.URL, subjectRequest.Method);
+export { Load, Meld };
+
+async function Load(subjectRequest: Entity, contextName: string, store: IStore): Promise<Entity> {
+  const resultRequest = new Entity(subjectRequest.Id, subjectRequest.Name, subjectRequest.URL, subjectRequest.Method);
   const variables = new FileVariables() as IVariables;
   const globals = await variables.globals(store);
   const globalsLocal = await variables.local(GLOBALS_FILE, store);
-  const environment = await variables.environment(environmentName, store);
-  const environmentLocal = await variables.local(environmentName, store);
+  const context = await variables.context(contextName, store);
+  const contextLocal = await variables.local(contextName, store);
   const defaults = await variables.defaults(dirname(subjectRequest.Id), store);
   const sessionLocal = await variables.local(SESSION_FILE, store);
-  for (const item of [globals, globalsLocal, environment, environmentLocal, defaults, subjectRequest, sessionLocal]) {
+  for (const item of [globals, globalsLocal, context, contextLocal, defaults, subjectRequest, sessionLocal]) {
     Meld(resultRequest, item);
   }
   console.log("Melded Variables:", JSON.stringify(resultRequest.Variables, null, 2));
   return resultRequest;
 }
 
-async function optionalEnvironment(variables: IVariables, environmentName: string, store: IStore): Promise<Entity> {
+async function optionalContext(variables: IVariables, contextName: string, store: IStore): Promise<Model> {
   try {
-    return await variables.environment(environmentName, store);
+    return await variables.context(contextName, store);
   } catch (e) {
     return BLANK_ENTITY;
   }
 }
 
-export function Meld(destination: any, source: any): void {
+function Meld(destination: any, source: any): void {
   if (!source) {
     return;
   }
@@ -51,33 +51,33 @@ export function Meld(destination: any, source: any): void {
 }
 
 interface IVariables {
-  globals(store: IStore): Promise<ZzzRequest>;
-  environment(environmentName: string, store: IStore): Promise<ZzzRequest>;
-  defaults(folderPath: string, store: IStore): Promise<ZzzRequest>;
-  local(environmentName: string, store: IStore): Promise<ZzzRequest>;
+  globals(store: IStore): Promise<Entity>;
+  context(contextName: string, store: IStore): Promise<Entity>;
+  defaults(collectionPath: string, store: IStore): Promise<Entity>;
+  local(contextName: string, store: IStore): Promise<Entity>;
 }
 
 class FileVariables implements IVariables {
-  async globals(store: IStore): Promise<ZzzRequest> {
-    return await optionalEnvironment(this, GLOBALS_FILE, store);
+  async globals(store: IStore): Promise<Entity> {
+    return await optionalContext(this, GLOBALS_FILE, store);
   }
-  async local(environmentName: string, store: IStore): Promise<ZzzRequest> {
-    return await optionalEnvironment(this, environmentName + ".local", store);
+  async local(contextName: string, store: IStore): Promise<Entity> {
+    return await optionalContext(this, contextName + ".local", store);
   }
-  environment(environmentName: string, store: IStore): Promise<ZzzRequest> {
+  context(contextName: string, store: IStore): Promise<Entity> {
     try {
-      const result = store.get(EntityType.Environment, environmentName, environmentName);
+      const result = store.get(ModelType.Context, contextName, contextName);
       return result;
     } catch (e) {
-      console.log("error loading environment", environmentName, e);
+      console.log("error loading context", contextName, e);
       return Promise.resolve(BLANK_ENTITY);
     }
   }
-  async defaults(folderPath: string, store: IStore): Promise<ZzzRequest> {
-    const theRequest = new ZzzRequest("", "", "", "");
+  async defaults(collectionPath: string, store: IStore): Promise<Entity> {
+    const theRequest = new Entity("", "", "", "");
     const fileExtension = "JSON"; // TODO: Hardcoded
     const parser = Parsers[fileExtension.toUpperCase()];
-    const defaultFilePaths = getDefaultFilePaths(folderPath, fileExtension);
+    const defaultFilePaths = getDefaultFilePaths(collectionPath, fileExtension);
     for (const defaultFilePath of defaultFilePaths) {
       if (existsSync(defaultFilePath)) {
         const fileContents = parser.parse(Deno.readTextFileSync(defaultFilePath));
@@ -89,9 +89,6 @@ class FileVariables implements IVariables {
   }
 }
 
-export function getEnvironmentPath(environmentName: string, fileExtension: string): string {
-  return getDirectoryForEntity(EntityType.Environment) + `/${environmentName}.${fileExtension}`;
-}
 function getDefaultFilePaths(requestFilePath: string, fileExtension: string): string[] {
   const defaultFilePaths = [];
   let currentDirectory = dirname(requestFilePath);
@@ -101,8 +98,8 @@ function getDefaultFilePaths(requestFilePath: string, fileExtension: string): st
   }
   return defaultFilePaths.reverse();
 }
-function getDefaultsFilePath(folderPath: string, fileExtension: string): string {
-  return `${folderPath}/${DEFAULT_MARKER}.${fileExtension}`;
+function getDefaultsFilePath(collectionPath: string, fileExtension: string): string {
+  return `${collectionPath}/${DEFAULT_MARKER}.${fileExtension}`;
 }
 
 const NO_DEFAULT_ALLOWED = ["Method", "URL", "QueryParams", "Body"];

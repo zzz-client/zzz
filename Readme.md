@@ -203,6 +203,7 @@ Needs its own modularity, or part of the Store?
 
 ## TODO
 
+[Hurl](hurl.dev) as format
 Examples for requests. That's a lot of work.
 Parsing body, notably as an external file.
 Path params
@@ -231,6 +232,7 @@ Frontend:
 - Where should we write to for Postman Store?
 - More Stores & parsers; TOML, SQLite
 - GET Image
+- Tooltip over variables to show their resolved values
 
 
 ### Polish

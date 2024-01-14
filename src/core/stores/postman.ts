@@ -1,27 +1,28 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
-import ZzzRequest from "../models.ts";
-import { EntityType, Get, Stores } from "../storage.ts";
+import { Context, Entity, HttpMethod, ModelType } from "../models.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
-import { IStore } from "../factories.ts";
+import { IStore } from "../app.ts";
+import Schema from "./postman.schema.ts";
+import { Meld } from "../variables.ts";
 
 export default class PostmanStore implements IStore {
-  collection: CollectionSchema;
+  collection: Schema;
   constructor(collectionJsonFilePath: string) {
     if (existsSync(collectionJsonFilePath)) {
       this.collection = JSON.parse(Deno.readTextFileSync(collectionJsonFilePath));
     } else {
       console.warn("Invalid JSON file path??? " + collectionJsonFilePath);
-      this.collection = {} as CollectionSchema;
+      this.collection = {} as Schema;
     }
   }
-  async get(entityType: EntityType, entityId: string, environmentName: string): Promise<any> {
-    if (entityType === EntityType.Request) {
+  async get(modelType: ModelType, entityId: string, environmentName: string): Promise<any> {
+    if (modelType === ModelType.Entity) {
       return await loadRequest(this.collection, environmentName, entityId);
     }
-    if (entityType === EntityType.Collection || entityType === EntityType.Folder) {
-      return await Get(entityType, entityId, environmentName);
+    if (modelType === ModelType.Collection) {
+      return await Get(modelType, entityId, environmentName);
     }
-    return Stores.YAML.get(entityType, entityId, environmentName);
+    return Stores.YAML.get(modelType, entityId, environmentName);
   }
   async store(key: string, value: any): Promise<void> {
     throw new Error("Method not implemented.");
@@ -30,83 +31,36 @@ export default class PostmanStore implements IStore {
     throw new Error("Not implemented");
   }
 }
-async function loadRequest(collection: CollectionSchema, environmentName: string, requestFilePath: string): Promise<ZzzRequest> {
-  console.debug("Loading theRequest from postman collection: ", requestFilePath);
+async function loadRequest(schema: Schema, environmentName: string, entityFilePath: string): Promise<Entity> {
+  console.debug("Loading theRequest from postman collection: ", entityFilePath);
   // TODO: Write this so it cna work recursively
-  const folderName = dirname(requestFilePath);
-  const extension = extname(requestFilePath);
-  const requestName = basename(requestFilePath, extension);
-  const folder = collection.item.filter((item) => item.name === folderName)[0];
-  const request = folder.item.filter((item) => item.name === requestName)[0].request;
-  const theRequest = new ZzzRequest(requestFilePath, requestName, request.url.raw.split("?")[0], request.method);
-  if (request.body) {
-    theRequest.Body = request.body.raw;
+  const collectionName = dirname(entityFilePath);
+  const extension = extname(entityFilePath);
+  const entityName = basename(entityFilePath, extension);
+  const collection = schema.item.filter((item) => item.name === collectionName)[0];
+  const entity = collection.item.filter((item) => item.name === entityName)[0].request;
+  const theRequest = new Entity(entityFilePath, entityName, entity.url.raw.split("?")[0], entity.method as HttpMethod);
+  if (entity.body) {
+    theRequest.Body = entity.body.raw;
   }
-  for (let header of request.header) {
+  for (let header of entity.header) {
     theRequest.Headers[header.key] = header.value;
   }
-  for (let query of request.url.query) {
+  for (let query of entity.url.query) {
     theRequest.QueryParams[query.key] = query.value;
   }
 
-  applyChanges(theRequest, await loadEnvironment("globals"));
-  // applyChanges(theRequest, await loadEnvironment("globals.local", null));
-  applyChanges(theRequest, await loadEnvironment(environmentName));
-  applyChanges(theRequest, await loadEnvironment(environmentName + ".local"));
-  applyChanges(theRequest, await loadEnvironment("session.local"));
+  Meld(theRequest, await loadContext("globals"));
+  // Meld(theRequest, await loadEnvironment("globals.local", null));
+  Meld(theRequest, await loadContext(environmentName));
+  Meld(theRequest, await loadContext(environmentName + ".local"));
+  Meld(theRequest, await loadContext("session.local"));
   return theRequest;
 }
-async function loadEnvironment(target: string): Promise<ZzzRequest> {
+async function loadContext(target: string): Promise<Context> {
   try {
-    return (await Stores.YAML.get(EntityType.Environment, target, "integrate")) as ZzzRequest; // TODO: Hardcoded
+    return (await Stores.YAML.get(ModelType.Context, target, "integrate")) as Context; // TODO: Hardcoded
   } catch (e) {
-    return new ZzzRequest("", "", ""); // TODO: WHAT
+    return new Context("", ""); // TODO: WHAT
   }
-}
-interface CollectionSchema {
-  info: {
-    _postman_id: string;
-    name: string;
-    schema: string;
-    _exporter_id: string;
-    _collection_link: string;
-  };
-  item: [
-    {
-      name: string;
-      item: [
-        {
-          name: string;
-          request: {
-            method: string;
-            header: [
-              {
-                key: string;
-                value: string;
-                description: string;
-              },
-            ];
-            body: {
-              mode: string;
-              raw: string;
-            };
-            url: {
-              raw: string;
-              protocol: string;
-              host: string[];
-              path: string[];
-              query: [
-                {
-                  key: string;
-                  value: string;
-                },
-              ];
-            };
-            description: string;
-          };
-          response: [];
-        },
-      ];
-    },
-  ];
 }

@@ -1,16 +1,16 @@
 import axios from "https://deno.land/x/redaxios/mod.ts";
-import { IActor } from "../factories.ts";
-import ZzzRequest from "../models.ts";
-import { Parsers } from "../stores/file.ts";
+import { IActor } from "../app.ts";
+import { Entity } from "../models.ts";
+import { getDriver } from "../files/drivers.ts";
 
-const defaultStringify = Parsers.JSON.stringify;
+const defaultStringify = getDriver(".json").stringify;
 
 export default class ClientActor implements IActor {
   stringify: Function;
   constructor(stringify: Function = defaultStringify) {
     this.stringify = stringify;
   }
-  async act(theRequest: ZzzRequest): Promise<any> {
+  async act(theRequest: Entity): Promise<any> {
     try {
       return await doRequest(theRequest);
     } catch (error) {
@@ -27,7 +27,7 @@ function formatError(error: any) {
   }
   return error;
 }
-async function doRequest(theRequest: ZzzRequest): Promise<any> {
+async function doRequest(theRequest: Entity): Promise<any> {
   return (
     await axios({
       method: theRequest.Method,
