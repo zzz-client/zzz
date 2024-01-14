@@ -1,3 +1,6 @@
 [submodule "Inspirato Salesforce REST API"]
 	path = Inspirato Salesforce REST API
 	url = git@github.com:jonnypetraglia/zzz-inspirato.git
+[submodule "libs/mitt"]
+	path = libs/mitt
+	url = https://github.com/developit/mitt.git
