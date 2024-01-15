@@ -216,6 +216,7 @@ TODO
     - SQLite TODO
     - Postman TODO
     - [Bru](https://docs.usebruno.com/bru-lang-overview.html)
+    - [Hurl](https://hurl.dev)
   - Extras:
     - VS Code extension TODO?
 
