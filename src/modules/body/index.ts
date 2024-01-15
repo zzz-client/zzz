@@ -18,6 +18,7 @@ export default class BodyModule implements IModule {
     }
     if (body) {
       entity.Body = body;
+      console.log("body", body);
     }
     return Promise.resolve();
   }

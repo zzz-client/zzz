@@ -24,7 +24,7 @@ export default class VariablesModule {
     this.app = app;
   }
   async load(theModel: Model, context: Context): Promise<StringToStringMap> {
-    return Load(theModel, context, await this.app.getStore()); // TODO
+    return Load(theModel, context, await this.app.getStore());
   }
 }
 
@@ -95,6 +95,7 @@ function getDefaultFilePaths(requestFilePath: string, fileExtension: string): st
     defaultFilePaths.push(getDefaultsFilePath(currentDirectory + "/" + currentDirectory, fileExtension));
     currentDirectory = dirname(currentDirectory);
   }
+  defaultFilePaths.push(getDefaultsFilePath(currentDirectory + "/" + currentDirectory, fileExtension));
   return defaultFilePaths.reverse();
 }
 function getDefaultsFilePath(collectionPath: string, fileExtension: string): string {

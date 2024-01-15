@@ -48,7 +48,7 @@ export class Server implements IServer {
     };
     Deno.serve({ port: this.port }, callback);
   }
-  respond(status: number, body: any, headers: StringToStringMap): Response {
+  newResponse(status: number, body: any, headers: StringToStringMap): Response {
     return new Response(body, { status, headers });
   }
   _handleOptions(request: Request): Response {
@@ -68,7 +68,7 @@ export class Server implements IServer {
     const store = await this.app.getStore();
     const { pathname: url } = new URL(request.url);
     if (url === "/favicon.ico") {
-      return this.respond(200, {}, {});
+      return this.newResponse(200, {}, {});
     }
     const resourcePath = decodeURI(url.substring(1));
     const context = getContext(request);
@@ -87,7 +87,7 @@ export class Server implements IServer {
         return collections;
       }
       if (ext === "") {
-        return this.respond(404, "", STANDARD_HEADERS);
+        return this.newResponse(404, "", STANDARD_HEADERS);
       }
     }
     Log("Received request", request.method, "base=" + base, resourcePath);
@@ -123,7 +123,7 @@ export class Server implements IServer {
         return this._respond(model, actorName);
       });
   }
-  _respond(theRequest: Entity, actorName: string) {
+  _respond(theRequest: Entity, actorName: string): Promise<Response> {
     return this.app.getActor(actorName).then((actor: IActor) => {
       return actor.act(theRequest);
     })
@@ -131,9 +131,10 @@ export class Server implements IServer {
         Log("Final response", result);
         let finalResponse = result;
         if(!(result instanceof Response)){
+          Log("Stringifying result");
           const driver = getDriver(".json");
-          const parsedResult = driver.stringify(result);
-          finalResponse = this.respond(200, parsedResult, STANDARD_HEADERS);
+          const stringResult = driver.stringify(result);
+          finalResponse = this.newResponse(200, stringResult, STANDARD_HEADERS);
         }
         return finalResponse;
       })
