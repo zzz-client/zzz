@@ -13,12 +13,10 @@ export default class ClientActor implements IActor {
   }
   async act(theRequest: Entity): Promise<any> {
     try {
-      console.log("acting file");
       const derp = await doRequest(theRequest);
-      console.log("acting file", derp);
+      console.log("acted file", derp);
       return derp;
     } catch (error) {
-      console.error("Errori file", error);
       throw formatError(error);
     }
   }

@@ -6,7 +6,7 @@ import { Server } from "./http.ts";
 
 function httpPromise(app: Application): Promise<void> {
   if (Deno.args.includes("--http")) {
-    new Server(app).listen("Client");
+    new Server(app).listen();
   }
   return Promise.resolve();
 }

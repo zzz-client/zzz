@@ -38,6 +38,7 @@ export default class FileStore implements IStore {
     if (modelType === ModelType.Context || modelType === ModelType.Authorization) {
       const entityFolder = getDirectoryForModel(modelType);
       const filePath = `${entityFolder}/${entityId}.${this.fileExtension}`;
+      console.log("Filepath: ", filePath);
       const item = this._driver().parse(Deno.readTextFileSync(filePath)) as Model; // TODO: Is this a naughty cast?
       item.Id = entityId;
       item.Type = ModelType[modelType];
@@ -59,7 +60,7 @@ export default class FileStore implements IStore {
     throw new Error("Not implemented");
   }
   _driver(): Driver {
-    return getDriver(this.fileExtension.toUpperCase());
+    return getDriver("." + this.fileExtension);
   }
 }
 
@@ -90,7 +91,7 @@ function excludeFromInfo(name: string): boolean {
 export function getDirectoryForModel(modelType: ModelType): string {
   switch (modelType) {
     case ModelType.Context:
-      return "context";
+      return "contexts";
     case ModelType.Authorization:
       return "authorizations";
     default:

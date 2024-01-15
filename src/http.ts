@@ -5,13 +5,14 @@ import { extname } from "https://deno.land/std/path/mod.ts";
 import { DefaultFlags } from "./core/flags.ts";
 import { Driver, getContentType, getDriver } from "./core/files/drivers.ts";
 import Application, { IActor, IStore } from "./core/app.ts";
+import { Load } from "./core/variables.ts";
 
 interface IServer {
   respond(code: number, body: any, headers: StringToStringMap): any;
   listen(actorName: string): void;
 }
 
-const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" };
 
 export class Server implements IServer {
   port: number;
@@ -21,13 +22,14 @@ export class Server implements IServer {
     this.app = app;
   }
 
-  listen(actorName: string): void {
+  listen(): void {
     const pls = this;
     const callback = async (request: Request): Promise<Response> => {
+      console.log("listen", request.method);
       switch (request.method) {
         case "GET":
           console.log("Responding to GET");
-          return pls._respond(request, actorName);
+          return pls._respond(request, "Pass");
         case "POST":
           console.log("Responding to POST");
           return pls._respond(request, "Client");
@@ -38,7 +40,7 @@ export class Server implements IServer {
           return Promise.resolve(
             new Response("", {
               status: 400,
-              headers: STANDARD_HEADERS
+              headers: STANDARD_HEADERS,
             }),
           );
       }
@@ -51,8 +53,7 @@ export class Server implements IServer {
   _handleOptions(request: Request): Response {
     const headers = {
       "Allow": ["OPTIONS", "GET"],
-      "Access-Control-Allow-Headers": ["X-Zzz-Workspace"],
-      ...STANDARD_HEADERS
+      ...STANDARD_HEADERS,
     };
     if (request.url !== "/") {
       headers.Allow.push("POST");
@@ -62,22 +63,15 @@ export class Server implements IServer {
       headers: headers,
     });
   }
-  async _respond(request: Request, actorName: string = "Pass"): Promise<Response> {
+  async _respond(request: Request, actorName: string): Promise<Response> {
     const store = await this.app.getStore();
     const { pathname: url } = new URL(request.url);
-    console.log(`Respond to ${url}`);
     if (url === "/favicon.ico") {
       return this.respond(200, {}, {});
     }
     const resourcePath = decodeURI(url.substring(1));
     let base = resourcePath;
     let ext = extname(resourcePath);
-    if (base === "") {
-      return this.respond(200, getDriver(".json").stringify(await Collections(store)), STANDARD_HEADERS);
-    }
-    if (ext === "") {
-      return this.respond(404, "",   STANDARD_HEADERS)
-    }
     if (ext.startsWith(".")) {
       ext = ext.substring(1);
       base = base.substring(0, base.length - ext.length - 1);
@@ -85,24 +79,39 @@ export class Server implements IServer {
     if ((base as string).endsWith("/")) {
       base = base.substring(0, base.length - 1);
     }
+    if (request.method == "GET") {
+      if (base === "") {
+        return this.respond(200, getDriver(".json").stringify(await Collections(store)), STANDARD_HEADERS);
+      }
+      if (ext === "") {
+        return this.respond(404, "", STANDARD_HEADERS);
+      }
+    }
     console.log("Received request", request.method, "base=" + base, resourcePath);
-    console.log;
+    const { searchParams } = new URL(request.url);
     return store.get(ModelType.Entity, base, "integrate")
-      .then((result: Model) => {
-        const theRequest = result as Entity;
-        const { searchParams } = new URL(theRequest.URL);
-        if (searchParams.has("format") || request.method === "POST") {
+      .then(async (result: Entity): Promise<Entity> => {
+        if (searchParams.has("format") || actorName == "Client") {
+          return Load(result, "integrate", store); // TODO:
+        } else {
+          return Promise.resolve(result);
+        }
+      })
+      .then((theRequest: Entity) => {
+        if (searchParams.has("format") || actorName == "Client") {
           tim(theRequest, theRequest.Variables);
         }
+        console.log("Tmmed", theRequest);
         return theRequest;
       })
       .then((theRequest: Entity) => {
-        return this.app.getActor("Pass").then((actor: IActor) => {
-          return actor.act(theRequest);
+        return this.app.getActor(actorName).then((actor: IActor) => {
+          return actor.act(theRequest).catch((error) => error);
         });
       })
       .then((result: any) => {
-        const driver = getDriver(resourcePath);
+        console.log("Result", result);
+        const driver = getDriver(".json");
         const parsedResult = driver.stringify(result);
         return this.respond(200, parsedResult, STANDARD_HEADERS);
       })

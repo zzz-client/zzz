@@ -46,7 +46,10 @@ function getContentType(resourcePath: string): string {
   }
 }
 function getDriver(resourcePath: string): Driver {
-  let ext = extname(resourcePath).substring(1).toLowerCase();
+  let ext = resourcePath.toLowerCase();
+  if (resourcePath.includes(".")) {
+    ext = extname(resourcePath).substring(1);
+  }
   if (resourcePath.startsWith(".") && !ext) {
     ext = resourcePath.slice(1);
   }
