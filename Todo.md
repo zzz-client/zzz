@@ -34,6 +34,7 @@ Fix HTTP so it returns different formats for different extensions given
 - CLI - `--edit <id> ...`
 - CLI - `--delete <id>`
 
+
 ### Bonus
 
 - Determine return format based on the supplied content-type header instead of having to do extension?

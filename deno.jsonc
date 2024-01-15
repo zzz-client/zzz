@@ -9,7 +9,9 @@
     "http": "deno run -A --unstable src/main.ts --http",
     "web": "deno run -A --unstable --node-modules-dir npm:vite --host 127.0.0.1",
     "web:build": "deno run -A --unstable --node-modules-dir npm:vite build",
-    "preview": "deno run -A --unstable --node-modules-dir npm:vite --host 127.0.0.1 preview"
+    "preview": "deno run -A --unstable --node-modules-dir npm:vite --host 127.0.0.1 preview",
+    "tauri": "tauri dev",
+    "tauri:build": "tauri build"
   },
   "lock": false,
   "fmt": {

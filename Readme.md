@@ -42,6 +42,12 @@ Run `--help` for more detail on flag usages and shorthands.
 - `--web`: Start the Web (Vite) server, defaults to port 5173
 
 
+## Desktop
+
+![Zzz_desktop_interface](./screenshots/desktop.png)
+
+TODO
+
 ## Web
 
 ![Zzz web interface](./screenshots/web.png)
@@ -404,7 +410,7 @@ This allows `v1/Foo/defaults.yml` to use an `Authorization` like BearerToken whe
 
 TODO
 
-21. Specify Context
+1. Specify Context
 2. CRUD
 3. Format
 4. Act on Entity
