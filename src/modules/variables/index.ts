@@ -2,7 +2,7 @@ import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
 import { dirname } from "https://deno.land/std/path/mod.ts";
 import { Context, Entity, Model, ModelType } from "../../core/models.ts";
 import { IStore } from "../../core/app.ts";
-import { getDriver } from "../../core/stores/files/drivers.ts";
+import { getDriver } from "../../stores/files/drivers.ts";
 const DEFAULT_MARKER = "_defaults";
 export const SESSION_FILE = "session";
 const GLOBALS_FILE = "globals";
@@ -13,20 +13,21 @@ const BLANK_ENTITY = {
 } as Context;
 
 export default class VariablesModule {
-    async mod(request: Request, theModel: Model, app: ModuleConfig): Promise<void>{
-      await Load(theRequest, "integrate", app.getStore()); // TODO 
+    async mod(request: Request, theModel: Model, app: ModuleConfig): Promise<void>{ 
+      await Load(theModel as Entity, "integrate", await app.getStore()); // TODO 
     }
 }
 
 
 
 async function Load(subjectRequest: Entity, contextName: string, store: IStore): Promise<Entity> {
-  const resultRequest = new Entity(subjectRequest.Id, subjectRequest.Name, subjectRequest.URL, subjectRequest.Method);
+  const resultRequest = subjectRequest;
   const variables = new FileVariables() as IVariables;
   const globals = await variables.globals(store);
   const globalsLocal = await variables.local(GLOBALS_FILE, store);
   const context = await variables.context(contextName, store);
   const contextLocal = await variables.local(contextName, store);
+  console.log(subjectRequest);
   const defaults = await variables.defaults(dirname(subjectRequest.Id), store);
   const sessionLocal = await variables.local(SESSION_FILE, store);
   for (const item of [globals, globalsLocal, context, contextLocal, defaults, subjectRequest, sessionLocal]) {
@@ -36,25 +37,11 @@ async function Load(subjectRequest: Entity, contextName: string, store: IStore):
   return resultRequest;
 }
 
-async function optionalContext(variables: IVariables, contextName: string, store: IStore): Promise<Context> {
-  try {
-    return await variables.context(contextName, store);
-  } catch (e) {
-    return BLANK_ENTITY;
-  }
-}
-
-function Meld(destination: any, source: any): void {
-  if (!source) {
-    return;
-  }
-  for (const key of Object.keys(source)) {
-    if (destination[key] !== undefined && typeof destination[key] === "object") {
-      Meld(destination[key], source[key]);
-    } else {
-      destination[key] = source[key];
-    }
-  }
+function optionalContext(variables: IVariables, contextName: string, store: IStore): Promise<Context> {
+  return variables.context(contextName, store).catch(() => {
+  console.log('oh no');
+  return Promise.resolve(BLANK_ENTITY);
+  });
 }
 
 interface IVariables {
@@ -71,12 +58,12 @@ class FileVariables implements IVariables {
   async local(contextName: string, store: IStore): Promise<Context> {
     return await optionalContext(this, contextName + ".local", store);
   }
-  context(contextName: string, store: IStore): Promise<Context> {
+  async context(contextName: string, store: IStore): Promise<Context> {
     try {
-      const result = store.get(ModelType.Context, contextName, contextName);
+      console.log('Getting context for', store, store.get)
+      const result = await store.get(ModelType.Context, contextName, contextName);
       return result;
     } catch (e) {
-      console.log("error loading context", contextName, e);
       return Promise.resolve(BLANK_ENTITY);
     }
   }

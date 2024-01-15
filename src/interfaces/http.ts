@@ -3,9 +3,10 @@ import { Collection, Entity, Model, ModelType, StringToStringMap } from "../core
 import { extname } from "https://deno.land/std/path/mod.ts";
 import tim from "../core/tim.ts";
 import { DefaultFlags } from "../core/flags.ts";
-import { Driver, getContentType, getDriver } from "../core/stores/files/drivers.ts";
+import { Driver, getContentType, getDriver } from "../stores/files/drivers.ts";
 import Application, { IActor, IStore } from "../core/app.ts";
 import Log from "../core/log.ts";
+import VariablesModule from "../modules/variables/index.ts";
 
 interface IServer {
   respond(code: number, body: any, headers: StringToStringMap): any;
@@ -91,8 +92,10 @@ export class Server implements IServer {
     const { searchParams } = new URL(request.url);
     return store.get(ModelType.Entity, base, "integrate")
       .then(async (result: Entity): Promise<Entity> => {
+       console.log('SP', searchParams);
         if (searchParams.has("format") || actorName == "Client") {
-          return Load(result, "integrate", store); // TODO:
+        console.log("FORMAT", result);
+          return new VariablesModule().mod(request, result, this.app); 
         } else {
           return Promise.resolve(result);
         }
