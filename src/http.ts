@@ -106,19 +106,23 @@ export class Server implements IServer {
       })
       .then((theRequest: Entity) => {
         return this.app.getActor(actorName).then((actor: IActor) => {
-          return actor.act(theRequest).catch((error) => error);
-        });
-      })
-      .then((result: any) => {
-        console.log("Result", result);
-        const driver = getDriver(".json");
-        const parsedResult = driver.stringify(result);
-        return this.respond(200, parsedResult, STANDARD_HEADERS);
-      })
-      .catch((reason: any) => {
-        console.error(reason.message);
-        console.error(reason);
-        return this.respond(500, reason, STANDARD_HEADERS);
+          let prom = actor.act(theRequest);
+          if (prom.catch) {
+            prom = prom.catch((error) => error);
+          }
+          return prom;
+        })
+          .then((result: any) => {
+            console.log("Result", result);
+            const driver = getDriver(".json");
+            const parsedResult = driver.stringify(result);
+            return this.respond(200, parsedResult, STANDARD_HEADERS);
+          })
+          .catch((reason: any) => {
+            console.error(reason.message);
+            console.error(reason);
+            return this.respond(500, reason, STANDARD_HEADERS);
+          });
       });
   }
 }
