@@ -106,7 +106,6 @@ export class Server implements IServer {
               return theRequest;
             });
         }
-        Log("Tmmed", theRequest);
         return theRequest;
       })
       .then((theRequest: Entity) => {

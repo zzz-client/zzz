@@ -70,7 +70,6 @@ class FileVariables implements IVariables {
   }
   async context(contextName: string, store: IStore): Promise<Context> {
     try {
-      console.log('Getting context for', store, store.get)
       const result = await store.get(ModelType.Context, contextName, contextName);
       return result;
     } catch (e) {

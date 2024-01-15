@@ -38,7 +38,6 @@ export default class FileStore implements IStore {
     if (modelType === ModelType.Context || modelType === ModelType.Authorization) {
       const entityFolder = getDirectoryForModel(modelType);
       const filePath = `${entityFolder}/${entityId}.${this.fileExtension}`;
-      console.log("Filepath: ", filePath);
       const item = this._driver().parse(Deno.readTextFileSync(filePath)) as Model; // TODO: Is this a naughty cast?
       item.Id = entityId;
       item.Type = ModelType[modelType];
