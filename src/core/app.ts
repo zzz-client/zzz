@@ -62,8 +62,8 @@ class Application {
   async getActor(actorType: string): Promise<IActor> {
       return await this.factory.newActor(actorType);
   }
-  async applyModules(theRequest: Entity): Promise<void> {
-    this.modules.mod(theRequest);
+  async applyModules(model: Model): Promise<void> {
+    return this.modules.mod(model, this.config);
   }
 }
 

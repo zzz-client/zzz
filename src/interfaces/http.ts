@@ -26,7 +26,6 @@ export class Server implements IServer {
   listen(): void {
     const pls = this;
     const callback = async (request: Request): Promise<Response> => {
-      Log("listen", request.method);
       switch (request.method) {
         case "GET":
           Log("Responding to GET");
@@ -91,11 +90,12 @@ export class Server implements IServer {
     Log("Received request", request.method, "base=" + base, resourcePath);
     const { searchParams } = new URL(request.url);
     return store.get(ModelType.Entity, base, "integrate")
+      .then((result: Entity) => {
+        return this.app.applyModules(result).then(() => result);
+      })
       .then(async (result: Entity): Promise<Entity> => {
-       console.log('SP', searchParams);
         if (searchParams.has("format") || actorName == "Client") {
-        console.log("FORMAT", result);
-          return new VariablesModule().mod(request, result, this.app); 
+          return VariablesModule.newInstance(this.app).mod(result); 
         } else {
           return Promise.resolve(result);
         }

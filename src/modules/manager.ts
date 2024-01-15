@@ -12,12 +12,13 @@ export default class ModuleManager {
       this.modules.push(module.newInstance(app));
     }
   }
-  async mod(theModel: Model, request: Request) {
+  async mod(theModel: Model, config: moduleConfig): Promise<void> {
     for (const module of this.modules) {
-      module.mod(request, theModel, this.app.config);
+      await module.mod(theModel, config);
     }
+    return Promise.resolve();
   }
 }
 export interface IModule {
-  mod(app: ModuleConfig, model: Model): Promise<void>;
+  mod(model: Model, app: ModuleConfig): Promise<void>;
 }

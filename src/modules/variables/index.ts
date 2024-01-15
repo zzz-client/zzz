@@ -4,6 +4,7 @@ import { Context, Entity, Model, ModelType } from "../../core/models.ts";
 import { IStore } from "../../core/app.ts";
 import { getDriver } from "../../stores/files/drivers.ts";
 import Meld from "../../core/meld.ts";
+import { IModule } from "../manager.ts";
 
 const DEFAULT_MARKER = "_defaults";
 export const SESSION_FILE = "session";
@@ -14,11 +15,19 @@ const BLANK_ENTITY = {
   Name: "",
 } as Context;
 
-export default class VariablesModule {
-    async mod(request: Request, theModel: Model, app: ModuleConfig): Promise<void>{ 
-      return Load(theModel as Entity, "integrate", await app.getStore()); // TODO 
+export default class VariablesModule implements IModule {
+    app: Application;
+    static newInstance(app: Application){
+      return new VariablesModule(app);
+    }
+    constructor(app: Application){
+      this.app = app;
+    }
+    async mod(theModel: Model): Promise<void>{
+      return Load(theModel, "integrate", await this.app.getStore()); // TODO 
     }
 }
+
 
 
 
@@ -29,7 +38,6 @@ async function Load(subjectRequest: Entity, contextName: string, store: IStore):
   const globalsLocal = await variables.local(GLOBALS_FILE, store);
   const context = await variables.context(contextName, store);
   const contextLocal = await variables.local(contextName, store);
-  console.log(subjectRequest);
   const defaults = await variables.defaults(dirname(subjectRequest.Id), store);
   const sessionLocal = await variables.local(SESSION_FILE, store);
   for (const item of [globals, globalsLocal, context, contextLocal, defaults, subjectRequest, sessionLocal]) {

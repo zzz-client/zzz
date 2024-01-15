@@ -15,7 +15,7 @@ export default class AuthorizationModule implements IModule {
   constructor(app: Application) {
     this.app = app;
   }
-  async mod(theModel: Model, request: Request): Promise<void> {
+  async mod(theModel: Model): Promise<void> {
     if (theModel.Authorization) {
       const authConfig = await (await this.app.getStore()).get(
         ModelType.Authorization,
