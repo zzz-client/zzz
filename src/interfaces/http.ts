@@ -30,10 +30,10 @@ export class Server implements IServer {
       switch (request.method) {
         case "GET":
           Log("Responding to GET");
-          return pls._respond(request, "Pass");
+          return pls._do(request, "Pass").then((result) => this._respond(result, "Pass"));
         case "POST":
           Log("Responding to POST");
-          return pls._respond(request, "Client");
+          return pls._do(request, "Client").then((result) => this._respond(result, "Client"));
         case "OPTIONS":
           Log("Responding to OPTIONS", request.url);
           return Promise.resolve(this._handleOptions(request));
@@ -64,7 +64,7 @@ export class Server implements IServer {
       headers: headers,
     });
   }
-  async _respond(request: Request, actorName: string): Promise<Response> {
+  async _do(request: Request, actorName: string): Promise<Response> {
     const store = await this.app.getStore();
     const { pathname: url } = new URL(request.url);
     if (url === "/favicon.ico") {
@@ -92,13 +92,13 @@ export class Server implements IServer {
     const { searchParams } = new URL(request.url);
     const context = getContext(request);
     const isVerbose = searchParams.has("verbose");
-    const isFormat = searchParams.has("format");
+    const isFormat = searchParams.has("format") || actorName == "Client";
     return store.get(ModelType.Entity, base, context)
       .then((result: Entity) => {
         return this.app.applyModules(result).then(() => result);
       })
       .then((theRequest: Entity) => {
-        if (isVerbose || isFormat || actorName == "Client") {
+        if (isVerbose || isFormat) {
           return VariablesModule.newInstance(this.app).load(theRequest, context)
             .then((variables) => {
               if (isVerbose) {
@@ -113,16 +113,16 @@ export class Server implements IServer {
         return theRequest;
       })
       .then((model: Model) => {
-          if(isFormat){
-            return PathParamsModule.newInstance(this.app).mod(model);
-          }
-          return Promise.resolve(model);
-      })
-      .then((theRequest: Entity) => {
-        return this.app.getActor(actorName).then((actor: IActor) => {
-          return actor.act(theRequest).catch((error) => error);
-        });
-      })
+        if (isFormat) {
+          return PathParamsModule.newInstance(this.app).mod(model);
+        }
+        return Promise.resolve(model);
+      });
+  }
+  _respond(theRequest: Entity, actorName: string) {
+    return this.app.getActor(actorName).then((actor: IActor) => {
+      return actor.act(theRequest).catch((error) => error);
+    })
       .then((result: any) => {
         Log("Result", result);
         const driver = getDriver(".json");

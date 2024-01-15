@@ -16,9 +16,9 @@ export default class PathParamsModule implements IModule {
   loadPathParams(entity: Entity, entityId: string): Promise<void> {
     let pathParams = entity.PathParams;
     if (pathParams) {
-      for(const key of Object.keys(pathParams)){
+      for (const key of Object.keys(pathParams)) {
         const value = pathParams[key];
-        entity.URL = entity.URL.replace(':' + key, value); 
+        entity.URL = entity.URL.replace(":" + key, value);
       }
     }
     return Promise.resolve();
