@@ -560,15 +560,14 @@ TODO
 
 # TODO
 
-[Hurl](hurl.dev) as format
 Examples for requests. That's a lot of work.
 Parsing body, notably as an external file.
 Path params
-Order requests, folders, & maybe collections
+Sequence, somehow
 Why the hell is primevue/menuitem not cached by Deno?
 
 backend:
-  - Workspaces
+  - Contexts
   - Sweet mother of god, fix the design pattern in serve.ts
     - Add workspace entity for Get, and some command to get all workspaces
   - Create auth UI for bulk edit and creation
@@ -577,8 +576,8 @@ backend:
   - find xmlStringify
 
 Frontend:
-  - Workspaces
-  - Environments
+  - Contexts
+  - Scopes
   - form-* Body
   - binary Body
   - Settings tab

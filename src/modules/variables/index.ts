@@ -23,8 +23,8 @@ export default class VariablesModule {
   constructor(app: Application) {
     this.app = app;
   }
-  async load(theModel: Model): Promise<StringToStringMap> {
-    return Load(theModel, "integrate", await this.app.getStore()); // TODO
+  async load(theModel: Model, context: Context): Promise<StringToStringMap> {
+    return Load(theModel, context, await this.app.getStore()); // TODO
   }
 }
 

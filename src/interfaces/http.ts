@@ -89,13 +89,14 @@ export class Server implements IServer {
     }
     Log("Received request", request.method, "base=" + base, resourcePath);
     const { searchParams } = new URL(request.url);
-    return store.get(ModelType.Entity, base, "integrate")
+    const context = getContext(request);
+    return store.get(ModelType.Entity, base, context)
       .then((result: Entity) => {
         return this.app.applyModules(result).then(() => result);
       })
       .then((theRequest: Entity) => {
         if (searchParams.has("format") || searchParams.has("verbose") || actorName == "Client") {
-          return VariablesModule.newInstance(this.app).load(theRequest)
+          return VariablesModule.newInstance(this.app).load(theRequest, context)
             .then((variables) => {
               if (searchParams.has("verbose")) {
                 theRequest.Variables = variables;
@@ -129,8 +130,14 @@ export class Server implements IServer {
 async function Collections(store: IStore): Promise<Collection[]> {
   const result = [] as Collection[];
   const collections = ["Salesforce Primary"];
+  const context = getContext(request);
   for (const collection of collections) {
-    result.push(await store.get(ModelType.Collection, collection, "integrate")); // TODO: Hardcoded
+    result.push(await store.get(ModelType.Collection, collection, context)); // TODO: Hardcoded
   }
   return result;
+}
+function getContext(request: Request): string {
+  const { searchParams } = new URL(request.url);
+  const headers = request.Headers || {};
+  return searchParams.get("context") || headers["X-ZZZ-Context"];
 }
