@@ -60,7 +60,7 @@ class Application {
     return this.store;
   }
   async getActor(actorType: string): Promise<IActor> {
-      return await this.factory.newActor(actorType);
+    return await this.factory.newActor(actorType);
   }
   async applyModules(model: Model): Promise<void> {
     return this.modules.mod(model, this.config);

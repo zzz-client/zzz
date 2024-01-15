@@ -19,35 +19,35 @@ function parse(input: string): any {
 }
 function stringify(input: any): string {
   const results = [] as string[];
-  if(input.Name){
+  if (input.Name) {
     results.push(`# ${input.Name}`);
   }
-  
+
   results.push(`${input.Method} ${input.URL}`);
 
-  if(input.Headers) {
+  if (input.Headers) {
     results.push(...parseMap(input.Headers));
   }
-  if(input.QueryParams){
+  if (input.QueryParams) {
     results.push("[QueryStringParams]");
     results.push(...parseMap(input.QueryParams));
   }
   if (input.Body) {
-    if(input.Headers?.content == "application/x-www-form-urlencoded"){
+    if (input.Headers?.content == "application/x-www-form-urlencoded") {
       results.push("[FormParams]");
       results.push(...parseMap(input.Body));
-    } else if(input.Headers?.content == "multipart/form-data"){
+    } else if (input.Headers?.content == "multipart/form-data") {
       results.push("[MultipartFormData]");
       results.push(...parseMap(input.Body));
-    } else if (typeof input.Body == "string"){
+    } else if (typeof input.Body == "string") {
       results.push(...input.Body.split("\n"));
     } else {
-      const  driver = getDriver(".json"); // TODO, and XML
+      const driver = getDriver(".json"); // TODO, and XML
       results.push(driver.stringify(input.Body));
     }
   }
   if (input.Authorization) {
-    console.log(input.Authorization)
+    console.log(input.Authorization);
     // TODO: only BasicAuth is natively supported...
   }
   return results.join("\n");

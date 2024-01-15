@@ -16,20 +16,17 @@ const BLANK_ENTITY = {
 } as Context;
 
 export default class VariablesModule {
-    app: Application;
-    static newInstance(app: Application){
-      return new VariablesModule(app);
-    }
-    constructor(app: Application){
-      this.app = app;
-    }
-    async load(theModel: Model): Promise<StringToStringMap>{
-      return Load(theModel, "integrate", await this.app.getStore()); // TODO 
-    }
+  app: Application;
+  static newInstance(app: Application) {
+    return new VariablesModule(app);
+  }
+  constructor(app: Application) {
+    this.app = app;
+  }
+  async load(theModel: Model): Promise<StringToStringMap> {
+    return Load(theModel, "integrate", await this.app.getStore()); // TODO
+  }
 }
-
-
-
 
 async function Load(subjectRequest: Entity, contextName: string, store: IStore): Promise<StringToStringMap> {
   const result = {};
@@ -49,8 +46,8 @@ async function Load(subjectRequest: Entity, contextName: string, store: IStore):
 
 function optionalContext(variables: IVariables, contextName: string, store: IStore): Promise<Context> {
   return variables.context(contextName, store).catch(() => {
-  console.log('oh no');
-  return Promise.resolve(BLANK_ENTITY);
+    console.log("oh no");
+    return Promise.resolve(BLANK_ENTITY);
   });
 }
 
