@@ -13,9 +13,9 @@ Zzz came out of the desire for a light replacement to Postman with generally the
   - Authorization
   - Headers
   - Body
-- Environments and Globals
-- Default values per folder or collection
-- Local variables
+- Environments and Globals (aka Scopes)
+- Local variables (more Scopes)
+- Default values per folder or collection (aka Variables)
 
 **Planned**:
 
@@ -35,8 +35,8 @@ Zzz came out of the desire for a light replacement to Postman with generally the
 
 Run `--help` for more detail on flag usages and shorthands.
 
-- `--environment <name>`: The name of the environment to load from
-- `--workspace <name>`: The name of the workspace to load from
+- `--scope <name>`: The name of the scope to use
+- `--context <name>`: The name of the context to use
 - `--http`: Start the HTTP server, defaults to port 8000
 - `--web`: Start the Web (Vite) server, defaults to port 5173
 
@@ -240,7 +240,7 @@ Query:
 
 These provide extra manipulation after a Model has been loaded from the Store and before it has been passed to the Actor.
 
-## Body
+### Body
 
 This module will further process the `Body` attribute on Entities.
 
@@ -271,7 +271,7 @@ Maybe if it starts with `@`? or use two different ones, `Body` and `BodyFile`? t
 Body: filepath ???
 ```
 
-## Authorization
+### Authorization
 
 The Authorization module allows reuse of Authorizations so that Models can refer to them by name.
 
@@ -302,7 +302,7 @@ Method: GET
 Authorization: foobar
 ```
 
-## Variables
+### Variables
 
 This module resolves all variable values for a given Model to help yield an actionable Model. Zzz will apply the following in order:
 
