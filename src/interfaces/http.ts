@@ -72,8 +72,7 @@ export class Server implements IServer {
     }
     const resourcePath = decodeURI(url.substring(1));
     const context = getContext(request);
-    const scope = getScope(request);
-    let base = scope + "/" + resourcePath;
+    let base = resourcePath;
     let ext = extname(resourcePath);
     if (ext.startsWith(".")) {
       ext = ext.substring(1);
@@ -83,7 +82,7 @@ export class Server implements IServer {
       base = base.substring(0, base.length - 1);
     }
     if (request.method == "GET") {
-      if (base == scope) {
+      if (base == "") {
         const collections = await Collections(request, store);
         return collections;
       }
@@ -126,13 +125,17 @@ export class Server implements IServer {
   }
   _respond(theRequest: Entity, actorName: string) {
     return this.app.getActor(actorName).then((actor: IActor) => {
-      return actor.act(theRequest).catch((error) => error);
+      return actor.act(theRequest);
     })
       .then((result: any) => {
-        Log("Result", result);
-        const driver = getDriver(".json");
-        const parsedResult = driver.stringify(result);
-        return this.respond(200, parsedResult, STANDARD_HEADERS);
+        Log("Final response", result);
+        let finalResponse = result;
+        if(!(result instanceof Response)){
+          const driver = getDriver(".json");
+          const parsedResult = driver.stringify(result);
+          finalResponse = this.respond(200, parsedResult, STANDARD_HEADERS);
+        }
+        return finalResponse;
       })
       .catch((reason: any) => {
         console.error(reason.message);

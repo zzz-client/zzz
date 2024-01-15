@@ -21,6 +21,8 @@ Web:
 
 Fix HTTP so it returns different formats for different extensions given
 
+Per-request settings? Is a Settings module even needed? how? see Readme.md for list
+
 
 ## Chipping away
 
