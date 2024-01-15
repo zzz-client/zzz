@@ -1,6 +1,6 @@
-import Application from "../core/app.ts";
-import { Entity, Model } from "../core/models.ts";
-import { IModule, ModuleConfig } from "./manager.ts";
+import Application from "../../core/app.ts";
+import { Entity, Model } from "../../core/models.ts";
+import { IModule, ModuleConfig } from "../manager.ts";
 
 export default class BodyModule implements IModule {
   static newInstance(app: Application): IModule {

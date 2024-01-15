@@ -2,7 +2,7 @@ import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
 import { dirname } from "https://deno.land/std/path/mod.ts";
 import { Context, Entity, Model, ModelType } from "./models.ts";
 import { IStore } from "./app.ts";
-import { getDriver } from "./files/drivers.ts";
+import { getDriver } from "./stores/files/drivers.ts";
 const DEFAULT_MARKER = "_defaults";
 export const SESSION_FILE = "session";
 const GLOBALS_FILE = "globals";

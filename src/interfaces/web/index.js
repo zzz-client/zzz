@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import PrimeVue from "primevue/config";
-import App from "../App.vue";
+import App from "./App.vue";
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
 import Badge from "primevue/badge";

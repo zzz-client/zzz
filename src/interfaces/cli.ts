@@ -1,9 +1,9 @@
 import { Args } from "https://deno.land/std/flags/mod.ts";
 import tim from "../core/tim.ts";
-import { getDriver } from "../core/files/drivers.ts";
+import { getDriver } from "../core/stores/files/drivers.ts";
 import Application, { ApplicationConfig } from "../core/app.ts";
-import AuthorizationModule from "../modules/authorization.ts";
-import BodyModule from "../modules/body.ts";
+import AuthorizationModule from "../modules/authorization/index.ts";
+import BodyModule from "../modules/body/index.ts";
 import { ModelType } from "../core/models.ts";
 
 const app = new Application({

@@ -1,11 +1,11 @@
-import BasicAuthAuthorizer from "./authorizers/basicAuth.ts";
-import BearerTokenAuthorizer from "./authorizers/bearerToken.ts";
-import HeaderAuthorizer from "./authorizers/header.ts";
-import QueryAuthorizer from "./authorizers/query.ts";
-import Application, { IAuthorizer } from "../core/app.ts";
-import { Auth, Entity } from "../core/models.ts";
-import { ModelType } from "../core/models.ts";
-import { IModule } from "./manager.ts";
+import BasicAuthAuthorizer from "./basicAuth.ts";
+import BearerTokenAuthorizer from "./bearerToken.ts";
+import HeaderAuthorizer from "./header.ts";
+import QueryAuthorizer from "./query.ts";
+import Application, { IAuthorizer } from "../../core/app.ts";
+import { Auth, Entity } from "../../core/models.ts";
+import { ModelType } from "../../core/models.ts";
+import { IModule } from "./../manager.ts";
 
 export default class AuthorizationModule implements IModule {
   app: Application;

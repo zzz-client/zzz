@@ -3,10 +3,10 @@ import { Collection, Entity, Model, ModelType, StringToStringMap } from "../core
 import { extname } from "https://deno.land/std/path/mod.ts";
 import tim from "../core/tim.ts";
 import { DefaultFlags } from "../core/flags.ts";
-import { Driver, getContentType, getDriver } from "../core/files/drivers.ts";
+import { Driver, getContentType, getDriver } from "../core/stores/files/drivers.ts";
 import Application, { IActor, IStore } from "../core/app.ts";
 import { Load } from "../core/variables.ts";
-import Log from "../log.ts";
+import Log from "../core/log.ts";
 
 interface IServer {
   respond(code: number, body: any, headers: StringToStringMap): any;

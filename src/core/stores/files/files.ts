@@ -1,8 +1,8 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
-import { Collection, Entity, Model, ModelType, StringToStringMap } from "../models.ts";
+import { Collection, Entity, Model, ModelType, StringToStringMap } from "../../models.ts";
 import { basename, extname } from "https://deno.land/std/path/mod.ts";
-import { IStore } from "../app.ts";
-import { Driver, getDriver } from "../files/drivers.ts";
+import { IStore } from "../../app.ts";
+import { Driver, getDriver } from "../../stores/files/drivers.ts";
 
 const SESSION_FILE = "session.local";
 

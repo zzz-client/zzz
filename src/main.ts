@@ -1,7 +1,7 @@
 import Cli from "./interfaces/cli.ts";
 import Application from "./core/app.ts";
-import AuthorizationModule from "./modules/authorization.ts";
-import BodyModule from "./modules/body.ts";
+import AuthorizationModule from "./modules/authorization/index.ts";
+import BodyModule from "./modules/body/index.ts";
 import { Server } from "./interfaces/http.ts";
 
 function httpPromise(app: Application): Promise<void> {

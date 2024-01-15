@@ -2,7 +2,7 @@
 import axios from "npm:axios";
 import { IActor } from "../app.ts";
 import { Entity } from "../models.ts";
-import { getDriver } from "../files/drivers.ts";
+import { getDriver } from "../stores/files/drivers.ts";
 
 const defaultStringify = getDriver(".json").stringify;
 
