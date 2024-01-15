@@ -3,6 +3,8 @@ import { dirname } from "https://deno.land/std/path/mod.ts";
 import { Context, Entity, Model, ModelType } from "../../core/models.ts";
 import { IStore } from "../../core/app.ts";
 import { getDriver } from "../../stores/files/drivers.ts";
+import Meld from "../../core/meld.ts";
+
 const DEFAULT_MARKER = "_defaults";
 export const SESSION_FILE = "session";
 const GLOBALS_FILE = "globals";
@@ -14,7 +16,7 @@ const BLANK_ENTITY = {
 
 export default class VariablesModule {
     async mod(request: Request, theModel: Model, app: ModuleConfig): Promise<void>{ 
-      await Load(theModel as Entity, "integrate", await app.getStore()); // TODO 
+      return Load(theModel as Entity, "integrate", await app.getStore()); // TODO 
     }
 }
 
