@@ -31,15 +31,15 @@ export class Server implements IServer {
         case "GET":
           Log("Responding to GET");
           return pls._do(request, "Pass").then((result) => this._respond(result, "Pass"));
-        case "POST":
-          Log("Responding to POST");
+        case "PATCH":
+          Log("Responding to PATCH");
           return pls._do(request, "Client").then((result) => this._respond(result, "Client"));
         case "OPTIONS":
           Log("Responding to OPTIONS", request.url);
           return Promise.resolve(this._handleOptions(request));
         default:
           return Promise.resolve(
-            new Response("", {
+            new Response("Unsupported request method: " + request.method, {
               status: 400,
               headers: STANDARD_HEADERS,
             }),

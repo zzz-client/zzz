@@ -9,7 +9,8 @@ export default {
     workspace: "Workspace to execute in",
     http: "Start HTTP server",
     web: "Start web UI server",
-    format: "Format the request with variables and params"
+    format: "Format the request with variables and params",
+    execute: "Execute the request instead of outputting it"
   },
   argument: {
     context: "context",
@@ -21,9 +22,10 @@ export default {
     context: "c",
     workspace: "w",
     format: "f",
+    execute: "x"
   },
   string: ["context", "workspace", "http", "web"],
-  boolean: ["format"],
+  boolean: ["format", "execute"],
   default: {
     http: DefaultFlags.HTTP_PORT,
     web: DefaultFlags.WEB_PORT,

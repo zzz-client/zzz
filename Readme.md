@@ -37,6 +37,7 @@ Run `--help` for more detail on flag usages and shorthands.
 
 - `--scope <name>`: The name of the scope to use
 - `--context <name>`: The name of the context to use
+- `--execute`: For CLI usage, execute the request instead outputting its contents
 - `--http`: Start the HTTP server, defaults to port 8000
 - `--web`: Start the Web (Vite) server, defaults to port 5173
 
@@ -358,7 +359,6 @@ This allows `v1/Foo/defaults.yml` to use an `Authorization` like BearerToken whe
     - GET `/:id`
     - PUT `/:id`
     - DELETE `/:id`
-    - Authorizations = TODO
 3. Format = "format" query param
 4. Act on Entity = PATCH
 

@@ -34,7 +34,7 @@ export default async function Cli(app: Application): Promise<void> {
       theEntity.Variables = variables;
     }
   }
-  const actor = await app.getActor("Pass");
+  const actor = await app.getActor(app.argv.execute ? "Client" : "Pass");
   const actResult = await actor.act(theEntity);
   console.info(getDriver(".json").stringify(actResult));
 }
