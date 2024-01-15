@@ -15,15 +15,15 @@ export default class AuthorizationModule implements IModule {
   constructor(app: Application) {
     this.app = app;
   }
-  async mod(theRequest: Entity): Promise<void> {
-    if (theRequest.Authorization) {
+  async mod(theModel: Model, request: Request): Promise<void> {
+    if (theModel.Authorization) {
       const authConfig = await (await this.app.getStore()).get(
         ModelType.Authorization,
-        theRequest.Authorization.Type,
+        theModel.Authorization.Type,
         "",
       ) as any;
       const injection = this.newAuthorization(authConfig.Type);
-      return await injection.authorize(theRequest, authConfig);
+      return await injection.authorize(theModel, authConfig);
     }
   }
   newAuthorization(type: string): IAuthorizer {

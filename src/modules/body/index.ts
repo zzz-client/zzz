@@ -6,8 +6,8 @@ export default class BodyModule implements IModule {
   static newInstance(app: Application): IModule {
     return new BodyModule();
   }
-  async mod(entity: Model, config: ModuleConfig): Promise<void> {
-    if (entity.Type == "Request") {
+  async mod(request: Request, entity: Model): Promise<void> {
+    if (entity.Type == "Entity") {
       await this.loadBody(entity as Entity, entity.Id);
     }
   }

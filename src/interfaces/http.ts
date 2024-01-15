@@ -5,7 +5,6 @@ import tim from "../core/tim.ts";
 import { DefaultFlags } from "../core/flags.ts";
 import { Driver, getContentType, getDriver } from "../core/stores/files/drivers.ts";
 import Application, { IActor, IStore } from "../core/app.ts";
-import { Load } from "../core/variables.ts";
 import Log from "../core/log.ts";
 
 interface IServer {

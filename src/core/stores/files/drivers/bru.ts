@@ -1,8 +1,61 @@
-import { Driver } from "./drivers.ts";
+import { Driver } from "../drivers.ts";
+
+const BRU = {
+  parse,
+  stringify,
+} as Driver;
+export default BRU;
 
 // TODO: Replace with @usebruno/lang to get all the goodies
+function parse(input: string): any {
+  let result = {};
+  const lines = input.split("\n");
+  let index = 0;
+  while (index < lines.length) {
+    const [block, newIndex] = readBlock(lines, index);
+    result = { ...result, ...parseBlock(block) };
+    index = newIndex;
+  }
+  return result;
+}
+function stringify(input: any): string {
+  const results = [] as string[];
+  results.push("meta {");
+  results.push(`  name: ${input.Name}`);
+  results.push(`  type: http`);
+  // TODO: Sequence
+  results.push("}");
+  if (input.Method) {
+    results.push(
+      `${input.Method.toLowerCase()} {`,
+      `  url: ${input.URL}`,
+      `}`,
+    );
+  }
+  if (input.Headers) {
+    results.push("headers {");
+    for (const header in input.Headers) {
+      results.push(`  ${header}: ${input.Headers[header]}`);
+    }
+    results.push("}");
+  }
+  if (input.QueryParams) {
+    results.push("query {");
+    for (const param in input.QueryParams) {
+      results.push(`  ${param}: ${input.QueryParams[param]}`);
+    }
+    results.push("}");
+  }
+  if (input.Body) {
+    results.push("body {");
+    // TODO: body, body:text, body:xml, body:form-urlencoded, body:multipart-form
+    results.push("}");
+  }
+  // TODO: script:post-response & script:pre-request (javascript), tests
+  return results.join("\n");
+}
 
-function readBruBlock(lines: string[], index: number): [any, number] {
+function readBlock(lines: string[], index: number): [any, number] {
   while (!lines[index].endsWith("{") || lines[index].trim() === "") {
     index++;
   }
@@ -62,55 +115,3 @@ function parseBody(block: any): any {
   // TODO
   return parseMap(block);
 }
-function parse(input: string): any {
-  let result = {};
-  const lines = input.split("\n");
-  let index = 0;
-  while (index < lines.length) {
-    const [block, newIndex] = readBruBlock(lines, index);
-    result = { ...result, ...parseBlock(block) };
-    index = newIndex;
-  }
-  return result;
-}
-function stringify(input: string): any {
-  const results = [] as string[];
-  results.push("meta {");
-  results.push(`  name: ${input.Name}`);
-  results.push(`  type: http`);
-  // TODO: Sequence
-  results.push("}");
-  if (input.Method) {
-    results.push(
-      `${input.Method.toLowerCase()} {`,
-      `  url: ${input.URL}`,
-      `}`,
-    );
-  }
-  if (input.Headers) {
-    results.push("headers {");
-    for (const header in input.Headers) {
-      results.push(`  ${header}: ${input.Headers[header]}`);
-    }
-    results.push("}");
-  }
-  if (input.QueryParams) {
-    results.push("query {");
-    for (const param in input.QueryParams) {
-      results.push(`  ${param}: ${input.QueryParams[param]}`);
-    }
-    results.push("}");
-  }
-  if (input.Body) {
-    results.push("body {");
-    // TODO: body, body:text, body:xml, body:form-urlencoded, body:multipart-form
-    results.push("}");
-  }
-  // TODO: script:post-response & script:pre-request (javascript), tests
-  return results.join("\n");
-}
-const BRU = {
-  parse,
-  stringify,
-} as Driver;
-export default BRU;

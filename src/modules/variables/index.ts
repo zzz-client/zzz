@@ -1,8 +1,8 @@
 import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
 import { dirname } from "https://deno.land/std/path/mod.ts";
-import { Context, Entity, Model, ModelType } from "./models.ts";
-import { IStore } from "./app.ts";
-import { getDriver } from "./stores/files/drivers.ts";
+import { Context, Entity, Model, ModelType } from "../../core/models.ts";
+import { IStore } from "../../core/app.ts";
+import { getDriver } from "../../core/stores/files/drivers.ts";
 const DEFAULT_MARKER = "_defaults";
 export const SESSION_FILE = "session";
 const GLOBALS_FILE = "globals";
@@ -12,7 +12,13 @@ const BLANK_ENTITY = {
   Name: "",
 } as Context;
 
-export { Load, Meld };
+export default class VariablesModule {
+    async mod(request: Request, theModel: Model, app: ModuleConfig): Promise<void>{
+      await Load(theRequest, "integrate", app.getStore()); // TODO 
+    }
+}
+
+
 
 async function Load(subjectRequest: Entity, contextName: string, store: IStore): Promise<Entity> {
   const resultRequest = new Entity(subjectRequest.Id, subjectRequest.Name, subjectRequest.URL, subjectRequest.Method);

@@ -5,7 +5,7 @@ import CurlActor from "./actors/curl.ts";
 import PassThruActor from "./actors/pass.ts";
 import SummaryActor from "./actors/summary.ts";
 import { Entity, ModelType } from "./models.ts";
-import FileStore from "./stores/files/files.ts";
+import FileStore from "./stores/files/index.ts";
 import Flags from "./flags.ts";
 
 interface IActor {
