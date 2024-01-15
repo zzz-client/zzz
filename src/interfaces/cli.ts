@@ -22,12 +22,17 @@ export default async function Cli(app: Application): Promise<void> {
   const context = app.argv.context;
   let theEntity = await (await app.getStore()).get(ModelType.Entity, arg + "", context);
   app.applyModules(theEntity);
-  const isVerbose = false;
-  const isFormat = true;
-  if(isFormat){
+  const isVerbose = true;
+  const isFormat = !!app.argv["format"];
+  if(isFormat || isVerbose){
     const variables = await VariablesModule.newInstance(app).load(theEntity, context);
-    tim(theEntity, variables);
-    theEntity = await PathParamsModule.newInstance(app).mod(theEntity);
+    if(isFormat) {
+      tim(theEntity, variables);
+      theEntity = await PathParamsModule.newInstance(app).mod(theEntity);
+    }
+    if(isVerbose) {
+      theEntity.Variables = variables;
+    }
   }
   const actor = await app.getActor("Pass");
   const actResult = await actor.act(theEntity);
