@@ -1,5 +1,5 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
-import { Collection, Entity, Model, ModelType, StringToStringMap } from "../../core/models.ts";
+import { Collection, Entity, Model, ModelType, Scope, StringToStringMap } from "../../core/models.ts";
 import { basename, extname } from "https://deno.land/std/path/mod.ts";
 import { IStore } from "../../core/app.ts";
 import { Driver, getDriver } from "../../stores/files/drivers.ts";
@@ -22,17 +22,24 @@ export default class FileStore implements IStore {
       }
       return resultRequest;
     } else if (modelType === ModelType.Collection) {
-      const item = new (modelType === ModelType.Collection ? Collection : Collection)(entityId, basename(entityId));
+      const item = new Collection(entityId, basename(entityId));
       for await (const child of Deno.readDir(entityId)) {
         if (child.isDirectory) {
           item.Children.push(await this.get(ModelType.Collection, `${entityId}/${child.name}`, context));
         } else if (child.isFile && filetypeSupported(child.name) && !excludeFromInfo(child.name)) {
           const baseless = basename(child.name, extname(child.name));
-          item.Children.push(await this.get(ModelType.Entity, `${entityId}/${baseless}`, context));
+          //item.Children.push(await this.get(ModelType.Entity, `${entityId}/${baseless}`, context));
         }
       }
-      item.Id = entityId;
-      item.Type = ModelType[modelType];
+      return item;
+    } else if (modelType === ModelType.Scope) {
+      const item = new Scope(entityId, basename(entityId));
+      // TODO: What do if not exist
+      for await (const child of Deno.readDir(entityId)) {
+        if (child.isDirectory) {
+          item.Collections.push(await this.get(ModelType.Collection, `${entityId}/${child.name}`, context));
+        }
+      }
       return item;
     }
     if (modelType === ModelType.Context || modelType === ModelType.Authorization) {

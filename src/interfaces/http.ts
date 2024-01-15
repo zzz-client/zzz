@@ -71,7 +71,9 @@ export class Server implements IServer {
       return this.respond(200, {}, {});
     }
     const resourcePath = decodeURI(url.substring(1));
-    let base = resourcePath;
+    const context = getContext(request);
+    const scope = getScope(request);
+    let base = scope + "/" + resourcePath;
     let ext = extname(resourcePath);
     if (ext.startsWith(".")) {
       ext = ext.substring(1);
@@ -81,8 +83,9 @@ export class Server implements IServer {
       base = base.substring(0, base.length - 1);
     }
     if (request.method == "GET") {
-      if (base === "") {
-        return this.respond(200, getDriver(".json").stringify(await Collections(store)), STANDARD_HEADERS);
+      if (base == scope) {
+        const collections = await Collections(request, store);
+        return collections;
       }
       if (ext === "") {
         return this.respond(404, "", STANDARD_HEADERS);
@@ -90,7 +93,6 @@ export class Server implements IServer {
     }
     Log("Received request", request.method, "base=" + base, resourcePath);
     const { searchParams } = new URL(request.url);
-    const context = getContext(request);
     const isVerbose = searchParams.has("verbose");
     const isFormat = searchParams.has("format") || actorName == "Client";
     return store.get(ModelType.Entity, base, context)
@@ -117,6 +119,9 @@ export class Server implements IServer {
           return PathParamsModule.newInstance(this.app).mod(model);
         }
         return Promise.resolve(model);
+      })
+      .then((model: Model) => {
+        return this._respond(model, actorName);
       });
   }
   _respond(theRequest: Entity, actorName: string) {
@@ -136,22 +141,21 @@ export class Server implements IServer {
       });
   }
 }
-async function Collections(store: IStore): Promise<Collection[]> {
+async function Collections(request: Request, store: IStore): Promise<Collection[]> {
   const result = [] as Collection[];
   const scope = getScope(request);
   const context = getContext(request);
-  return [
-    await store.get(ModelType.Scope, scope, context)
-  ];
+  const scopeModel = await store.get(ModelType.Scope, scope, context);
+  return Promise.resolve(scopeModel.Collections);
 }
 function getContext(request: Request): string {
   const { searchParams } = new URL(request.url);
-  const headers = request.Headers || {};
-  return searchParams.get("context") || headers["X-ZZZ-Context"];
+  const headers = request.headers || {};
+  return searchParams.get("context") || headers.get("x-zzz-context");
 }
 function getScope(request: Request): string {
   const { searchParams } = new URL(request.url);
-  const headers = request.Headers || {};
-  return searchParams.get("scope") || headers["X-ZZZ-Scope"];
+  const headers = request.headers || {};
+  return searchParams.get("scope") || headers.get("x-zzz-scope");
 }
 
