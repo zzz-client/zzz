@@ -1,3 +1,4 @@
+
 # Models
 
 ## Scope
@@ -40,12 +41,24 @@ QueryParams?:
  - key: value
 PathParams?:
  - key: value
-Authorization?: authorization
 ```
 
-The `Authorization` is a tree of values that differ based on the type, or it can also reference a saved Authorization by name.
+## Context
 
-## Body
+Replaces Environment
+
+```yml
+Id: string
+Name: string
+Defaults?:
+  key: value
+```
+
+## Modules
+
+These provide extra manipulation after a Model has been loaded from the Store and before it has been passed to the Actor.
+
+### Body
 
 The Body is optional and can be one of three options:
 
@@ -74,18 +87,9 @@ Maybe if it starts with `@`? or use two different ones, `Body` and `BodyFile`? t
 Body: filepath ???
 ```
 
-## Context
+### Authorization
 
-Replaces Environment
-
-```yml
-Id: string
-Name: string
-Defaults?:
-  key: value
-```
-
-## Authorization
+> Note: This is used ry the Authorization Module.
 
 An Authorization can be a part of a Workspace, a Collection, or a File, but it can also be defined on its own so that it can be referenced by multiple entities.
 
@@ -107,6 +111,10 @@ Query:
   Param: "{{_authParam}}"
   Value: "{{_apiToken}}"
 ```
+
+### Variables
+
+TODO
 
 # Interfaces
 
@@ -278,7 +286,7 @@ TODO
 
 TODO
 
-# Hoppscotch
+## Hoppscotch
 
 TODO
 
