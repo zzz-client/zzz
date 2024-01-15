@@ -32,7 +32,7 @@ export default class VariablesModule {
 
 
 async function Load(subjectRequest: Entity, contextName: string, store: IStore): Promise<StringToStringMap> {
-  const resultRequest = subjectRequest;
+  const result = {};
   const variables = new FileVariables() as IVariables;
   const globals = await variables.globals(store);
   const globalsLocal = await variables.local(GLOBALS_FILE, store);
@@ -41,10 +41,10 @@ async function Load(subjectRequest: Entity, contextName: string, store: IStore):
   const defaults = await variables.defaults(dirname(subjectRequest.Id), store);
   const sessionLocal = await variables.local(SESSION_FILE, store);
   for (const item of [globals, globalsLocal, context, contextLocal, defaults, subjectRequest, sessionLocal]) {
-    Meld(resultRequest, item);
+    Meld(result, item);
   }
-  console.log("Melded Variables:", JSON.stringify(resultRequest.Variables, null, 2));
-  return resultRequest.Variables;
+  console.log("Melded Variables:", JSON.stringify(result.Variables, null, 2));
+  return result.Variables;
 }
 
 function optionalContext(variables: IVariables, contextName: string, store: IStore): Promise<Context> {

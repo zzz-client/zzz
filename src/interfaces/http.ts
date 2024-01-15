@@ -94,10 +94,15 @@ export class Server implements IServer {
         return this.app.applyModules(result).then(() => result);
       })
       .then((theRequest: Entity) => {
-        if (searchParams.has("format") || actorName == "Client") {
+        if (searchParams.has("format") || searchParams.has("verbose") || actorName == "Client") {
           return VariablesModule.newInstance(this.app).load(theRequest)
             .then(variables => {
-              tim(theRequest, variables);
+              if(searchParams.has("verbose")){
+                theRequest.Variables = variables;
+              }
+              if(searchParams.has("format")){
+                tim(theRequest, variables);
+              }
               return theRequest;
             });
         }
