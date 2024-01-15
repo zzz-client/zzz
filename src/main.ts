@@ -1,8 +1,8 @@
-import Cli from "./cli.ts";
+import Cli from "./interfaces/cli.ts";
 import Application from "./core/app.ts";
 import AuthorizationModule from "./modules/authorization.ts";
 import BodyModule from "./modules/body.ts";
-import { Server } from "./http.ts";
+import { Server } from "./interfaces/http.ts";
 
 function httpPromise(app: Application): Promise<void> {
   if (Deno.args.includes("--http")) {

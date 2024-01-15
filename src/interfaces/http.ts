@@ -1,11 +1,12 @@
 // import { basename, extname } from "path";
-import { Collection, Entity, Model, ModelType, StringToStringMap } from "./core/models.ts";
-import tim from "./core/tim.ts";
+import { Collection, Entity, Model, ModelType, StringToStringMap } from "../core/models.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
-import { DefaultFlags } from "./core/flags.ts";
-import { Driver, getContentType, getDriver } from "./core/files/drivers.ts";
-import Application, { IActor, IStore } from "./core/app.ts";
-import { Load } from "./core/variables.ts";
+import tim from "../core/tim.ts";
+import { DefaultFlags } from "../core/flags.ts";
+import { Driver, getContentType, getDriver } from "../core/files/drivers.ts";
+import Application, { IActor, IStore } from "../core/app.ts";
+import { Load } from "../core/variables.ts";
+import Log from "../log.ts";
 
 interface IServer {
   respond(code: number, body: any, headers: StringToStringMap): any;
@@ -25,16 +26,16 @@ export class Server implements IServer {
   listen(): void {
     const pls = this;
     const callback = async (request: Request): Promise<Response> => {
-      console.log("listen", request.method);
+      Log("listen", request.method);
       switch (request.method) {
         case "GET":
-          console.log("Responding to GET");
+          Log("Responding to GET");
           return pls._respond(request, "Pass");
         case "POST":
-          console.log("Responding to POST");
+          Log("Responding to POST");
           return pls._respond(request, "Client");
         case "OPTIONS":
-          console.log("Responding to OPTIONS", request.url);
+          Log("Responding to OPTIONS", request.url);
           return Promise.resolve(this._handleOptions(request));
         default:
           return Promise.resolve(
@@ -87,7 +88,7 @@ export class Server implements IServer {
         return this.respond(404, "", STANDARD_HEADERS);
       }
     }
-    console.log("Received request", request.method, "base=" + base, resourcePath);
+    Log("Received request", request.method, "base=" + base, resourcePath);
     const { searchParams } = new URL(request.url);
     return store.get(ModelType.Entity, base, "integrate")
       .then(async (result: Entity): Promise<Entity> => {
@@ -101,7 +102,7 @@ export class Server implements IServer {
         if (searchParams.has("format") || actorName == "Client") {
           tim(theRequest, theRequest.Variables);
         }
-        console.log("Tmmed", theRequest);
+        Log("Tmmed", theRequest);
         return theRequest;
       })
       .then((theRequest: Entity) => {
@@ -113,7 +114,7 @@ export class Server implements IServer {
           return prom;
         })
           .then((result: any) => {
-            console.log("Result", result);
+            Log("Result", result);
             const driver = getDriver(".json");
             const parsedResult = driver.stringify(result);
             return this.respond(200, parsedResult, STANDARD_HEADERS);

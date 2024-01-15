@@ -1,10 +1,10 @@
-import tim from "./core/tim.ts";
-import { getDriver } from "./core/files/drivers.ts";
 import { Args } from "https://deno.land/std/flags/mod.ts";
-import Application, { ApplicationConfig } from "./core/app.ts";
-import AuthorizationModule from "./modules/authorization.ts";
-import BodyModule from "./modules/body.ts";
-import { ModelType } from "./core/models.ts";
+import tim from "../core/tim.ts";
+import { getDriver } from "../core/files/drivers.ts";
+import Application, { ApplicationConfig } from "../core/app.ts";
+import AuthorizationModule from "../modules/authorization.ts";
+import BodyModule from "../modules/body.ts";
+import { ModelType } from "../core/models.ts";
 
 const app = new Application({
   store: "yml",
