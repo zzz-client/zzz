@@ -138,15 +138,20 @@ export class Server implements IServer {
 }
 async function Collections(store: IStore): Promise<Collection[]> {
   const result = [] as Collection[];
-  const collections = ["Salesforce Primary"];
+  const scope = getScope(request);
   const context = getContext(request);
-  for (const collection of collections) {
-    result.push(await store.get(ModelType.Collection, collection, context)); // TODO: Hardcoded
-  }
-  return result;
+  return [
+    await store.get(ModelType.Scope, scope, context)
+  ];
 }
 function getContext(request: Request): string {
   const { searchParams } = new URL(request.url);
   const headers = request.Headers || {};
   return searchParams.get("context") || headers["X-ZZZ-Context"];
 }
+function getScope(request: Request): string {
+  const { searchParams } = new URL(request.url);
+  const headers = request.Headers || {};
+  return searchParams.get("scope") || headers["X-ZZZ-Scope"];
+}
+

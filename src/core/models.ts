@@ -8,6 +8,7 @@ enum ModelType {
   Context,
   Entity,
   Collection,
+  Scope
 }
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
@@ -45,8 +46,8 @@ class Collection implements Model {
     this.Children = [];
   }
 }
-class Context implements Model {
-  Type = "Context";
+class Scope implements Model {
+  Type = "Scope";
   Id: string;
   Name: string;
   Collections: Collection[];
@@ -56,6 +57,11 @@ class Context implements Model {
     this.Collections = [];
   }
 }
+class Context implements Model {
+  Type = "Context";
+  Id: string;
+  Name: string;
+}
 
 interface Auth {
   Type: string;
@@ -64,5 +70,5 @@ export interface StringToStringMap {
   [key: string]: string;
 }
 
-export { Collection, Context, Entity, ModelType };
+export { Collection, Context, Entity, ModelType, Scope };
 export type { Auth, HttpMethod, Model };
