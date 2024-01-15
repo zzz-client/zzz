@@ -93,27 +93,20 @@ export class Server implements IServer {
       .then((result: Entity) => {
         return this.app.applyModules(result).then(() => result);
       })
-      .then(async (result: Entity): Promise<Entity> => {
-        if (searchParams.has("format") || actorName == "Client") {
-          return VariablesModule.newInstance(this.app).mod(result); 
-        } else {
-          return Promise.resolve(result);
-        }
-      })
       .then((theRequest: Entity) => {
         if (searchParams.has("format") || actorName == "Client") {
-          tim(theRequest, theRequest.Variables);
+          return VariablesModule.newInstance(this.app).load(theRequest)
+            .then(variables => {
+              tim(theRequest, variables);
+              return theRequest;
+            });
         }
         Log("Tmmed", theRequest);
         return theRequest;
       })
       .then((theRequest: Entity) => {
         return this.app.getActor(actorName).then((actor: IActor) => {
-          let prom = actor.act(theRequest);
-          if (prom.catch) {
-            prom = prom.catch((error) => error);
-          }
-          return prom;
+          return actor.act(theRequest).catch((error) => error);
         })
           .then((result: any) => {
             Log("Result", result);

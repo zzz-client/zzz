@@ -12,11 +12,12 @@ export default class BodyModule implements IModule {
     }
   }
   loadBody(entity: Entity, _requestFilePath: string): Promise<void> {
+    let body = entity.Body;
     if (typeof entity.Body === "string") {
-      entity.Body = JSON.parse(entity.Body);
+      body = JSON.parse(entity.Body);
     }
-    if (!entity.Body) {
-      entity.Body = null;
+    if (body) {
+      entity.Body = body;
     }
     return Promise.resolve();
   }

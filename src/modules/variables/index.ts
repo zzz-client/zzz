@@ -15,7 +15,7 @@ const BLANK_ENTITY = {
   Name: "",
 } as Context;
 
-export default class VariablesModule implements IModule {
+export default class VariablesModule {
     app: Application;
     static newInstance(app: Application){
       return new VariablesModule(app);
@@ -23,7 +23,7 @@ export default class VariablesModule implements IModule {
     constructor(app: Application){
       this.app = app;
     }
-    async mod(theModel: Model): Promise<void>{
+    async load(theModel: Model): Promise<StringToStringMap>{
       return Load(theModel, "integrate", await this.app.getStore()); // TODO 
     }
 }
@@ -31,7 +31,7 @@ export default class VariablesModule implements IModule {
 
 
 
-async function Load(subjectRequest: Entity, contextName: string, store: IStore): Promise<Entity> {
+async function Load(subjectRequest: Entity, contextName: string, store: IStore): Promise<StringToStringMap> {
   const resultRequest = subjectRequest;
   const variables = new FileVariables() as IVariables;
   const globals = await variables.globals(store);
@@ -44,7 +44,7 @@ async function Load(subjectRequest: Entity, contextName: string, store: IStore):
     Meld(resultRequest, item);
   }
   console.log("Melded Variables:", JSON.stringify(resultRequest.Variables, null, 2));
-  return resultRequest;
+  return resultRequest.Variables;
 }
 
 function optionalContext(variables: IVariables, contextName: string, store: IStore): Promise<Context> {
