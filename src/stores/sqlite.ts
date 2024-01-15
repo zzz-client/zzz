@@ -1,6 +1,6 @@
 import { DB } from "https://deno.land/x/sqlite/mod.ts";
-import { IStore } from "../app.ts";
-import { ModelType } from "../models.ts";
+import { IStore } from "../core/app.ts";
+import { ModelType } from "../core/models.ts";
 
 export default class SqliteStore implements IStore {
   database: DB;

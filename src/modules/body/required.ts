@@ -1,5 +1,5 @@
-import Model from "../core/models.ts";
-import { IModule, ModuleConfig } from "./manager.ts";
+import Model from "../../core/models.ts";
+import { IModule, ModuleConfig } from "../manager.ts";
 
 export default class BodyModule implements IModule {
   mod(theRequest: Model, config: ModuleConfig): Promise<void> {

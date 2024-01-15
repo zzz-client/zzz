@@ -40,7 +40,6 @@ async function Load(subjectRequest: Entity, contextName: string, store: IStore):
   for (const item of [globals, globalsLocal, context, contextLocal, defaults, subjectRequest, sessionLocal]) {
     Meld(result, item);
   }
-  console.log("Melded Variables:", JSON.stringify(result.Variables, null, 2));
   return result.Variables;
 }
 
