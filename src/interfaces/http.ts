@@ -7,6 +7,7 @@ import { Driver, getContentType, getDriver } from "../stores/files/drivers.ts";
 import Application, { IActor, IStore } from "../core/app.ts";
 import Log from "../core/log.ts";
 import VariablesModule from "../modules/variables/index.ts";
+import PathParamsModule from "../modules/path-params/index.ts";
 
 interface IServer {
   respond(code: number, body: any, headers: StringToStringMap): any;
@@ -90,24 +91,32 @@ export class Server implements IServer {
     Log("Received request", request.method, "base=" + base, resourcePath);
     const { searchParams } = new URL(request.url);
     const context = getContext(request);
+    const isVerbose = searchParams.has("verbose");
+    const isFormat = searchParams.has("format");
     return store.get(ModelType.Entity, base, context)
       .then((result: Entity) => {
         return this.app.applyModules(result).then(() => result);
       })
       .then((theRequest: Entity) => {
-        if (searchParams.has("format") || searchParams.has("verbose") || actorName == "Client") {
+        if (isVerbose || isFormat || actorName == "Client") {
           return VariablesModule.newInstance(this.app).load(theRequest, context)
             .then((variables) => {
-              if (searchParams.has("verbose")) {
+              if (isVerbose) {
                 theRequest.Variables = variables;
               }
-              if (searchParams.has("format")) {
+              if (isFormat) {
                 tim(theRequest, variables);
               }
               return theRequest;
             });
         }
         return theRequest;
+      })
+      .then((model: Model) => {
+          if(isFormat){
+            return PathParamsModule.newInstance(this.app).mod(model);
+          }
+          return Promise.resolve(model);
       })
       .then((theRequest: Entity) => {
         return this.app.getActor(actorName).then((actor: IActor) => {

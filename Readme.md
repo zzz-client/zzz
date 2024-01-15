@@ -562,7 +562,7 @@ TODO
 
 Examples for requests. That's a lot of work.
 Parsing body, notably as an external file.
-Path params
+Path params as a module
 Sequence, somehow
 Why the hell is primevue/menuitem not cached by Deno?
 
