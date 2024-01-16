@@ -12,7 +12,7 @@ import Collections from "./Collections.vue";
 import Cookies from "./Cookies.vue";
 import RequestTab from "./RequestTab.vue";
 import axios from "axios";
-import { MenuItem } from "primevue/menuitem";
+import type { MenuItem } from "primevue/menuitem";
 const basename = (path) => path.split("/").reverse()[0];
 
 const tabs = ref([] as { title: string; value: string }[]);
@@ -24,7 +24,7 @@ let lastClick = -1;
 function clickRequest(uwu) {
   const currentClick = Date.now();
   if (lastClick >= 0 && currentClick - lastClick < 500) {
-    console.log("lastClick", lastClick, currentClick, uwu);
+    console.log("lastClick", lastClick, currentClick, uwu.item.key);
     openTab(uwu.item.key);
   }
   lastClick = currentClick;
@@ -59,6 +59,7 @@ function addEntityToNodes(noteList, entity) {
     key: fullPath,
     label: entity.Name
   } as MenuItem;
+  console.log("T", entity.Type);
   if (entity.Type == "Entity") {
     newNode.command = clickRequest;
   }
@@ -82,9 +83,9 @@ function addQueryParams(base: string): string {
 
 axios
   .get(addQueryParams("http://localhost:8000"), {
-    // headers: {
-    //   "X-Zzz-Workspace": ""
-    // }
+    headers: {
+      "X-Zzz-Context": "integrate"
+    }
   })
   .then((res) => {
     console.log("Got initial data", res.data);

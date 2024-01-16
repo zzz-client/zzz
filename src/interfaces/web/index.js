@@ -4,7 +4,6 @@ import App from "./App.vue";
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
 import Badge from "primevue/badge";
-import MenuItem from "primevue/menuitem";
 import BadgeDirective from "primevue/badgedirective";
 import mitt from "mitt";
 export const emitter = mitt();

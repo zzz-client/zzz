@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MenuItem, MenuItemCommandEvent } from "primevue/menuitem";
+import { MenuItemCommandEvent } from "primevue/menuitem";
 import PanelMenu from "primevue/panelmenu";
 import { ref, toRefs, watch } from "vue";
 const expandedKeys = ref({} as [string: boolean]);

@@ -14,7 +14,7 @@ interface IServer {
   listen(): void;
 }
 
-const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" };
+const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "X-Zzz-Context" };
 
 export class Server implements IServer {
   port: number;
@@ -28,11 +28,11 @@ export class Server implements IServer {
     const pls = this;
     switch (request.method) {
       case "GET": {
-        Log("Responding to GET");
+        Log("Responding to GET", request.url);
         return pls._do(request, "Pass").then((result: Entity | Collection[]) => this._respond(result, "Pass"));
       }
       case "PATCH":
-        Log("Responding to PATCH");
+        Log("Responding to PATCH", request.url);
         return pls._do(request, "Client").then((result: Entity | Collection[]) => this._respond(result, "Client"));
       case "OPTIONS":
         Log("Responding to OPTIONS", request.url);
@@ -77,7 +77,7 @@ export class Server implements IServer {
   handleExtraRequestCases(request: Request): Response | string {
     const { pathname: url } = new URL(request.url);
     if (url === "/favicon.ico") {
-      return this.newResponse(200, {}, {});
+      return this.newResponse(200, {}, STANDARD_HEADERS);
     }
     const resourcePath = decodeURI(url.substring(1));
     let base = resourcePath;
@@ -101,7 +101,8 @@ export class Server implements IServer {
     const isVerbose = searchParams.has("verbose");
     const isFormat = searchParams.has("format") || actorName == "Client";
     const extraCaseResult = this.handleExtraRequestCases(request);
-    if (request.method == "GET" && !(extraCaseResult instanceof String)) {
+    console.log("OH NO", "|" + extraCaseResult + "|");
+    if (request.method == "GET" && extraCaseResult == "") {
       return Collections(request, store);
     }
 
@@ -152,15 +153,13 @@ export class Server implements IServer {
       .catch((reason: any) => {
         console.error(reason.message);
         console.error(reason);
+        console.error(reason.stacktrace);
         return this.newResponse(500, reason, STANDARD_HEADERS);
       });
   }
 }
 async function Collections(request: Request, store: IStore): Promise<Collection[]> {
-  const scope = getScope(request);
-  if (!scope) {
-    return Promise.reject("Must specify Scope");
-  }
+  const scope = "Salesforce Primary";
   const context = getContext(request);
   const scopeModel = await store.get(ModelType.Scope, scope, context);
   return Promise.resolve(scopeModel.Collections);
@@ -171,7 +170,6 @@ function getContext(request: Request): string {
   return searchParams.get("context") || headers.get("x-zzz-context") || "";
 }
 function getScope(request: Request): string {
-  const { searchParams } = new URL(request.url);
-  const headers = request.headers || {};
-  return searchParams.get("scope") || headers.get("x-zzz-scope") || "";
+  console.log(decodeURI(request.url.split(":8000/")[1]));
+  return decodeURI(request.url.split(":8000/")[1]);
 }

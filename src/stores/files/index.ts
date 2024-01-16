@@ -22,17 +22,19 @@ export default class FileStore implements IStore {
       }
       return resultRequest;
     } else if (modelType === ModelType.Collection) {
+      console.log("it is a collect");
       const item = new Collection(entityId, basename(entityId));
       for await (const child of Deno.readDir(entityId)) {
         if (child.isDirectory) {
           item.Children.push(await this.get(ModelType.Collection, `${entityId}/${child.name}`, context));
         } else if (child.isFile && filetypeSupported(child.name) && !excludeFromInfo(child.name)) {
           const baseless = basename(child.name, extname(child.name));
-          //item.Children.push(await this.get(ModelType.Entity, `${entityId}/${baseless}`, context));
+          item.Children.push(await this.get(ModelType.Entity, `${entityId}/${baseless}`, context));
         }
       }
       return item;
     } else if (modelType === ModelType.Scope) {
+      console.log("t is a scop");
       const scopeName = entityId;
       const item = new Scope(entityId, scopeName);
       // TODO: What do if not exist

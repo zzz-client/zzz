@@ -6,7 +6,7 @@ import InputText from "primevue/inputtext";
 import Button from "primevue/button";
 import Breadcrumb from "primevue/breadcrumb";
 import Dropdown from "primevue/dropdown";
-import { MenuItem } from "primevue/menuitem";
+import type { MenuItem } from "primevue/menuitem";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import KeyValueTable from "./KeyValueTable.vue";
@@ -14,7 +14,7 @@ import Authorization from "./Authorization.vue";
 import Response from "./Response.vue";
 import Body from "./Body.vue";
 import { ref, toRefs } from "vue";
-import { Entity, StringToStringMap } from "../core/models";
+import { Entity, StringToStringMap } from "../../../core/models";
 const basename = (path) => path.split("/").reverse()[0];
 
 const props = defineProps(["value", "viewSecrets", "title"]);
@@ -46,9 +46,15 @@ function refreshTabTitle() {
   window.emitter.emit("set-tab-title", requestData.value as Entity);
 }
 async function fetchRequest(value: string): Promise<any> {
+  console.log("LOL", "http://localhost:8000/" + value + ".json");
   return axios
-    .get(addQueryParams("http://localhost:8000/" + value + ".json"))
+    .get(addQueryParams("http://localhost:8000/" + value + ".json"), {
+      headers: {
+        "X-Zzz-Context": "integrate"
+      }
+    })
     .then((res) => {
+      console.log("Data", res.data);
       return res.data;
     })
     .catch((error) => {
@@ -83,12 +89,17 @@ function doTheThing(newValue: string) {
     .catch((error) => {
       console.log("ERROR", error.message, `(${error.code})`);
       console.log(error.stack);
+      return Promise.reject(error);
     });
 }
 function send(): void {
   // const what = (await axios({method: requestData.value.Method, headers: requestData.value.Headers, params: requestData.value.QueryParams, url: requestData.value.URL, data: requestData.value.Body})).data;
   axios
-    .post("http://localhost:8000/" + value.value)
+    .post("http://localhost:8000/" + value.value, {
+      headers: {
+        "X-Zzz-Context": "integrate"
+      }
+    })
     .then((what) => {
       console.log("Send response", what);
       response.value = {
