@@ -1,5 +1,5 @@
 // import { basename, extname } from "path";
-import { Collection, Entity, Model, ModelType, StringToStringMap } from "../core/models.ts";
+import { Collection, Entity, Model, ModelType, Scope, StringToStringMap } from "../core/models.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
 import tim from "../core/tim.ts";
 import { DefaultFlags } from "../core/flags.ts";
@@ -29,11 +29,14 @@ export class Server implements IServer {
     switch (request.method) {
       case "GET": {
         Log("Responding to GET", request.url);
-        return pls._do(request, "Pass").then((result: Entity | Collection[]) => this._respond(result, "Pass"));
+        return pls._do(request, "Pass").then((result: Entity | Scope) => this._respond(result, "Pass"));
       }
       case "PATCH":
         Log("Responding to PATCH", request.url);
-        return pls._do(request, "Client").then((result: Entity | Collection[]) => this._respond(result, "Client"));
+        return pls._do(request, "Client").then((result: Entity | Scope) => {
+          console.log("Hmm", result);
+          return this._respond(result, "Client");
+        });
       case "OPTIONS":
         Log("Responding to OPTIONS", request.url);
         return Promise.resolve(this._handleOptions(request));
@@ -94,7 +97,7 @@ export class Server implements IServer {
     }
     return base;
   }
-  async _do(request: Request, actorName: string): Promise<Entity | Collection[]> {
+  async _do(request: Request, actorName: string): Promise<Entity | Scope> {
     const store = await this.app.getStore();
     const context = getContext(request);
     const { searchParams } = new URL(request.url);
@@ -102,7 +105,7 @@ export class Server implements IServer {
     const isFormat = searchParams.has("format") || actorName == "Client";
     const extraCaseResult = this.handleExtraRequestCases(request);
     if (request.method == "GET" && extraCaseResult == "") {
-      return Collections(request, store);
+      return Scope(request, store);
     }
 
     return store.get(ModelType.Entity, extraCaseResult as string, context)
@@ -126,13 +129,14 @@ export class Server implements IServer {
       })
       .then((entity: Entity) => {
         if (isFormat) {
-          return PathParamsModule.newInstance(this.app).mod(entity, this.app.config);
+          return PathParamsModule.newInstance(this.app).mod(entity as Entity, this.app.config);
         }
         return entity;
       });
   }
-  _respond(theRequest: Entity | Collection[], actorName: string): Promise<Response> {
+  _respond(theRequest: Entity | Scope, actorName: string): Promise<Response> {
     return this.app.getActor(actorName).then((actor: IActor) => {
+      console.log("acting");
       if (theRequest instanceof Entity) {
         return actor.act(theRequest);
       }
@@ -156,6 +160,12 @@ export class Server implements IServer {
         return this.newResponse(500, reason, STANDARD_HEADERS);
       });
   }
+}
+async function Scope(request: Request, store: IStore): Promise<Collection[]> {
+  const scope = "Salesforce Primary";
+  const context = getContext(request);
+  const scopeModel = await store.get(ModelType.Scope, scope, context);
+  return Promise.resolve(scopeModel);
 }
 async function Collections(request: Request, store: IStore): Promise<Collection[]> {
   const scope = "Salesforce Primary";

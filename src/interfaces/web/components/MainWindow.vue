@@ -88,7 +88,7 @@ axios
   })
   .then((res) => {
     console.log("Got initial data", res.data);
-    res.data.forEach((entity) => {
+    res.data.Collections.forEach((entity) => {
       addEntityToNodes(collections.value, entity);
     });
   })
