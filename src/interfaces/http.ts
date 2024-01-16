@@ -14,7 +14,7 @@ interface IServer {
   listen(): void;
 }
 
-const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "X-Zzz-Context" };
+const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "allow,content-type,x-zzz-context", "Access-Control-Allow-Methods": "GET,PATCH" };
 
 export class Server implements IServer {
   port: number;
@@ -67,7 +67,7 @@ export class Server implements IServer {
       ...STANDARD_HEADERS,
     };
     if (request.url !== "/") {
-      headers.Allow.push("POST");
+      headers.Allow.push("PATCH}");
     }
     return new Response(null, {
       status: 204,
@@ -101,7 +101,6 @@ export class Server implements IServer {
     const isVerbose = searchParams.has("verbose");
     const isFormat = searchParams.has("format") || actorName == "Client";
     const extraCaseResult = this.handleExtraRequestCases(request);
-    console.log("OH NO", "|" + extraCaseResult + "|");
     if (request.method == "GET" && extraCaseResult == "") {
       return Collections(request, store);
     }

@@ -59,7 +59,6 @@ function addEntityToNodes(noteList, entity) {
     key: fullPath,
     label: entity.Name
   } as MenuItem;
-  console.log("T", entity.Type);
   if (entity.Type == "Entity") {
     newNode.command = clickRequest;
   }

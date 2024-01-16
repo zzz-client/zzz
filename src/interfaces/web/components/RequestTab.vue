@@ -95,7 +95,7 @@ function doTheThing(newValue: string) {
 function send(): void {
   // const what = (await axios({method: requestData.value.Method, headers: requestData.value.Headers, params: requestData.value.QueryParams, url: requestData.value.URL, data: requestData.value.Body})).data;
   axios
-    .post("http://localhost:8000/" + value.value, {
+    .patch("http://localhost:8000/" + value.value, {
       headers: {
         "X-Zzz-Context": "integrate"
       }
