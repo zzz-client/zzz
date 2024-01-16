@@ -11,7 +11,7 @@ import PathParamsModule from "../modules/path-params/index.ts";
 
 interface IServer {
   // respond(code: number, body: any, headers: StringToStringMap): any;
-  listen(actorName: string): void;
+  listen(): void;
 }
 
 const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" };
@@ -24,30 +24,39 @@ export class Server implements IServer {
     this.app = app;
   }
 
-  listen(actorName: string): void {
+  respond(request: Request): Promise<Response> {
     const pls = this;
-    const callback = async (request: Request): Promise<Response> => {
-      switch (request.method) {
-        case "GET": {
-          Log("Responding to GET");
-          return pls._do(request, "Pass").then((result: Entity | Collection[]) => this._respond(result, "Pass"));
-        }
-        case "PATCH":
-          Log("Responding to PATCH");
-          return pls._do(request, "Client").then((result: Entity | Collection[]) => this._respond(result, "Client"));
-        case "OPTIONS":
-          Log("Responding to OPTIONS", request.url);
-          return Promise.resolve(this._handleOptions(request));
-        default:
-          return Promise.resolve(
-            new Response("Unsupported request method: " + request.method, {
-              status: 400,
-              headers: STANDARD_HEADERS,
-            }),
-          );
+    switch (request.method) {
+      case "GET": {
+        Log("Responding to GET");
+        return pls._do(request, "Pass").then((result: Entity | Collection[]) => this._respond(result, "Pass"));
       }
-    };
-    Deno.serve({ port: this.port }, callback);
+      case "PATCH":
+        Log("Responding to PATCH");
+        return pls._do(request, "Client").then((result: Entity | Collection[]) => this._respond(result, "Client"));
+      case "OPTIONS":
+        Log("Responding to OPTIONS", request.url);
+        return Promise.resolve(this._handleOptions(request));
+      default:
+        return Promise.reject(
+          new Response("Unsupported request method: " + request.method, {
+            status: 400,
+            headers: STANDARD_HEADERS,
+          }),
+        );
+    }
+  }
+  listen(): void {
+    const pls = this;
+    function cb(request: Request): Promise<Response> {
+      return pls.respond(request).catch((error: any) => {
+        if (error instanceof Response) {
+          return Promise.resolve(error);
+        }
+        return Promise.resolve(pls.newResponse(400, error, STANDARD_HEADERS));
+      });
+    }
+    Deno.serve({ port: this.port }, cb);
   }
   newResponse(status: number, body: any, headers: StringToStringMap): Response {
     return new Response(body, { status, headers });
@@ -93,7 +102,7 @@ export class Server implements IServer {
     const isFormat = searchParams.has("format") || actorName == "Client";
     const extraCaseResult = this.handleExtraRequestCases(request);
     if (request.method == "GET" && !(extraCaseResult instanceof String)) {
-      return await Collections(request, store);
+      return Collections(request, store);
     }
 
     return store.get(ModelType.Entity, extraCaseResult as string, context)
@@ -148,8 +157,10 @@ export class Server implements IServer {
   }
 }
 async function Collections(request: Request, store: IStore): Promise<Collection[]> {
-  const result = [] as Collection[];
   const scope = getScope(request);
+  if (!scope) {
+    return Promise.reject("Must specify Scope");
+  }
   const context = getContext(request);
   const scopeModel = await store.get(ModelType.Scope, scope, context);
   return Promise.resolve(scopeModel.Collections);
