@@ -1,5 +1,5 @@
 import Cli from "./interfaces/cli.ts";
-import Application from "./core/app.ts";
+import Application, { ApplicationConfig } from "./core/app.ts";
 import AuthorizationModule from "./modules/authorization/index.ts";
 import BodyModule from "./modules/body/index.ts";
 import PathParamsModule from "./modules/path-params/index.ts";
@@ -35,7 +35,7 @@ export default async function main(): Promise<void> {
     const app = new Application({
       store: "yml",
       modules: [AuthorizationModule, BodyModule],
-    });
+    } as ApplicationConfig);
     await Promise.all([
       httpPromise(app),
       webPromise(app),

@@ -9,7 +9,6 @@ import VariablesModule from "../modules/variables/index.ts";
 import { ModelType } from "../core/models.ts";
 import { load } from "https://deno.land/std/dotenv/mod.ts";
 
-
 const app = new Application({
   store: "yml",
   actor: "Summary",
@@ -24,13 +23,13 @@ export default async function Cli(app: Application): Promise<void> {
   app.applyModules(theEntity);
   const isVerbose = true;
   const isFormat = !!app.argv["format"];
-  if(isFormat || isVerbose){
+  if (isFormat || isVerbose) {
     const variables = await VariablesModule.newInstance(app).load(theEntity, context);
-    if(isFormat) {
+    if (isFormat) {
       tim(theEntity, variables);
-      theEntity = await PathParamsModule.newInstance(app).mod(theEntity);
+      theEntity = await PathParamsModule.newInstance(app).mod(theEntity, app.config);
     }
-    if(isVerbose) {
+    if (isVerbose) {
       theEntity.Variables = variables;
     }
   }

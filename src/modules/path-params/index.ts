@@ -1,5 +1,4 @@
 import Application from "../../core/app.ts";
-import tim from "../../core/tim.ts";
 import { Entity, Model } from "../../core/models.ts";
 import { IModule, ModuleConfig } from "../manager.ts";
 
@@ -11,7 +10,7 @@ export default class PathParamsModule implements IModule {
     if (entity.Type == "Entity") {
       await this.loadPathParams(entity as Entity, entity.Id);
     }
-    return Promise.resolve(entity);
+    return Promise.resolve();
   }
   loadPathParams(entity: Entity, entityId: string): Promise<void> {
     let pathParams = entity.PathParams;

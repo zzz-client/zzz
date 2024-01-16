@@ -33,11 +33,12 @@ export default class FileStore implements IStore {
       }
       return item;
     } else if (modelType === ModelType.Scope) {
-      const item = new Scope(entityId, basename(entityId));
+      const scopeName = entityId;
+      const item = new Scope(entityId, scopeName);
       // TODO: What do if not exist
       for await (const child of Deno.readDir(entityId)) {
         if (child.isDirectory) {
-          item.Collections.push(await this.get(ModelType.Collection, `${entityId}/${child.name}`, context));
+          item.Collections.push(await this.get(ModelType.Collection, `${entityId}/${child.name}`, context) as Collection);
         }
       }
       return item;

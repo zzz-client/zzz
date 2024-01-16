@@ -130,7 +130,7 @@ export class Server implements IServer {
       .then((result: any) => {
         Log("Final response", result);
         let finalResponse = result;
-        if(!(result instanceof Response)){
+        if (!(result instanceof Response)) {
           Log("Stringifying result");
           const driver = getDriver(".json");
           const stringResult = driver.stringify(result);
@@ -162,4 +162,3 @@ function getScope(request: Request): string {
   const headers = request.headers || {};
   return searchParams.get("scope") || headers.get("x-zzz-scope");
 }
-

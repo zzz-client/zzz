@@ -1,5 +1,5 @@
 import { encode64 } from "https://deno.land/x/base64to@v0.0.2/mod.ts";
-import Entity from "../../core/models.ts";
+import { Entity } from "../../core/models.ts";
 import { IAuthorizer } from "../../core/app.ts";
 
 export default class BasicAuthAuthorizer implements IAuthorizer {

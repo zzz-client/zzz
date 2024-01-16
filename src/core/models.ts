@@ -8,7 +8,7 @@ enum ModelType {
   Context,
   Entity,
   Collection,
-  Scope
+  Scope,
 }
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
@@ -24,6 +24,7 @@ class Entity implements Model {
   Variables: StringToStringMap;
   Body: string | any;
   Authorization?: Auth;
+  PathParams?: StringToStringMap;
   constructor(id: string, name: string, url: string, method: HttpMethod) {
     this.Id = id;
     this.Name = name;
@@ -61,6 +62,10 @@ class Context implements Model {
   Type = "Context";
   Id: string;
   Name: string;
+  constructor(id: string, name: string) {
+    this.Id = id;
+    this.Name = name;
+  }
 }
 
 interface Auth {

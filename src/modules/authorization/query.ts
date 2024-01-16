@@ -1,5 +1,5 @@
 import { IAuthorizer } from "../../core/app.ts";
-import Entity from "../../core/models.ts";
+import { Entity } from "../../core/models.ts";
 
 export default class QueryAuthorizer implements IAuthorizer {
   authorize(theRequest: Entity, authorizationConfig: Config): void {

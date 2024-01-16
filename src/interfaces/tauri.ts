@@ -5,7 +5,6 @@ import PathParamsModule from "../modules/path-params/index.ts";
 import VariablesModule from "../modules/variables/index.ts";
 import * as Tauri from "npm:tauri";
 
-
 const app = new Application({
   store: "yml",
   actor: "Summary",

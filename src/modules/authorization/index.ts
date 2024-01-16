@@ -3,7 +3,7 @@ import BearerTokenAuthorizer from "./bearerToken.ts";
 import HeaderAuthorizer from "./header.ts";
 import QueryAuthorizer from "./query.ts";
 import Application, { IAuthorizer } from "../../core/app.ts";
-import { Auth, Entity } from "../../core/models.ts";
+import { Auth } from "../../core/models.ts";
 import { ModelType } from "../../core/models.ts";
 import { IModule } from "./../manager.ts";
 

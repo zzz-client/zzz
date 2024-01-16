@@ -1,13 +1,13 @@
 import Application from "../../core/app.ts";
 import { Entity, Model } from "../../core/models.ts";
-import { IModule, ModuleConfig } from "../manager.ts";
+import { IModule } from "../manager.ts";
 
 export default class CookieModule implements IModule {
-  app: Application
+  app: Application;
   static newInstance(app: Application): IModule {
     return new CookieModule(app);
   }
-  constructor(app: Application){
+  constructor(app: Application) {
     this.app = app;
   }
   async mod(entity: Model): Promise<void> {
@@ -16,7 +16,7 @@ export default class CookieModule implements IModule {
     }
   }
   loadCookies(entity: Entity, _requestFilePath: string): Promise<void> {
-     TODO
+    // TODO
     return Promise.resolve();
   }
 }

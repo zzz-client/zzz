@@ -1,10 +1,9 @@
 import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
 import { dirname } from "https://deno.land/std/path/mod.ts";
-import { Context, Entity, Model, ModelType } from "../../core/models.ts";
-import { IStore } from "../../core/app.ts";
+import { Context, Entity, Model, ModelType, StringToStringMap } from "../../core/models.ts";
+import Application, { IStore } from "../../core/app.ts";
 import { getDriver } from "../../stores/files/drivers.ts";
 import Meld from "../../core/meld.ts";
-import { IModule } from "../manager.ts";
 
 const DEFAULT_MARKER = "_defaults";
 export const SESSION_FILE = "session";
@@ -23,8 +22,8 @@ export default class VariablesModule {
   constructor(app: Application) {
     this.app = app;
   }
-  async load(theModel: Model, context: Context): Promise<StringToStringMap> {
-    return Load(theModel, context, await this.app.getStore());
+  async load(theModel: Model, context: string): Promise<StringToStringMap> {
+    return Load(theModel as Entity, context, await this.app.getStore());
   }
 }
 
@@ -40,7 +39,7 @@ async function Load(subjectRequest: Entity, contextName: string, store: IStore):
   for (const item of [globals, globalsLocal, context, contextLocal, defaults, subjectRequest, sessionLocal]) {
     Meld(result, item);
   }
-  return result.Variables;
+  return (result as any).Variables;
 }
 
 function optionalContext(variables: IVariables, contextName: string, store: IStore): Promise<Context> {
