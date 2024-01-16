@@ -20,5 +20,5 @@ export default class ModuleManager {
   }
 }
 export interface IModule {
-  mod(model: Model, app: ModuleConfig): Promise<void>;
+  mod(model: Model, config: ModuleConfig): Promise<void>;
 }
