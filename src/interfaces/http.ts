@@ -105,7 +105,7 @@ export class Server implements IServer {
     const isFormat = searchParams.has("format") || actorName == "Client";
     const extraCaseResult = this.handleExtraRequestCases(request);
     if (request.method == "GET" && extraCaseResult == "") {
-      return Scope(request, store);
+      return getScopes(request, store);
     }
 
     return store.get(ModelType.Entity, extraCaseResult as string, context)
@@ -161,17 +161,8 @@ export class Server implements IServer {
       });
   }
 }
-async function Scope(request: Request, store: IStore): Promise<Collection[]> {
-  const scope = "Salesforce Primary";
-  const context = getContext(request);
-  const scopeModel = await store.get(ModelType.Scope, scope, context);
-  return Promise.resolve(scopeModel);
-}
-async function Collections(request: Request, store: IStore): Promise<Collection[]> {
-  const scope = "Salesforce Primary";
-  const context = getContext(request);
-  const scopeModel = await store.get(ModelType.Scope, scope, context);
-  return Promise.resolve(scopeModel.Collections);
+async function getScopes(request: Request, store: IStore): Promise<Scope[]> {
+  return store.getAll(ModelType.Scope);
 }
 function getContext(request: Request): string {
   const { searchParams } = new URL(request.url);

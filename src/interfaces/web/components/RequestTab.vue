@@ -59,7 +59,7 @@ async function fetchRequest(value: string): Promise<any> {
     })
     .catch((error) => {
       console.log("ERROR", error.message, `(${error.code})`);
-      console.log(error.stack);
+      console.log(error.response?.data);
     });
 }
 function doTheThing(newValue: string) {

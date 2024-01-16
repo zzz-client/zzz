@@ -96,7 +96,7 @@ axios
     console.log(error);
     console.error("ERROR", error.message, `(${error.code})`);
     console.error(error.stack);
-    errorMessage.value = `An error occured: ${error.message}`;
+    errorMessage.value = error.response?.data || error.message;
   });
 
 function newTab(): void {
