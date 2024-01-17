@@ -90,6 +90,7 @@ export default class FileStore implements IStore {
   getAuthenticationOrContext(modelType: ModelType, itemId: string): Promise<Model> {
     const directory = getDirectoryForModel(modelType);
     const filePath = `${directory}/${itemId}.${this.fileExtension}`;
+    console.log("Hmm", filePath);
     const item = this._driver().parse(Deno.readTextFileSync(filePath)) as Model; // TODO: Is this a naughty cast?
     item.Id = itemId;
     item.Type = ModelType[modelType];
@@ -118,9 +119,9 @@ function getDirectoryForModel(modelType: ModelType): string {
     case ModelType.Scope:
       return "library";
     case ModelType.Context:
-      return getDirectoryForModel(ModelType.Scope) + "/contexts";
+      return "contexts";
     case ModelType.Authorization:
-      return getDirectoryForModel(ModelType.Scope) + "/authorizations";
+      return "authorizations";
     default:
       throw new Error(`Unknown entity type ${ModelType[modelType]}`);
   }

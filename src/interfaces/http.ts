@@ -92,7 +92,7 @@ export class Server implements IServer {
     console.log("Parts:", scope, context, entityId, extension);
     const store = await this.app.getStore();
     const { searchParams } = new URL(request.url);
-    const isResolve = searchParams.has("resolve");
+    const isFull = searchParams.has("full");
     const isFormat = searchParams.has("format") || actorName == "Client";
     function getModelType(entityId: string): ModelType {
       if (!entityId) {
@@ -111,31 +111,28 @@ export class Server implements IServer {
         return this.app.applyModules(result).then(() => result);
       })
       .then((entity: Entity) => {
-        if (isResolve || isFormat) {
+        if (isFull || isFormat) {
           return VariablesModule.newInstance(this.app).load(entity, context)
             .then((variables) => {
-              if (isResolve) {
+              if (isFull) {
                 entity.Variables = variables;
               }
               if (isFormat) {
                 tim(entity, variables);
               }
-              return entity;
+              return Promise.resolve(entity);
+            })
+            .then((entity: Entity) => {
+              return PathParamsModule.newInstance(this.app).mod(entity as Entity, this.app.config).then(() => entity);
             });
+        } else {
+          return Promise.resolve(entity);
         }
-        return entity;
-      })
-      // @ts-ignore: ignore
-      .then((entity: Entity) => {
-        if (isFormat) {
-          return PathParamsModule.newInstance(this.app).mod(entity as Entity, this.app.config);
-        }
-        return entity;
       });
   }
   _respond(theRequest: Entity | Scope, actorName: string): Promise<Response> {
     return this.app.getActor(actorName).then((actor: IActor) => {
-      console.log("acting");
+      console.log("Acting");
       if (theRequest instanceof Entity) {
         return actor.act(theRequest);
       }

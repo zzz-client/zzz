@@ -4,7 +4,10 @@ interface Model {
   Name: string;
 }
 export interface HasAuthorization extends Model {
-  Authorization: Auth;
+  Authorization?: Auth;
+}
+export interface HasVariables extends Model {
+  Variables?: StringToStringMap;
 }
 enum ModelType {
   Authorization,

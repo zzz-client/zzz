@@ -1,6 +1,6 @@
 import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
 import { dirname } from "https://deno.land/std/path/mod.ts";
-import { Context, Entity, Model, ModelType, StringToStringMap } from "../../core/models.ts";
+import { Context, Entity, HasVariables, Model, ModelType, StringToStringMap } from "../../core/models.ts";
 import Application, { IStore } from "../../core/app.ts";
 import { getDriver } from "../../stores/files/drivers.ts";
 import Meld from "../../core/meld.ts";
@@ -39,7 +39,7 @@ async function Load(subjectRequest: Entity, contextName: string, store: IStore):
   for (const item of [globals, globalsLocal, context, contextLocal, defaults, subjectRequest, sessionLocal]) {
     Meld(result, item);
   }
-  return (result as any).Variables;
+  return Promise.resolve((result as HasVariables).Variables || {});
 }
 
 function optionalContext(variables: IVariables, contextName: string, store: IStore): Promise<Context> {
@@ -65,8 +65,8 @@ class FileVariables implements IVariables {
   }
   async context(contextName: string, store: IStore): Promise<Context> {
     try {
-      const result = await store.get(ModelType.Context, contextName);
-      return result;
+      const context = await store.get(ModelType.Context, contextName);
+      return context;
     } catch (e) {
       return Promise.resolve(BLANK_ENTITY);
     }
