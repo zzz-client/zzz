@@ -31,7 +31,7 @@ export class Server implements IServer {
       case "PATCH":
         return this.respondToPatch(request);
       case "OPTIONS":
-        return Promise.resolve(this._handleOptions(request));
+        return Promise.resolve(this.respondToOptions(request));
       default:
         return Promise.reject(
           new Response("Unsupported request method: " + request.method, {
@@ -62,14 +62,14 @@ export class Server implements IServer {
     if (url === "/") {
       return this.respondToScopesList();
     }
-    return this._do(request).then((result: Entity | Scope) => this._respond(result, "Pass"));
+    return this._do(request).then((result: Entity | Scope) => this.respondUsingEntity(result, "Pass"));
   }
   respondToPatch(request: Request): Promise<Response> {
     return this._do(request).then((result: Entity | Scope) => {
-      return this._respond(result, "Client");
+      return this.respondUsingEntity(result, "Client");
     });
   }
-  _handleOptions(request: Request): Response {
+  respondToOptions(request: Request): Response {
     const headers = {
       "Allow": ["OPTIONS", "GET"],
       ...STANDARD_HEADERS,
@@ -87,6 +87,7 @@ export class Server implements IServer {
     const scopeIds = scopes.map((scope: Model) => scope.Id);
     return newResponse(200, this.stringify(scopeIds), STANDARD_HEADERS);
   }
+  // TODO
   async _do(request: Request): Promise<Entity | Scope> {
     const { scope, context, entityId, extension, fullId } = dissectRequest(request);
     console.log("Parts:", scope, context, entityId, extension);
@@ -130,7 +131,8 @@ export class Server implements IServer {
         }
       });
   }
-  _respond(model: Model | Scope, actorName: string): Promise<Response> {
+  // TODO
+  respondUsingEntity(model: Model | Scope, actorName: string): Promise<Response> {
     return this.app.getActor(actorName).then((actor: IActor) => {
       if (model.Type === "Entity") {
         console.log("Acting", model);

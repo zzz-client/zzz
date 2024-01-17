@@ -21,6 +21,8 @@ export default class VariablesModule {
   }
   constructor(app: Application) {
     this.app = app;
+    app.addFeature("context", "");
+    // add.addModelType(ModelType.Context);
   }
   async load(theModel: Model, context: string): Promise<StringToStringMap> {
     return Load(theModel as Entity, context, await this.app.getStore());

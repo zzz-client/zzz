@@ -39,16 +39,20 @@ class Factory {
 }
 interface ApplicationConfig {
   store: string;
-  actor: string;
   modules: any[];
 }
+interface Feature {
+  id: string;
+  // models?: Model[];
+}
+type FeatureMap = { [key: string]: Feature };
 class Application {
+  argv = processFlags(Deno.args, Flags);
   config: ApplicationConfig;
+  feature = {} as FeatureMap;
   modules: ModuleManager;
   factory = new Factory();
   store?: IStore;
-  actor?: IActor;
-  argv = processFlags(Deno.args, Flags);
   constructor(config: ApplicationConfig) {
     this.config = config;
     this.modules = new ModuleManager(this);
@@ -64,6 +68,9 @@ class Application {
   }
   async applyModules(model: Model): Promise<void> {
     return this.modules.mod(model, this.config);
+  }
+  addFeature(name: string, feature: Feature): void {
+    this.feature[name] = feature;
   }
 }
 
