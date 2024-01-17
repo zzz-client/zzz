@@ -1,19 +1,19 @@
 import Application from "../../core/app.ts";
 import { Entity, Model } from "../../core/models.ts";
-import { IModule, ModuleConfig } from "../manager.ts";
+import { IModule } from "../manager.ts";
 
 export default class PathParamsModule implements IModule {
-  static newInstance(app: Application): IModule {
+  static newInstance(_app: Application): IModule {
     return new PathParamsModule();
   }
   async mod(entity: Model): Promise<void> {
     if (entity.Type == "Entity") {
-      await this.loadPathParams(entity as Entity, entity.Id);
+      await this.loadPathParams(entity as Entity);
     }
     return Promise.resolve();
   }
-  loadPathParams(entity: Entity, entityId: string): Promise<void> {
-    let pathParams = entity.PathParams;
+  loadPathParams(entity: Entity): Promise<void> {
+    const pathParams = entity.PathParams;
     if (pathParams) {
       for (const key of Object.keys(pathParams)) {
         const value = pathParams[key];

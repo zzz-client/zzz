@@ -11,49 +11,30 @@ export default class FileStore implements IStore {
   constructor(fileExtension: string) {
     this.fileExtension = fileExtension;
   }
-  async get(modelType: ModelType, entityId: string, context: string): Promise<Model> {
-    if (modelType === ModelType.Entity) {
-      const requestPath = entityId + "." + this.fileExtension;
-      const resultRequest = await (await getDriver(requestPath)).parse(Deno.readTextFileSync(requestPath)) as Entity;
-      resultRequest.Id = entityId;
-      resultRequest.Type = ModelType[modelType];
-      if (!resultRequest.Name) {
-        resultRequest.Name = basename(entityId);
-      }
-      return resultRequest;
-    } else if (modelType === ModelType.Collection) {
-      console.log("it is a collect");
-      const item = new Collection(entityId, basename(entityId));
-      for await (const child of Deno.readDir(entityId)) {
-        if (child.isDirectory) {
-          item.Children.push(await this.get(ModelType.Collection, `${entityId}/${child.name}`, context));
-        } else if (child.isFile && filetypeSupported(child.name) && !excludeFromInfo(child.name)) {
-          const baseless = basename(child.name, extname(child.name));
-          item.Children.push(await this.get(ModelType.Entity, `${entityId}/${baseless}`, context));
-        }
-      }
-      return item;
-    } else if (modelType === ModelType.Scope) {
-      console.log("t is a scop");
-      const scopeName = entityId;
-      const item = new Scope(entityId, scopeName);
-      // TODO: What do if not exist
-      for await (const child of Deno.readDir(entityId)) {
-        if (child.isDirectory) {
-          item.Collections.push(await this.get(ModelType.Collection, `${entityId}/${child.name}`, context) as Collection);
-        }
-      }
-      return item;
+  async getAll(modelType: ModelType.Scope | ModelType.Context | ModelType.Authorization): Promise<Model[]> {
+    const folder = getDirectoryForModel(modelType);
+    console.log("YARP");
+    const result: Model[] = [];
+    for await (const child of Deno.readDir(folder)) {
+      result.push(await this.get(modelType, child.name));
     }
-    if (modelType === ModelType.Context || modelType === ModelType.Authorization) {
-      const entityFolder = getDirectoryForModel(modelType);
-      const filePath = `${entityFolder}/${entityId}.${this.fileExtension}`;
-      const item = this._driver().parse(Deno.readTextFileSync(filePath)) as Model; // TODO: Is this a naughty cast?
-      item.Id = entityId;
-      item.Type = ModelType[modelType];
-      return item;
+    return result;
+  }
+  async get(modelType: ModelType, modelId: string): Promise<Model> {
+    console.log("Getting " + ModelType[modelType]);
+    switch (modelType) {
+      case ModelType.Entity:
+        return this.getEntity(modelId);
+      case ModelType.Collection:
+        return this.getCollection(modelId);
+      case ModelType.Scope:
+        return this.getScope(modelId);
+      case ModelType.Context:
+      case ModelType.Authorization:
+        return this.getAuthenticationOrContext(modelType, modelId);
+      default:
+        throw new Error(`Unknown type of entity: ${modelType}`);
     }
-    throw new Error(`Unknown type of entity: ${modelType}`);
   }
   store(key: string, value: any): Promise<void> {
     const sessionPath = getDirectoryForModel(ModelType.Context) + "/" + SESSION_FILE + "." + this.fileExtension;
@@ -65,25 +46,59 @@ export default class FileStore implements IStore {
     Deno.writeTextFileSync(sessionPath, this._driver().stringify(sessionContents));
     return Promise.resolve();
   }
-  setContext(context: string): void {
-    throw new Error("Not implemented");
-  }
   _driver(): Driver {
     return getDriver("." + this.fileExtension);
   }
-}
-
-function filetypeSupported(filePath: string): boolean {
-  try {
-    getDriver(filePath);
-    return true;
-  } catch (error) {
-    return false;
+  async getEntity(entityId: string): Promise<Entity> {
+    const requestPath = entityId + "." + this.fileExtension;
+    const resultRequest = await (await getDriver(requestPath)).parse(Deno.readTextFileSync(requestPath)) as Entity;
+    resultRequest.Id = entityId;
+    resultRequest.Type = ModelType[ModelType.Entity];
+    if (!resultRequest.Name) {
+      resultRequest.Name = basename(entityId);
+    }
+    return resultRequest;
+  }
+  async getCollection(collectionId: string): Promise<Collection> {
+    const collection = new Collection(collectionId, basename(collectionId));
+    for await (const child of Deno.readDir(collectionId)) {
+      if (child.isDirectory) {
+        collection.Children.push(await this.getCollection(`${collectionId}/${child.name}`));
+      } else if (child.isFile && !this.excludeFromInfo(child.name)) {
+        const baseless = basename(child.name, extname(child.name));
+        collection.Children.push(await this.getEntity(`${collectionId}/${baseless}`));
+      }
+    }
+    return collection;
+  }
+  async getScope(scopeId: string): Promise<Scope> {
+    const scopeFolder = getDirectoryForModel(ModelType.Scope);
+    const fullPath = scopeFolder + "/" + scopeId;
+    const scopeName = scopeId;
+    const scope = new Scope(scopeId, scopeName);
+    for await (const child of Deno.readDir(fullPath)) {
+      if (child.isDirectory) {
+        scope.Children.push(await this.getCollection(`${fullPath}/${child.name}`));
+      } else if (child.isFile && !this.excludeFromInfo(child.name)) {
+        const baseless = basename(child.name, extname(child.name));
+        scope.Children.push(await this.getEntity(`${fullPath}/${baseless}`));
+      }
+    }
+    return scope;
+  }
+  getAuthenticationOrContext(modelType: ModelType, itemId: string): Promise<Model> {
+    const directory = getDirectoryForModel(modelType);
+    const filePath = `${directory}/${itemId}.${this.fileExtension}`;
+    const item = this._driver().parse(Deno.readTextFileSync(filePath)) as Model; // TODO: Is this a naughty cast?
+    item.Id = itemId;
+    item.Type = ModelType[modelType];
+    return Promise.resolve(item);
+  }
+  excludeFromInfo(name: string): boolean {
+    return !name.endsWith("." + this.fileExtension) || name.startsWith("_");
   }
 }
-function excludeFromInfo(name: string): boolean {
-  return name.startsWith("_");
-}
+
 // async function determineType(modelId: string): Promise<ModelType> {
 //   if (modelId.startsWith(getDirectoryForModel(ModelType.Authorization))) {
 //     return ModelType.Authorization;
@@ -97,12 +112,14 @@ function excludeFromInfo(name: string): boolean {
 //     return ModelType.Collection;
 //   }
 // }
-export function getDirectoryForModel(modelType: ModelType): string {
+function getDirectoryForModel(modelType: ModelType): string {
   switch (modelType) {
+    case ModelType.Scope:
+      return "library";
     case ModelType.Context:
-      return "contexts";
+      return getDirectoryForModel(ModelType.Scope) + "/contexts";
     case ModelType.Authorization:
-      return "authorizations";
+      return getDirectoryForModel(ModelType.Scope) + "/authorizations";
     default:
       throw new Error(`Unknown entity type ${ModelType[modelType]}`);
   }

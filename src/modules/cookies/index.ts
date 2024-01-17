@@ -1,6 +1,6 @@
 import Application from "../../core/app.ts";
 import { Entity, Model } from "../../core/models.ts";
-import { IModule } from "../manager.ts";
+import { IModule, ModuleConfig } from "../manager.ts";
 
 export default class CookieModule implements IModule {
   app: Application;
@@ -10,7 +10,7 @@ export default class CookieModule implements IModule {
   constructor(app: Application) {
     this.app = app;
   }
-  async mod(entity: Model): Promise<void> {
+  async mod(entity: Model, _config: ModuleConfig): Promise<void> {
     if (entity.Type == "Entity") {
       await this.loadCookies(entity as Entity, entity.Id);
     }

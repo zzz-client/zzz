@@ -19,6 +19,7 @@ const tabs = ref([] as { title: string; value: string }[]);
 const collections = ref([] as any[]);
 const dirty = ref([] as boolean[]);
 const errorMessage = ref("");
+const scope = ref("Salesforce Primary");
 
 let lastClick = -1;
 function clickRequest(uwu) {
@@ -81,14 +82,14 @@ function addQueryParams(base: string): string {
 }
 
 axios
-  .get(addQueryParams("http://localhost:8000"), {
+  .get(addQueryParams("http://localhost:8000/" + scope.value), {
     headers: {
       "X-Zzz-Context": "integrate"
     }
   })
   .then((res) => {
     console.log("Got initial data", res.data);
-    res.data.Collections.forEach((entity) => {
+    res.data.Children.forEach((entity) => {
       addEntityToNodes(collections.value, entity);
     });
   })

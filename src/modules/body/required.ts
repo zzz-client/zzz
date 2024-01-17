@@ -2,7 +2,7 @@ import { Model } from "../../core/models.ts";
 import { IModule, ModuleConfig } from "../manager.ts";
 
 export default class BodyModule implements IModule {
-  mod(theRequest: Model, config: ModuleConfig): Promise<void> {
+  mod(theRequest: Model, _config: ModuleConfig): Promise<void> {
     if (theRequest.Type == "Request") {
       checkRequired(theRequest);
     }

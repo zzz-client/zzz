@@ -29,6 +29,11 @@ export class Server implements IServer {
     switch (request.method) {
       case "GET": {
         Log("Responding to GET", request.url);
+        const specialCaseResponse = this.handleSpecialRequestCases(request);
+        if (specialCaseResponse) {
+          console.log("Special case: ", specialCaseResponse);
+          return Promise.resolve(specialCaseResponse);
+        }
         return pls._do(request, "Pass").then((result: Entity | Scope) => this._respond(result, "Pass"));
       }
       case "PATCH":
@@ -77,8 +82,12 @@ export class Server implements IServer {
       headers: headers as any,
     });
   }
-  handleExtraRequestCases(request: Request): Response | string {
+  handleSpecialRequestCases(request: Request): Response | null {
     const { pathname: url } = new URL(request.url);
+    if (url === "/") {
+      // TODO
+      return this.newResponse(200, "TODO", STANDARD_HEADERS);
+    }
     if (url === "/favicon.ico") {
       return this.newResponse(200, {}, STANDARD_HEADERS);
     }
@@ -92,23 +101,26 @@ export class Server implements IServer {
     if ((base as string).endsWith("/")) {
       base = base.substring(0, base.length - 1);
     }
-    if (request.method == "GET" && base !== "" && ext === "") {
-      return this.newResponse(404, "", STANDARD_HEADERS);
-    }
-    return base;
+    return null;
   }
   async _do(request: Request, actorName: string): Promise<Entity | Scope> {
     const store = await this.app.getStore();
-    const context = getContext(request);
+    const { scope, context, entityId } = dissectRequest(request);
     const { searchParams } = new URL(request.url);
     const isVerbose = searchParams.has("verbose");
     const isFormat = searchParams.has("format") || actorName == "Client";
-    const extraCaseResult = this.handleExtraRequestCases(request);
-    if (request.method == "GET" && extraCaseResult == "") {
-      return getScopes(request, store);
+    function getModelType(entityId: string): ModelType {
+      if (!entityId) {
+        return ModelType.Scope;
+      }
+      if (entityId.split("/")[-1].includes(".")) {
+        return ModelType.Entity;
+      }
+      return ModelType.Collection;
     }
-
-    return store.get(ModelType.Entity, extraCaseResult as string, context)
+    const modelType = getModelType(entityId);
+    // @ts-ignore: ignore
+    return store.get(modelType, modelType == ModelType.Scope ? scope : entityId)
       .then((result: Entity) => {
         return this.app.applyModules(result).then(() => result);
       })
@@ -127,6 +139,7 @@ export class Server implements IServer {
         }
         return entity;
       })
+      // @ts-ignore: ignore
       .then((entity: Entity) => {
         if (isFormat) {
           return PathParamsModule.newInstance(this.app).mod(entity as Entity, this.app.config);
@@ -161,15 +174,15 @@ export class Server implements IServer {
       });
   }
 }
-async function getScopes(request: Request, store: IStore): Promise<Scope[]> {
-  return store.getAll(ModelType.Scope);
-}
-function getContext(request: Request): string {
-  const { searchParams } = new URL(request.url);
-  const headers = request.headers || {};
-  return searchParams.get("context") || headers.get("x-zzz-context") || "";
-}
-function getScope(request: Request): string {
-  console.log(decodeURI(request.url.split(":8000/")[1]));
-  return decodeURI(request.url.split(":8000/")[1]);
+function dissectRequest(request: Request): { scope: string; context: string; entityId: string } {
+  const { searchParams, pathname } = new URL(request.url);
+  const decodedPathname = decodeURI(pathname.replace(/^\//, ""));
+  const scope = decodedPathname.split("/")[0];
+  const entityId = decodedPathname.substring(scope.length + 1);
+  const context = searchParams.get("context") || request.headers?.get("x-zzz-context") || "";
+  return {
+    context: context,
+    scope: scope,
+    entityId: entityId,
+  };
 }

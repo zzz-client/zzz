@@ -3,6 +3,9 @@ interface Model {
   Type: string;
   Name: string;
 }
+export interface HasAuthorization extends Model {
+  Authorization: Auth;
+}
 enum ModelType {
   Authorization,
   Context,
@@ -51,11 +54,11 @@ class Scope implements Model {
   Type = "Scope";
   Id: string;
   Name: string;
-  Collections: Collection[];
+  Children: CollectionChild[];
   constructor(id: string, name: string) {
     this.Id = id;
     this.Name = name;
-    this.Collections = [];
+    this.Children = [];
   }
 }
 class Context implements Model {

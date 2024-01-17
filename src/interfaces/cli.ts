@@ -1,7 +1,7 @@
 import { Args } from "https://deno.land/std/flags/mod.ts";
 import tim from "../core/tim.ts";
 import { getDriver } from "../stores/files/drivers.ts";
-import Application, { ApplicationConfig } from "../core/app.ts";
+import Application from "../core/app.ts";
 import AuthorizationModule from "../modules/authorization/index.ts";
 import BodyModule from "../modules/body/index.ts";
 import PathParamsModule from "../modules/path-params/index.ts";
@@ -19,7 +19,7 @@ export default async function Cli(app: Application): Promise<void> {
   const env = await load();
   const arg = app.argv._[0];
   const context = app.argv.context;
-  let theEntity = await (await app.getStore()).get(ModelType.Entity, arg + "", context);
+  let theEntity = await (await app.getStore()).get(ModelType.Entity, arg + "");
   app.applyModules(theEntity);
   const isVerbose = true;
   const isFormat = !!app.argv["format"];

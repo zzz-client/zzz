@@ -12,13 +12,12 @@ interface IActor {
   act(theRequest: Entity): Promise<any>;
 }
 interface IStore {
-  getAll(modelType: ModelType.Scope | ModelType.Context | ModelType.Authorization): Promise<ModelType.Scope | ModelType.Context | ModelType.Authorization[]>;
-  get(modelType: ModelType, entityId: string, contextName: string): Promise<any>;
+  getAll(modelType: ModelType.Scope | ModelType.Context | ModelType.Authorization): Promise<Model[]>;
+  get(modelType: ModelType, entityId: string): Promise<any>;
   store(key: string, value: any, contextName: string): Promise<void>;
-  setContext(context: string): void;
 }
 interface IAuthorizer {
-  authorize(theRequest: Entity, authorizationConfig: any): void;
+  authorize(model: Model, authorizationConfig: any): void;
 }
 class Factory {
   async newStore(fileExtension: string): Promise<IStore> {

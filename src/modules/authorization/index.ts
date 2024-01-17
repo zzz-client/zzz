@@ -3,7 +3,7 @@ import BearerTokenAuthorizer from "./bearerToken.ts";
 import HeaderAuthorizer from "./header.ts";
 import QueryAuthorizer from "./query.ts";
 import Application, { IAuthorizer } from "../../core/app.ts";
-import { Auth } from "../../core/models.ts";
+import { Auth, HasAuthorization, Model } from "../../core/models.ts";
 import { ModelType } from "../../core/models.ts";
 import { IModule } from "./../manager.ts";
 
@@ -16,11 +16,10 @@ export default class AuthorizationModule implements IModule {
     this.app = app;
   }
   async mod(theModel: Model): Promise<void> {
-    if (theModel.Authorization) {
+    if ((theModel as HasAuthorization).Authorization) {
       const authConfig = await (await this.app.getStore()).get(
         ModelType.Authorization,
-        theModel.Authorization.Type,
-        "",
+        (theModel as HasAuthorization).Authorization.Type,
       ) as any;
       const injection = this.newAuthorization(authConfig.Type);
       return await injection.authorize(theModel, authConfig);
