@@ -54,7 +54,7 @@ class Scope implements Model {
   Type = "Scope";
   Id: string;
   Name: string;
-  Children: CollectionChild[];
+  Children: (CollectionChild | string)[];
   constructor(id: string, name: string) {
     this.Id = id;
     this.Name = name;

@@ -11,12 +11,11 @@ export default class FileStore implements IStore {
   constructor(fileExtension: string) {
     this.fileExtension = fileExtension;
   }
-  async getAll(modelType: ModelType.Scope | ModelType.Context | ModelType.Authorization): Promise<Model[]> {
+  async list(modelType: ModelType.Scope | ModelType.Context | ModelType.Authorization): Promise<Model[]> {
     const folder = getDirectoryForModel(modelType);
-    console.log("YARP");
     const result: Model[] = [];
     for await (const child of Deno.readDir(folder)) {
-      result.push(await this.get(modelType, child.name));
+      result.push(new Scope(child.name, child.name));
     }
     return result;
   }

@@ -24,12 +24,12 @@ export class Server implements IServer {
     this.app = app;
   }
 
-  respond(request: Request): Promise<Response> {
+  async respond(request: Request): Promise<Response> {
     const pls = this;
     switch (request.method) {
       case "GET": {
         Log("Responding to GET", request.url);
-        const specialCaseResponse = this.handleSpecialRequestCases(request);
+        const specialCaseResponse = await this.handleSpecialRequestCases(request);
         if (specialCaseResponse) {
           console.log("Special case: ", specialCaseResponse);
           return Promise.resolve(specialCaseResponse);
@@ -82,11 +82,13 @@ export class Server implements IServer {
       headers: headers as any,
     });
   }
-  handleSpecialRequestCases(request: Request): Response | null {
+  async handleSpecialRequestCases(request: Request): Promise<Response | null> {
     const { pathname: url } = new URL(request.url);
     if (url === "/") {
       // TODO
-      return this.newResponse(200, "TODO", STANDARD_HEADERS);
+      const scopes = await (await this.app.getStore()).list(ModelType.Scope);
+      const scopeIds = scopes.map((scope: Model) => scope.Id);
+      return this.newResponse(200, this.stringify(scopeIds), STANDARD_HEADERS);
     }
     if (url === "/favicon.ico") {
       return this.newResponse(200, {}, STANDARD_HEADERS);
@@ -159,10 +161,7 @@ export class Server implements IServer {
         Log("Final response", result);
         let finalResponse = result;
         if (!(result instanceof Response)) {
-          Log("Stringifying result");
-          const driver = getDriver(".json");
-          const stringResult = driver.stringify(result);
-          finalResponse = this.newResponse(200, stringResult, STANDARD_HEADERS);
+          finalResponse = this.newResponse(200, this.stringify(result), STANDARD_HEADERS);
         }
         return finalResponse;
       })
@@ -172,6 +171,9 @@ export class Server implements IServer {
         console.error(reason.stacktrace);
         return this.newResponse(500, reason, STANDARD_HEADERS);
       });
+  }
+  stringify(result: any): string {
+    return getDriver(".json").stringify(result);
   }
 }
 function dissectRequest(request: Request): { scope: string; context: string; entityId: string } {

@@ -12,7 +12,7 @@ interface IActor {
   act(theRequest: Entity): Promise<any>;
 }
 interface IStore {
-  getAll(modelType: ModelType.Scope | ModelType.Context | ModelType.Authorization): Promise<Model[]>;
+  list(modelType: ModelType.Scope | ModelType.Context | ModelType.Authorization): Promise<Model[]>;
   get(modelType: ModelType, entityId: string): Promise<any>;
   store(key: string, value: any, contextName: string): Promise<void>;
 }
