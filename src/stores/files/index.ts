@@ -21,14 +21,13 @@ export default class FileStore implements IStore {
   }
   async get(modelType: ModelType, modelId: string): Promise<Model> {
     console.log("Getting " + ModelType[modelType], modelId);
-    if (modelType == ModelType.Scope) {
-      return this.getScope(modelId);
-    }
     switch (modelType) {
       case ModelType.Entity:
         return this.getEntity(modelId);
       case ModelType.Collection:
         return this.getCollection(modelId);
+      case ModelType.Scope:
+        return this.getScope(modelId);
       case ModelType.Context:
       case ModelType.Authorization:
         return this.getAuthenticationOrContext(modelType, modelId);
@@ -49,25 +48,33 @@ export default class FileStore implements IStore {
   _driver(): Driver {
     return getDriver("." + this.fileExtension);
   }
-  async getEntity(entityId: string): Promise<Entity> {
-    const requestPath = getDirectoryForModel(ModelType.Scope) + "/" + entityId + "." + this.fileExtension;
-    const resultRequest = await (await getDriver(requestPath)).parse(Deno.readTextFileSync(requestPath)) as Entity;
-    resultRequest.Id = entityId;
-    resultRequest.Type = ModelType[ModelType.Entity];
-    if (!resultRequest.Name) {
-      resultRequest.Name = basename(entityId);
-    }
-    return resultRequest;
+  getEntity(entityId: string): Promise<Entity> {
+    const fullId = getDirectoryForModel(ModelType.Scope) + "/" + entityId;
+    return this.getEntityFullId(fullId);
   }
-  async getCollection(collectionId: string): Promise<Collection> {
-    const requestPath = getDirectoryForModel(ModelType.Scope) + "/" + collectionId;
+  async getEntityFullId(entityId: string): Promise<Entity> {
+    const entity = await (await getDriver(this.fileExtension)).parse(Deno.readTextFileSync(entityId + "." + this.fileExtension)) as Entity;
+    entity.Id = entityId.substring(getDirectoryForModel(ModelType.Scope).length + 1); // TODO: Hack
+    entity.Type = ModelType[ModelType.Entity];
+    if (!entity.Name) {
+      entity.Name = basename(entityId);
+    }
+    return Promise.resolve(entity);
+  }
+  getCollection(collectionId: string): Promise<Collection> {
+    const fullId = getDirectoryForModel(ModelType.Scope) + "/" + collectionId;
+    console.log("xCollection", fullId);
+    return this.getCollectionFullId(fullId);
+  }
+  async getCollectionFullId(collectionId: string): Promise<Collection> {
+    console.log("x @Collection", collectionId);
     const collection = new Collection(collectionId, basename(collectionId));
-    for await (const child of Deno.readDir(requestPath)) {
+    for await (const child of Deno.readDir(collectionId)) {
       if (child.isDirectory) {
-        collection.Children.push(await this.getCollection(`${collectionId}/${child.name}`));
+        collection.Children.push(await this.getCollectionFullId(`${collectionId}/${child.name}`));
       } else if (child.isFile && !this.excludeFromInfo(child.name)) {
         const baseless = basename(child.name, extname(child.name));
-        collection.Children.push(await this.getEntity(`${collectionId}/${baseless}`));
+        collection.Children.push(await this.getEntityFullId(`${collectionId}/${baseless}`));
       }
     }
     return collection;
@@ -75,14 +82,15 @@ export default class FileStore implements IStore {
   async getScope(scopeId: string): Promise<Scope> {
     const scopeFolder = getDirectoryForModel(ModelType.Scope);
     const fullPath = scopeFolder + "/" + scopeId;
+    console.log("Scope id vs full path", scopeId, fullPath);
     const scopeName = scopeId;
     const scope = new Scope(scopeId, scopeName);
     for await (const child of Deno.readDir(fullPath)) {
       if (child.isDirectory) {
-        scope.Children.push(await this.getCollection(`${fullPath}/${child.name}`));
+        scope.Children.push(await this.getCollectionFullId(`${fullPath}/${child.name}`));
       } else if (child.isFile && !this.excludeFromInfo(child.name)) {
-        const baseless = basename(child.name, extname(child.name));
-        scope.Children.push(await this.getEntity(`${fullPath}/${baseless}`));
+        // const baseless = basename(child.name, extname(child.name));
+        // scope.Children.push(await this.getEntityFullId(`${fullPath}/${child.name}`));
       }
     }
     return scope;
@@ -90,7 +98,6 @@ export default class FileStore implements IStore {
   getAuthenticationOrContext(modelType: ModelType, itemId: string): Promise<Model> {
     const directory = getDirectoryForModel(modelType);
     const filePath = `${directory}/${itemId}.${this.fileExtension}`;
-    console.log("Hmm", filePath);
     const item = this._driver().parse(Deno.readTextFileSync(filePath)) as Model; // TODO: Is this a naughty cast?
     item.Id = itemId;
     item.Type = ModelType[modelType];
