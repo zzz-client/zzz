@@ -47,6 +47,7 @@ interface Feature {
 }
 type FeatureMap = { [key: string]: Feature };
 class Application {
+  argv: Args;
   flags = { preamble: "Usage: zzz <options>" };
   config: ApplicationConfig;
   feature = {} as FeatureMap;
@@ -56,6 +57,7 @@ class Application {
   constructor(config: ApplicationConfig) {
     this.config = config;
     this.modules = new ModuleManager(this);
+    this.argv = processFlags(Deno.args, this.flags);
   }
   async getStore(): Promise<IStore> {
     if (!this.store) {
