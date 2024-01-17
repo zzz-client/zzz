@@ -127,6 +127,10 @@ function send(): void {
 if (value) {
   doTheThing(value.value);
 }
+function showCookies() {
+  console.log("ha");
+  window.emitter.emit("show-cookies");
+}
 </script>
 
 <template>
@@ -153,7 +157,7 @@ if (value) {
             <pre>{{ requestData }}</pre>
           </TabPanel>
         </TabView>
-        <a style="font-weight: bold; margin: 1em; cursor: pointer" v-on:click="emitter.emit('show-cookies')">Cookies</a>
+        <a style="font-weight: bold; margin: 1em; cursor: pointer" @click="showCookies">Cookies</a>
       </div>
     </SplitterPanel>
     <SplitterPanel :minSize="10">
