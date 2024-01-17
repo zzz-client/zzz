@@ -23,27 +23,14 @@ export class Server implements IServer {
     this.port = app.argv.http || DefaultFlags.HTTP_PORT;
     this.app = app;
   }
-
-  async respond(request: Request): Promise<Response> {
-    const pls = this;
+  respond(request: Request): Promise<Response> {
+    Log("Responding to " + request.method, request.url);
     switch (request.method) {
-      case "GET": {
-        Log("Responding to GET", request.url);
-        const specialCaseResponse = await this.handleSpecialRequestCases(request);
-        if (specialCaseResponse) {
-          console.log("Special case: ", specialCaseResponse);
-          return Promise.resolve(specialCaseResponse);
-        }
-        return pls._do(request, "Pass").then((result: Entity | Scope) => this._respond(result, "Pass"));
-      }
+      case "GET":
+        return this.respondToGet(request);
       case "PATCH":
-        Log("Responding to PATCH", request.url);
-        return pls._do(request, "Client").then((result: Entity | Scope) => {
-          console.log("Hmm", result);
-          return this._respond(result, "Client");
-        });
+        return this.respondToPatch(request);
       case "OPTIONS":
-        Log("Responding to OPTIONS", request.url);
         return Promise.resolve(this._handleOptions(request));
       default:
         return Promise.reject(
@@ -61,13 +48,26 @@ export class Server implements IServer {
         if (error instanceof Response) {
           return Promise.resolve(error);
         }
-        return Promise.resolve(pls.newResponse(400, error, STANDARD_HEADERS));
+        return Promise.resolve(newResponse(400, error, STANDARD_HEADERS));
       });
     }
     Deno.serve({ port: this.port }, cb);
   }
-  newResponse(status: number, body: any, headers: StringToStringMap): Response {
-    return new Response(body, { status, headers });
+
+  async respondToGet(request: Request): Promise<Response> {
+    const { pathname: url } = new URL(request.url);
+    if (url === "/favicon.ico") {
+      return newResponse(204, null, STANDARD_HEADERS);
+    }
+    if (url === "/") {
+      return this.respondToScopesList();
+    }
+    return this._do(request, "Pass").then((result: Entity | Scope) => this._respond(result, "Pass"));
+  }
+  respondToPatch(request: Request): Promise<Response> {
+    return this._do(request, "Client").then((result: Entity | Scope) => {
+      return this._respond(result, "Client");
+    });
   }
   _handleOptions(request: Request): Response {
     const headers = {
@@ -82,55 +82,39 @@ export class Server implements IServer {
       headers: headers as any,
     });
   }
-  async handleSpecialRequestCases(request: Request): Promise<Response | null> {
-    const { pathname: url } = new URL(request.url);
-    if (url === "/") {
-      // TODO
-      const scopes = await (await this.app.getStore()).list(ModelType.Scope);
-      const scopeIds = scopes.map((scope: Model) => scope.Id);
-      return this.newResponse(200, this.stringify(scopeIds), STANDARD_HEADERS);
-    }
-    if (url === "/favicon.ico") {
-      return this.newResponse(200, {}, STANDARD_HEADERS);
-    }
-    const resourcePath = decodeURI(url.substring(1));
-    let base = resourcePath;
-    let ext = extname(resourcePath);
-    if (ext.startsWith(".")) {
-      ext = ext.substring(1);
-      base = base.substring(0, base.length - ext.length - 1);
-    }
-    if ((base as string).endsWith("/")) {
-      base = base.substring(0, base.length - 1);
-    }
-    return null;
+  async respondToScopesList(): Promise<Response> {
+    const scopes = await (await this.app.getStore()).list(ModelType.Scope);
+    const scopeIds = scopes.map((scope: Model) => scope.Id);
+    return newResponse(200, this.stringify(scopeIds), STANDARD_HEADERS);
   }
   async _do(request: Request, actorName: string): Promise<Entity | Scope> {
+    const { scope, context, entityId, extension, fullId } = dissectRequest(request);
+    console.log("Parts:", scope, context, entityId, extension);
     const store = await this.app.getStore();
-    const { scope, context, entityId } = dissectRequest(request);
     const { searchParams } = new URL(request.url);
-    const isVerbose = searchParams.has("verbose");
+    const isResolve = searchParams.has("resolve");
     const isFormat = searchParams.has("format") || actorName == "Client";
     function getModelType(entityId: string): ModelType {
       if (!entityId) {
         return ModelType.Scope;
       }
-      if (entityId.split("/")[-1].includes(".")) {
+      if (extension) {
         return ModelType.Entity;
       }
       return ModelType.Collection;
     }
     const modelType = getModelType(entityId);
+    console.log("Dealing with", ModelType[modelType], entityId);
     // @ts-ignore: ignore
-    return store.get(modelType, modelType == ModelType.Scope ? scope : entityId)
+    return store.get(modelType, fullId)
       .then((result: Entity) => {
         return this.app.applyModules(result).then(() => result);
       })
       .then((entity: Entity) => {
-        if (isVerbose || isFormat) {
+        if (isResolve || isFormat) {
           return VariablesModule.newInstance(this.app).load(entity, context)
             .then((variables) => {
-              if (isVerbose) {
+              if (isResolve) {
                 entity.Variables = variables;
               }
               if (isFormat) {
@@ -161,7 +145,7 @@ export class Server implements IServer {
         Log("Final response", result);
         let finalResponse = result;
         if (!(result instanceof Response)) {
-          finalResponse = this.newResponse(200, this.stringify(result), STANDARD_HEADERS);
+          finalResponse = newResponse(200, this.stringify(result), STANDARD_HEADERS);
         }
         return finalResponse;
       })
@@ -169,22 +153,36 @@ export class Server implements IServer {
         console.error(reason.message);
         console.error(reason);
         console.error(reason.stacktrace);
-        return this.newResponse(500, reason, STANDARD_HEADERS);
+        return newResponse(500, reason, STANDARD_HEADERS);
       });
   }
   stringify(result: any): string {
     return getDriver(".json").stringify(result);
   }
 }
-function dissectRequest(request: Request): { scope: string; context: string; entityId: string } {
+
+function newResponse(status: number, body: any, headers: StringToStringMap): Response {
+  return new Response(body, { status, headers });
+}
+function dissectRequest(request: Request): RequestParts {
   const { searchParams, pathname } = new URL(request.url);
+  const extension = extname(pathname);
   const decodedPathname = decodeURI(pathname.replace(/^\//, ""));
   const scope = decodedPathname.split("/")[0];
-  const entityId = decodedPathname.substring(scope.length + 1);
+  const entityId = decodedPathname.substring(scope.length + 1, decodedPathname.length - extension.length).replace(/^\./, "");
   const context = searchParams.get("context") || request.headers?.get("x-zzz-context") || "";
   return {
-    context: context,
-    scope: scope,
-    entityId: entityId,
+    context,
+    scope,
+    entityId,
+    extension,
+    fullId: (entityId ? (scope + "/" + entityId) : scope),
   };
 }
+type RequestParts = {
+  context: string;
+  entityId: string;
+  scope: string;
+  extension: string;
+  fullId: string;
+};

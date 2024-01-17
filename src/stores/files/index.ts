@@ -20,14 +20,15 @@ export default class FileStore implements IStore {
     return result;
   }
   async get(modelType: ModelType, modelId: string): Promise<Model> {
-    console.log("Getting " + ModelType[modelType]);
+    console.log("Getting " + ModelType[modelType], modelId);
+    if (modelType == ModelType.Scope) {
+      return this.getScope(modelId);
+    }
     switch (modelType) {
       case ModelType.Entity:
         return this.getEntity(modelId);
       case ModelType.Collection:
         return this.getCollection(modelId);
-      case ModelType.Scope:
-        return this.getScope(modelId);
       case ModelType.Context:
       case ModelType.Authorization:
         return this.getAuthenticationOrContext(modelType, modelId);
@@ -49,7 +50,7 @@ export default class FileStore implements IStore {
     return getDriver("." + this.fileExtension);
   }
   async getEntity(entityId: string): Promise<Entity> {
-    const requestPath = entityId + "." + this.fileExtension;
+    const requestPath = getDirectoryForModel(ModelType.Scope) + "/" + entityId + "." + this.fileExtension;
     const resultRequest = await (await getDriver(requestPath)).parse(Deno.readTextFileSync(requestPath)) as Entity;
     resultRequest.Id = entityId;
     resultRequest.Type = ModelType[ModelType.Entity];
@@ -59,8 +60,9 @@ export default class FileStore implements IStore {
     return resultRequest;
   }
   async getCollection(collectionId: string): Promise<Collection> {
+    const requestPath = getDirectoryForModel(ModelType.Scope) + "/" + collectionId;
     const collection = new Collection(collectionId, basename(collectionId));
-    for await (const child of Deno.readDir(collectionId)) {
+    for await (const child of Deno.readDir(requestPath)) {
       if (child.isDirectory) {
         collection.Children.push(await this.getCollection(`${collectionId}/${child.name}`));
       } else if (child.isFile && !this.excludeFromInfo(child.name)) {
