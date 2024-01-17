@@ -1,6 +1,7 @@
 import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
 import { dirname } from "https://deno.land/std/path/mod.ts";
-import { Context, Entity, HasVariables, Model, ModelType, StringToStringMap } from "../../core/models.ts";
+import { Entity, HasVariables, Model, ModelType, StringToStringMap } from "../../core/models.ts";
+import { Context } from "./models.ts";
 import Application, { IStore } from "../../core/app.ts";
 import { getDriver } from "../../stores/files/drivers.ts";
 import Meld from "../../core/meld.ts";
@@ -21,7 +22,15 @@ export default class VariablesModule {
   }
   constructor(app: Application) {
     this.app = app;
-    app.addFeature("context", "");
+    app.addFeature({
+      id: "context",
+    });
+    app.addFlags({
+      type: "string",
+      description: "Context to execute in",
+      argument: "context",
+      alias: "c",
+    });
     // add.addModelType(ModelType.Context);
   }
   async load(theModel: Model, context: string): Promise<StringToStringMap> {

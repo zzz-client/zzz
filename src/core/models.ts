@@ -64,16 +64,6 @@ class Scope implements Model {
     this.Children = [];
   }
 }
-class Context implements Model {
-  Type = "Context";
-  Id: string;
-  Name: string;
-  constructor(id: string, name: string) {
-    this.Id = id;
-    this.Name = name;
-  }
-}
-
 interface Auth {
   Type: string;
 }
@@ -81,5 +71,5 @@ export interface StringToStringMap {
   [key: string]: string;
 }
 
-export { Collection, Context, Entity, ModelType, Scope };
+export { Collection, Entity, ModelType, Scope };
 export type { Auth, HttpMethod, Model };

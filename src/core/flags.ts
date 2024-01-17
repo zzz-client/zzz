@@ -5,7 +5,6 @@ export const DefaultFlags = {
 export default {
   preamble: "Usage: zzz <options>", // Optional preamble for describing non-flag/positional arguments
   description: {
-    context: "Context to execute in",
     workspace: "Workspace to execute in",
     http: "Start HTTP server",
     web: "Start web UI server",
@@ -13,18 +12,16 @@ export default {
     execute: "Execute the request instead of outputting it",
   },
   argument: {
-    context: "context",
     workspace: "workspace",
     http: "port",
     web: "port",
   },
   alias: {
-    context: "c",
     workspace: "w",
     format: "f",
     execute: "x",
   },
-  string: ["context", "workspace", "http", "web"],
+  string: ["workspace", "http", "web"],
   boolean: ["format", "execute"],
   default: {
     http: DefaultFlags.HTTP_PORT,

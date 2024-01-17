@@ -10,7 +10,6 @@ import { getDriver } from "../stores/files/drivers.ts";
 
 const app = new Application({
   store: "yml",
-  actor: "Summary",
   modules: [AuthorizationModule, BodyModule],
 });
 

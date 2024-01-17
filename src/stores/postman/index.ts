@@ -1,9 +1,10 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
-import { Context, Entity, HttpMethod, ModelType } from "../../core/models.ts";
+import { Entity, HttpMethod, ModelType } from "../../core/models.ts";
+import { Context } from "../../modules/variables/models.ts";
 import { basename, dirname, extname } from "https://deno.land/std/path/mod.ts";
 import { IStore } from "../../core/app.ts";
 import Schema from "./postman.schema.ts";
-import { Meld } from "../../core/meld.ts";
+import Meld from "../../core/meld.ts";
 
 export default class PostmanStore implements IStore {
   collection: Schema;

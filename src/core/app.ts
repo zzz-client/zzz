@@ -7,14 +7,14 @@ import PassThruActor from "./actors/pass.ts";
 import SummaryActor from "./actors/summary.ts";
 import Flags from "./flags.ts";
 import { Entity, Model, ModelType } from "./models.ts";
+import { Args } from "https://deno.land/std/cli/parse_args.ts";
 
 interface IActor {
   act(theRequest: Entity): Promise<any>;
 }
 interface IStore {
-  list(modelType: ModelType.Scope | ModelType.Context | ModelType.Authorization): Promise<Model[]>;
+  list(modelType: ModelType): Promise<Model[]>;
   get(modelType: ModelType, entityId: string): Promise<any>;
-  store(key: string, value: any, contextName: string): Promise<void>;
 }
 interface IAuthorizer {
   authorize(model: Model, authorizationConfig: any): void;
@@ -47,7 +47,7 @@ interface Feature {
 }
 type FeatureMap = { [key: string]: Feature };
 class Application {
-  argv = processFlags(Deno.args, Flags);
+  flags = { preamble: "Usage: zzz <options>" };
   config: ApplicationConfig;
   feature = {} as FeatureMap;
   modules: ModuleManager;
@@ -69,10 +69,22 @@ class Application {
   async applyModules(model: Model): Promise<void> {
     return this.modules.mod(model, this.config);
   }
-  addFeature(name: string, feature: Feature): void {
-    this.feature[name] = feature;
+  addFeature(feature: Feature): void {
+    this.feature[feature.id] = feature;
+  }
+  addFlags(flags: Flag): void {
+    this.flags = { ...this.flags, ...flags };
+    this.argv = processFlags(Deno.args, this.flags);
   }
 }
+
+type Flag = {
+  description: string;
+  argument?: string;
+  alias?: string;
+  default?: any;
+  type: "string" | "boolean";
+};
 
 export type { ApplicationConfig, IActor, IAuthorizer, IStore };
 
