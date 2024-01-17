@@ -1,8 +1,8 @@
 // import axios from "https://deno.land/x/redaxios/mod.ts";
 import axios from "npm:axios";
+import { getDriver } from "../../stores/files/drivers.ts";
 import { IActor } from "../app.ts";
 import { Entity } from "../models.ts";
-import { getDriver } from "../../stores/files/drivers.ts";
 
 const defaultStringify = getDriver(".json").stringify;
 

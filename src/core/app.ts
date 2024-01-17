@@ -1,12 +1,12 @@
 import { processFlags } from "https://deno.land/x/flags_usage@2.0.0/mod.ts";
 import ModuleManager from "../modules/manager.ts";
+import FileStore from "../stores/files/index.ts";
 import ClientActor from "./actors/client.ts";
 import CurlActor from "./actors/curl.ts";
 import PassThruActor from "./actors/pass.ts";
 import SummaryActor from "./actors/summary.ts";
-import { Entity, Model, ModelType } from "./models.ts";
-import FileStore from "../stores/files/index.ts";
 import Flags from "./flags.ts";
+import { Entity, Model, ModelType } from "./models.ts";
 
 interface IActor {
   act(theRequest: Entity): Promise<any>;

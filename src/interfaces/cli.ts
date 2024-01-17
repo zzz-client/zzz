@@ -1,13 +1,12 @@
-import { Args } from "https://deno.land/std/flags/mod.ts";
-import tim from "../core/tim.ts";
-import { getDriver } from "../stores/files/drivers.ts";
+import { load } from "https://deno.land/std/dotenv/mod.ts";
 import Application from "../core/app.ts";
+import { ModelType } from "../core/models.ts";
+import tim from "../core/tim.ts";
 import AuthorizationModule from "../modules/authorization/index.ts";
 import BodyModule from "../modules/body/index.ts";
 import PathParamsModule from "../modules/path-params/index.ts";
 import VariablesModule from "../modules/variables/index.ts";
-import { ModelType } from "../core/models.ts";
-import { load } from "https://deno.land/std/dotenv/mod.ts";
+import { getDriver } from "../stores/files/drivers.ts";
 
 const app = new Application({
   store: "yml",

@@ -1,13 +1,13 @@
 // import { basename, extname } from "path";
-import { Collection, Entity, Model, ModelType, Scope, StringToStringMap } from "../core/models.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
-import tim from "../core/tim.ts";
+import Application, { IActor } from "../core/app.ts";
 import { DefaultFlags } from "../core/flags.ts";
-import { Driver, getContentType, getDriver } from "../stores/files/drivers.ts";
-import Application, { IActor, IStore } from "../core/app.ts";
 import Log from "../core/log.ts";
-import VariablesModule from "../modules/variables/index.ts";
+import { Entity, Model, ModelType, Scope, StringToStringMap } from "../core/models.ts";
+import tim from "../core/tim.ts";
 import PathParamsModule from "../modules/path-params/index.ts";
+import VariablesModule from "../modules/variables/index.ts";
+import { getDriver } from "../stores/files/drivers.ts";
 
 interface IServer {
   // respond(code: number, body: any, headers: StringToStringMap): any;
