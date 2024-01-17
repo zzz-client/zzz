@@ -62,10 +62,10 @@ export class Server implements IServer {
     if (url === "/") {
       return this.respondToScopesList();
     }
-    return this._do(request, "Pass").then((result: Entity | Scope) => this._respond(result, "Pass"));
+    return this._do(request).then((result: Entity | Scope) => this._respond(result, "Pass"));
   }
   respondToPatch(request: Request): Promise<Response> {
-    return this._do(request, "Client").then((result: Entity | Scope) => {
+    return this._do(request).then((result: Entity | Scope) => {
       return this._respond(result, "Client");
     });
   }
@@ -87,18 +87,18 @@ export class Server implements IServer {
     const scopeIds = scopes.map((scope: Model) => scope.Id);
     return newResponse(200, this.stringify(scopeIds), STANDARD_HEADERS);
   }
-  async _do(request: Request, actorName: string): Promise<Entity | Scope> {
+  async _do(request: Request): Promise<Entity | Scope> {
     const { scope, context, entityId, extension, fullId } = dissectRequest(request);
     console.log("Parts:", scope, context, entityId, extension);
     const store = await this.app.getStore();
     const { searchParams } = new URL(request.url);
     const isFull = searchParams.has("full");
-    const isFormat = searchParams.has("format") || actorName == "Client";
+    const isFormat = searchParams.has("format") || request.method == "PATCH";
     function getModelType(entityId: string): ModelType {
       if (!entityId) {
         return ModelType.Scope;
       }
-      if (extension) {
+      if (extension || request.method == "PATCH") {
         return ModelType.Entity;
       }
       return ModelType.Collection;
@@ -130,13 +130,13 @@ export class Server implements IServer {
         }
       });
   }
-  _respond(theRequest: Entity | Scope, actorName: string): Promise<Response> {
+  _respond(model: Model | Scope, actorName: string): Promise<Response> {
     return this.app.getActor(actorName).then((actor: IActor) => {
-      console.log("Acting");
-      if (theRequest instanceof Entity) {
-        return actor.act(theRequest);
+      if (model.Type === "Entity") {
+        console.log("Acting", model);
+        return actor.act(model as Entity).catch((error) => error);
       }
-      return Promise.resolve(theRequest);
+      return Promise.resolve(model);
     })
       .then((result: any) => {
         Log("Final response", result);
@@ -147,9 +147,9 @@ export class Server implements IServer {
         return finalResponse;
       })
       .catch((reason: any) => {
-        console.error(reason.message);
-        console.error(reason);
-        console.error(reason.stacktrace);
+        console.error("Message", reason.message);
+        console.error("Reason", reason);
+        console.error("Stacktrace", reason.stacktrace);
         return newResponse(500, reason, STANDARD_HEADERS);
       });
   }

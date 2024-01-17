@@ -20,11 +20,11 @@ export default class ClientActor implements IActor {
   }
 }
 function formatError(error: any) {
-  if (error.response && error.response.data) {
-    return error.response.data;
-  }
-  if (error.code) {
-    return new Error(error.code);
+  let result = new Error(error);
+  if (error.response?.data) {
+    result = new Error(error.response.data);
+  } else if (error.code) {
+    result = new Error(error.code);
   }
   return error;
 }
