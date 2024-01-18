@@ -7,6 +7,7 @@ import { dirname } from "https://deno.land/std/path/mod.ts";
 import { getFileFormat } from "../../stores/files/formats.ts";
 import { HttpRequest } from "../requests/module.ts";
 
+// TODO: All of ContextModule
 export class ContextModule extends Module implements IModuleFlags, IModuleModifier {
   dependencies: (typeof Module)[] = [RequestsModule, TemplateModule];
   flags: Flag[] = [

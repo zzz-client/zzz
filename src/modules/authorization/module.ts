@@ -1,18 +1,10 @@
 import { BasicAuth, BasicAuthAuthorizer } from "./basicAuth.ts";
 import { BearerTokenAuthorizer } from "./bearerToken.ts";
-import HeaderAuthorizer from "./header.ts";
+import HeaderAuthorizer, { Header } from "./header.ts";
 import { Query, QueryAuthorizer } from "./query.ts";
-import { IAuthorizer } from "../../core/app.ts";
 import { IModuleModifier, Module } from "../module.ts";
-import { RequestsModule } from "../requests/module.ts";
+import { HttpRequest, RequestsModule } from "../requests/module.ts";
 import { Model } from "../../core/yeet.ts";
-
-export function HasAuthorization(model: Model): boolean {
-  return "Authorization" in model;
-}
-export interface IAuthorizer {
-  authorize(model: Model, authorizationConfig: Auth): void;
-}
 
 export default class AuthorizationModule extends Module implements IModuleModifier {
   dependencies = [RequestsModule];
@@ -41,18 +33,9 @@ export default class AuthorizationModule extends Module implements IModuleModifi
     }
   }
 }
-interface Auth {
-  Type: string;
+export interface IAuthorizer {
+  authorize(model: HttpRequest, data: AuthType): void;
 }
-export interface BearerTokenAuth extends Auth {
-  BearerToken: string;
-}
-export interface BasicAuthAuth extends Auth {
-  BasicAuth: BasicAuth;
-}
-export interface HeaderAuth extends Auth {
-  Header: HeaderAuth;
-}
-export interface QueryAuth extends Auth {
-  Query: Query;
-}
+export type AuthType = {};
+
+export type Authentication = { [key: string]: AuthType };

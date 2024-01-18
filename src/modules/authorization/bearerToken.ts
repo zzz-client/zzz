@@ -1,5 +1,5 @@
-import { IAuthorizer } from "../../core/app.ts";
 import { HttpRequest } from "../requests/module.ts";
+import { AuthType, IAuthorizer } from "./module.ts";
 
 export class BearerTokenAuthorizer implements IAuthorizer {
   authorize(theRequest: HttpRequest, token: BearerToken): void {
@@ -7,4 +7,4 @@ export class BearerTokenAuthorizer implements IAuthorizer {
   }
 }
 
-export type BearerToken = string;
+export type BearerToken = AuthType & string;

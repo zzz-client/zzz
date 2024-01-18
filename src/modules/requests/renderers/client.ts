@@ -1,16 +1,9 @@
 // import axios from "https://deno.land/x/redaxios/mod.ts";
 import axios from "npm:axios";
-import { getFileFormat } from "../../../stores/files/formats.ts";
 import { HttpRequest } from "../module.ts";
 import { IModuleRenderer } from "../../module.ts";
 
-const defaultStringify = getFileFormat(".json").stringify;
-
 export default class HttpClient implements IModuleRenderer {
-  stringify: Function;
-  constructor(stringify: Function = defaultStringify) {
-    this.stringify = stringify;
-  }
   async render(theRequest: HttpRequest): Promise<void> {
     try {
       return await doRequest(theRequest);
