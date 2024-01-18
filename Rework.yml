@@ -1,0 +1,118 @@
+Requests:
+  Dependencies: []
+  Flags:
+    name: execute
+    short: x
+    type: boolean
+    exposed: true
+  Models:
+    name: Request
+  Fields:
+    Requests:
+      url: ddg.gg
+      method: HttpMethod
+      headers: KeyValue
+  Modify:
+    do: load(model.Id)
+  Render:
+    Execute:
+      if: feature.execute
+      do: axios(Request)
+    Stringify: (json, yml, xml, curl, hurl, etc).stringify
+    Store: IStore?
+
+Template:
+  Dependencies: [Requests]
+  Flags:
+    name: format
+    short: f
+    type: boolean
+    exposed: true
+  Models:
+  Fields:
+  Modify:
+    if: feature.format || feature.execute
+    do: tim, but how get Variables?
+  Render:
+
+Body:
+  Dependencies: [Requests]
+  Fields:
+    Request:
+      body: complex
+
+Authorization:
+  Dependencies: [Requests?]
+  Flags:
+  Models:
+    - name: Authorization
+      has: Request | Collection | Scope
+  Fields:
+    Authorization:
+      type: BasicAuth | BearerToken | ...
+      value: complex
+  Modify: ...
+  Render:
+
+Scope:
+  Dependencies: [Requests]
+  Models:
+    - name: Scope
+      has: Collection
+
+Context:
+  Dependencies: [Requests, Template]
+  Flags:
+    - name: full
+      type: boolean
+      exposed: true
+    - name: context
+      type: string
+      exposed: true
+  Models:
+    - name: Context
+  Fields:
+    Request:
+      variables: KeyValue
+    Collections:
+      variables: KeyValue
+    Scope:
+      variables: KeyValue
+    Context:
+      variables: KeyValue
+  Modify:
+    if: feature.full || feature.format || feature.execute
+    do: load
+
+PathParams:
+  Dependencies: [Requests]
+  Fields:
+    Request:
+      pathParams: KeyValue
+  Modify:
+    if: feature.format || feature.execute
+    do: ...
+
+Cookies:
+  Dependencies: [Requests]
+  Flags:
+    name: cookies
+    type: boolean
+    exposed: true
+  Models:
+    - name: Cookie
+      has: Request
+  Fields:
+    Request:
+      cookies: KeyValue
+  Modify:
+    if: feature.cookies
+    do: load
+
+Redact:
+  Dependencies: [Variables, Cookies]
+  Render:
+    if: not feature.full
+    do: |
+      delete model.Variables
+      delete model.Cookies

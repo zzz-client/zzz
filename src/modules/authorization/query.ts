@@ -1,12 +1,12 @@
 import { IAuthorizer } from "../../core/app.ts";
-import { Entity } from "../../core/models.ts";
+import { HttpRequest } from "../requests/module.ts";
 
-export default class QueryAuthorizer implements IAuthorizer {
-  authorize(theRequest: Entity, authorizationConfig: Config): void {
-    theRequest.QueryParams[authorizationConfig.Param] = authorizationConfig.Value;
+export class QueryAuthorizer implements IAuthorizer {
+  authorize(theRequest: HttpRequest, data: Query): void {
+    theRequest.QueryParams[data.Name] = data.Value;
   }
 }
-interface Config {
-  Param: string;
+export type Query = {
+  Name: string;
   Value: string;
-}
+};

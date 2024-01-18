@@ -1,44 +1,39 @@
+import Meld, { Model, StringToStringMap } from "../../core/yeet.ts";
+import { Flag, IModuleFlags, IModuleModifier, Module } from "../module.ts";
+import { Collection, RequestsModule } from "../requests/module.ts";
+import TemplateModule from "../template/module.ts";
 import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
 import { dirname } from "https://deno.land/std/path/mod.ts";
-import { Entity, HasVariables, Model, ModelType, StringToStringMap } from "../../core/models.ts";
-import { Context } from "./models.ts";
-import Application, { IStore } from "../../core/app.ts";
 import { getDriver } from "../../stores/files/drivers.ts";
-import Meld from "../../core/meld.ts";
+import { HttpRequest } from "../requests/module.ts";
 
-const DEFAULT_MARKER = "_defaults";
-export const SESSION_FILE = "session";
-const GLOBALS_FILE = "globals";
-const BLANK_ENTITY = {
-  Id: "",
-  Type: "",
-  Name: "",
-} as Context;
-
-export default class VariablesModule {
-  app: Application;
-  static newInstance(app: Application) {
-    return new VariablesModule(app);
-  }
-  constructor(app: Application) {
-    this.app = app;
-    app.addFeature({
-      id: "context",
-    });
-    app.addFlags({
-      type: "string",
-      description: "Context to execute in",
-      argument: "context",
-      alias: "c",
-    });
-    // add.addModelType(ModelType.Context);
-  }
-  async load(theModel: Model, context: string): Promise<StringToStringMap> {
-    return Load(theModel as Entity, context, await this.app.getStore());
+export class ContextModule extends Module implements IModuleFlags, IModuleModifier {
+  dependencies: (typeof Module)[] = [RequestsModule, TemplateModule];
+  flags: Flag[] = [
+    {
+      name: "execute",
+      description: "Execute request",
+      type: "boolean",
+      argument: "request",
+      alias: "x",
+    },
+  ];
+  models = [Request, Collection];
+  modify(theModel: Model): Promise<void> {
+    if (this.app.feature.full || this.app.feature.format || this.app.feature.execute) {
+      return Load(theModel as HttpRequest, context, await this.app.getStore()); // TODO: What do with context
+    }
+    return Promise.resolve();
   }
 }
 
-async function Load(subjectRequest: Entity, contextName: string, store: IStore): Promise<StringToStringMap> {
+export class Context extends Model {}
+
+///
+///
+///
+
+async function Load(subjectRequest: HttpRequest, contextName: string, store: IStore): Promise<StringToStringMap> {
   const result = {};
   const variables = new FileVariables() as IVariables;
   const globals = await variables.globals(store);
@@ -50,7 +45,7 @@ async function Load(subjectRequest: Entity, contextName: string, store: IStore):
   for (const item of [globals, globalsLocal, context, contextLocal, defaults, subjectRequest, sessionLocal]) {
     Meld(result, item);
   }
-  return Promise.resolve((result as HasVariables).Variables || {});
+  return Promise.resolve((result as any).Variables || {});
 }
 
 function optionalContext(variables: IVariables, contextName: string, store: IStore): Promise<Context> {

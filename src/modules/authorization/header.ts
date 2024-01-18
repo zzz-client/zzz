@@ -1,12 +1,12 @@
 import { IAuthorizer } from "../../core/app.ts";
-import { Entity } from "../../core/models.ts";
+import { HttpRequest } from "../requests/module.ts";
 
 export default class HeaderAuthorizer implements IAuthorizer {
-  authorize(theRequest: Entity, authorizationConfig: Config): void {
-    theRequest.Headers[authorizationConfig.Name] = authorizationConfig.Value;
+  authorize(theRequest: HttpRequest, data: Header): void {
+    theRequest.Headers[data.Name] = data.Value;
   }
 }
-interface Config {
+type Header = {
   Name: string;
   Value: string;
-}
+};

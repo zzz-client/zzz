@@ -4,9 +4,9 @@ import Application, { IActor } from "../core/app.ts";
 import { DefaultFlags } from "../core/flags.ts";
 import Log from "../core/log.ts";
 import { Entity, Model, ModelType, Scope, StringToStringMap } from "../core/models.ts";
-import tim from "../core/tim.ts";
-import PathParamsModule from "../modules/path-params/index.ts";
-import VariablesModule from "../modules/variables/index.ts";
+import tim from "../modules/template/tim.ts";
+import PathParamsModule from "../modules/path-params/module.ts";
+import VariablesModule from "../modules/variables/module.ts";
 import { getDriver } from "../stores/files/drivers.ts";
 
 interface IServer {

@@ -1,8 +1,9 @@
-import { Model } from "../../core/models.ts";
-import { IModule, ModuleConfig } from "../manager.ts";
+import { Model } from "../core/yeet.ts";
+import { IModuleModifier, Module } from "./module.ts";
 
-export default class BodyModule implements IModule {
-  mod(theRequest: Model, _config: ModuleConfig): Promise<void> {
+export default class RequiredModule implements Module, IModuleModifier {
+  dependencies: = [];
+  modify(theRequest: Model): Promise<void> {
     if (theRequest.Type == "Request") {
       checkRequired(theRequest);
     }

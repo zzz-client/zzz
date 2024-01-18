@@ -1,3 +1,20 @@
+import { ModuleFields } from "../modules/module.ts";
+
+export class Model {
+  Id: string;
+  Name: string;
+  constructor(id: string, name: string) {
+    this.Id = id;
+    this.Name = name;
+  }
+}
+
+export interface StringToStringMap {
+  [key: string]: string;
+}
+
+// ModelTypes.push(HttpRequest);
+
 export default function Meld(destination: any, source: any): void {
   if (!source) {
     return;
@@ -11,4 +28,7 @@ export default function Meld(destination: any, source: any): void {
       }
     }
   }
+}
+export function Log(...args: any[]): void {
+  console.log.apply(null, args);
 }

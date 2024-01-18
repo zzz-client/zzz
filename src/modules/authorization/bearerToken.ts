@@ -1,8 +1,10 @@
 import { IAuthorizer } from "../../core/app.ts";
-import { Entity } from "../../core/models.ts";
+import { HttpRequest } from "../requests/module.ts";
 
-export default class BearerTokenAuthorizer implements IAuthorizer {
-  authorize(theRequest: Entity, authorizationConfig: string): void {
-    theRequest.Headers["Authorization"] = `Bearer ${authorizationConfig}`;
+export class BearerTokenAuthorizer implements IAuthorizer {
+  authorize(theRequest: HttpRequest, token: BearerToken): void {
+    theRequest.Headers["Authorization"] = `Bearer ${token}`;
   }
 }
+
+export type BearerToken = string;
