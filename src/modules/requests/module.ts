@@ -1,7 +1,7 @@
 import { Model, StringToStringMap } from "../../core/yeet.ts";
-import { Flag, IModuleFlags, IModuleModels, IModuleModifier, Module, ModuleField } from "../module.ts";
+import { Flag, IModuleFields, IModuleFlags, IModuleModels, IModuleModifier, Module, ModuleField } from "../module.ts";
 
-export class RequestsModule extends Module implements IModuleFlags, IModuleModels, IModuleModifier {
+export class RequestsModule extends Module implements IModuleFlags, IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [];
   flags: Flag[] = [
     {

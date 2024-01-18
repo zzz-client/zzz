@@ -2,6 +2,7 @@ import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import { basename, extname } from "https://deno.land/std/path/mod.ts";
 import { IStore } from "../../core/app.ts";
 import { FileFormat, getFileFormat } from "./formats.ts";
+import { Model } from "../../core/yeet.ts";
 
 const SESSION_FILE = "session.local";
 
@@ -20,8 +21,7 @@ export default class FileStore implements IStore {
     }
     return result;
   }
-  get(modelType: ModelType, modelId: string): Promise<Model> {
-    console.log("Getting " + ModelType[modelType], modelId);
+  get(type: typeof Model, modelId: string): Promise<Model> {
     switch (modelType) {
       case ModelType.Entity:
         return this.getEntity(modelId);

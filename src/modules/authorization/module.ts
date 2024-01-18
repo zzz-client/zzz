@@ -1,13 +1,17 @@
-import { BasicAuth, BasicAuthAuthorizer } from "./basicAuth.ts";
-import { BearerTokenAuthorizer } from "./bearerToken.ts";
-import HeaderAuthorizer, { Header } from "./header.ts";
-import { Query, QueryAuthorizer } from "./query.ts";
-import { IModuleModifier, Module } from "../module.ts";
-import { HttpRequest, RequestsModule } from "../requests/module.ts";
 import { Model } from "../../core/yeet.ts";
+import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../module.ts";
+import { HttpRequest, RequestsModule } from "../requests/module.ts";
+import { BasicAuthAuthorizer } from "./basicAuth.ts";
+import { BearerTokenAuthorizer } from "./bearerToken.ts";
+import HeaderAuthorizer from "./header.ts";
+import { QueryAuthorizer } from "./query.ts";
 
-export default class AuthorizationModule extends Module implements IModuleModifier {
+export default class AuthorizationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [RequestsModule];
+  models = [Authentication];
+  fields = {
+    Authentication: Authentication,
+  };
   async modify(theModel: Model): Promise<void> {
     if (AuthorizationModule.hasFields(theModel)) {
       const authConfig = await (await this.app.getStore()).get( //TODO: store.get
@@ -38,4 +42,6 @@ export interface IAuthorizer {
 }
 export type AuthType = {};
 
-export type Authentication = { [key: string]: AuthType };
+export class Authentication extends Model {
+  [key: string]: AuthType;
+}

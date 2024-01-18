@@ -2,7 +2,7 @@ import { Model } from "../../core/yeet.ts";
 import { IModuleFields, IModuleModifier, Module } from "../module.ts";
 import { HttpRequest, RequestsModule } from "../requests/module.ts";
 
-export default class PathParamsModule extends Module implements IModuleModifier, IModuleFields {
+export default class PathParamsModule extends Module implements IModuleFields, IModuleModifier {
   dependencies = [RequestsModule];
   fields = {
     PathParams: {
@@ -16,7 +16,7 @@ export default class PathParamsModule extends Module implements IModuleModifier,
     }
     return Promise.resolve();
   }
-  loadPathParams(theRequest: HttpRequest): Promise<void> {
+  private loadPathParams(theRequest: HttpRequest): Promise<void> {
     const pathParams = (theRequest as any).PathParams;
     if (pathParams) {
       for (const key of Object.keys(pathParams)) {

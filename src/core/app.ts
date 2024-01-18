@@ -1,6 +1,7 @@
 import { processFlags } from "https://deno.land/x/flags_usage@2.0.0/mod.ts";
 import { IModuleRenderer, Module } from "../modules/module.ts";
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
+import { Model } from "./yeet.ts";
 
 type FeatureMap = { [key: string]: boolean | string | number };
 class Application {
@@ -76,3 +77,8 @@ export type Flag = {
 };
 
 export default Application;
+
+export interface IStore {
+  get(type: typeof Model, name: string): Promise<any>;
+  set(type: typeof Model, name: string, value: any): Promise<void>;
+}

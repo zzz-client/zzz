@@ -6,8 +6,7 @@ export class BodyModule extends Module implements IModuleModifier, IModuleFields
   dependencies = [RequestsModule];
   fields = {
     Body: {
-      type: "object",
-      description: "The body of the request",
+      type: Object, // TODO: Complicated
     },
   };
   async modify(entity: Model): Promise<void> {
