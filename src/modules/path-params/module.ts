@@ -2,7 +2,7 @@ import { Model } from "../../core/yeet.ts";
 import { IModuleFields, IModuleModifier, Module } from "../module.ts";
 import { HttpRequest, RequestsModule } from "../requests/module.ts";
 
-export default class PathParamsModule extends Module implements IModuleFields, IModuleModifier {
+export class PathParamsModule extends Module implements IModuleFields, IModuleModifier {
   dependencies = [RequestsModule];
   fields = {
     PathParams: {

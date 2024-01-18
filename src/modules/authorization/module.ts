@@ -6,7 +6,7 @@ import { BearerTokenAuthorizer } from "./bearerToken.ts";
 import HeaderAuthorizer from "./header.ts";
 import { QueryAuthorizer } from "./query.ts";
 
-export default class AuthorizationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
+export class AuthorizationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [RequestsModule];
   models = [Authentication];
   fields = {
