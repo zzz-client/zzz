@@ -7,7 +7,7 @@ import { Entity, Model, ModelType, Scope, StringToStringMap } from "../core/mode
 import tim from "../modules/template/tim.ts";
 import PathParamsModule from "../modules/path-params/module.ts";
 import VariablesModule from "../modules/variables/module.ts";
-import { getDriver } from "../stores/files/drivers.ts";
+import { getFileFormat } from "../stores/files/formats.ts";
 
 interface IServer {
   // respond(code: number, body: any, headers: StringToStringMap): any;
@@ -156,7 +156,7 @@ export class Server implements IServer {
       });
   }
   stringify(result: any): string {
-    return getDriver(".json").stringify(result);
+    return getFileFormat(".json").stringify(result);
   }
 }
 

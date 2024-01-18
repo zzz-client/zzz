@@ -1,17 +1,17 @@
 // import axios from "https://deno.land/x/redaxios/mod.ts";
 import axios from "npm:axios";
-import { getDriver } from "../../stores/files/drivers.ts";
-import { IActor } from "../app.ts";
-import { Entity } from "../models.ts";
+import { getFileFormat } from "../../../stores/files/formats.ts";
+import { HttpRequest } from "../module.ts";
+import { IModuleRenderer } from "../../module.ts";
 
-const defaultStringify = getDriver(".json").stringify;
+const defaultStringify = getFileFormat(".json").stringify;
 
-export default class ClientActor implements IActor {
+export default class HttpClient implements IModuleRenderer {
   stringify: Function;
   constructor(stringify: Function = defaultStringify) {
     this.stringify = stringify;
   }
-  async act(theRequest: Entity): Promise<any> {
+  async render(theRequest: HttpRequest): Promise<void> {
     try {
       return await doRequest(theRequest);
     } catch (error) {
@@ -26,15 +26,15 @@ function formatError(error: any) {
   } else if (error.code) {
     result = new Error(error.code);
   }
-  return error;
+  return result;
 }
-async function doRequest(theRequest: Entity): Promise<any> {
+function doRequest(theRequest: HttpRequest): Promise<any> {
   return axios({
     method: theRequest.Method,
     headers: theRequest.Headers,
     params: theRequest.QueryParams,
     url: theRequest.URL,
-    data: theRequest.Body,
+    data: (theRequest as any).Body, // TODO: any
   }).then((result) => {
     result.data;
     return result.data;

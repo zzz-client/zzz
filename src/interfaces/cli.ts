@@ -6,7 +6,7 @@ import AuthorizationModule from "../modules/authorization/module.ts";
 import BodyModule from "../modules/body/module.ts";
 import PathParamsModule from "../modules/path-params/module.ts";
 import VariablesModule from "../modules/variables/module.ts";
-import { getDriver } from "../stores/files/drivers.ts";
+import { getFileFormat } from "../stores/files/formats.ts";
 
 const app = new Application({
   store: "yml",
@@ -33,5 +33,5 @@ export default async function Cli(app: Application): Promise<void> {
   }
   const actor = await app.getActor(app.argv.execute ? "Client" : "Pass");
   const actResult = await actor.act(theEntity);
-  console.info(getDriver(".json").stringify(actResult));
+  console.info(getFileFormat(".json").stringify(actResult));
 }

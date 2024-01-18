@@ -1,9 +1,9 @@
-import { Driver } from "../drivers.ts";
+import { FileFormat } from "../formats.ts";
 
 const BRU = {
   parse,
   stringify,
-} as Driver;
+} as FileFormat;
 export default BRU;
 
 // TODO: Replace with @usebruno/lang to get all the goodies

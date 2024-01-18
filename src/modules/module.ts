@@ -29,7 +29,7 @@ export interface IModuleFields {
   fields: ModuleFields;
 }
 export interface IModuleRenderer {
-  render(model: Model): Promise<void>;
+  render(model: Model): Promise<any>;
 }
 export interface IModuleModifier {
   modify(model: Model): Promise<void>;

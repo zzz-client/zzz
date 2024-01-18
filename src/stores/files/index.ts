@@ -1,10 +1,11 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
-import { Collection, Entity, Model, ModelType, Scope, StringToStringMap } from "../../core/models.ts";
 import { basename, extname } from "https://deno.land/std/path/mod.ts";
 import { IStore } from "../../core/app.ts";
-import { Driver, getDriver } from "../../stores/files/drivers.ts";
+import { FileFormat, getFileFormat } from "./formats.ts";
 
 const SESSION_FILE = "session.local";
+
+// TODO: Rework
 
 export default class FileStore implements IStore {
   fileExtension: string;
@@ -19,7 +20,7 @@ export default class FileStore implements IStore {
     }
     return result;
   }
-  async get(modelType: ModelType, modelId: string): Promise<Model> {
+  get(modelType: ModelType, modelId: string): Promise<Model> {
     console.log("Getting " + ModelType[modelType], modelId);
     switch (modelType) {
       case ModelType.Entity:
@@ -45,15 +46,15 @@ export default class FileStore implements IStore {
     Deno.writeTextFileSync(sessionPath, this._driver().stringify(sessionContents));
     return Promise.resolve();
   }
-  _driver(): Driver {
-    return getDriver("." + this.fileExtension);
+  _driver(): FileFormat {
+    return getFileFormat("." + this.fileExtension);
   }
   getEntity(entityId: string): Promise<Entity> {
     const fullId = getDirectoryForModel(ModelType.Scope) + "/" + entityId;
     return this.getEntityFullId(fullId);
   }
   async getEntityFullId(entityId: string): Promise<Entity> {
-    const entity = await (await getDriver(this.fileExtension)).parse(Deno.readTextFileSync(entityId + "." + this.fileExtension)) as Entity;
+    const entity = await (await getFileFormat(this.fileExtension)).parse(Deno.readTextFileSync(entityId + "." + this.fileExtension)) as Entity;
     entity.Id = entityId.substring(getDirectoryForModel(ModelType.Scope).length + 1); // TODO: Hack
     entity.Type = ModelType[ModelType.Entity];
     if (!entity.Name) {

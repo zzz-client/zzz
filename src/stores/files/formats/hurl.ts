@@ -1,9 +1,9 @@
-import { Driver, getDriver } from "../drivers.ts";
+import { FileFormat, getFileFormat } from "../formats.ts";
 
 const HURL = {
   parse,
   stringify,
-} as Driver;
+} as FileFormat;
 export default HURL;
 
 function parse(input: string): any {
@@ -42,7 +42,7 @@ function stringify(input: any): string {
     } else if (typeof input.Body == "string") {
       results.push(...input.Body.split("\n"));
     } else {
-      const driver = getDriver(".json"); // TODO, and XML
+      const driver = getFileFormat(".json"); // TODO, and XML
       results.push(driver.stringify(input.Body));
     }
   }

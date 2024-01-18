@@ -4,7 +4,7 @@ import { Collection, RequestsModule } from "../requests/module.ts";
 import TemplateModule from "../template/module.ts";
 import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
 import { dirname } from "https://deno.land/std/path/mod.ts";
-import { getDriver } from "../../stores/files/drivers.ts";
+import { getFileFormat } from "../../stores/files/formats.ts";
 import { HttpRequest } from "../requests/module.ts";
 
 export class ContextModule extends Module implements IModuleFlags, IModuleModifier {
@@ -80,7 +80,7 @@ class FileVariables implements IVariables {
   async defaults(collectionPath: string, store: IStore): Promise<Context> {
     const theRequest = new Context("", "");
     const fileExtension = "JSON"; // TODO: Hardcoded
-    const parser = await getDriver(fileExtension.toUpperCase());
+    const parser = await getFileFormat(fileExtension.toUpperCase());
     const defaultFilePaths = getDefaultFilePaths(collectionPath, fileExtension);
     for (const defaultFilePath of defaultFilePaths) {
       if (existsSync(defaultFilePath)) {
