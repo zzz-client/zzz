@@ -1,16 +1,21 @@
-
 /*
 Module:
   - flags (execute, format, full)
-  - Models 
+  - Models
   - Fields
   - Modify
   - Render?
 */
 
-import { Flag } from "./modules/module.ts";
+import { StringToStringMap } from "./yeet.ts";
 
-class Action{
-  features: Flag[];
+type FeatureFlags = { [key: string]: any };
 
+export default class Action {
+  features: FeatureFlags;
+  env: StringToStringMap;
+  constructor(features: FeatureFlags, env: StringToStringMap) {
+    this.features = features;
+    this.env = env;
+  }
 }

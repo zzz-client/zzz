@@ -1,12 +1,12 @@
 import { Model } from "../../core/yeet.ts";
 import { ContextModule } from "../context/module.ts";
-import { Flag, IModuleFlags, IModuleModifier, Module } from "../module.ts";
+import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../core/module.ts";
 import { RequestsModule } from "../requests/module.ts";
 import tim from "./tim.ts";
 
-export default class TemplateModule extends Module implements IModuleFlags, IModuleModifier {
+export default class TemplateModule extends Module implements IModuleFeatures, IModuleModifier {
   dependencies = [RequestsModule, ContextModule];
-  flags: Flag[] = [
+  flags: Feature[] = [
     {
       name: "execute",
       description: "Execute request",

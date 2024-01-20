@@ -1,5 +1,6 @@
-import Application from "../core/app.ts";
-import { Model } from "../core/yeet.ts";
+import Action from "./action.ts";
+import Application from "./app.ts";
+import { Model } from "./yeet.ts";
 
 export abstract class Module {
   app: Application;
@@ -8,10 +9,10 @@ export abstract class Module {
     this.app = app;
   }
   static hasFields(model: Model): boolean {
-    if (!("fields" in this)) {
-      return false;
-    }
-    for (const key of Object.keys((this as any).fields)) {
+    // if (!("fields" in this)) {
+    //   return false;
+    // }
+    for (const key of Object.keys(this as any)) {
       if (!(key in model)) {
         return false;
       }
@@ -19,8 +20,8 @@ export abstract class Module {
     return true;
   }
 }
-export interface IModuleFlags {
-  flags: Flag[];
+export interface IModuleFeatures {
+  flags: Feature[];
 }
 export interface IModuleModels {
   models: (typeof Model)[];
@@ -29,10 +30,10 @@ export interface IModuleFields {
   fields: ModuleFields;
 }
 export interface IModuleRenderer {
-  render(model: Model): Promise<any>;
+  render(model: Model, action: Action): Promise<any>;
 }
 export interface IModuleModifier {
-  modify(model: Model): Promise<void>;
+  modify(model: Model, action: Action): Promise<void>;
 }
 
 export interface ModuleFields {
@@ -42,7 +43,7 @@ export interface ModuleField {
   [key: string]: any;
 }
 
-export type Flag = {
+export type Feature = {
   name: string;
   description: string;
   type: "string" | "boolean";

@@ -1,7 +1,9 @@
 import { processFlags } from "https://deno.land/x/flags_usage@2.0.0/mod.ts";
-import { IModuleFields, IModuleFlags, IModuleModels, IModuleModifier, IModuleRenderer, Module } from "../modules/module.ts";
+import { IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, IModuleRenderer, Module } from "./module.ts";
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
-import { Model } from "./yeet.ts";
+import { Model, StringToStringMap } from "./yeet.ts";
+import { load as loadEnv } from "https://deno.land/std/dotenv/mod.ts";
+import Action from "./action.ts";
 
 type FeatureMap = { [key: string]: boolean | string | number };
 export default class Application {
@@ -17,34 +19,31 @@ export default class Application {
       http: "port",
       web: "port",
     } as { [key: string]: string },
-    default: {
-      http: 8000,
-      web: 5173,
-    } as { [key: string]: any },
+    default: {} as { [key: string]: any },
     alias: {} as { [key: string]: string },
   } as any;
   argv: Args;
   feature = {} as FeatureMap;
+  env = {} as StringToStringMap;
   executedModules = [] as Module[];
   modules = [] as Module[];
   renderers = [] as IModuleRenderer[];
   constructor() {
     this.argv = processFlags(Deno.args, this.flags);
+    loadEnv().then((env) => this.env = env);
   }
   registerModule(module: Module): void {
-    console.log("Registering module");
     // TODO: Check dependencies via executedModules
-    /*
-    if (module instanceof IModuleFlags) { // TODO: IModuleFlags
+    if ("feature" in module) { // TODO: IModuleFeatures
       for (const flag of (module as any).flags) {
         this.flags[flag.type].push(flag.name);
         this.flags.description[flag.name] = flag.description;
         if (flag.argument) this.flags.argument[flag.name] = flag.argument;
         if (flag.alias) this.flags.alias[flag.name] = flag.alias;
         if (flag.default) this.flags.default[flag.name] = flag.default;
-        this.feature[flag.name] = flag.default;
       }
     }
+    /*
     if (module instanceof IModuleModels) {
       // TODO: IModuleModels
     }
@@ -54,22 +53,15 @@ export default class Application {
     if (module instanceof IModuleRenderer) {
       // TODO: IModuleRenderer
     }
+    */
     this.modules.push(module);
     this.argv = processFlags(Deno.args, this.flags);
-    */
   }
-  executeModules(): void {
-    /*
+  executeModules(action: Action, model: Model = {}): void {
     for (const module of this.modules) {
-      if (module instanceof IModuleModifier) {
-        (module as IModuleModifier).modify(this.feature);
-        this.executedModules.push(module);
-      }
+      (module as unknown as IModuleModifier).modify(model, action);
+      this.executedModules.push(module);
     }
-    for (const renderer of this.renderers) {
-      renderer.render("???");
-    }
-    */
   }
 }
 

@@ -1,5 +1,5 @@
 import { Model } from "../../core/yeet.ts";
-import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../module.ts";
+import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../core/module.ts";
 import { HttpRequest, RequestsModule } from "../requests/module.ts";
 import { BasicAuthAuthorizer } from "./basicAuth.ts";
 import { BearerTokenAuthorizer } from "./bearerToken.ts";

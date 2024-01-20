@@ -1,9 +1,10 @@
 import { Model, StringToStringMap } from "../../core/yeet.ts";
-import { Flag, IModuleFields, IModuleFlags, IModuleModels, IModuleModifier, Module, ModuleField } from "../module.ts";
+import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module, ModuleField } from "../../core/module.ts";
+import Action from "../../core/action.ts";
 
-export class RequestsModule extends Module implements IModuleFlags, IModuleModels, IModuleFields, IModuleModifier {
+export class RequestsModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [];
-  flags: Flag[] = [
+  flags: Feature[] = [
     {
       name: "execute",
       description: "Execute request",
@@ -16,13 +17,14 @@ export class RequestsModule extends Module implements IModuleFlags, IModuleModel
   fields = {
     HttpRequest: {
       url: "string",
-      method: HttpMethod, // TODO: why undefined
-      headers: StringToStringMap, // TODO: why undefined
+      // method: HttpMethod, // TODO: why undefined
+      // headers: StringToStringMap, // TODO: why undefined
       description: "Params to be replaced in the URL",
     } as ModuleField,
   };
-  modify(model: Model): Promise<void> {
-    // TODO
+  modify(model: Model, action: Action): Promise<void> {
+    console.log("requests module");
+    // TODO: Get from Store?
     return Promise.resolve();
   }
 }

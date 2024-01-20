@@ -1,20 +1,26 @@
 import { Model } from "../../core/yeet.ts";
-import { IModuleFields, IModuleModifier, Module } from "../module.ts";
-//import { RequestsModule } from "../requests/module.ts";
+import { IModuleFields, IModuleModifier, Module } from "../../core/module.ts";
+import Action from "../../core/action.ts";
+import { HttpRequest, RequestsModule } from "../requests/module.ts";
 
 export class BodyModule extends Module implements IModuleModifier, IModuleFields {
-  dependencies = [/*RequestsModule*/];
+  dependencies = [RequestsModule];
   fields = {
     Body: {
       type: Object, // TODO: Complicated
     },
   };
-  async modify(entity: Model): Promise<void> {
-    if (BodyModule.hasFields(entity)) {
-      await this.loadBody(entity, entity.Id);
+  async modify(entity: Model, _action: Action): Promise<void> {
+    if (
+      entity instanceof HttpRequest &&
+      BodyModule.hasFields(entity)
+    ) {
+      console.log("Body module executing on: ", _action);
+      await this.loadBody(entity);
     }
+    console.log(entity);
   }
-  loadBody(entity: Model, _requestFilePath: string): Promise<void> {
+  private loadBody(entity: Model): Promise<void> {
     let body = (entity as any).Body;
     if (typeof body === "string") {
       body = JSON.parse(body);

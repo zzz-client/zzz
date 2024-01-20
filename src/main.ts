@@ -1,10 +1,11 @@
-// import Cli from "./interfaces/cli.ts";
+import Cli from "./interfaces/cli.ts";
 import Application from "./core/app.ts";
 // import AuthorizationModule from "./modules/authorization/module.ts";
 // import BodyModule from "./modules/body/module.ts";
 // import PathParamsModule from "./modules/path-params/module.ts";
 // import { Server } from "./interfaces/http.ts";
 import { BodyModule } from "./modules/body/module.ts";
+import { RequestsModule } from "./modules/requests/module.ts";
 
 // function httpPromise(app: Application): Promise<void> {
 //   if (Deno.args.includes("--http")) {
@@ -32,7 +33,10 @@ import { BodyModule } from "./modules/body/module.ts";
 // }
 
 const app = new Application();
-app.registerModule(new BodyModule());
+app.registerModule(new RequestsModule(app));
+app.registerModule(new BodyModule(app));
+
+Cli(app);
 
 //export default async function main(): Promise<void> {
 //   try {

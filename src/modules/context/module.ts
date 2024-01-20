@@ -1,12 +1,12 @@
 import { Model } from "../../core/yeet.ts";
-import { Flag, IModuleFields, IModuleFlags, IModuleModels, IModuleModifier, Module } from "../module.ts";
+import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../core/module.ts";
 import { HttpRequest, RequestsModule } from "../requests/module.ts";
 import TemplateModule from "../template/module.ts";
 
 // TODO: All of ContextModule
-export class ContextModule extends Module implements IModuleFlags, IModuleModels, IModuleFields, IModuleModifier {
+export class ContextModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
   dependencies: (typeof Module)[] = [RequestsModule, TemplateModule];
-  flags: Flag[] = [
+  flags: Feature[] = [
     {
       name: "full",
       description: "Display resolved data for the current context",
