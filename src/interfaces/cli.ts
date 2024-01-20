@@ -1,6 +1,6 @@
 import Application from "../core/app.ts";
 import Action from "../core/action.ts";
-import { HttpRequest } from "../modules/requests/module.ts";
+import { HttpRequest } from "../modules/requests/mod.ts";
 import { Model } from "../core/yeet.ts";
 import { IModuleModifier } from "../core/module.ts";
 

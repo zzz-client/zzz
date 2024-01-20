@@ -1,7 +1,7 @@
 import { Model } from "../../core/yeet.ts";
-import { ContextModule } from "../context/module.ts";
+import { ContextModule } from "../context/mod.ts";
 import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../core/module.ts";
-import { RequestsModule } from "../requests/module.ts";
+import { RequestsModule } from "../requests/mod.ts";
 import tim from "./tim.ts";
 import Action from "../../core/action.ts";
 

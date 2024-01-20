@@ -1,5 +1,5 @@
-import { HttpRequest } from "../requests/module.ts";
-import { AuthType, IAuthorizer } from "./module.ts";
+import { HttpRequest } from "../requests/mod.ts";
+import { AuthType, IAuthorizer } from "./mod.ts";
 
 export class QueryAuthorizer implements IAuthorizer {
   authorize(theRequest: HttpRequest, data: Query): void {

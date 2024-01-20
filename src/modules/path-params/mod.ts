@@ -1,6 +1,6 @@
 import { Model } from "../../core/yeet.ts";
 import { IModuleFields, IModuleModifier, Module } from "../../core/module.ts";
-import { HttpRequest, RequestsModule } from "../requests/module.ts";
+import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 import Action from "../../core/action.ts";
 
 export class PathParamsModule extends Module implements IModuleFields, IModuleModifier {

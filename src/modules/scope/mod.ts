@@ -1,6 +1,6 @@
 import { Model } from "../../core/yeet.ts";
 import { IModuleModels, Module } from "../../core/module.ts";
-import { CollectionChild, RequestsModule } from "../requests/module.ts";
+import { CollectionChild, RequestsModule } from "../requests/mod.ts";
 
 export class ScopeModule extends Module implements IModuleModels {
   dependencies = [RequestsModule];

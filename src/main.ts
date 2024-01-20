@@ -2,14 +2,14 @@ import Cli from "./interfaces/cli.ts";
 import Application from "./core/app.ts";
 // import { Server } from "./interfaces/http.ts";
 import { BodyModule } from "./modules/body/module.ts";
-import { RequestsModule } from "./modules/requests/module.ts";
-import { PathParamsModule } from "./modules/path-params/module.ts";
-import { AuthorizationModule } from "./modules/authorization/module.ts";
-import TemplateModule from "./modules/template/module.ts";
-import { ContextModule } from "./modules/context/module.ts";
-import { CookiesModule } from "./modules/cookies/module.ts";
-import { RedactModule } from "./modules/redact/module.ts";
-import { ScopeModule } from "./modules/scope/module.ts";
+import { RequestsModule } from "./modules/requests/mod.ts";
+import { PathParamsModule } from "./modules/path-params/mod.ts";
+import { AuthorizationModule } from "./modules/authorization/mod.ts";
+import TemplateModule from "./modules/template/mod.ts";
+import { ContextModule } from "./modules/context/mod.ts";
+import { CookiesModule } from "./modules/cookies/mod.ts";
+import { RedactModule } from "./modules/redact/mod.ts";
+import { ScopeModule } from "./modules/scope/mod.ts";
 import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
 
 // function httpPromise(app: Application): Promise<void> {

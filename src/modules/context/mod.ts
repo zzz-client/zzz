@@ -1,7 +1,7 @@
 import { Model } from "../../core/yeet.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../core/module.ts";
-import { HttpRequest, RequestsModule } from "../requests/module.ts";
-import TemplateModule from "../template/module.ts";
+import { HttpRequest, RequestsModule } from "../requests/mod.ts";
+import TemplateModule from "../template/mod.ts";
 import Action from "../../core/action.ts";
 
 // TODO: All of ContextModule
