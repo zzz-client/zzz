@@ -1,24 +1,17 @@
 import { load } from "https://deno.land/std/dotenv/mod.ts";
 import Application from "../core/app.ts";
-import { ModelType } from "../core/models.ts";
 import tim from "../modules/template/tim.ts";
-import AuthorizationModule from "../modules/authorization/module.ts";
-import BodyModule from "../modules/body/module.ts";
-import PathParamsModule from "../modules/path-params/module.ts";
-import VariablesModule from "../modules/variables/module.ts";
+import { AuthorizationModule } from "../modules/authorization/module.ts";
+import { BodyModule } from "../modules/body/module.ts";
+import { PathParamsModule } from "../modules/path-params/module.ts";
+import { ContextModule } from "../modules/context/module.ts";
 import { getFileFormat } from "../stores/files/formats.ts";
-
-const app = new Application({
-  store: "yml",
-  modules: [AuthorizationModule, BodyModule],
-});
 
 export default async function Cli(app: Application): Promise<void> {
   const env = await load();
   const arg = app.argv._[0];
   const context = app.argv.context;
   let theEntity = await (await app.getStore()).get(ModelType.Entity, arg + "");
-  app.applyModules(theEntity);
   const isVerbose = true;
   const isFormat = !!app.argv["format"];
   if (isFormat || isVerbose) {

@@ -5,7 +5,7 @@ import { ContextModule } from "../context/module.ts";
 
 export class RedactModule extends Module implements IModuleModifier {
   dependencies = [ContextModule, CookiesModule];
-  async modify(entity: Model): Promise<void> {
+  modify(entity: Model): Promise<void> {
     if (!this.app.feature.full) {
       if ("Variables" in entity) {
         delete entity.Variables;

@@ -4,7 +4,7 @@ import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { Model } from "./yeet.ts";
 
 type FeatureMap = { [key: string]: boolean | string | number };
-class Application {
+export default class Application {
   flags = {
     preamble: "Usage: zzz <options>",
     string: ["http", "web"],
@@ -33,7 +33,6 @@ class Application {
   }
   registerModule(module: Module): void {
     // TODO: Check dependencies via executedModules
-
     if (module instanceof IModuleFlags) { // TODO: IModuleFlags
       for (const flag of (module as any).flags) {
         this.flags[flag.type].push(flag.name);
@@ -41,6 +40,7 @@ class Application {
         if (flag.argument) this.flags.argument[flag.name] = flag.argument;
         if (flag.alias) this.flags.alias[flag.name] = flag.alias;
         if (flag.default) this.flags.default[flag.name] = flag.default;
+        this.feature[flag.name] = flag.default;
       }
     }
     if (module instanceof IModuleModels) {
@@ -67,16 +67,6 @@ class Application {
     }
   }
 }
-
-export type Flag = {
-  description: string;
-  argument?: string;
-  alias?: string;
-  default?: any;
-  type: "string" | "boolean";
-};
-
-export default Application;
 
 export interface IStore {
   get(type: typeof Model, name: string): Promise<any>;
