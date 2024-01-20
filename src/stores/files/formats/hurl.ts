@@ -47,7 +47,6 @@ function stringify(input: any): string {
     }
   }
   if (input.Authorization) {
-    console.log(input.Authorization);
     // TODO: only BasicAuth is natively supported...
   }
   return results.join("\n");

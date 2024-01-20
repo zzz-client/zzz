@@ -38,7 +38,6 @@ import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
 // }
 
 const app = new Application();
-console.log("Loading modules");
 app.registerModule(new RequestsModule(app));
 // app.registerModule(new AuthorizationModule(app));
 app.registerModule(new BodyModule(app));

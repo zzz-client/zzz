@@ -6,4 +6,3 @@ const asYaml = Deno.readTextFileSync("library/Salesforce Primary/Mess/v1/sendEma
 const asJs = YAML.parse(asYaml);
 
 const asHURL = HURL.stringify(asJs);
-console.log(asHURL);
