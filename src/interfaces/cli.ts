@@ -1,11 +1,12 @@
 import Application from "../core/app.ts";
-import Action from "../core/action.ts";
+import Action, { FeatureFlags } from "../core/action.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";
 import { Model } from "../core/yeet.ts";
 import { IModuleModifier } from "../core/module.ts";
 
 export default async function Cli(app: Application): Promise<void> {
-  const action = new Action(app.argv, app.env);
+  const flagValues = app.argv as FeatureFlags;
+  const action = new Action(flagValues, app.env);
   const model = {} as Model;
   (model as any).Body = { foo: "bar" }; // DEBUG
   for (const module of app.modules) {

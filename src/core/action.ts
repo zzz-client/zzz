@@ -9,7 +9,8 @@ Module:
 
 import { StringToStringMap } from "./yeet.ts";
 
-type FeatureFlags = { [key: string]: any };
+type FlagValue = string | boolean | number;
+export type FeatureFlags = { [key: string]: FlagValue };
 
 export default class Action {
   feature: FeatureFlags;
