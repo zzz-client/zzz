@@ -23,7 +23,7 @@ export class Action {
   }
 }
 
-export default function Meld(destination: any, source: any): void {
+export function Meld(destination: any, source: any): void {
   if (!source) {
     return;
   }

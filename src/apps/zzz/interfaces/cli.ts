@@ -1,8 +1,8 @@
-import Application from "../apps/zzz/app.ts";
-import Action, { FeatureFlags } from "../lib/lib.ts";
-import { HttpRequest } from "../modules/requests/mod.ts";
-import { Model } from "../lib/lib.ts";
-import { IModuleModifier } from "../module.ts";
+import Application from "../app.ts";
+import { Action, FeatureFlags } from "../../../lib/lib.ts";
+import { HttpRequest } from "../../../modules/requests/mod.ts";
+import { Model } from "../../../lib/lib.ts";
+import { IModuleModifier } from "../../../module.ts";
 
 export default async function Cli(app: Application): Promise<void> {
   const flagValues = app.argv as FeatureFlags;

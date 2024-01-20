@@ -1,6 +1,6 @@
 import { Model, StringToStringMap } from "../../lib/lib.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module, ModuleField } from "../../module.ts";
-import Action from "../../apps/core/action.ts";
+import { Action } from "../../lib/lib.ts";
 
 export class RequestsModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [];

@@ -1,4 +1,4 @@
-import Cli from "./interfaces/cli.ts";
+import Cli from "./apps/zzz/interfaces/cli.ts";
 import Application from "./apps/zzz/app.ts";
 // import { Server } from "./interfaces/http.ts";
 import { BodyModule } from "./modules/body/mod.ts";
