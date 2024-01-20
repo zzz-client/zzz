@@ -1,5 +1,3 @@
-import { ModuleFields } from "../modules/module.ts";
-
 export class Model {
   Id: string;
   Name: string;

@@ -1,5 +1,5 @@
 import { processFlags } from "https://deno.land/x/flags_usage@2.0.0/mod.ts";
-import { IModuleRenderer, Module } from "../modules/module.ts";
+import { IModuleFields, IModuleFlags, IModuleModels, IModuleModifier, IModuleRenderer, Module } from "../modules/module.ts";
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { Model } from "./yeet.ts";
 
@@ -32,7 +32,9 @@ export default class Application {
     this.argv = processFlags(Deno.args, this.flags);
   }
   registerModule(module: Module): void {
+    console.log("Registering module");
     // TODO: Check dependencies via executedModules
+    /*
     if (module instanceof IModuleFlags) { // TODO: IModuleFlags
       for (const flag of (module as any).flags) {
         this.flags[flag.type].push(flag.name);
@@ -54,8 +56,10 @@ export default class Application {
     }
     this.modules.push(module);
     this.argv = processFlags(Deno.args, this.flags);
+    */
   }
   executeModules(): void {
+    /*
     for (const module of this.modules) {
       if (module instanceof IModuleModifier) {
         (module as IModuleModifier).modify(this.feature);
@@ -65,6 +69,7 @@ export default class Application {
     for (const renderer of this.renderers) {
       renderer.render("???");
     }
+    */
   }
 }
 

@@ -34,7 +34,7 @@ export class ContextModule extends Module implements IModuleFlags, IModuleModels
       variables: "StringToStringMap",
     },
   };
-  modify(theModel: Model): Promise<void> {
+  async modify(theModel: Model): Promise<void> {
     // TODO:
     if (this.app.feature.full || this.app.feature.format || this.app.feature.execute) {
       return Load(theModel as HttpRequest, context, await this.app.getStore()); // TODO: What do with context

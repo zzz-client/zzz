@@ -2,7 +2,7 @@ import { Model } from "../core/yeet.ts";
 import { IModuleModifier, Module } from "./module.ts";
 
 export default class RequiredModule implements Module, IModuleModifier {
-  dependencies: = [];
+  dependencies = [];
   modify(theRequest: Model): Promise<void> {
     if (theRequest.Type == "Request") {
       checkRequired(theRequest);

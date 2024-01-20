@@ -1,9 +1,9 @@
 import { Model } from "../../core/yeet.ts";
 import { IModuleFields, IModuleModifier, Module } from "../module.ts";
-import { RequestsModule } from "../requests/module.ts";
+//import { RequestsModule } from "../requests/module.ts";
 
 export class BodyModule extends Module implements IModuleModifier, IModuleFields {
-  dependencies = [RequestsModule];
+  dependencies = [/*RequestsModule*/];
   fields = {
     Body: {
       type: Object, // TODO: Complicated
