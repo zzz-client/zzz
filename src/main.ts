@@ -1,7 +1,7 @@
 import Cli from "./interfaces/cli.ts";
 import Application from "./core/app.ts";
 // import { Server } from "./interfaces/http.ts";
-import { BodyModule } from "./modules/body/module.ts";
+import { BodyModule } from "./modules/body/mod.ts";
 import { RequestsModule } from "./modules/requests/mod.ts";
 import { PathParamsModule } from "./modules/path-params/mod.ts";
 import { AuthorizationModule } from "./modules/authorization/mod.ts";
