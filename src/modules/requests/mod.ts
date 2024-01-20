@@ -1,4 +1,4 @@
-import { Model, StringToStringMap } from "../../apps/core/yeet.ts";
+import { Model, StringToStringMap } from "../../lib/lib.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module, ModuleField } from "../../module.ts";
 import Action from "../../apps/core/action.ts";
 

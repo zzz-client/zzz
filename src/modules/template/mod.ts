@@ -1,4 +1,4 @@
-import { Model } from "../../apps/core/yeet.ts";
+import { Model } from "../../lib/lib.ts";
 import { ContextModule } from "../context/mod.ts";
 import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../module.ts";
 import { RequestsModule } from "../requests/mod.ts";

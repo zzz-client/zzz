@@ -1,4 +1,4 @@
-import Application, { ApplicationConfig } from "../apps/app.ts";
+import Application, { ApplicationConfig } from "../apps/zzz/app.ts";
 import AuthorizationModule from "../modules/authorization/mod.ts";
 import BodyModule from "../modules/body/mod.ts";
 import PathParamsModule from "../modules/path-params/mod.ts";

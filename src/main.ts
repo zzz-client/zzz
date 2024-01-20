@@ -1,5 +1,5 @@
 import Cli from "./interfaces/cli.ts";
-import Application from "./apps/app.ts";
+import Application from "./apps/zzz/app.ts";
 // import { Server } from "./interfaces/http.ts";
 import { BodyModule } from "./modules/body/mod.ts";
 import { RequestsModule } from "./modules/requests/mod.ts";

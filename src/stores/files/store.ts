@@ -1,8 +1,8 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import { basename, extname } from "https://deno.land/std/path/mod.ts";
-import { IStore } from "../../apps/app.ts";
+import { IStore } from "../../apps/zzz/app.ts";
 import { FileFormat, getFileFormat } from "./formats.ts";
-import { Model, StringToStringMap } from "../../apps/core/yeet.ts";
+import { Model, StringToStringMap } from "../../lib/lib.ts";
 import { Collection } from "../../modules/requests/mod.ts";
 
 const SESSION_FILE = "session.local";
