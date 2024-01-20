@@ -1,6 +1,6 @@
-import Action from "./action.ts";
-import Application from "./app.ts";
-import { Model } from "./yeet.ts";
+import Action from "./core/action.ts";
+import Application from "./apps/app.ts";
+import { Model } from "./apps/core/yeet.ts";
 
 export abstract class Module {
   app: Application;

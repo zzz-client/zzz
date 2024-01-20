@@ -1,24 +1,27 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import { basename, extname } from "https://deno.land/std/path/mod.ts";
-import { IStore } from "../../core/app.ts";
+import { IStore } from "../../apps/app.ts";
 import { FileFormat, getFileFormat } from "./formats.ts";
-import { Model, StringToStringMap } from "../../core/yeet.ts";
+import { Model, StringToStringMap } from "../../apps/core/yeet.ts";
 import { Collection } from "../../modules/requests/mod.ts";
 
 const SESSION_FILE = "session.local";
 
 const DirectoryMapping = {
-  HttpRequest: "library",
+  HttpRequest: "requests",
   Context: "contexts",
   Authorization: "authorizations",
+  Scope: ".",
 } as unknown as { ModelType: string };
+
+type SearchParams = string;
 
 export default class FileStore implements IStore {
   fileExtension: string;
   constructor(fileExtension: string) {
     this.fileExtension = fileExtension;
   }
-  async get(type: typeof Model id: string): Promise<Model> {
+  async get(type: typeof Model, id: string): Promise<Model> {
     const directory = DirectoryMapping[type] as string;
     const result = await (await getFileFormat(this.fileExtension)).parse(Deno.readTextFileSync(directory + "/" + id + "." + this.fileExtension)) as Model;
     result.Id = id.substring(directory.length + 1); // TODO: Hack?
@@ -37,6 +40,15 @@ export default class FileStore implements IStore {
     sessionContents.Variables[key] = value;
     Deno.writeTextFileSync(sessionPath, this.driver().stringify(sessionContents));
     return Promise.resolve();
+  }
+
+  async search(modelType: typeof Model, searchParams: SearchParams): Promise<Model[]> {
+    const folder = getDirectoryForModel(modelType);
+    const result: Model[] = [];
+    for await (const child of Deno.readDir(folder)) {
+      result.push(new Scope(child.name, child.name));
+    }
+    return result;
   }
   private excludeFromInfo(name: string): boolean {
     return !name.endsWith("." + this.fileExtension) || name.startsWith("_");
@@ -72,21 +84,11 @@ export default class FileStore implements IStore {
     }
     return collection;
   }
- private getAuthenticationOrContext(modelType: typeof Model, itemId: string): Promise<Model> {
+  private getAuthenticationOrContext(modelType: typeof Model, itemId: string): Promise<Model> {
     const directory = getDirectoryForModel(modelType);
     const filePath = `${directory}/${itemId}.${this.fileExtension}`;
     const item = this.driver().parse(Deno.readTextFileSync(filePath)) as Model; // TODO: Is this a naughty cast?
     item.Id = itemId;
     return Promise.resolve(item);
   }
-  /*
-  async list(modelType: ModelType.Scope | ModelType.Context | ModelType.Authorization): Promise<Model[]> {
-    const folder = getDirectoryForModel(modelType);
-    const result: Model[] = [];
-    for await (const child of Deno.readDir(folder)) {
-      result.push(new Scope(child.name, child.name));
-    }
-    return result;
-  }
-  */
 }

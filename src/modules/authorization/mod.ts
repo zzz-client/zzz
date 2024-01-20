@@ -1,11 +1,11 @@
-import { Model } from "../../core/yeet.ts";
-import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../core/module.ts";
+import { Model } from "../../apps/core/yeet.ts";
+import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../module.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 import { BasicAuthAuthorizer } from "./basicAuth.ts";
 import { BearerTokenAuthorizer } from "./bearerToken.ts";
 import HeaderAuthorizer from "./header.ts";
 import { QueryAuthorizer } from "./query.ts";
-import Action from "../../core/action.ts";
+import Action from "../../apps/core/action.ts";
 
 export class AuthorizationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [RequestsModule];

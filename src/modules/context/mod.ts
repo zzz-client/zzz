@@ -1,8 +1,8 @@
-import { Model } from "../../core/yeet.ts";
-import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../core/module.ts";
+import { Model } from "../../apps/core/yeet.ts";
+import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../module.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 import TemplateModule from "../template/mod.ts";
-import Action from "../../core/action.ts";
+import Action from "../../apps/core/action.ts";
 
 // TODO: All of ContextModule
 export class ContextModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {

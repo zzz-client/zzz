@@ -1,6 +1,6 @@
-import { Model, StringToStringMap } from "../../core/yeet.ts";
-import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module, ModuleField } from "../../core/module.ts";
-import Action from "../../core/action.ts";
+import { Model, StringToStringMap } from "../../apps/core/yeet.ts";
+import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module, ModuleField } from "../../module.ts";
+import Action from "../../apps/core/action.ts";
 
 export class RequestsModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [];

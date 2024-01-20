@@ -1,8 +1,8 @@
-import Application from "../core/app.ts";
-import Action, { FeatureFlags } from "../core/action.ts";
+import Application from "../apps/app.ts";
+import Action, { FeatureFlags } from "../apps/core/action.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";
-import { Model } from "../core/yeet.ts";
-import { IModuleModifier } from "../core/module.ts";
+import { Model } from "../apps/core/yeet.ts";
+import { IModuleModifier } from "../module.ts";
 
 export default async function Cli(app: Application): Promise<void> {
   const flagValues = app.argv as FeatureFlags;

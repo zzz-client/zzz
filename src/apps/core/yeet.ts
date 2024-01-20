@@ -11,7 +11,17 @@ export interface StringToStringMap {
   [key: string]: string;
 }
 
-// ModelTypes.push(HttpRequest);
+type FlagValue = string | boolean | number;
+export type FeatureFlags = { [key: string]: FlagValue };
+
+export class Action {
+  feature: FeatureFlags;
+  env: StringToStringMap;
+  constructor(feature: FeatureFlags, env: StringToStringMap) {
+    this.feature = feature;
+    this.env = env;
+  }
+}
 
 export default function Meld(destination: any, source: any): void {
   if (!source) {

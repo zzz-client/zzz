@@ -1,9 +1,9 @@
-import { Model } from "../../core/yeet.ts";
+import { Model } from "../../apps/core/yeet.ts";
 import { ContextModule } from "../context/mod.ts";
-import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../core/module.ts";
+import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../module.ts";
 import { RequestsModule } from "../requests/mod.ts";
 import tim from "./tim.ts";
-import Action from "../../core/action.ts";
+import Action from "../../apps/core/action.ts";
 
 export default class TemplateModule extends Module implements IModuleFeatures, IModuleModifier {
   dependencies = [RequestsModule, ContextModule];

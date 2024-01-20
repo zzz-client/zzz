@@ -1,6 +1,6 @@
-import { Model } from "../../core/yeet.ts";
-import { IModuleFields, IModuleModifier, Module } from "../../core/module.ts";
-import Action from "../../core/action.ts";
+import { Model } from "../../apps/core/yeet.ts";
+import { IModuleFields, IModuleModifier, Module } from "../../module.ts";
+import Action from "../../apps/core/action.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 
 export class BodyModule extends Module implements IModuleModifier, IModuleFields {
