@@ -1,10 +1,11 @@
-import { Model, StringToStringMap } from "../../core/yeet.ts";
-import { Flag, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../module.ts";
+import Action from "../../core/action.ts";
+import { Model } from "../../core/yeet.ts";
+import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../core/module.ts";
 import { HttpRequest, RequestsModule } from "../requests/module.ts";
 
 export class CookiesModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [RequestsModule];
-  flags: Flag[] = [
+  features: Feature[] = [
     {
       name: "no-cookies",
       description: "Do not load cookies",
@@ -17,8 +18,8 @@ export class CookiesModule extends Module implements IModuleFeatures, IModuleMod
       cookies: Cookies, // TODO Why error
     },
   };
-  async modify(model: Model): Promise<void> {
-    if (this.app.feature["no-cookies"]) {
+  async modify(model: Model, action: Action): Promise<void> {
+    if (action.feature["no-cookies"] && model instanceof HttpRequest) {
       await this.loadCookies(model);
     }
   }

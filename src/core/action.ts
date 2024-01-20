@@ -12,10 +12,10 @@ import { StringToStringMap } from "./yeet.ts";
 type FeatureFlags = { [key: string]: any };
 
 export default class Action {
-  features: FeatureFlags;
+  feature: FeatureFlags;
   env: StringToStringMap;
-  constructor(features: FeatureFlags, env: StringToStringMap) {
-    this.features = features;
+  constructor(feature: FeatureFlags, env: StringToStringMap) {
+    this.feature = feature;
     this.env = env;
   }
 }

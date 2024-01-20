@@ -5,6 +5,7 @@ import { BasicAuthAuthorizer } from "./basicAuth.ts";
 import { BearerTokenAuthorizer } from "./bearerToken.ts";
 import HeaderAuthorizer from "./header.ts";
 import { QueryAuthorizer } from "./query.ts";
+import Action from "../../core/action.ts";
 
 export class AuthorizationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [RequestsModule];
@@ -12,7 +13,7 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
   fields = {
     Authentication: Authentication,
   };
-  async modify(theModel: Model): Promise<void> {
+  async modify(theModel: Model, action: Action): Promise<void> {
     if (AuthorizationModule.hasFields(theModel)) {
       const authConfig = await (await this.app.getStore()).get( //TODO: store.get
         ModelType.Authorization,

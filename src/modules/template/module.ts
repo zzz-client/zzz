@@ -3,20 +3,23 @@ import { ContextModule } from "../context/module.ts";
 import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../core/module.ts";
 import { RequestsModule } from "../requests/module.ts";
 import tim from "./tim.ts";
+import Action from "../../core/action.ts";
 
 export default class TemplateModule extends Module implements IModuleFeatures, IModuleModifier {
   dependencies = [RequestsModule, ContextModule];
-  flags: Feature[] = [
+  features: Feature[] = [
     {
-      name: "execute",
-      description: "Execute request",
+      name: "format",
+      alias: "f",
+      description: "Apply variables",
       type: "boolean",
-      argument: "request",
-      alias: "x",
     },
   ];
-  modify(model: Model): Promise<void> {
-    if (ContextModule.hasFields(model)) {
+  modify(model: Model, action: Action): Promise<void> {
+    if (
+      action.feature.format &&
+      ContextModule.hasFields(model)
+    ) {
       tim(model, (model as any).Variables);
     }
     return Promise.resolve();

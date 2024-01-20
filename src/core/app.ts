@@ -1,4 +1,3 @@
-import { processFlags } from "https://deno.land/x/flags_usage@2.0.0/mod.ts";
 import { IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, IModuleRenderer, Module } from "./module.ts";
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { Model, StringToStringMap } from "./yeet.ts";
@@ -22,20 +21,19 @@ export default class Application {
     default: {} as { [key: string]: any },
     alias: {} as { [key: string]: string },
   } as any;
-  argv: Args;
+  argv?: Args; // TODO: Should not be optional but needs to wait to be loaded until after registerModule has been called
   feature = {} as FeatureMap;
   env = {} as StringToStringMap;
   executedModules = [] as Module[];
   modules = [] as Module[];
   renderers = [] as IModuleRenderer[];
   constructor() {
-    this.argv = processFlags(Deno.args, this.flags);
     loadEnv().then((env) => this.env = env);
   }
   registerModule(module: Module): void {
     // TODO: Check dependencies via executedModules
-    if ("feature" in module) { // TODO: IModuleFeatures
-      for (const flag of (module as any).flags) {
+    if ("features" in module) { // TODO: IModuleFeatures
+      for (const flag of (module as unknown as IModuleFeatures).features) {
         this.flags[flag.type].push(flag.name);
         this.flags.description[flag.name] = flag.description;
         if (flag.argument) this.flags.argument[flag.name] = flag.argument;
@@ -55,12 +53,11 @@ export default class Application {
     }
     */
     this.modules.push(module);
-    this.argv = processFlags(Deno.args, this.flags);
+    this.executedModules.push(module);
   }
   executeModules(action: Action, model: Model = {}): void {
     for (const module of this.modules) {
       (module as unknown as IModuleModifier).modify(model, action);
-      this.executedModules.push(module);
     }
   }
 }

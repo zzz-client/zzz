@@ -4,12 +4,11 @@ import Action from "../../core/action.ts";
 
 export class RequestsModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [];
-  flags: Feature[] = [
+  features: Feature[] = [
     {
       name: "execute",
       description: "Execute request",
       type: "boolean",
-      argument: "request",
       alias: "x",
     },
   ];

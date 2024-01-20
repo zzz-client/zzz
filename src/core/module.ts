@@ -21,7 +21,7 @@ export abstract class Module {
   }
 }
 export interface IModuleFeatures {
-  flags: Feature[];
+  features: Feature[];
 }
 export interface IModuleModels {
   models: (typeof Model)[];

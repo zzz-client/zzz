@@ -93,7 +93,7 @@
 //     console.log("Parts:", scope, context, entityId, extension);
 //     const store = await this.app.getStore();
 //     const { searchParams } = new URL(request.url);
-//     const isFull = searchParams.has("full");
+//     const isFull = searchParams.has("all");
 //     const isFormat = searchParams.has("format") || request.method == "PATCH";
 //     function getModelType(entityId: string): ModelType {
 //       if (!entityId) {

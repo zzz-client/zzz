@@ -1,6 +1,7 @@
 import { Model } from "../../core/yeet.ts";
 import { IModuleFields, IModuleModifier, Module } from "../../core/module.ts";
 import { HttpRequest, RequestsModule } from "../requests/module.ts";
+import Action from "../../core/action.ts";
 
 export class PathParamsModule extends Module implements IModuleFields, IModuleModifier {
   dependencies = [RequestsModule];
@@ -10,7 +11,7 @@ export class PathParamsModule extends Module implements IModuleFields, IModuleMo
       description: "Params to be replaced in the URL",
     },
   };
-  async modify(entity: Model): Promise<void> {
+  async modify(entity: Model, _action: Action): Promise<void> {
     if (entity instanceof HttpRequest && PathParamsModule.hasFields(entity)) {
       await this.loadPathParams(entity as HttpRequest);
     }

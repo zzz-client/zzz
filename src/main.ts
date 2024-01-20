@@ -1,11 +1,16 @@
 import Cli from "./interfaces/cli.ts";
 import Application from "./core/app.ts";
-// import AuthorizationModule from "./modules/authorization/module.ts";
-// import BodyModule from "./modules/body/module.ts";
-// import PathParamsModule from "./modules/path-params/module.ts";
 // import { Server } from "./interfaces/http.ts";
 import { BodyModule } from "./modules/body/module.ts";
 import { RequestsModule } from "./modules/requests/module.ts";
+import { PathParamsModule } from "./modules/path-params/module.ts";
+import { AuthorizationModule } from "./modules/authorization/module.ts";
+import TemplateModule from "./modules/template/module.ts";
+import { ContextModule } from "./modules/context/module.ts";
+import { CookiesModule } from "./modules/cookies/module.ts";
+import { RedactModule } from "./modules/redact/module.ts";
+import { ScopeModule } from "./modules/scope/module.ts";
+import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
 
 // function httpPromise(app: Application): Promise<void> {
 //   if (Deno.args.includes("--http")) {
@@ -33,8 +38,18 @@ import { RequestsModule } from "./modules/requests/module.ts";
 // }
 
 const app = new Application();
+console.log("Loading modules");
 app.registerModule(new RequestsModule(app));
+// app.registerModule(new AuthorizationModule(app));
 app.registerModule(new BodyModule(app));
+app.registerModule(new PathParamsModule(app));
+app.registerModule(new ScopeModule(app));
+app.registerModule(new TemplateModule(app));
+app.registerModule(new ContextModule(app));
+// app.registerModule(new CookiesModule(app));
+// app.registerModule(new RedactModule(app));
+
+app.argv = processFlags(Deno.args, app.flags);
 
 Cli(app);
 

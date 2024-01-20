@@ -7,9 +7,11 @@ import { IModuleModifier } from "../core/module.ts";
 export default async function Cli(app: Application): Promise<void> {
   const action = new Action(app.argv, app.env);
   const model = {} as Model;
-  (model as any).Body = { foo: "bar" };
+  (model as any).Body = { foo: "bar" }; // DEBUG
   for (const module of app.modules) {
-    (module as unknown as IModuleModifier).modify(model, action);
+    if ("modify" in module) {
+      (module as unknown as IModuleModifier).modify(model, action);
+    }
   }
   // const context = app.argv.context;
   // let theEntity = await (await app.getStore()).get(ModelType.Entity, arg + "");
