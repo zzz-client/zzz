@@ -1,6 +1,6 @@
-import { Model } from "../../lib/lib.ts";
-import { IModuleFields, IModuleModifier, Module } from "../../lib/module.ts";
-import { Action } from "../../lib/lib.ts";
+import { Model } from "../../../../lib/lib.ts";
+import { IModuleFields, IModuleModifier, Module } from "../../../../lib/module.ts";
+import { Action } from "../../../../lib/lib.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 
 export class BodyModule extends Module implements IModuleModifier, IModuleFields {

@@ -1,8 +1,8 @@
-import { Model } from "../../lib/lib.ts";
-import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../lib/module.ts";
+import { Model } from "../../../../lib/lib.ts";
+import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 import TemplateModule from "../template/mod.ts";
-import { Action } from "../../lib/lib.ts";
+import { Action } from "../../../../lib/lib.ts";
 
 // TODO: All of ContextModule
 export class ContextModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {

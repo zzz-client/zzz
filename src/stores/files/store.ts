@@ -3,7 +3,7 @@ import { basename, extname } from "https://deno.land/std/path/mod.ts";
 import { IStore } from "../../apps/zzz/app.ts";
 import { FileFormat, getFileFormat } from "./formats.ts";
 import { Model, StringToStringMap } from "../../lib/lib.ts";
-import { Collection } from "../../modules/requests/mod.ts";
+import { Collection } from "../../apps/zzz/modules/requests/mod.ts";
 
 const SESSION_FILE = "session.local";
 

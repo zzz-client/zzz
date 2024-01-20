@@ -1,7 +1,7 @@
-import { Model } from "../../lib/lib.ts";
-import { IModuleFields, IModuleModifier, Module } from "../../lib/module.ts";
+import { Model } from "../../../../lib/lib.ts";
+import { IModuleFields, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
-import { Action } from "../../lib/lib.ts";
+import { Action } from "../../../../lib/lib.ts";
 
 export class PathParamsModule extends Module implements IModuleFields, IModuleModifier {
   dependencies = [RequestsModule];

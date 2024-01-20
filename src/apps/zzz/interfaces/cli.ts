@@ -1,6 +1,5 @@
 import Application from "../app.ts";
 import { Action, FeatureFlags } from "../../../lib/lib.ts";
-import { HttpRequest } from "../../../modules/requests/mod.ts";
 import { Model } from "../../../lib/lib.ts";
 import { IModuleModifier } from "../../../lib/module.ts";
 

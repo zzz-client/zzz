@@ -1,15 +1,15 @@
 import Cli from "./apps/zzz/interfaces/cli.ts";
 import Application from "./apps/zzz/app.ts";
 // import { Server } from "./interfaces/http.ts";
-import { BodyModule } from "./modules/body/mod.ts";
-import { RequestsModule } from "./modules/requests/mod.ts";
-import { PathParamsModule } from "./modules/path-params/mod.ts";
-import { AuthorizationModule } from "./modules/authorization/mod.ts";
-import TemplateModule from "./modules/template/mod.ts";
-import { ContextModule } from "./modules/context/mod.ts";
-import { CookiesModule } from "./modules/cookies/mod.ts";
-import { RedactModule } from "./modules/redact/mod.ts";
-import { ScopeModule } from "./modules/scope/mod.ts";
+import { BodyModule } from "./apps/zzz/modules/body/mod.ts";
+import { RequestsModule } from "./apps/zzz/modules/requests/mod.ts";
+import { PathParamsModule } from "./apps/zzz/modules/path-params/mod.ts";
+import { AuthorizationModule } from "./apps/zzz/modules/authorization/mod.ts";
+import TemplateModule from "./apps/zzz/modules/template/mod.ts";
+import { ContextModule } from "./apps/zzz/modules/context/mod.ts";
+import { CookiesModule } from "./apps/zzz/modules/cookies/mod.ts";
+import { RedactModule } from "./apps/zzz/modules/redact/mod.ts";
+import { ScopeModule } from "./apps/zzz/modules/scope/mod.ts";
 import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
 
 // function httpPromise(app: Application): Promise<void> {
