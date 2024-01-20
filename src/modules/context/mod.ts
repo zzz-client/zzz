@@ -1,5 +1,5 @@
 import { Model } from "../../lib/lib.ts";
-import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../module.ts";
+import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../lib/module.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 import TemplateModule from "../template/mod.ts";
 import { Action } from "../../lib/lib.ts";

@@ -1,5 +1,5 @@
 import { Model } from "../../lib/lib.ts";
-import { IModuleModifier, Module } from "../../module.ts";
+import { IModuleModifier, Module } from "../../lib/module.ts";
 import { CookiesModule } from "../cookies/mod.ts";
 import { ContextModule } from "../context/mod.ts";
 import { Action } from "../../lib/lib.ts";

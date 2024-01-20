@@ -1,6 +1,6 @@
-import Action from "./lib/lib.ts";
-import Application from "./apps/zzz/app.ts";
-import { Model } from "./lib/lib.ts";
+import Action from "./lib.ts";
+import Application from "../apps/zzz/app.ts";
+import { Model } from "./lib.ts";
 
 export abstract class Module {
   app: Application;

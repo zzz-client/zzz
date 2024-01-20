@@ -1,5 +1,5 @@
 import { Model } from "../../lib/lib.ts";
-import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../module.ts";
+import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../lib/module.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 import { BasicAuthAuthorizer } from "./basicAuth.ts";
 import { BearerTokenAuthorizer } from "./bearerToken.ts";

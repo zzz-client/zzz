@@ -1,4 +1,4 @@
-import { IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, IModuleRenderer, Module } from "../../module.ts";
+import { IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, IModuleRenderer, Module } from "../../lib/module.ts";
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { Model, StringToStringMap } from "../../lib/lib.ts";
 import { load as loadEnv } from "https://deno.land/std/dotenv/mod.ts";
