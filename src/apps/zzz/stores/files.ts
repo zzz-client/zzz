@@ -15,7 +15,7 @@ DirectoryMapping.set(Scope.name, "requests");
 
 export default class FileStore implements IStore {
   private store: IStorage = new FileStorage("yml");
-  get(modelType: typeof Model, id: string): Promise<Model> {
+  get(modelType: string, id: string): Promise<Model> {
     console.log("model", modelType, "!", id);
     const directory = getDirectoryForModelType(modelType.constructor.name);
     console.log("directory", directory);

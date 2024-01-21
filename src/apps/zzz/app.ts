@@ -5,7 +5,6 @@ import { IModuleFeatures, IModuleModifier, IModuleRenderer, Module } from "../..
 import { Model } from "../../storage/mod.ts";
 import IApplication, { ConfigValue, FeatureMap, Flags } from "../mod.ts";
 import FileStore from "./stores/files.ts";
-import { IStore } from "./stores/mod.ts";
 
 export default class Application implements IApplication {
   store = new FileStore();

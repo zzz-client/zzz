@@ -24,7 +24,7 @@ export interface IModuleFeatures {
   features: Feature[];
 }
 export interface IModuleModels {
-  models: (typeof Model)[];
+  models: string[];
 }
 export interface IModuleFields {
   fields: ModuleFields;
