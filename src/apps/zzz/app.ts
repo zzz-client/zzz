@@ -1,13 +1,13 @@
-import { IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, IModuleRenderer, Module } from "../../lib/module.ts";
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
-import { Action, StringToStringMap } from "../../lib/lib.ts";
 import { load as loadEnv } from "https://deno.land/std/dotenv/mod.ts";
+import { Action, StringToStringMap } from "../../lib/lib.ts";
+import { IModuleFeatures, IModuleModifier, IModuleRenderer, Module } from "../../lib/module.ts";
+import { Model } from "../../storage/mod.ts";
+import IApplication, { ConfigValue, FeatureMap, Flags } from "../mod.ts";
 import FileStore from "./stores/files.ts";
-import { ConfigValue, FeatureMap, Flags } from "../mod.ts";
-import { IStorage, Model } from "../../storage/mod.ts";
 import { IStore } from "./stores/mod.ts";
 
-export default class Application {
+export default class Application implements IApplication {
   store: IStore = new FileStore();
   flags = {
     preamble: "Usage: zzz <options>",

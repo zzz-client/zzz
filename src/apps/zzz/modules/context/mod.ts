@@ -2,6 +2,7 @@ import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 import TemplateModule from "../template/mod.ts";
 import { Action, StringToStringMap } from "../../../../lib/lib.ts";
+import { Model } from "../../../../storage/mod.ts";
 
 // TODO: All of ContextModule
 export class ContextModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
@@ -38,7 +39,7 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
   };
   async modify(theModel: Model, action: Action): Promise<void> {
     // TODO:
-    if (this.app.feature.full || this.app.feature.format || this.app.feature.execute) {
+    if (this.app.feature.all || this.app.feature.format || this.app.feature.execute) {
       return Load(theModel as HttpRequest, context, await this.app.getStore()); // TODO: What do with context
     }
     return Promise.resolve();

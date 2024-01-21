@@ -7,7 +7,7 @@ import { Model } from "../../../../storage/mod.ts";
 export class RedactModule extends Module implements IModuleModifier {
   dependencies = [ContextModule, CookiesModule];
   modify(entity: Model, action: Action): Promise<void> {
-    if (!action.feature.full) {
+    if (!action.feature.all) {
       if ("Variables" in entity) {
         delete entity.Variables;
       }

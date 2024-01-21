@@ -17,7 +17,7 @@ export class AuthenticationModule extends Module implements IModuleModels, IModu
     if (AuthenticationModule.hasFields(model) && model instanceof HttpRequest) {
       let auth = (model as any).Authentication as Authentication;
       if (typeof auth === "string") {
-        auth = await this.app.store.get(auth.Id) as Authentication;
+        auth = await this.app.store.get(Authentication, auth) as Authentication; // TODO Why is this a never????
       }
       const authType = "BasicAuth"; // TODO: Somehow get root key?
       const authorizer = this.newAuthentication(authType);
@@ -40,10 +40,10 @@ export class AuthenticationModule extends Module implements IModuleModels, IModu
   }
 }
 export interface IAuthorizer {
-  authorize(model: HttpRequest, data: AuthType): void;
+  authorize(model: HttpRequest, data: AuthContents): void;
 }
-export type AuthType = {};
+export type AuthContents = {};
 
 export class Authentication extends Model {
-  [key: string]: AuthType;
+  [key: string]: AuthContents;
 }
