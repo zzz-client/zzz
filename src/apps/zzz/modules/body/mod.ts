@@ -1,7 +1,7 @@
 import { IModuleFields, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Action } from "../../../../lib/lib.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
-import { Model } from "../../../../storage/files/mod.ts";
+import { Model } from "../../../../storage/mod.ts";
 
 export class BodyModule extends Module implements IModuleModifier, IModuleFields {
   dependencies = [RequestsModule];

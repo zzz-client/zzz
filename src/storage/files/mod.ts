@@ -1,21 +1,8 @@
 import { basename, extname } from "https://deno.land/std/path/mod.ts";
 import { FileFormat, getFileFormat } from "./formats.ts";
+import { IStorage, Model, ParentModel, SearchParams } from "../mod.ts";
 
-export type SearchParams = string;
-
-export interface IStore {
-  get(id: string): Promise<Model>;
-  set(id: string, model: Model): Promise<void>;
-  search(searchParams: SearchParams): Promise<Model[]>;
-}
-export class Model {
-  Id!: string;
-  Name!: string;
-}
-export interface ParentModel extends Model {
-  Children: Model[];
-}
-export default class FileStore implements IStore {
+export default class FileStorage implements IStorage {
   fileExtension: string;
   constructor(fileExtension: string) {
     this.fileExtension = fileExtension;

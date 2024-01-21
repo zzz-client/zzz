@@ -10,7 +10,7 @@ import type { MenuItem } from "primevue/menuitem";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import KeyValueTable from "./KeyValueTable.vue";
-import Authorization from "./Authorization.vue";
+import Authentication from "./Authentication.vue";
 import Response from "./Response.vue";
 import Body from "./Body.vue";
 import { ref, toRefs } from "vue";
@@ -23,7 +23,7 @@ const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 const method = ref("GET");
 const requestData = ref({} as any);
 const breadcrumbs = ref([] as MenuItem[]);
-const authorization = ref("None");
+const authentication = ref("None");
 const response = ref(
   {} as {
     status: number;
@@ -144,8 +144,8 @@ function showCookies() {
       </div>
       <div class="flex">
         <TabView style="flex: 1">
-          <TabPanel header="Authorization">
-            <Authorization :method="authorization"></Authorization>
+          <TabPanel header="Authentication">
+            <Authentication :method="authentication"></Authentication>
           </TabPanel>
           <TabPanel header="Params"><KeyValueTable :data="requestData.QueryParams"></KeyValueTable></TabPanel>
           <TabPanel header="Headers"><KeyValueTable :data="requestData.Headers"></KeyValueTable></TabPanel>

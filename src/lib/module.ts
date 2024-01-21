@@ -1,5 +1,5 @@
 import Application from "../apps/zzz/app.ts";
-import { Model } from "../storage/files/mod.ts";
+import { Model } from "../storage/mod.ts";
 import { Action } from "./lib.ts";
 
 export abstract class Module {

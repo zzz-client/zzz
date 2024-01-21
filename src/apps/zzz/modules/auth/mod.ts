@@ -5,25 +5,26 @@ import { BearerTokenAuthorizer } from "./bearerToken.ts";
 import HeaderAuthorizer from "./header.ts";
 import { QueryAuthorizer } from "./query.ts";
 import { Action } from "../../../../lib/lib.ts";
-import { Model } from "../../../../storage/files/mod.ts";
+import { Model } from "../../../../storage/mod.ts";
 
-export class AuthorizationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
+export class AuthenticationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [RequestsModule];
   models = [Authentication];
   fields = {
     Authentication: Authentication,
   };
   async modify(model: Model, action: Action): Promise<void> {
-    if (AuthorizationModule.hasFields(model) && model instanceof HttpRequest) {
-      let auth = (model as any).Authorization;
+    if (AuthenticationModule.hasFields(model) && model instanceof HttpRequest) {
+      let auth = (model as any).Authentication as Authentication;
       if (typeof auth === "string") {
-        auth = await this.app.store.get(Authentication, auth);
+        auth = await this.app.store.get(auth.Id) as Authentication;
       }
-      const authorizer = this.newAuthorization(auth.Type);
+      const authType = "BasicAuth"; // TODO: Somehow get root key?
+      const authorizer = this.newAuthentication(authType);
       return await authorizer.authorize(model, auth);
     }
   }
-  private newAuthorization(type: string): IAuthorizer {
+  private newAuthentication(type: string): IAuthorizer {
     switch (type) {
       case "BearerToken":
         return new BearerTokenAuthorizer();
@@ -34,7 +35,7 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
       case "Query":
         return new QueryAuthorizer();
       default:
-        throw new Error(`Unknown authorization type: $type`);
+        throw new Error(`Unknown authentication type: $type`);
     }
   }
 }

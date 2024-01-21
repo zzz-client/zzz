@@ -2,27 +2,13 @@ import { IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, IModule
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { Action, StringToStringMap } from "../../lib/lib.ts";
 import { load as loadEnv } from "https://deno.land/std/dotenv/mod.ts";
-import { IStore, Model } from "../../storage/files/mod.ts";
-import FileStore from "./storage/files.ts";
-
-export type ConfigValue = string | boolean | number;
-
-type Flags = {
-  preamble: string;
-  string: string[];
-  boolean: string[];
-  description: StringToStringMap;
-  argument: { [key: string]: string };
-  default: { [key: string]: ConfigValue };
-  alias: StringToStringMap;
-};
-type FeatureFlagValue = string | boolean | number;
-export type FeatureFlags = { [key: string]: FeatureFlagValue };
-
-type FeatureMap = { [key: string]: ConfigValue };
+import FileStore from "./stores/files.ts";
+import { ConfigValue, FeatureMap, Flags } from "../mod.ts";
+import { IStorage, Model } from "../../storage/mod.ts";
+import { IStore } from "./stores/mod.ts";
 
 export default class Application {
-  store = new FileStore();
+  store: IStore = new FileStore();
   flags = {
     preamble: "Usage: zzz <options>",
     string: ["http", "web"],

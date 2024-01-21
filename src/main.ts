@@ -4,7 +4,7 @@ import Application from "./apps/zzz/app.ts";
 import { BodyModule } from "./apps/zzz/modules/body/mod.ts";
 import { RequestsModule } from "./apps/zzz/modules/requests/mod.ts";
 import { PathParamsModule } from "./apps/zzz/modules/path-params/mod.ts";
-import { AuthorizationModule } from "./apps/zzz/modules/auth/mod.ts";
+import { AuthenticationModule } from "./apps/zzz/modules/auth/mod.ts";
 import TemplateModule from "./apps/zzz/modules/template/mod.ts";
 import { ContextModule } from "./apps/zzz/modules/context/mod.ts";
 import { CookiesModule } from "./apps/zzz/modules/cookies/mod.ts";
@@ -16,7 +16,7 @@ export default function main(): Promise<void> {
   const app = new Application();
   try {
     app.registerModule(new RequestsModule(app));
-    // app.registerModule(new AuthorizationModule(app));
+    // app.registerModule(new AuthenticationModule(app));
     app.registerModule(new BodyModule(app));
     app.registerModule(new PathParamsModule(app));
     app.registerModule(new ScopeModule(app));
@@ -32,7 +32,7 @@ export default function main(): Promise<void> {
     //       cliPromise(app),
     //     ]);
   } catch (error) {
-    console.error("!!!", e);
+    console.error("!!!", error);
     Deno.exit(1);
   }
   return Cli(app);
@@ -40,7 +40,7 @@ export default function main(): Promise<void> {
 
 function httpPromise(app: Application): Promise<void> {
   if (Deno.args.includes("--http")) {
-    new Server(app).listen();
+    // new Server(app).listen();
   }
   return Promise.resolve();
 }

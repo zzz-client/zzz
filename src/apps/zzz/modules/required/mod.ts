@@ -1,6 +1,6 @@
-import { IModuleModifier, Module } from "../../../lib/module.ts";
-import { Model } from "../../../storage/files/mod.ts";
-import { HttpRequest } from "./requests/mod.ts";
+import { IModuleModifier, Module } from "../../../../lib/module.ts";
+import { Model } from "../../../../storage/mod.ts";
+import { HttpRequest } from "../requests/mod.ts";
 
 export default class RequiredModule extends Module implements IModuleModifier {
   dependencies = [];

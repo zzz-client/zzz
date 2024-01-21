@@ -2,7 +2,6 @@ import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 import TemplateModule from "../template/mod.ts";
 import { Action, StringToStringMap } from "../../../../lib/lib.ts";
-import { Model } from "../../../../storage/files/mod.ts";
 
 // TODO: All of ContextModule
 export class ContextModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
@@ -22,7 +21,7 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
       argument: "context",
     },
   ];
-  models = [Context];
+  models = [Context]; // TODO: What
   fields = {
     Request: {
       variables: "StringToStringMap",

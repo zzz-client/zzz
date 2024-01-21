@@ -46,7 +46,7 @@ function stringify(input: any): string {
       results.push(driver.stringify(input.Body));
     }
   }
-  if (input.Authorization) {
+  if (input.Authentication) {
     // TODO: only BasicAuth is natively supported...
   }
   return results.join("\n");

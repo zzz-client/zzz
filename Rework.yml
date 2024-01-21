@@ -40,13 +40,13 @@ Body:
   Modify:
     do: ...
 
-Authorization:
+Authentication:
   Dependencies: [Requests?]
   Models:
-    - name: Authorization
+    - name: Authentication
       has: Request | Collection | Scope
   Fields:
-    Authorization:
+    Authentication:
       type: BasicAuth | BearerToken | ...
       value: complex
   Modify: ...

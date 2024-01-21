@@ -2,7 +2,7 @@ import { IModuleModifier, Module } from "../../../../lib/module.ts";
 import { CookiesModule } from "../cookies/mod.ts";
 import { ContextModule } from "../context/mod.ts";
 import { Action } from "../../../../lib/lib.ts";
-import { Model } from "../../../../storage/files/mod.ts";
+import { Model } from "../../../../storage/mod.ts";
 
 export class RedactModule extends Module implements IModuleModifier {
   dependencies = [ContextModule, CookiesModule];
