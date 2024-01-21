@@ -1,5 +1,5 @@
-import { Model } from "../../../../lib/lib.ts";
 import { IModuleModels, Module } from "../../../../lib/module.ts";
+import { Model } from "../../../../stores/files/store.ts";
 import { CollectionChild, RequestsModule } from "../requests/mod.ts";
 
 export class ScopeModule extends Module implements IModuleModels {

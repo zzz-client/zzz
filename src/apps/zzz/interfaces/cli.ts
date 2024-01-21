@@ -1,7 +1,7 @@
-import Application from "../app.ts";
-import { Action, FeatureFlags } from "../../../lib/lib.ts";
-import { Model } from "../../../lib/lib.ts";
+import Application, { FeatureFlags } from "../app.ts";
+import { Action } from "../../../lib/lib.ts";
 import { IModuleModifier } from "../../../lib/module.ts";
+import { Model } from "../../../stores/files/store.ts";
 
 export default async function Cli(app: Application): Promise<void> {
   const flagValues = app.argv as FeatureFlags;

@@ -4,7 +4,7 @@ import Application from "./apps/zzz/app.ts";
 import { BodyModule } from "./apps/zzz/modules/body/mod.ts";
 import { RequestsModule } from "./apps/zzz/modules/requests/mod.ts";
 import { PathParamsModule } from "./apps/zzz/modules/path-params/mod.ts";
-import { AuthorizationModule } from "./apps/zzz/modules/authorization/mod.ts";
+import { AuthorizationModule } from "./apps/zzz/modules/auth/mod.ts";
 import TemplateModule from "./apps/zzz/modules/template/mod.ts";
 import { ContextModule } from "./apps/zzz/modules/context/mod.ts";
 import { CookiesModule } from "./apps/zzz/modules/cookies/mod.ts";

@@ -1,6 +1,7 @@
-import { Model, StringToStringMap } from "../../../../lib/lib.ts";
+import { StringToStringMap } from "../../../../lib/lib.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module, ModuleField } from "../../../../lib/module.ts";
 import { Action } from "../../../../lib/lib.ts";
+import { Model, ParentModel } from "../../../../stores/files/store.ts";
 
 export class RequestsModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [];
@@ -33,16 +34,9 @@ export class HttpRequest extends Model {
   Method: HttpMethod;
   QueryParams: StringToStringMap;
   Headers: StringToStringMap;
-  constructor(id: string, name: string, url: string, method: HttpMethod) {
-    super(id, name);
-    this.URL = url;
-    this.Method = method;
-    this.QueryParams = {} as StringToStringMap;
-    this.Headers = {} as StringToStringMap;
-  }
 }
 export type CollectionChild = HttpRequest | Collection;
-export class Collection extends Model {
+export class Collection extends Model implements ParentModel {
   Children: CollectionChild[];
   constructor(id: string, name: string) {
     super(id, name);

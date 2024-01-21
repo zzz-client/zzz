@@ -1,7 +1,8 @@
 import { IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, IModuleRenderer, Module } from "../../lib/module.ts";
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
-import { Action, Model, StringToStringMap } from "../../lib/lib.ts";
+import { Action, StringToStringMap } from "../../lib/lib.ts";
 import { load as loadEnv } from "https://deno.land/std/dotenv/mod.ts";
+import { Model } from "../../stores/stores.ts";
 
 export type ConfigValue = string | boolean | number;
 
@@ -14,14 +15,10 @@ type Flags = {
   default: { [key: string]: any };
   alias: StringToStringMap;
 };
+type FeatureFlagValue = string | boolean | number;
+export type FeatureFlags = { [key: string]: FeatureFlagValue };
 
 type FeatureMap = { [key: string]: ConfigValue };
-
-export interface IStore {
-  get(type: typeof Model, name: string): Promise<Model>;
-  // deno-lint-ignore no-explicit-any
-  set(type: typeof Model, name: string, value: any): Promise<void>;
-}
 
 export default class Application {
   flags = {

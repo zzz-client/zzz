@@ -1,18 +1,6 @@
-export class Model {
-  Id: string;
-  Name: string;
-  constructor(id: string, name: string) {
-    this.Id = id;
-    this.Name = name;
-  }
-}
-
 export interface StringToStringMap {
   [key: string]: string;
 }
-
-type FlagValue = string | boolean | number;
-export type FeatureFlags = { [key: string]: FlagValue };
 
 export class Action {
   feature: FeatureFlags;
