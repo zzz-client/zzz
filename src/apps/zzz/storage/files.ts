@@ -1,5 +1,5 @@
-import { IStore, Model, SearchParams } from "../../../stores/files/store.ts";
-import FileStorage} from "../../../stores/files/store.ts";
+import { IStore, Model, SearchParams } from "../../../storage/files/mod.ts";
+import FileStorage from "../../../storage/files/mod.ts";
 import { Context } from "../modules/context/mod.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";
 import { Authentication } from "../modules/auth/mod.ts";
