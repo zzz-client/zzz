@@ -3,19 +3,12 @@ import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier
 import { Model } from "../../../../stores/files/store.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 
-export class CookiesModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
+export class CookiesModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [RequestsModule];
-  features: Feature[] = [
-    {
-      name: "no-cookies",
-      description: "Do not load cookies",
-      type: "boolean",
-    },
-  ];
   models = [Cookies];
   fields = {
     Request: {
-      cookies: Cookies, // TODO Why error
+      cookies: Cookies,
     },
   };
   async modify(model: Model, action: Action): Promise<void> {

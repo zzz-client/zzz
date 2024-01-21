@@ -10,16 +10,14 @@ const DirectoryMapping = new Map<typeof Model, string>();
 DirectoryMapping.set(HttpRequest, "requests");
 DirectoryMapping.set(Context, "contexts");
 DirectoryMapping.set(Authentication, "auth");
-DirectoryMapping.set(Scope, "");
+DirectoryMapping.set(Scope, "requests");
 export default class FileStore {
-  private store: IStore = new ParentFileStore(".yml");
+  private store: IStore = new ParentFileStore("yml");
   get(modelType: typeof Model, id: string): Promise<Model> {
+    console.log("model", modelType, "!", id);
     const directory = DirectoryMapping.get(modelType) as string;
-    if (modelType == HttpRequest) {
-      return this.store.get(directory + "/" + id);
-    } else {
-      return this.store.get(directory + "/" + id);
-    }
+    console.log("directory", directory);
+    return this.store.get(directory + "/" + id);
   }
   set(model: Model): Promise<void> {
     const directory = DirectoryMapping.get(Context);

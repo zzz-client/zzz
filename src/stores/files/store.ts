@@ -9,30 +9,30 @@ export interface IStore {
   search(searchParams: SearchParams): Promise<Model[]>;
 }
 export class Model {
-  Id: string;
-  Name: string;
-  constructor(id: string, name: string) {
-    this.Id = id;
-    this.Name = name;
-  }
+  Id!: string;
+  Name!: string;
 }
 export interface ParentModel extends Model {
   Children: Model[];
 }
 export default class FileStore implements IStore {
-  store = new FileStore("yml");
   fileExtension: string;
   constructor(fileExtension: string) {
     this.fileExtension = fileExtension;
   }
+
+  async isFile(fullId: string): Promise<boolean> {
+    try {
+      return (await Deno.stat(fullId)).isFile;
+    } catch (error) {
+      return (await Deno.stat(fullId + "." + this.fileExtension)).isFile;
+    }
+  }
   async get(fullId: string): Promise<Model> {
-    const fileInfo = await Deno.stat(fullId);
-    if (fileInfo.isFile) {
+    if (await this.isFile(fullId)) {
       return this.getFile(fullId);
-    } else if (fileInfo.isDirectory) {
-      return this.getFolder(fullId);
     } else {
-      throw new Error("Unknown type of thing on the filesystem: " + fullId);
+      return this.getFolder(fullId);
     }
   }
   set(fullId: string, model: Model): Promise<void> {
@@ -55,16 +55,16 @@ export default class FileStore implements IStore {
       });
   }
   private async getFolder(fullPath: string): Promise<Model> {
-    const collection = new Model(fullPath, basename(fullPath)) as ParentModel;
+    const model = { Id: fullPath, Name: basename(fullPath) } as ParentModel;
     for await (const child of Deno.readDir(fullPath)) {
       if (child.isDirectory) {
-        collection.Children.push(await this.getFolder(`${fullPath}/${child.name}`));
+        model.Children.push(await this.getFolder(`${fullPath}/${child.name}`));
       } else if (child.isFile && !this.excludeFromInfo(child.name)) {
         const baseless = basename(child.name, extname(child.name));
-        collection.Children.push(await this.getFolder(`${fullPath}/${baseless}`));
+        model.Children.push(await this.getFile(`${fullPath}/${baseless}`));
       }
     }
-    return collection;
+    return model;
   }
   private excludeFromInfo(name: string): boolean {
     return !name.endsWith("." + this.fileExtension) || name.startsWith("_");

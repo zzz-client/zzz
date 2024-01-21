@@ -13,17 +13,17 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
   fields = {
     Authentication: Authentication,
   };
-  async modify(theModel: Model, action: Action): Promise<void> {
-    if (AuthorizationModule.hasFields(theModel)) {
-      const authConfig = await (await this.app.getStore()).get( //TODO: store.get
-        ModelType.Authorization,
-        (theModel as any).Authorization.Type,
-      ) as any;
-      const injection = this.newAuthorization(authConfig.Type);
-      return await injection.authorize(theModel, authConfig);
+  async modify(model: Model, action: Action): Promise<void> {
+    if (AuthorizationModule.hasFields(model) && model instanceof HttpRequest) {
+      let auth = (model as any).Authorization;
+      if (typeof auth === "string") {
+        auth = await this.app.store.get(Authentication, auth);
+      }
+      const authorizer = this.newAuthorization(auth.Type);
+      return await authorizer.authorize(model, auth);
     }
   }
-  newAuthorization(type: string): IAuthorizer {
+  private newAuthorization(type: string): IAuthorizer {
     switch (type) {
       case "BearerToken":
         return new BearerTokenAuthorizer();

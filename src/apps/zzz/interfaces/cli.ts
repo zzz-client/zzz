@@ -2,12 +2,14 @@ import Application, { FeatureFlags } from "../app.ts";
 import { Action } from "../../../lib/lib.ts";
 import { IModuleModifier } from "../../../lib/module.ts";
 import { Model } from "../../../stores/files/store.ts";
+import { HttpRequest } from "../modules/requests/mod.ts";
 
 export default async function Cli(app: Application): Promise<void> {
   const flagValues = app.argv as FeatureFlags;
-  const action = new Action(flagValues, app.env);
-  const model = {} as Model;
-  (model as any).Body = { foo: "bar" }; // DEBUG
+  // const action = new HttpRequest(flagValues, app.env);
+  const action = new Action({}, {});
+  const model = { Id: "Salesforce Primary/BasicFunctionality" } as Model;
+  // (model as any).Body = { foo: "bar" }; // DEBUG
   for (const module of app.modules) {
     if ("modify" in module) {
       (module as unknown as IModuleModifier).modify(model, action);
