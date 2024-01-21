@@ -5,7 +5,7 @@ import { Action } from "../../../../lib/lib.ts";
 import { Model } from "../../../../storage/mod.ts";
 
 export class RedactModule extends Module implements IModuleModifier {
-  dependencies = [ContextModule, CookiesModule];
+  dependencies = [ContextModule.constructor.name, CookiesModule.constructor.name];
   modify(entity: Model, action: Action): Promise<void> {
     if (!action.feature.all) {
       if ("Variables" in entity) {

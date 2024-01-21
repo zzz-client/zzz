@@ -3,7 +3,7 @@ import { Model, ParentModel } from "../../../../storage/mod.ts";
 import { CollectionChild, RequestsModule } from "../requests/mod.ts";
 
 export class ScopeModule extends Module implements IModuleModels {
-  dependencies = [RequestsModule];
+  dependencies = [RequestsModule.constructor.name];
   models = [Scope];
 }
 export class Scope extends Model implements ParentModel {

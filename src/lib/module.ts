@@ -4,7 +4,7 @@ import { Action } from "./lib.ts";
 
 export abstract class Module {
   app: Application;
-  abstract dependencies: (typeof Module)[];
+  abstract dependencies: string[];
   constructor(app: Application) {
     this.app = app;
   }

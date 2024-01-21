@@ -6,7 +6,7 @@ import { Action } from "../../../../lib/lib.ts";
 import { Model } from "../../../../storage/mod.ts";
 
 export default class TemplateModule extends Module implements IModuleFeatures, IModuleModifier {
-  dependencies = [RequestsModule, ContextModule];
+  dependencies = [RequestsModule.constructor.name, ContextModule.constructor.name];
   features: Feature[] = [
     {
       name: "format",

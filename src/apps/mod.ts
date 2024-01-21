@@ -1,10 +1,11 @@
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { Action, StringToStringMap } from "../lib/lib.ts";
-import { IStorage, Model } from "../storage/mod.ts";
-import { IModuleRenderer, Module } from "../lib/module.ts";
+import { Model } from "../storage/mod.ts";
+import { Module } from "../lib/module.ts";
+import { IStore } from "./zzz/stores/mod.ts";
 
 export default interface IApplication {
-  store: IStorage;
+  store: IStore; // TODO: bad, imports from zzz
   flags: Flags;
   argv?: Args; // TODO: Should not be optional but needs to wait to be loaded until after registerModule has been called
   feature: FeatureMap;

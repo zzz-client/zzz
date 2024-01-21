@@ -4,7 +4,7 @@ import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 import { Model } from "../../../../storage/mod.ts";
 
 export class BodyModule extends Module implements IModuleModifier, IModuleFields {
-  dependencies = [RequestsModule];
+  dependencies = [RequestsModule.constructor.name];
   fields = {
     Body: {
       type: Object, // TODO: Complicated

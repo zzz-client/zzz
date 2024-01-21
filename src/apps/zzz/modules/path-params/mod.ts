@@ -4,7 +4,7 @@ import { Action } from "../../../../lib/lib.ts";
 import { Model } from "../../../../storage/mod.ts";
 
 export class PathParamsModule extends Module implements IModuleFields, IModuleModifier {
-  dependencies = [RequestsModule];
+  dependencies = [RequestsModule.constructor.name];
   fields = {
     PathParams: {
       type: "StringToStringMap",

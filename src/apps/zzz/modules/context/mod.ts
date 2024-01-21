@@ -6,7 +6,7 @@ import { Model } from "../../../../storage/mod.ts";
 
 // TODO: All of ContextModule
 export class ContextModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
-  dependencies: (typeof Module)[] = [RequestsModule, TemplateModule];
+  dependencies: string[] = [RequestsModule.constructor.name, TemplateModule.constructor.name];
   features: Feature[] = [
     {
       name: "all",

@@ -23,8 +23,9 @@ export class RequestsModule extends Module implements IModuleFeatures, IModuleMo
     } as ModuleField,
   };
   async modify(model: Model, action: Action): Promise<void> {
-    console.log("requests module", model, action);
-    const loadedModel = await this.app.store.get(model.Id);
+    const modelType = model.constructor.name;
+    console.log("requests module", modelType, model, action);
+    const loadedModel = await this.app.store.get(modelType.constructor.name, model.Id);
     Meld(model, loadedModel);
     return Promise.resolve();
   }

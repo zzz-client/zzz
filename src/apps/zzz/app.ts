@@ -8,7 +8,7 @@ import FileStore from "./stores/files.ts";
 import { IStore } from "./stores/mod.ts";
 
 export default class Application implements IApplication {
-  store: IStore = new FileStore();
+  store = new FileStore();
   flags = {
     preamble: "Usage: zzz <options>",
     string: ["http", "web"],

@@ -8,7 +8,7 @@ import { Action } from "../../../../lib/lib.ts";
 import { Model } from "../../../../storage/mod.ts";
 
 export class AuthenticationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
-  dependencies = [RequestsModule];
+  dependencies = [RequestsModule.constructor.name];
   models = [Authentication];
   fields = {
     Authentication: Authentication,
@@ -17,7 +17,7 @@ export class AuthenticationModule extends Module implements IModuleModels, IModu
     if (AuthenticationModule.hasFields(model) && model instanceof HttpRequest) {
       let auth = (model as any).Authentication as Authentication;
       if (typeof auth === "string") {
-        auth = await this.app.store.get(Authentication, auth) as Authentication; // TODO Why is this a never????
+        auth = await this.app.store.get(Authentication.constructor.name, auth) as Authentication; // TODO Why is this a never????
       }
       const authType = "BasicAuth"; // TODO: Somehow get root key?
       const authorizer = this.newAuthentication(authType);
