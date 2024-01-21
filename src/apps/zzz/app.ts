@@ -2,7 +2,7 @@ import { IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, IModule
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { Action, StringToStringMap } from "../../lib/lib.ts";
 import { load as loadEnv } from "https://deno.land/std/dotenv/mod.ts";
-import { IStore, Model } from "../../stores/files/store.ts";
+import { IStore, Model } from "../../storage/files/mod.ts";
 import FileStore from "./storage/files.ts";
 
 export type ConfigValue = string | boolean | number;
@@ -62,10 +62,17 @@ export default class Application {
     */
     this.modules.push(module);
   }
-  executeModules(action: Action, model: Model): void {
-    for (const module of this.modules) {
-      (module as unknown as IModuleModifier).modify(model, action);
-    }
+  executeModules(action: Action, model: Model): Promise<void> {
+    const promises = Promise.resolve();
+    this.modules.forEach((module) => {
+      promises.then(() => {
+        if ("modify" in module) {
+          (module as unknown as IModuleModifier).modify(model, action);
+        }
+      });
+    });
+    console.log("executing", this.modules.length, "promises");
+    return promises;
   }
   private loadFlags(module: Module) {
     // TODO: Check dependencies via executedModules

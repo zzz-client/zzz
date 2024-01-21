@@ -23,9 +23,9 @@ export default class FileStore implements IStore {
 
   async isFile(fullId: string): Promise<boolean> {
     try {
-      return (await Deno.stat(fullId)).isFile;
+      return (await Deno.stat("/home/projects/zzz/" + fullId)).isFile;
     } catch (error) {
-      return (await Deno.stat(fullId + "." + this.fileExtension)).isFile;
+      return (await Deno.stat("/home/projects/zzz/" + fullId + "." + this.fileExtension)).isFile;
     }
   }
   async get(fullId: string): Promise<Model> {
@@ -43,7 +43,7 @@ export default class FileStore implements IStore {
   }
   private getFile(fullPath: string): Promise<Model> {
     const fileFormat = getFileFormat(this.fileExtension);
-    return Deno.readTextFile(fullPath + "." + this.fileExtension)
+    return Deno.readTextFile("/home/projects/zzz/" + fullPath + "." + this.fileExtension)
       .then((fileContents) => {
         return fileFormat.parse(fileContents) as Model;
       }).then((result) => {

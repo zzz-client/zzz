@@ -1,5 +1,5 @@
 import { IModuleModifier, Module } from "../../../lib/module.ts";
-import { Model } from "../../../stores/files/store.ts";
+import { Model } from "../../../storage/files/mod.ts";
 import { HttpRequest } from "./requests/mod.ts";
 
 export default class RequiredModule extends Module implements IModuleModifier {

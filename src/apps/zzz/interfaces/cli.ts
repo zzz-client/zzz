@@ -1,7 +1,7 @@
 import Application, { FeatureFlags } from "../app.ts";
 import { Action } from "../../../lib/lib.ts";
 import { IModuleModifier } from "../../../lib/module.ts";
-import { Model } from "../../../stores/files/store.ts";
+import { Model } from "../../../storage/files/mod.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";
 
 export default async function Cli(app: Application): Promise<void> {
@@ -9,12 +9,9 @@ export default async function Cli(app: Application): Promise<void> {
   // const action = new HttpRequest(flagValues, app.env);
   const action = new Action({}, {});
   const model = { Id: "Salesforce Primary/BasicFunctionality" } as Model;
+  await app.executeModules(action, model);
   // (model as any).Body = { foo: "bar" }; // DEBUG
-  for (const module of app.modules) {
-    if ("modify" in module) {
-      (module as unknown as IModuleModifier).modify(model, action);
-    }
-  }
+  console.log("result", model);
   // const context = app.argv.context;
   // let theEntity = await (await app.getStore()).get(ModelType.Entity, arg + "");
   // const isVerbose = true;

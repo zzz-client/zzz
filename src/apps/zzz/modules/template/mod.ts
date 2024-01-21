@@ -3,7 +3,7 @@ import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../../../l
 import { RequestsModule } from "../requests/mod.ts";
 import tim from "./tim.ts";
 import { Action } from "../../../../lib/lib.ts";
-import { Model } from "../../../../stores/files/store.ts";
+import { Model } from "../../../../storage/files/mod.ts";
 
 export default class TemplateModule extends Module implements IModuleFeatures, IModuleModifier {
   dependencies = [RequestsModule, ContextModule];

@@ -1,5 +1,5 @@
 import { IStore, Model, SearchParams } from "../../../stores/files/store.ts";
-import { default as ParentFileStore } from "../../../stores/files/store.ts";
+import FileStorage} from "../../../stores/files/store.ts";
 import { Context } from "../modules/context/mod.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";
 import { Authentication } from "../modules/auth/mod.ts";
@@ -12,7 +12,7 @@ DirectoryMapping.set(Context, "contexts");
 DirectoryMapping.set(Authentication, "auth");
 DirectoryMapping.set(Scope, "requests");
 export default class FileStore {
-  private store: IStore = new ParentFileStore("yml");
+  private store: IStore = new FileStorage("yml");
   get(modelType: typeof Model, id: string): Promise<Model> {
     console.log("model", modelType, "!", id);
     const directory = DirectoryMapping.get(modelType) as string;

@@ -1,7 +1,7 @@
 import { Meld, StringToStringMap } from "../../../../lib/lib.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module, ModuleField } from "../../../../lib/module.ts";
 import { Action } from "../../../../lib/lib.ts";
-import { Model, ParentModel } from "../../../../stores/files/store.ts";
+import { Model, ParentModel } from "../../../../storage/files/mod.ts";
 
 export class RequestsModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [];
@@ -29,7 +29,6 @@ export class RequestsModule extends Module implements IModuleFeatures, IModuleMo
     return Promise.resolve();
   }
 }
-
 export class HttpRequest extends Model {
   URL!: string;
   Method!: HttpMethod;

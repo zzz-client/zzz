@@ -1,6 +1,6 @@
 import { Action } from "../../../../lib/lib.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
-import { Model } from "../../../../stores/files/store.ts";
+import { Model } from "../../../../storage/files/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 
 export class CookiesModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
