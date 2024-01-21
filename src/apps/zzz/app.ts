@@ -2,7 +2,7 @@ import { IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, IModule
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { Action, StringToStringMap } from "../../lib/lib.ts";
 import { load as loadEnv } from "https://deno.land/std/dotenv/mod.ts";
-import { Model } from "../../stores/stores.ts";
+import { Model } from "../../stores/files/store.ts";
 
 export type ConfigValue = string | boolean | number;
 
@@ -12,7 +12,7 @@ type Flags = {
   boolean: string[];
   description: StringToStringMap;
   argument: { [key: string]: string };
-  default: { [key: string]: any };
+  default: { [key: string]: ConfigValue };
   alias: StringToStringMap;
 };
 type FeatureFlagValue = string | boolean | number;

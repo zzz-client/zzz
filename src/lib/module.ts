@@ -1,6 +1,6 @@
-import Action from "./lib.ts";
 import Application from "../apps/zzz/app.ts";
-import { Model } from "./lib.ts";
+import { Model } from "../stores/files/store.ts";
+import { Action } from "./lib.ts";
 
 export abstract class Module {
   app: Application;
@@ -35,14 +35,12 @@ export interface IModuleRenderer {
 export interface IModuleModifier {
   modify(model: Model, action: Action): Promise<void>;
 }
-
 export interface ModuleFields {
   [key: string]: ModuleField;
 }
 export interface ModuleField {
   [key: string]: any;
 }
-
 export type Feature = {
   name: string;
   description: string;

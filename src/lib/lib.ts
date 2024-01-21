@@ -1,7 +1,8 @@
+import { FeatureFlags } from "../apps/zzz/app.ts";
+
 export interface StringToStringMap {
   [key: string]: string;
 }
-
 export class Action {
   feature: FeatureFlags;
   env: StringToStringMap;
@@ -10,7 +11,6 @@ export class Action {
     this.env = env;
   }
 }
-
 export function Meld(destination: any, source: any): void {
   if (!source) {
     return;

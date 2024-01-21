@@ -1,10 +1,11 @@
-import { Model } from "../core/yeet.ts";
-import { IModuleModifier, Module } from "./module.ts";
+import { IModuleModifier, Module } from "../../../lib/module.ts";
+import { Model } from "../../../stores/files/store.ts";
+import { HttpRequest } from "./requests/mod.ts";
 
-export default class RequiredModule implements Module, IModuleModifier {
+export default class RequiredModule extends Module implements IModuleModifier {
   dependencies = [];
   modify(theRequest: Model): Promise<void> {
-    if (theRequest.Type == "Request") {
+    if (theRequest instanceof HttpRequest) {
       checkRequired(theRequest);
     }
     return Promise.resolve();
