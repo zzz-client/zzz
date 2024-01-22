@@ -23,8 +23,10 @@ type FileFormat = {
   parse: (input: string) => any;
   stringify: (input: any) => string;
 };
+export type { FileFormat };
 
-function getContentType(resourcePath: string): string {
+// TODO: search denoland for better
+export function getContentType(resourcePath: string): string {
   const ext = extname(resourcePath).substring(1).toLowerCase();
   switch (ext) {
     case "json":
@@ -42,7 +44,7 @@ function getContentType(resourcePath: string): string {
       throw new Error('No known content type for extension "' + ext + '"');
   }
 }
-function getFileFormat(resourcePath: string): FileFormat {
+export function getFileFormat(resourcePath: string): FileFormat {
   let ext = resourcePath.toLowerCase();
   if (resourcePath.includes(".")) {
     ext = extname(resourcePath).substring(1);
@@ -68,6 +70,3 @@ function getFileFormat(resourcePath: string): FileFormat {
       throw new Error('No known parser for extension "' + ext + '"');
   }
 }
-
-export { getContentType, getFileFormat };
-export type { FileFormat };

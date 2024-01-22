@@ -4,10 +4,10 @@ export interface StringToStringMap {
   [key: string]: string;
 }
 export class Action {
-  feature: FeatureFlags;
+  features: FeatureFlags;
   env: StringToStringMap;
-  constructor(feature: FeatureFlags, env: StringToStringMap) {
-    this.feature = feature;
+  constructor(features: FeatureFlags, env: StringToStringMap) {
+    this.features = features;
     this.env = env;
   }
 }

@@ -17,7 +17,7 @@ export default class TemplateModule extends Module implements IModuleFeatures, I
   ];
   modify(model: Model, action: Action): Promise<void> {
     if (
-      action.feature.format &&
+      action.features.format &&
       ContextModule.hasFields(model)
     ) {
       tim(model, (model as any).Variables);

@@ -12,7 +12,7 @@ export class CookiesModule extends Module implements IModuleModels, IModuleField
     },
   };
   async modify(model: Model, action: Action): Promise<void> {
-    if (action.feature["no-cookies"] && model instanceof HttpRequest) {
+    if (action.features["no-cookies"] && model instanceof HttpRequest) {
       await this.loadCookies(model);
     }
   }

@@ -24,7 +24,7 @@ export default class Application implements IApplication {
     alias: {} as StringToStringMap,
   } as Flags;
   argv?: Args; // TODO: Should not be optional but needs to wait to be loaded until after registerModule has been called
-  feature = {} as FeatureMap;
+  features = {} as FeatureMap;
   env = {} as StringToStringMap;
   loadedModules = [] as Module[];
   modules = [] as Module[];

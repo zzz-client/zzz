@@ -1,3 +1,5 @@
+import { IStore } from "../apps/zzz/stores/mod.ts";
+
 export class Model {
   Id!: string;
   Name!: string;

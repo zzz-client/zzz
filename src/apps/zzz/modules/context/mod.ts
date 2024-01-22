@@ -1,16 +1,16 @@
-import { Action, Meld, StringToStringMap } from "../../../../lib/lib.ts";
+import { Action, StringToStringMap } from "../../../../lib/lib.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { RequestsModule } from "../requests/mod.ts";
 import TemplateModule from "../template/mod.ts";
-import { GLOBALS_CONTEXT, ILoader, Loader, SESSION_CONTEXT } from "./loader.ts";
+import Loader, { Apply, GLOBALS_CONTEXT, ILoader, SESSION_CONTEXT } from "./loader.ts";
 
 export class ContextModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
   dependencies: string[] = [RequestsModule.constructor.name, TemplateModule.constructor.name];
   features: Feature[] = [
     {
       name: "all",
-      alias: "a",
+      // alias: "a", // TODO: Uncomment for compiling because otherwise `deno run -A` will always be included in this
       description: "Display resolved data for the current context",
       type: "boolean",
     },
@@ -37,28 +37,29 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
       variables: "StringToStringMap",
     },
   };
-  modify(theModel: Model, action: Action): Promise<void> {
-    // TODO:
-    const context = action.feature.context as string;
-    if (this.app.feature.all || this.app.feature.format || this.app.feature.execute) {
-      return this.load(theModel.Id, context).then((models) => {
-        for (const model in models) {
-          Meld(theModel, model);
+  modify(subjectModel: Model, action: Action): Promise<void> {
+    const context = action.features.context as string;
+    if (action.features.all || action.features.format || action.features.execute) {
+      return this.load(subjectModel.Id, context).then(async (loadedModels) => {
+        for (const loadedModel in loadedModels) {
+          await this.loader.defaults(subjectModel.Id, this.app.store).then((defaults) => {
+            Apply(loadedModel, defaults);
+          });
         }
       });
     }
     return Promise.resolve();
   }
+  private loader = new Loader() as ILoader;
 
   private load(modelId: string, contextName: string): Promise<Model[]> {
-    const loader = new Loader() as ILoader;
     return Promise.all([
-      loader.globals(this.app.store),
-      loader.local(GLOBALS_CONTEXT, this.app.store),
-      loader.context(contextName, this.app.store),
-      loader.local(contextName, this.app.store),
-      loader.defaults(modelId, this.app.store), // TODO: is this right or does it need to be the model's parent's id?
-      loader.local(SESSION_CONTEXT, this.app.store),
+      this.loader.globals(this.app.store),
+      this.loader.local(GLOBALS_CONTEXT, this.app.store),
+      this.loader.context(contextName, this.app.store),
+      this.loader.local(contextName, this.app.store),
+      this.loader.defaults(modelId, this.app.store), // TODO: is this right or does it need to be the model's parent's id?
+      this.loader.local(SESSION_CONTEXT, this.app.store),
     ]);
   }
 }
