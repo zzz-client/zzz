@@ -13,21 +13,19 @@ export class RequestsModule extends Module implements IModuleFeatures, IModuleMo
       alias: "x",
     },
   ];
-  models: (typeof Model)[] = [HttpRequest, Collection];
+  models: string[] = [HttpRequest.constructor.name, Collection.constructor.name];
   fields = {
     HttpRequest: {
-      url: "string",
-      // method: HttpMethod, // TODO: why undefined
-      // headers: StringToStringMap, // TODO: why undefined
+      ...HttpRequest,
       description: "Params to be replaced in the URL",
     } as ModuleField,
   };
-  async modify(model: Model, action: Action): Promise<void> {
-    const modelType = model.constructor.name;
-    console.log("requests module", modelType, model, action);
-    const loadedModel = await this.app.store.get(modelType.constructor.name, model.Id);
-    Meld(model, loadedModel);
-    return Promise.resolve();
+  modify(model: Model, action: Action): Promise<void> {
+    return this.app.store.get(model.constructor.name, model.Id)
+      .then((loadedModel) => {
+        Meld(model, loadedModel);
+        return Promise.resolve();
+      });
   }
 }
 export class HttpRequest extends Model {

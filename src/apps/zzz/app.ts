@@ -48,15 +48,15 @@ export default class Application implements IApplication {
     this.modules.push(module);
   }
   executeModules(action: Action, model: Model): Promise<void> {
-    const promises = Promise.resolve();
+    let promises = Promise.resolve();
     this.modules.forEach((module) => {
-      promises.then(() => {
+      promises = promises.then(() => {
         if ("modify" in module) {
-          (module as unknown as IModuleModifier).modify(model, action);
+          return (module as unknown as IModuleModifier).modify(model, action);
         }
+        return Promise.resolve();
       });
     });
-    console.log("executing", this.modules.length, "promises");
     return promises;
   }
   private loadFlags(module: Module) {

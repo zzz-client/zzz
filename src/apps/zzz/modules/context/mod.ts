@@ -22,7 +22,7 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
       argument: "context",
     },
   ];
-  models = [Context]; // TODO: What
+  models = [Context.constructor.name]; // TODO: What
   fields = {
     Request: {
       variables: "StringToStringMap",

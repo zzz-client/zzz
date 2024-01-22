@@ -9,7 +9,7 @@ import { Model } from "../../../../storage/mod.ts";
 
 export class AuthenticationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [RequestsModule.constructor.name];
-  models = [Authentication];
+  models = [Authentication.constructor.name];
   fields = {
     Authentication: Authentication,
   };

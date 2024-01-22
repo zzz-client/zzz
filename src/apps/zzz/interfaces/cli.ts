@@ -1,13 +1,14 @@
 import { Action } from "../../../lib/lib.ts";
-import { Model } from "../../../storage/mod.ts";
 import { FeatureFlags } from "../../mod.ts";
 import Application from "../app.ts";
+import { HttpRequest } from "../modules/requests/mod.ts";
 
 export default async function Cli(app: Application): Promise<void> {
   const flagValues = app.argv as FeatureFlags;
   // const action = new HttpRequest(flagValues, app.env);
   const action = new Action({}, {});
-  const model = { Id: "Salesforce Primary/BasicFunctionality" } as Model;
+  const model = new HttpRequest();
+  model.Id = "Salesforce Primary/BasicFunctionality";
   await app.executeModules(action, model);
   // (model as any).Body = { foo: "bar" }; // DEBUG
   console.log("result", model);
