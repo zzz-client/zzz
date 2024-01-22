@@ -1,7 +1,7 @@
 import { Action, Meld, StringToStringMap } from "../../../../lib/lib.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
-import { Model, ParentModel } from "../../../../storage/mod.ts";
-import { HttpRequest, RequestsModule } from "../requests/mod.ts";
+import { Model } from "../../../../storage/mod.ts";
+import { RequestsModule } from "../requests/mod.ts";
 import TemplateModule from "../template/mod.ts";
 import { GLOBALS_CONTEXT, ILoader, Loader, SESSION_CONTEXT } from "./loader.ts";
 

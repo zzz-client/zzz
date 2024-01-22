@@ -33,30 +33,37 @@ export class Loader implements ILoader {
       return Promise.resolve(BLANK_ENTITY);
     }
   }
-  async defaults(collectionPath: string, store: IStore): Promise<Context> { // TODO: Bad, file-related
-    const theRequest = new Context();
-    const fileExtension = "JSON"; // TODO: Hardcoded
-    const parser = await getDriver(fileExtension.toUpperCase());
-    const defaultFilePaths = getDefaultFilePaths(collectionPath, fileExtension);
-    for (const defaultFilePath of defaultFilePaths) {
-      if (existsSync(defaultFilePath)) {
-        const fileContents = parser.parse(Deno.readTextFileSync(defaultFilePath));
-        this.checkForbidden(fileContents);
-        Meld(theRequest, fileContents);
-      }
-    }
-    return theRequest;
+  defaults(collectionPath: string, store: IStore): Promise<Context> {
+    return getDefaults(collectionPath, store);
   }
   private NO_DEFAULT_ALLOWED = ["Method", "URL", "QueryParams", "Body"];
-  private checkForbidden(modelContents: any): void {
-    for (const key of this.NO_DEFAULT_ALLOWED) {
-      if (modelContents[key]) {
-        throw new Error(`Forbidden key ${key}`);
-      }
+}
+function checkForbidden(modelContents: any): void {
+  for (const key of this.NO_DEFAULT_ALLOWED) {
+    if (modelContents[key]) {
+      throw new Error(`Forbidden key ${key}`);
     }
   }
 }
+
+//
 // TODO: Bad, file-related
+//
+
+async function getDefaults(collectionPath: string, store: IStore): Promise<Context> {
+  const context = new Context();
+  const fileExtension = "JSON";
+  const parser = await getDriver(fileExtension.toUpperCase());
+  const defaultFilePaths = getDefaultFilePaths(collectionPath, fileExtension);
+  for (const defaultFilePath of defaultFilePaths) {
+    if (existsSync(defaultFilePath)) {
+      const fileContents = parser.parse(Deno.readTextFileSync(defaultFilePath));
+      checkForbidden(fileContents);
+      Meld(context, fileContents);
+    }
+  }
+  return Promise.resolve(context);
+}
 function getDefaultFilePaths(requestFilePath: string, fileExtension: string): string[] {
   const defaultFilePaths = [];
   let currentDirectory = dirname(requestFilePath);
