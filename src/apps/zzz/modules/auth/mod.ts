@@ -18,7 +18,6 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
   async modify(model: Model, action: Action): Promise<void> {
     if (AuthorizationModule.hasFields(model) && model instanceof HttpRequest) {
       let auth = (model as any).Authorization;
-      console.log("!", auth, model);
       if (auth === undefined) {
         return;
       }
