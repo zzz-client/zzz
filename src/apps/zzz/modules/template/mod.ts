@@ -20,7 +20,11 @@ export default class TemplateModule extends Module implements IModuleFeatures, I
       action.features.format &&
       ContextModule.hasFields(model)
     ) {
-      tim(model, (model as any).Variables);
+      try {
+        tim(model, (model as any).Variables);
+      } catch (error) {
+        console.warn("Missing tag but we will let it slide for now", "(" + error.message + ")");
+      }
     }
     return Promise.resolve();
   }
