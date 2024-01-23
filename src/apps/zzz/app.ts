@@ -6,22 +6,26 @@ import { Model } from "../../storage/mod.ts";
 import IApplication, { ConfigValue, FeatureMap, Flags } from "../mod.ts";
 import FileStore from "./stores/files.ts";
 
+const STANDARD_FLAGS = {
+  string: ["http", "web"],
+  boolean: [] as string[],
+  description: {
+    http: "Start HTTP server",
+    web: "Start web UI server",
+  } as StringToStringMap,
+  argument: {
+    http: "port",
+    web: "port",
+  } as StringToStringMap,
+  default: {} as { [key: string]: ConfigValue },
+  alias: {} as StringToStringMap,
+};
+
 export default class Application implements IApplication {
   store = new FileStore();
   flags = {
     preamble: "Usage: zzz <options>",
-    string: ["http", "web"],
-    boolean: [] as string[],
-    description: {
-      http: "Start HTTP server",
-      web: "Start web UI server",
-    } as StringToStringMap,
-    argument: {
-      http: "port",
-      web: "port",
-    } as StringToStringMap,
-    default: {} as { [key: string]: ConfigValue },
-    alias: {} as StringToStringMap,
+    ...STANDARD_FLAGS,
   } as Flags;
   argv?: Args; // TODO: Should not be optional but needs to wait to be loaded until after registerModule has been called
   features = {} as FeatureMap;
