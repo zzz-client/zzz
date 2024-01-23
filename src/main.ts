@@ -23,7 +23,7 @@ export default function main(): Promise<void> {
     app.registerModule(new AuthorizationModule(app));
     app.registerModule(new TemplateModule(app));
     // app.registerModule(new CookiesModule(app));
-    // app.registerModule(new RedactModule(app));
+    app.registerModule(new RedactModule(app));
     app.argv = processFlags(Deno.args, app.flags);
     //     await Promise.all([
     //       httpPromise(app),
