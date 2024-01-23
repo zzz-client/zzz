@@ -4,7 +4,7 @@ import { AuthContents, IAuthorizer } from "./mod.ts";
 
 export class BasicAuthAuthorizer implements IAuthorizer {
   authorize(theRequest: HttpRequest, data: BasicAuth): void {
-    theRequest.Headers["Authentication"] = "Basic " + encode64(data.Username + data.Password);
+    theRequest.Headers["Authorization"] = "Basic " + encode64(data.Username + data.Password);
   }
 }
 export type BasicAuth = AuthContents & {

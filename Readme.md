@@ -10,7 +10,7 @@ Zzz came out of the desire for a light replacement to Postman with generally the
   - Method
   - URL
   - Query params
-  - Authentication
+  - Authorization
   - Headers
   - Body
 - Environments and Globals (aka Scopes)
@@ -24,10 +24,10 @@ Zzz came out of the desire for a light replacement to Postman with generally the
   - Disable cookie jar
   - Follow redirects (3xx)
   - Follow original HTTP method (instead of redirecting to GET)
-  - Follow Authentication Header
+  - Follow Authorization Header
   - Remove referrer header on redirect
   - Enable strict HTTP parser???
-  - Encode URL automatically (path, query parameters, authentication fields)
+  - Encode URL automatically (path, query parameters, authorization fields)
   - Maximum number of redirects
 
 
@@ -84,7 +84,7 @@ Outside of the sense of a workspace of requests, for the file storage driver, a 
 ```yaml
 Method: POST
 URL: "{{baseUrl}}{{auth_path}}token"
-Authentication:
+Authorization:
   BasicAuth: 32tersgvzfwt45g54=
 QueryParams:
   grant_type: client_credentials
@@ -103,7 +103,7 @@ Variables:
 
 ![Zzz REST API](./screenshots/api.png)
 
-This is itself an API that serves up the Zzz resources so that they can be used for other applications, like the web frontend. It is a basic REST API that maps URLs one-to-one with Requests; in other words, the path to retrieve the Request from the Store is the contents of the URL to get it from the server. The Request named "OAuth Client Credentials" in the folder "Authentication" would translate to the URL http://127.0.0.1:8000/Authentication/OAuth%20Client%20Credentials
+This is itself an API that serves up the Zzz resources so that they can be used for other applications, like the web frontend. It is a basic REST API that maps URLs one-to-one with Requests; in other words, the path to retrieve the Request from the Store is the contents of the URL to get it from the server. The Request named "OAuth Client Credentials" in the folder "Authorization" would translate to the URL http://127.0.0.1:8000/Authorization/OAuth%20Client%20Credentials
 
 This API can behave in one of two ways:
 
@@ -184,7 +184,7 @@ Represents both Collections and Folders
 Id: string
 Name: string
 WorkspaceOrCollectionId: id
-AuthenticationId?: id
+AuthorizationId?: id
 Defaults?:
   key: value
 ```
@@ -218,11 +218,11 @@ Defaults?:
   key: value
 ```
 
-### Authentication
+### Authorization
 
-> Note: This Model is supplied by the Authentication module
+> Note: This Model is supplied by the Authorization module
 
-An Authentication can be a part of a Workspace, a Collection, or a File, but it can also be defined on its own so that it can be referenced by multiple entities.
+An Authorization can be a part of a Workspace, a Collection, or a File, but it can also be defined on its own so that it can be referenced by multiple entities.
 
 ```yml
 BasicAuth:
@@ -278,35 +278,35 @@ Maybe if it starts with `@`? or use two different ones, `Body` and `BodyFile`? t
 Body: filepath ???
 ```
 
-### Authentication
+### Authorization
 
-The Authentication module allows reuse of Authentications so that Models can refer to them by name.
+The Authorization module allows reuse of Authorizations so that Models can refer to them by name.
 
-Example Entity using a manual Authentication:
+Example Entity using a manual Authorization:
 
 ```yml
 Url: /
 Method: GET
-Authentication:
+Authorization:
   BasicAuth:
     Username: foo
     Password: bar
 ```
 
-The Authentication Module can be used to extract this to an Authentication Model record.
+The Authorization Module can be used to extract this to an Authorization Model record.
 
-Example `foobar` Authentication:
+Example `foobar` Authorization:
 ```yml
 BasicAuth:
   Username: foo
   Password: bar
 ```
 
-Previous example using the Authentication module:
+Previous example using the Authorization module:
 ```yml
 Url: /
 Method: GET
-Authentication: foobar
+Authorization: foobar
 ```
 
 ### Variables
@@ -332,13 +332,13 @@ For example, supposed you had the following:
 - `v1/Foo/defaults.yml`
 - `v1/Foo/Bar.yml`
 
-When making the `Authentication/Token` request, it will find and apply these files in this order:
+When making the `Authorization/Token` request, it will find and apply these files in this order:
 
 - `v1/defaults.yml`
 - `v1/Auth/defaults.yml`
 - `v1/Auth/Token.yml`
 
-This allows `v1/Foo/defaults.yml` to use an `Authentication` like BearerToken whereas `v1/Auth/Token.yml` needs to _not_ have any Authentication specified. We can do this by using `v1/Auth/defaults.yml` to unset `Authentication`.
+This allows `v1/Foo/defaults.yml` to use an `Authorization` like BearerToken whereas `v1/Auth/Token.yml` needs to _not_ have any Authorization specified. We can do this by using `v1/Auth/defaults.yml` to unset `Authorization`.
 
 
 # Interfaces
@@ -350,8 +350,8 @@ This allows `v1/Foo/defaults.yml` to use an `Authentication` like BearerToken wh
     - Get Entity
     - Get Collection (returns Collections/Entities)
     - Get Contexts (Globals is just a special context. maybe I should rename it to "All"?)
-    - Get Authentications
-    - Get Authentication
+    - Get Authorizations
+    - Get Authorization
 4. Format
 5. Act (execute) - perform request as passthrough
 
@@ -383,7 +383,7 @@ This allows `v1/Foo/defaults.yml` to use an `Authentication` like BearerToken wh
     - Entity
     - Collection
     - Context
-    - Authentication
+    - Authorization
 3. Format = Show Variables
 4. Act on Entity = Send
 
@@ -440,7 +440,7 @@ TODO
     - Readline: [tui](https://deno.land/x/tui@2.1.7)
   - Notable Features:
     - Hooks (JS) TODO
-    - Modules (e.g. Authentication, Body)
+    - Modules (e.g. Authorization, Body)
   - Storage:
     - YAML
     - JSON

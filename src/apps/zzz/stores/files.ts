@@ -4,7 +4,7 @@ import FileStorage from "../../../storage/files/mod.ts";
 import { IStore } from "./mod.ts";
 import { Context } from "../modules/context/mod.ts";
 import { Collection, HttpRequest } from "../modules/requests/mod.ts";
-import { Authentication } from "../modules/auth/mod.ts";
+import { Authorization } from "../modules/auth/mod.ts";
 import { Scope } from "../modules/scope/mod.ts";
 
 const SESSION_FILE = "session.local";
@@ -13,7 +13,7 @@ DirectoryMapping.set(HttpRequest.name, "requests");
 DirectoryMapping.set(Scope.name, "requests");
 DirectoryMapping.set(Collection.name, "requests");
 DirectoryMapping.set(Context.name, "contexts");
-DirectoryMapping.set(Authentication.name, "authentications");
+DirectoryMapping.set(Authorization.name, "auth");
 
 export default class FileStore implements IStore {
   private storage: IStorage = new FileStorage("yml");

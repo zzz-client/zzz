@@ -7,26 +7,36 @@ import { QueryAuthorizer } from "./query.ts";
 import { Action } from "../../../../lib/lib.ts";
 import { Model } from "../../../../storage/mod.ts";
 
-export class AuthenticationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
+export class AuthorizationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [RequestsModule.constructor.name];
-  models = [Authentication.constructor.name];
+  models = [Authorization.constructor.name];
   fields = {
-    Authentication: Authentication,
+    Authorization: Authorization,
   };
   async modify(model: Model, action: Action): Promise<void> {
-    if (AuthenticationModule.hasFields(model) && model instanceof HttpRequest) {
-      let auth = (model as any).Authentication as Authentication;
-      if (typeof auth === "string") {
-        auth = await this.app.store.get(Authentication.name, auth) as Authentication; // TODO Why is this a never????
+    if (AuthorizationModule.hasFields(model) && model instanceof HttpRequest) {
+      let auth = (model as any).Authorization;
+      console.log("!", auth, model);
+      if (auth === undefined) {
+        return;
       }
-      (model as any).Authentication = auth;
-      const authType = "BearerToken"; // TODO: Somehow get root key?
-      auth = auth[authType] as Authentication;
-      const authorizer = this.newAuthentication(authType);
-      return await authorizer.authorize(model, auth);
+      if (typeof auth === "string") {
+        auth = await this.app.store.get(Authorization.name, auth) as Authorization; // TODO Why is this a never????
+      }
+      // if (action.features.all) {
+      (model as any).Authorization = auth;
+      // }
+      if (action.features.all || action.features.execute) {
+        const authType = "BearerToken"; // TODO: Somehow get root key?
+        console.log(auth);
+        auth = auth[authType] as Authorization;
+        const authorizer = this.newAuthorization(authType);
+        return authorizer.authorize(model, auth);
+      }
+      return Promise.resolve();
     }
   }
-  private newAuthentication(type: string): IAuthorizer {
+  private newAuthorization(type: string): IAuthorizer {
     switch (type) {
       case "BearerToken":
         return new BearerTokenAuthorizer();
@@ -37,7 +47,7 @@ export class AuthenticationModule extends Module implements IModuleModels, IModu
       case "Query":
         return new QueryAuthorizer();
       default:
-        throw new Error(`Unknown authentication type: $type`);
+        throw new Error(`Unknown Authorization type: $type`);
     }
   }
 }
@@ -46,6 +56,6 @@ export interface IAuthorizer {
 }
 export type AuthContents = {};
 
-export class Authentication extends Model {
-  [key: string]: AuthContents | Authentication;
+export class Authorization extends Model {
+  [key: string]: AuthContents | Authorization;
 }
