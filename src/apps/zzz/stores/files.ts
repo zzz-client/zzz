@@ -1,3 +1,4 @@
+import { basename } from "https://deno.land/std/path/mod.ts";
 import { IStorage, Model, SearchParams } from "../../../storage/mod.ts";
 import FileStorage from "../../../storage/files/mod.ts";
 import { IStore } from "./mod.ts";
@@ -16,14 +17,19 @@ DirectoryMapping.set(Authentication.name, "auth");
 
 export default class FileStore implements IStore {
   private storage: IStorage = new FileStorage("yml");
-  get(modelType: string, id: string): Promise<Model> {
+  async get(modelType: string, id: string): Promise<Model> {
     const directory = this.getDirectoryForModelType(modelType);
     if (modelType == Collection.constructor.name) {
       console.log("Bro what", modelType);
       throw new Error("Bro what");
       // ???
     }
-    return this.storage.get(directory + "/" + id);
+    const result = await this.storage.get(directory + "/" + id);
+    result.Id = id;
+    if (!result.Name) {
+      result.Name = basename(id);
+    }
+    return result;
   }
   set(model: Model): Promise<void> {
     const directory = this.getDirectoryForModelType(model.constructor.name);

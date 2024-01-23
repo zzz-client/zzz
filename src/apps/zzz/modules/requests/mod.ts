@@ -15,10 +15,7 @@ export class RequestsModule extends Module implements IModuleFeatures, IModuleMo
   ];
   models: string[] = [HttpRequest.constructor.name, Collection.constructor.name];
   fields = {
-    HttpRequest: {
-      ...HttpRequest,
-      description: "Params to be replaced in the URL",
-    } as ModuleField,
+    HttpRequest: HttpRequest,
   };
   modify(model: Model, action: Action): Promise<void> {
     return this.app.store.get(model.constructor.name, model.Id)

@@ -1,11 +1,14 @@
 import { basename, extname } from "https://deno.land/std/path/mod.ts";
+import { resolve } from "https://deno.land/std/path/resolve.ts";
 import { IStorage, Model, ParentModel, SearchParams } from "../mod.ts";
+
 import { FileFormat, getFileFormat } from "./formats.ts";
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import { Meld } from "../../lib/lib.ts";
 const DEFAULT_MARKER = "_defaults";
 
 export default class FileStorage implements IStorage {
+  // private WORKING_DIR = resolve(Deno.cwd() + "/..");
   private WORKING_DIR = "..";
   fileExtension: string;
   constructor(fileExtension: string) {
@@ -19,7 +22,8 @@ export default class FileStorage implements IStorage {
     }
   }
   set(fullId: string, model: Model): Promise<void> {
-    return Deno.writeTextFile(fullId + "." + this.fileExtension, this.driver().stringify(model));
+    // TODO set
+    throw new Error("Not implemented");
   }
   search(_searchParams: SearchParams): Promise<Model[]> {
     // TODO search
@@ -30,7 +34,6 @@ export default class FileStorage implements IStorage {
     try {
       return (await Deno.stat(this.WORKING_DIR + "/" + fullId)).isFile;
     } catch (error) {
-      console.log("Stating file", fullId + "." + this.fileExtension);
       return (await Deno.stat(this.WORKING_DIR + "/" + fullId + "." + this.fileExtension)).isFile;
     }
   }
@@ -40,10 +43,6 @@ export default class FileStorage implements IStorage {
       .then((fileContents) => {
         return fileFormat.parse(fileContents) as Model;
       }).then((result) => {
-        result.Id = fullPath;
-        if (!result.Name) {
-          result.Name = basename(fullPath);
-        }
         return result;
       });
   }

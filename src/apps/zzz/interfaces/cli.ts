@@ -5,9 +5,7 @@ import { HttpRequest } from "../modules/requests/mod.ts";
 
 export default async function Cli(app: Application): Promise<void> {
   const flagValues = app.argv as FeatureFlags;
-  console.log("flagValues", flagValues);
   const action = new Action(flagValues, app.env);
-  console.log("Action features", action.features);
   const model = new HttpRequest();
   model.Id = "Salesforce Primary/BasicFunctionality";
   await app.executeModules(action, model);
