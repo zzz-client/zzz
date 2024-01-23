@@ -45,7 +45,6 @@ export default class FileStorage implements IStorage {
       });
   }
   private async getFolder(fullPath: string): Promise<ParentModel> {
-    console.log("getFolder", fullPath);
     const model = { Id: fullPath, Name: basename(fullPath), Children: [] as Model[] } as ParentModel;
     for await (const child of Deno.readDir(this.adjustPath(fullPath))) {
       if (child.isDirectory) {
