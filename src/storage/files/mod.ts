@@ -1,7 +1,7 @@
 import { basename, extname } from "https://deno.land/std/path/mod.ts";
 import { IStorage, Model, ParentModel, SearchParams } from "../mod.ts";
 
-import { FileFormat, getFileFormat } from "./formats.ts";
+import { getFileFormat } from "./formats.ts";
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import { Meld } from "../../lib/lib.ts";
 const DEFAULT_MARKER = "_defaults";

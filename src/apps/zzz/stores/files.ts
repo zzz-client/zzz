@@ -6,6 +6,7 @@ import { Context } from "../modules/context/mod.ts";
 import { Collection, HttpRequest } from "../modules/requests/mod.ts";
 import { Authorization } from "../modules/auth/mod.ts";
 import { Scope } from "../modules/scope/mod.ts";
+import { Cookies } from "../modules/cookies/mod.ts";
 
 const SESSION_FILE = "session.local";
 const DirectoryMapping = new Map<string, string>();
@@ -14,6 +15,7 @@ DirectoryMapping.set(Scope.name, "requests");
 DirectoryMapping.set(Collection.name, "requests");
 DirectoryMapping.set(Context.name, "contexts");
 DirectoryMapping.set(Authorization.name, "auth");
+DirectoryMapping.set(Cookies.name, "cookies");
 
 export default class FileStore implements IStore {
   private storage: IStorage = new FileStorage("yml");
