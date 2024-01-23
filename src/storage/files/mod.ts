@@ -1,5 +1,4 @@
 import { basename, extname } from "https://deno.land/std/path/mod.ts";
-import { resolve } from "https://deno.land/std/path/resolve.ts";
 import { IStorage, Model, ParentModel, SearchParams } from "../mod.ts";
 
 import { FileFormat, getFileFormat } from "./formats.ts";
@@ -51,14 +50,12 @@ export default class FileStorage implements IStorage {
     for await (const child of Deno.readDir(this.WORKING_DIR + "/" + fullPath)) {
       if (child.isDirectory) {
         const x = await this.getFolder(`${fullPath}/${child.name}`);
-        console.log("WHAT", x);
         model.Children.push(x);
       } else if (child.isFile && this.isFileToInclude(child.name)) {
         const baseless = basename(child.name, extname(child.name));
         model.Children.push(await this.getFile(`${fullPath}/${baseless}`));
       }
     }
-    console.log("Children", model.Children);
     if (existsSync("./" + fullPath + "/" + DEFAULT_MARKER)) {
       const defaults = await this.getFile(fullPath + "/" + DEFAULT_MARKER);
       Meld(model, defaults);

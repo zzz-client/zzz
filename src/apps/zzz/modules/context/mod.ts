@@ -40,11 +40,9 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
   modify(subjectModel: Model, action: Action): Promise<void> {
     const context = action.features.context as string;
     if (action.features.all || action.features.format || action.features.execute) {
-      return this.load(subjectModel.Id, context).then(async (loadedModels) => {
-        for (const loadedModel in loadedModels) {
-          await this.loader.defaults(subjectModel.Id, this.app.store).then((defaults) => {
-            Apply(loadedModel, defaults);
-          });
+      return this.load(subjectModel.Id, context).then(async (loadedDefaults) => {
+        for (const defaults of loadedDefaults) {
+          Apply(subjectModel, defaults);
         }
       });
     }
@@ -57,9 +55,9 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
       this.loader.globals(this.app.store),
       this.loader.local(GLOBALS_CONTEXT, this.app.store),
       this.loader.context(contextName, this.app.store),
-      this.loader.local(contextName, this.app.store),
-      this.loader.defaults(modelId, this.app.store), // TODO: is this right or does it need to be the model's parent's id?
-      this.loader.local(SESSION_CONTEXT, this.app.store),
+      // this.loader.local(contextName, this.app.store),
+      // this.loader.defaults(modelId, this.app.store), // TODO: is this right or does it need to be the model's parent's id?
+      // this.loader.local(SESSION_CONTEXT, this.app.store),
     ]);
   }
 }
