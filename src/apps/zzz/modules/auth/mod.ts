@@ -17,9 +17,11 @@ export class AuthenticationModule extends Module implements IModuleModels, IModu
     if (AuthenticationModule.hasFields(model) && model instanceof HttpRequest) {
       let auth = (model as any).Authentication as Authentication;
       if (typeof auth === "string") {
-        auth = await this.app.store.get(Authentication.constructor.name, auth) as Authentication; // TODO Why is this a never????
+        auth = await this.app.store.get(Authentication.name, auth) as Authentication; // TODO Why is this a never????
       }
-      const authType = "BasicAuth"; // TODO: Somehow get root key?
+      (model as any).Authentication = auth;
+      const authType = "BearerToken"; // TODO: Somehow get root key?
+      auth = auth[authType] as Authentication;
       const authorizer = this.newAuthentication(authType);
       return await authorizer.authorize(model, auth);
     }
@@ -40,10 +42,10 @@ export class AuthenticationModule extends Module implements IModuleModels, IModu
   }
 }
 export interface IAuthorizer {
-  authorize(model: HttpRequest, data: AuthContents): void;
+  authorize(model: Model, data: AuthContents): void;
 }
 export type AuthContents = {};
 
 export class Authentication extends Model {
-  [key: string]: AuthContents;
+  [key: string]: AuthContents | Authentication;
 }

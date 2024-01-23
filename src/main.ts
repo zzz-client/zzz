@@ -16,7 +16,7 @@ export default function main(): Promise<void> {
   const app = new Application();
   try {
     app.registerModule(new RequestsModule(app));
-    // app.registerModule(new AuthenticationModule(app));
+    app.registerModule(new AuthenticationModule(app));
     app.registerModule(new BodyModule(app));
     app.registerModule(new PathParamsModule(app));
     app.registerModule(new ScopeModule(app));

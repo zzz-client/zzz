@@ -13,7 +13,7 @@ DirectoryMapping.set(HttpRequest.name, "requests");
 DirectoryMapping.set(Scope.name, "requests");
 DirectoryMapping.set(Collection.name, "requests");
 DirectoryMapping.set(Context.name, "contexts");
-DirectoryMapping.set(Authentication.name, "auth");
+DirectoryMapping.set(Authentication.name, "authentications");
 
 export default class FileStore implements IStore {
   private storage: IStorage = new FileStorage("yml");
