@@ -20,8 +20,8 @@ export default function main(): Promise<void> {
     app.registerModule(new BodyModule(app));
     app.registerModule(new PathParamsModule(app));
     app.registerModule(new ScopeModule(app));
-    app.registerModule(new TemplateModule(app));
     app.registerModule(new ContextModule(app));
+    app.registerModule(new TemplateModule(app));
     // app.registerModule(new CookiesModule(app));
     // app.registerModule(new RedactModule(app));
     app.argv = processFlags(Deno.args, app.flags);
