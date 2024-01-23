@@ -26,7 +26,7 @@ export default class FileStore implements IStore {
     }
     const result = await this.storage.get(directory + "/" + id);
     result.Id = id;
-    if (!result.Name) {
+    if (!result.Name) { // TODO: Why is this not working when --all is passed
       result.Name = basename(id);
     }
     return result;

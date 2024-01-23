@@ -42,7 +42,6 @@ export async function Apply(subject: any, defaults: any): Promise<void> {
         await Apply(subject[key], defaults[key]);
       }
     } else {
-      subject.Name = "foobar";
       subject[key] = defaults[key];
     }
   }

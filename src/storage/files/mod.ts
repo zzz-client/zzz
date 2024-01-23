@@ -7,7 +7,6 @@ import { Meld } from "../../lib/lib.ts";
 const DEFAULT_MARKER = "_defaults";
 
 export default class FileStorage implements IStorage {
-  // private WORKING_DIR = resolve(Deno.cwd() + "/..");
   private WORKING_DIR = "..";
   fileExtension: string;
   constructor(fileExtension: string) {
@@ -31,14 +30,14 @@ export default class FileStorage implements IStorage {
 
   private async isFile(fullId: string): Promise<boolean> {
     try {
-      return (await Deno.stat(this.WORKING_DIR + "/" + fullId)).isFile;
+      return (await Deno.stat(this.adjustPath(fullId))).isFile;
     } catch (error) {
-      return (await Deno.stat(this.WORKING_DIR + "/" + fullId + "." + this.fileExtension)).isFile;
+      return (await Deno.stat(this.adjustPath(fullId, true))).isFile;
     }
   }
   private getFile(fullPath: string): Promise<Model> {
     const fileFormat = getFileFormat(this.fileExtension);
-    return Deno.readTextFile(this.WORKING_DIR + "/" + fullPath + "." + this.fileExtension)
+    return Deno.readTextFile(this.adjustPath(fullPath, true))
       .then((fileContents) => {
         return fileFormat.parse(fileContents) as Model;
       }).then((result) => {
@@ -46,8 +45,9 @@ export default class FileStorage implements IStorage {
       });
   }
   private async getFolder(fullPath: string): Promise<ParentModel> {
+    console.log("getFolder", fullPath);
     const model = { Id: fullPath, Name: basename(fullPath), Children: [] as Model[] } as ParentModel;
-    for await (const child of Deno.readDir(this.WORKING_DIR + "/" + fullPath)) {
+    for await (const child of Deno.readDir(this.adjustPath(fullPath))) {
       if (child.isDirectory) {
         const x = await this.getFolder(`${fullPath}/${child.name}`);
         model.Children.push(x);
@@ -56,7 +56,7 @@ export default class FileStorage implements IStorage {
         model.Children.push(await this.getFile(`${fullPath}/${baseless}`));
       }
     }
-    if (existsSync("./" + fullPath + "/" + DEFAULT_MARKER)) {
+    if (existsSync(this.adjustPath(fullPath + "/" + DEFAULT_MARKER, true))) {
       const defaults = await this.getFile(fullPath + "/" + DEFAULT_MARKER);
       Meld(model, defaults);
     }
@@ -65,7 +65,11 @@ export default class FileStorage implements IStorage {
   private isFileToInclude(name: string): boolean {
     return name.endsWith("." + this.fileExtension) && !name.startsWith("_");
   }
-  private driver(): FileFormat {
-    return getFileFormat("." + this.fileExtension);
+  private adjustPath(fullPath: string, extension = false): string {
+    if (extension) {
+      return this.WORKING_DIR + "/" + fullPath + "." + this.fileExtension;
+    } else {
+      return this.WORKING_DIR + "/" + fullPath;
+    }
   }
 }

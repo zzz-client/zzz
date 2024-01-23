@@ -55,9 +55,9 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
       this.loader.globals(this.app.store),
       this.loader.local(GLOBALS_CONTEXT, this.app.store),
       this.loader.context(contextName, this.app.store),
-      // this.loader.local(contextName, this.app.store),
-      // this.loader.defaults(modelId, this.app.store), // TODO: is this right or does it need to be the model's parent's id?
-      // this.loader.local(SESSION_CONTEXT, this.app.store),
+      this.loader.local(contextName, this.app.store),
+      this.loader.defaults(modelId, this.app.store), // TODO: is this right or does it need to be the model's parent's id?
+      this.loader.local(SESSION_CONTEXT, this.app.store),
     ]);
   }
 }
