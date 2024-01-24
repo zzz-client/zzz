@@ -122,12 +122,12 @@ function closeTab(tabIndex) {
 
 <template>
   <Message severity="error" v-if="!!errorMessage" :closable="false">{{ errorMessage }}</Message>
-  <div style="position: relative">
-    <div style="float: right; position: absolute; top: 0.5em; right: 0.5em; z-index: 100">
-      <ToggleButton v-model="viewSecrets" onLabel="Show secrets" offLabel="Hide secrets" />
-    </div>
-  </div>
   <Splitter class="absolute" v-if="!errorMessage">
+    <div style="position: relative">
+      <div style="float: right; position: absolute; top: 0.5em; right: 0.5em; z-index: 100">
+        <ToggleButton v-model="viewSecrets" onLabel="Show secrets" offLabel="Hide secrets" />
+      </div>
+    </div>
     <SplitterPanel :size="15" :minSize="20" class="absolute">
       <Collections :collections="collections" />
     </SplitterPanel>
