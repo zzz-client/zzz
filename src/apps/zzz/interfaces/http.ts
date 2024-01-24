@@ -48,28 +48,18 @@ export class Server {
     Trace("Server started (asynchronously)");
     return Promise.resolve();
   }
-
-  async respondToGet(request: Request): Promise<Response> {
+  respondToGet(request: Request): Promise<Response> {
     const { pathname: url } = new URL(request.url);
     Trace("respondToGet " + url);
     if (url === "/favicon.ico") {
       Trace("Responding to favicon request");
-      return newResponse(204, null, STANDARD_HEADERS);
-      "";
+      return Promise.resolve(newResponse(204, null, STANDARD_HEADERS));
     }
     if (url === "/") {
       Trace("Responding to base URL: scope list");
       return this.respondToScopesList();
     }
-    const flagValues = this.app.argv as FeatureFlags;
-    Trace("Flag values:", flagValues);
-    const action = new Action(flagValues, this.app.env);
-    const model = constructModelFromRequest(request);
-    await this.app.executeModules(action, model);
-    // (model as any).Body = { foo: "bar" }; // DEBUG
-    console.log("result", model);
-    // return this._do(request).then((result: Model) => this.respondUsingEntity(result, "Pass"));
-    return Promise.resolve(newResponse(500, null, STANDARD_HEADERS));
+    return this.executeRequest(request);
   }
   respondToPatch(request: Request): Promise<Response> {
     Trace("Responding to PATCH");
@@ -101,6 +91,17 @@ export class Server {
   }
   stringify(result: any): string {
     return getFileFormat(".json").stringify(result); // TODO: Hardcoded?
+  }
+  private async executeRequest(request: Request): Promise<Response> {
+    const flagValues = this.app.argv as FeatureFlags;
+    Trace("Flag values:", flagValues);
+    const action = new Action(flagValues, this.app.env);
+    const model = constructModelFromRequest(request);
+    await this.app.executeModules(action, model);
+    // (model as any).Body = { foo: "bar" }; // DEBUG
+    console.log("result", model);
+    // return this._do(request).then((result: Model) => this.respondUsingEntity(result, "Pass"));
+    return Promise.resolve(newResponse(500, null, STANDARD_HEADERS));
   }
 }
 
