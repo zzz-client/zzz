@@ -121,7 +121,10 @@ function closeTab(tabIndex) {
 </script>
 
 <template>
-  <Message severity="error" v-if="!!errorMessage" :closable="false">{{ errorMessage }}</Message>
+  <div v-if="!!errorMessage" style="position: relative; padding: 2em">
+    <h1>(ー。ー) Zzz</h1>
+    <Message severity="error" :closable="false">{{ errorMessage }}</Message>
+  </div>
   <Splitter class="absolute" v-if="!errorMessage">
     <div style="position: relative">
       <div style="float: right; position: absolute; top: 0.5em; right: 0.5em; z-index: 100">
