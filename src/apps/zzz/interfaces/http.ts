@@ -110,7 +110,8 @@ function newResponse(status: number, body: any, headers: StringToStringMap): Res
 function constructModelFromRequest(request: Request): Model {
   const parts = dissectRequest(request);
   Trace("Deconstructed request", parts);
-  const model = { Id: parts.fullId } as Model;
+  const model = new Model();
+  model.Id = parts.fullId;
   return model;
 }
 function dissectRequest(request: Request): RequestParts {
