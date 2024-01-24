@@ -93,8 +93,11 @@ export class Server {
     return getFileFormat(".json").stringify(result); // TODO: Hardcoded?
   }
   private async executeRequest(request: Request): Promise<Response> {
+    const parts = dissectRequest(request);
     const flagValues = this.app.argv as FeatureFlags;
     Trace("Flag values:", flagValues);
+    flagValues.context = parts.context || flagValues.context;
+    flagValues.scope = parts.scope || flagValues.scope;
     const action = new Action(flagValues, this.app.env);
     const model = constructModelFromRequest(request);
     await this.app.executeModules(action, model);
