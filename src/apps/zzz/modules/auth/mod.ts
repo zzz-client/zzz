@@ -1,12 +1,12 @@
+import { Action } from "../../../../lib/lib.ts";
 import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
+import { Model } from "../../../../storage/mod.ts";
+import { ContextModule } from "../context/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 import { BasicAuthAuthorizer } from "./basicAuth.ts";
 import { BearerTokenAuthorizer } from "./bearerToken.ts";
 import HeaderAuthorizer from "./header.ts";
 import { QueryAuthorizer } from "./query.ts";
-import { Action } from "../../../../lib/lib.ts";
-import { Model } from "../../../../storage/mod.ts";
-import { ContextModule } from "../context/mod.ts";
 
 export class AuthorizationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [RequestsModule.constructor.name, ContextModule.constructor.name];

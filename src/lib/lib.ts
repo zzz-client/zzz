@@ -28,3 +28,6 @@ export function Meld(destination: any, source: any): void {
 export function Log(...args: any[]): void {
   console.log.apply(null, args);
 }
+export function Trace(...args: any[]): void {
+  Log(...args);
+}

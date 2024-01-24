@@ -1,12 +1,13 @@
 import { basename } from "https://deno.land/std/path/mod.ts";
-import { IStorage, Model, SearchParams } from "../../../storage/mod.ts";
+import { Trace } from "../../../lib/lib.ts";
 import FileStorage from "../../../storage/files/mod.ts";
-import { IStore } from "./mod.ts";
-import { Context } from "../modules/context/mod.ts";
-import { Collection, HttpRequest } from "../modules/requests/mod.ts";
+import { IStorage, Model, SearchParams } from "../../../storage/mod.ts";
 import { Authorization } from "../modules/auth/mod.ts";
-import { Scope } from "../modules/scope/mod.ts";
+import { Context } from "../modules/context/mod.ts";
 import { Cookies } from "../modules/cookies/mod.ts";
+import { Collection, HttpRequest } from "../modules/requests/mod.ts";
+import { Scope } from "../modules/scope/mod.ts";
+import { IStore } from "./mod.ts";
 
 const SESSION_FILE = "session.local";
 const DirectoryMapping = new Map<string, string>();
@@ -20,6 +21,7 @@ DirectoryMapping.set(Cookies.name, "cookies");
 export default class FileStore implements IStore {
   private storage: IStorage = new FileStorage("yml");
   async get(modelType: string, id: string): Promise<Model> {
+    Trace(`Getting model type ${modelType} id ${id}`);
     const directory = this.getDirectoryForModelType(modelType);
     if (modelType == Collection.constructor.name) {
       console.log("Bro what", modelType);
@@ -37,6 +39,13 @@ export default class FileStore implements IStore {
     const directory = this.getDirectoryForModelType(model.constructor.name);
     const sessionId = directory + "." + SESSION_FILE; // TODO
     return this.storage.set(sessionId, model);
+  }
+  async list(modelType: string): Promise<Model[]> {
+    const directory = this.getDirectoryForModelType(modelType);
+    const result = await this.storage.get(directory);
+    const children = result.Children;
+    console.log("children", children);
+    return children;
   }
   search(searchParams: SearchParams): Promise<Model[]> {
     return this.storage.search(searchParams);

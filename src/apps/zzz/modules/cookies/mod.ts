@@ -13,9 +13,9 @@ export class CookiesModule extends Module implements IModuleModels, IModuleField
   };
   async modify(model: Model, action: Action): Promise<void> {
     console.log("cookies", model);
-    if (!action.features["no-cookies"] && action.features.execute && model instanceof HttpRequest) {
-      await this.loadCookies(model);
-    }
+    // if (!action.features["no-cookies"] && action.features.execute && model instanceof HttpRequest) {
+    await this.loadCookies(model);
+    // }
   }
   private async loadCookies(theRequest: HttpRequest): Promise<void> {
     const cookieId = new URL(theRequest.URL).host;

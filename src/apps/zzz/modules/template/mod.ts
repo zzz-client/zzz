@@ -1,9 +1,9 @@
-import { ContextModule } from "../context/mod.ts";
-import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../../../lib/module.ts";
-import { RequestsModule } from "../requests/mod.ts";
-import tim from "./tim.ts";
 import { Action } from "../../../../lib/lib.ts";
+import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
+import { ContextModule } from "../context/mod.ts";
+import { RequestsModule } from "../requests/mod.ts";
+import tim from "../../../../lib/tim.ts";
 
 export default class TemplateModule extends Module implements IModuleFeatures, IModuleModifier {
   dependencies = [RequestsModule.constructor.name, ContextModule.constructor.name];
