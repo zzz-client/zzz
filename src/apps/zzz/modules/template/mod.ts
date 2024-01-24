@@ -1,4 +1,4 @@
-import { Action } from "../../../../lib/lib.ts";
+import { Action, Trace } from "../../../../lib/lib.ts";
 import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { ContextModule } from "../context/mod.ts";
@@ -16,6 +16,7 @@ export default class TemplateModule extends Module implements IModuleFeatures, I
     },
   ];
   modify(model: Model, action: Action): Promise<void> {
+    Trace("TemplateModule:modify");
     if (
       action.features.format &&
       ContextModule.hasFields(model)

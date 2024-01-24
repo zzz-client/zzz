@@ -1,17 +1,24 @@
-import Cli from "./apps/zzz/interfaces/cli.ts";
+import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
 import Application from "./apps/zzz/app.ts";
+import Cli from "./apps/zzz/interfaces/cli.ts";
 import { Server } from "./apps/zzz/interfaces/http.ts";
-import { BodyModule } from "./apps/zzz/modules/body/mod.ts";
-import { RequestsModule } from "./apps/zzz/modules/requests/mod.ts";
-import { PathParamsModule } from "./apps/zzz/modules/path-params/mod.ts";
 import { AuthorizationModule } from "./apps/zzz/modules/auth/mod.ts";
-import TemplateModule from "./apps/zzz/modules/template/mod.ts";
+import { BodyModule } from "./apps/zzz/modules/body/mod.ts";
 import { ContextModule } from "./apps/zzz/modules/context/mod.ts";
 import { CookiesModule } from "./apps/zzz/modules/cookies/mod.ts";
+import { PathParamsModule } from "./apps/zzz/modules/path-params/mod.ts";
 import { RedactModule } from "./apps/zzz/modules/redact/mod.ts";
+import { RequestsModule } from "./apps/zzz/modules/requests/mod.ts";
 import { ScopeModule } from "./apps/zzz/modules/scope/mod.ts";
-import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
-import { Log, Trace } from "./lib/lib.ts";
+import TemplateModule from "./apps/zzz/modules/template/mod.ts";
+import { Log, Trace as TraceOutput } from "./lib/lib.ts";
+
+// deno-lint-ignore no-explicit-any
+function Trace(arg: any) {
+  TraceOutput(arg);
+}
+
+// import * as vite from "../node_modules/vite/bin/vite.js";
 
 export default function main(): Promise<void> {
   const app = new Application();
@@ -30,7 +37,7 @@ export default function main(): Promise<void> {
     console.error("!!!", error);
     Deno.exit(1);
   }
-  if (app.argv.web === undefined && app.argv.http === undefined) {
+  if (app.argv._.includes("run")) {
     Trace("Running CLI");
     return Cli(app);
   }
@@ -44,14 +51,18 @@ export default function main(): Promise<void> {
     if (app.argv.format) Trace("--format not allowed");
     throw new Error("Flags not allowed when starting HTTP or Web server");
   }
-  if (app.argv.http !== undefined) {
-    Log("Starting HTTP server");
-    new Server(app).listen();
-  }
-  if (app.argv.web !== undefined) {
+  if (app.argv._.includes("web")) {
     Log("Starting web server");
+    Deno.args.splice(2);
+    // vite;
+    Deno.exit(0);
     // TODO
   }
+  if (app.argv._.includes("http")) {
+    Log("Starting HTTP server");
+    return new Server(app).listen();
+  }
+  Log(":)");
   return Promise.resolve();
 }
 

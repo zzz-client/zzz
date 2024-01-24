@@ -1,7 +1,7 @@
 import { basename } from "https://deno.land/std/path/mod.ts";
 import { Trace } from "../../../lib/lib.ts";
 import FileStorage from "../../../storage/files/mod.ts";
-import { IStorage, Model, SearchParams } from "../../../storage/mod.ts";
+import { IStorage, Model, ParentModel, SearchParams } from "../../../storage/mod.ts";
 import { Authorization } from "../modules/auth/mod.ts";
 import { Context } from "../modules/context/mod.ts";
 import { Cookies } from "../modules/cookies/mod.ts";
@@ -21,7 +21,7 @@ DirectoryMapping.set(Cookies.name, "cookies");
 export default class FileStore implements IStore {
   private storage: IStorage = new FileStorage("yml");
   async get(modelType: string, id: string): Promise<Model> {
-    Trace(`Getting model type ${modelType} id ${id}`);
+    Trace(`FileStore: Getting model type ${modelType} id ${id}`);
     const directory = this.getDirectoryForModelType(modelType);
     if (modelType == Collection.constructor.name) {
       console.log("Bro what", modelType);
@@ -43,7 +43,7 @@ export default class FileStore implements IStore {
   async list(modelType: string): Promise<Model[]> {
     const directory = this.getDirectoryForModelType(modelType);
     const result = await this.storage.get(directory);
-    const children = result.Children;
+    const children = (result as ParentModel).Children;
     console.log("children", children);
     return children;
   }

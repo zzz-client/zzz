@@ -1,4 +1,4 @@
-import { Action } from "../../../../lib/lib.ts";
+import { Action, Trace } from "../../../../lib/lib.ts";
 import { IModuleFields, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
@@ -12,6 +12,7 @@ export class PathParamsModule extends Module implements IModuleFields, IModuleMo
     },
   };
   async modify(entity: Model, _action: Action): Promise<void> {
+    Trace("PathParamsModule:modify");
     if (entity instanceof HttpRequest && PathParamsModule.hasFields(entity)) {
       await this.loadPathParams(entity as HttpRequest);
     }

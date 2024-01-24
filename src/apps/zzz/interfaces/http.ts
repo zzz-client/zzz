@@ -16,7 +16,7 @@ export class Server {
     this.app = app;
   }
   respond(request: Request): Promise<Response> {
-    Trace("Responding to " + request.method, request.url);
+    Trace("Server:Respond: Responding to " + request.method, request.url);
     switch (request.method) {
       case "GET":
         return this.respondToGet(request);
@@ -51,7 +51,7 @@ export class Server {
 
   async respondToGet(request: Request): Promise<Response> {
     const { pathname: url } = new URL(request.url);
-    Trace("Responding to GET " + url);
+    Trace("respondToGet " + url);
     if (url === "/favicon.ico") {
       Trace("Responding to favicon request");
       return newResponse(204, null, STANDARD_HEADERS);

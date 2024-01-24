@@ -1,3 +1,4 @@
+import { Trace } from "../../../../lib/lib.ts";
 import { IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { HttpRequest } from "../requests/mod.ts";
@@ -5,6 +6,7 @@ import { HttpRequest } from "../requests/mod.ts";
 export default class RequiredModule extends Module implements IModuleModifier {
   dependencies = [];
   modify(theRequest: Model): Promise<void> {
+    Trace("RequiredModule:modify");
     if (theRequest instanceof HttpRequest) {
       checkRequired(theRequest);
     }

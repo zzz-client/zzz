@@ -1,4 +1,4 @@
-import { Action } from "../../../../lib/lib.ts";
+import { Action, Trace } from "../../../../lib/lib.ts";
 import { IModuleFields, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
@@ -11,6 +11,7 @@ export class BodyModule extends Module implements IModuleModifier, IModuleFields
     },
   };
   async modify(entity: Model, _action: Action): Promise<void> {
+    Trace("BodyModule:modify");
     if (
       entity instanceof HttpRequest &&
       BodyModule.hasFields(entity)

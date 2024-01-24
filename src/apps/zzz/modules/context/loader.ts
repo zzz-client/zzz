@@ -15,6 +15,7 @@ export interface ILoader {
   defaults(collectionPath: string, store: IStore): Promise<Context>;
   local(contextName: string, store: IStore): Promise<Context>;
 }
+// deno-lint-ignore no-explicit-any
 export async function Apply(subject: any, defaults: any): Promise<void> {
   for (const key of Object.keys(defaults)) {
     if (key == "Id" || key == "Children") {

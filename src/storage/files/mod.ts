@@ -13,14 +13,14 @@ export default class FileStorage implements IStorage {
     this.fileExtension = fileExtension;
   }
   async get(fullId: string): Promise<Model> {
-    console.log("fullId", fullId);
+    console.log("FileStorage: get(", fullId + ")");
     if (await this.isFile(fullId)) {
       return this.getFile(fullId);
     } else {
       return this.getFolder(fullId);
     }
   }
-  set(fullId: string, model: Model): Promise<void> {
+  set(_fullId: string, _model: Model): Promise<void> {
     // TODO set
     throw new Error("Not implemented");
   }
@@ -33,10 +33,10 @@ export default class FileStorage implements IStorage {
   //   return await this.getFolder(directory).Children;
   // }
   private async isFile(fullId: string): Promise<boolean> {
-    Trace("Checking if file: " + fullId);
+    Trace("FileStorage: Checking if file: " + fullId);
     try {
       return (await Deno.stat(this.adjustPath(fullId))).isFile;
-    } catch (error) {
+    } catch (_error) {
       return (await Deno.stat(this.adjustPath(fullId, true))).isFile;
     }
   }

@@ -1,4 +1,4 @@
-import { Action, Meld, StringToStringMap } from "../../../../lib/lib.ts";
+import { Action, Meld, StringToStringMap, Trace } from "../../../../lib/lib.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model, ParentModel } from "../../../../storage/mod.ts";
 
@@ -16,12 +16,11 @@ export class RequestsModule extends Module implements IModuleFeatures, IModuleMo
   fields = {
     HttpRequest: HttpRequest,
   };
-  modify(model: Model, action: Action): Promise<void> {
-    return this.app.store.get(model.constructor.name, model.Id)
-      .then((loadedModel) => {
-        Meld(model, loadedModel);
-        return Promise.resolve();
-      });
+  async modify(model: Model, _action: Action): Promise<void> {
+    Trace("RequestsModule:modify");
+    const loadedModel = await this.app.store.get(model.constructor.name, model.Id);
+    Meld(model, loadedModel);
+    return await Promise.resolve();
   }
 }
 export class HttpRequest extends Model {

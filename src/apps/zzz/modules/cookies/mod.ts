@@ -1,4 +1,4 @@
-import { Action, StringToStringMap } from "../../../../lib/lib.ts";
+import { Action, StringToStringMap, Trace } from "../../../../lib/lib.ts";
 import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
@@ -12,10 +12,10 @@ export class CookiesModule extends Module implements IModuleModels, IModuleField
     },
   };
   async modify(model: Model, action: Action): Promise<void> {
-    console.log("cookies", model);
-    // if (!action.features["no-cookies"] && action.features.execute && model instanceof HttpRequest) {
-    await this.loadCookies(model);
-    // }
+    Trace("CookiesModule:modify");
+    if (!action.features["no-cookies"] && action.features.execute && model instanceof HttpRequest) {
+      await this.loadCookies(model);
+    }
   }
   private async loadCookies(theRequest: HttpRequest): Promise<void> {
     const cookieId = new URL(theRequest.URL).host;

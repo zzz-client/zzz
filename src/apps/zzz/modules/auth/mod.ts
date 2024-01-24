@@ -1,4 +1,4 @@
-import { Action } from "../../../../lib/lib.ts";
+import { Action, Trace } from "../../../../lib/lib.ts";
 import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { ContextModule } from "../context/mod.ts";
@@ -16,22 +16,31 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
     HttpRequest: ChildAuthorization,
   };
   async modify(model: Model, action: Action): Promise<void> {
+    Trace("AuthorizationModule:modify");
     if (AuthorizationModule.hasFields(model) && model instanceof HttpRequest) {
+      Trace("Has Authorization");
       let auth = (model as any).Authorization;
       if (auth === undefined) {
+        Trace("Authorization is undefined, aborting");
         return;
       }
       if (typeof auth === "string") {
+        Trace("Loading stored Authorization:", auth);
         auth = await this.app.store.get(Authorization.name, auth) as Authorization; // TODO Why is this a never????
       }
+      Trace("Authorization:", Authorization);
       if (action.features.all) {
+        Trace("Setting Authorization attribute on Model");
         (model as any).Authorization = auth;
       }
       if (action.features.execute) { // TODO: Should this be for format too? if so does this module depend on template? that seems backwards??? Maybe dependencies should only be those that are required, but then how does this class state that it knows about Template?
+        Trace("Executing");
         const authType = Object.keys(auth)[0];
-        console.log(auth);
+        Trace("AuthType:", authType);
         auth = auth[authType] as Authorization;
+        Trace("Authorization:", Authorization);
         const authorizer = this.newAuthorization(authType);
+        Trace("Authorizer", authorizer);
         return authorizer.authorize(model, auth);
       }
       return Promise.resolve();

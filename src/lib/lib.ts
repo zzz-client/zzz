@@ -11,6 +11,7 @@ export class Action {
     this.env = env;
   }
 }
+// deno-lint-ignore no-explicit-any
 export function Meld(destination: any, source: any): void {
   if (!source) {
     return;
@@ -25,9 +26,11 @@ export function Meld(destination: any, source: any): void {
     }
   }
 }
+// deno-lint-ignore no-explicit-any
 export function Log(...args: any[]): void {
   console.log.apply(null, args);
 }
+// deno-lint-ignore no-explicit-any
 export function Trace(...args: any[]): void {
   Log(...args);
 }
