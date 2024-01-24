@@ -97,6 +97,9 @@ axios
     console.log(error);
     console.error("ERROR", error.message, `(${error.code})`);
     console.error(error.stack);
+    if (error.message === "Network Error") {
+      error.message += ". Is the HTTP server running?";
+    }
     errorMessage.value = error.response?.data || error.message;
   });
 
