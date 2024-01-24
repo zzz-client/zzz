@@ -3,8 +3,8 @@ import { getFileFormat } from "../../../storage/files/formats.ts";
 import { Model } from "../../../storage/mod.ts";
 import { FeatureFlags } from "../../mod.ts";
 import Application from "../app.ts";
-import { HttpRequest } from "../modules/requests/mod.ts";
 import { Scope } from "../modules/scope/mod.ts";
+import { extname } from "https://deno.land/std/path/mod.ts";
 
 const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "allow,content-type,x-zzz-context", "Access-Control-Allow-Methods": "GET,PATCH" };
 
@@ -64,7 +64,7 @@ export class Server {
     const flagValues = this.app.argv as FeatureFlags;
     Trace("Flag values:", flagValues);
     const action = new Action(flagValues, this.app.env);
-    const model = new HttpRequest();
+    const model = constructModelFromRequest(request);
     await this.app.executeModules(action, model);
     // (model as any).Body = { foo: "bar" }; // DEBUG
     console.log("result", model);
@@ -106,6 +106,12 @@ export class Server {
 
 function newResponse(status: number, body: any, headers: StringToStringMap): Response {
   return new Response(body, { status, headers });
+}
+function constructModelFromRequest(request: Request): Model {
+  const parts = dissectRequest(request);
+  Trace("Deconstructed request", parts);
+  const model = { Id: parts.fullId } as Model;
+  return model;
 }
 function dissectRequest(request: Request): RequestParts {
   const { searchParams, pathname } = new URL(request.url);
