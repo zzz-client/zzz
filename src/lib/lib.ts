@@ -3,6 +3,9 @@ import { FeatureFlags } from "../apps/mod.ts";
 export interface StringToStringMap {
   [key: string]: string;
 }
+export function asAny(thing: any): any {
+  return thing as any;
+}
 export class Action {
   features: FeatureFlags;
   env: StringToStringMap;

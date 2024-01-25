@@ -4,7 +4,7 @@ import { BasicAuthAuthorizer } from "./basicAuth.ts";
 import { BearerTokenAuthorizer } from "./bearerToken.ts";
 import HeaderAuthorizer from "./header.ts";
 import { QueryAuthorizer } from "./query.ts";
-import { Action } from "../../../../lib/lib.ts";
+import { Action, asAny } from "../../../../lib/lib.ts";
 import { Model } from "../../../../storage/mod.ts";
 
 export class AuthenticationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
@@ -13,9 +13,9 @@ export class AuthenticationModule extends Module implements IModuleModels, IModu
   fields = {
     Authentication: Authentication,
   };
-  async modify(model: Model, action: Action): Promise<void> {
+  async modify(model: Model, _action: Action): Promise<void> {
     if (AuthenticationModule.hasFields(model) && model instanceof HttpRequest) {
-      let auth = (model as any).Authentication as Authentication;
+      let auth = asAny(model).Authentication as Authentication;
       if (typeof auth === "string") {
         auth = await this.app.store.get(Authentication.constructor.name, auth) as Authentication; // TODO Why is this a never????
       }
@@ -42,7 +42,7 @@ export class AuthenticationModule extends Module implements IModuleModels, IModu
 export interface IAuthorizer {
   authorize(model: HttpRequest, data: AuthContents): void;
 }
-export type AuthContents = {};
+export type AuthContents = {}; // TODO
 
 export class Authentication extends Model {
   [key: string]: AuthContents;

@@ -1,14 +1,12 @@
 import { IModuleFields, IModuleModifier, Module } from "../../../../lib/module.ts";
-import { Action } from "../../../../lib/lib.ts";
+import { Action, asAny } from "../../../../lib/lib.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 import { Model } from "../../../../storage/mod.ts";
 
 export class BodyModule extends Module implements IModuleModifier, IModuleFields {
   dependencies = [RequestsModule.constructor.name];
   fields = {
-    Body: {
-      type: Object, // TODO: Complicated
-    },
+    HttpRequest: BodyFields,
   };
   async modify(entity: Model, _action: Action): Promise<void> {
     if (
@@ -19,7 +17,7 @@ export class BodyModule extends Module implements IModuleModifier, IModuleFields
     }
   }
   private loadBody(entity: Model): Promise<void> {
-    let body = (entity as any).Body;
+    let body = asAny(entity).Body;
     if (typeof body === "string") {
       body = JSON.parse(body); // TODO: read it if it's a text doc, attach it as binary if it's binary?
     }
@@ -28,4 +26,8 @@ export class BodyModule extends Module implements IModuleModifier, IModuleFields
     }
     return Promise.resolve();
   }
+}
+
+class BodyFields {
+  Body!: string | object;
 }
