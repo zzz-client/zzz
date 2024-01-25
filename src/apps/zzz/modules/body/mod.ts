@@ -17,7 +17,7 @@ export class BodyModule extends Module implements IModuleModifier, IModuleFields
   private loadBody(entity: Model): Promise<void> {
     let body = asAny(entity).Body;
     if (typeof body === "string") {
-      body = JSON.parse(body); // TODO: read it if it's a text doc, attach it as binary if it's binary?
+      body = Deno.readTextFileSync(body);
     }
     if (body) {
       asAny(entity).Body = body;

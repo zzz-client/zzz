@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 import Application, { ApplicationConfig } from "../app.ts";
 import AuthorizationModule from "../modules/auth/mod.ts";
 import BodyModule from "../modules/body/mod.ts";
