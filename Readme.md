@@ -16,10 +16,10 @@ Zzz came out of the desire for a light replacement to Postman with generally the
 - Environments and Globals (aka Scopes)
 - Local variables (more Scopes)
 - Default values per folder or collection (aka Variables)
+- Cookie jar
 
 **Planned**:
 
-- Cookie jar
 - Settings (per-request)
   - Disable cookie jar
   - Follow redirects (3xx)

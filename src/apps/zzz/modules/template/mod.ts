@@ -6,7 +6,7 @@ import { RequestsModule } from "../requests/mod.ts";
 import tim from "../../../../lib/tim.ts";
 
 export default class TemplateModule extends Module implements IModuleFeatures, IModuleModifier {
-  dependencies = [RequestsModule.constructor.name, ContextModule.constructor.name];
+  dependencies = [RequestsModule.name, ContextModule.name];
   features: Feature[] = [
     {
       name: "format",

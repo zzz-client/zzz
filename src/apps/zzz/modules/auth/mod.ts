@@ -9,8 +9,8 @@ import HeaderAuthorizer from "./header.ts";
 import { QueryAuthorizer } from "./query.ts";
 
 export class AuthorizationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
-  dependencies = [RequestsModule.constructor.name, ContextModule.constructor.name];
-  models = [Authorization.constructor.name];
+  dependencies = [RequestsModule.name, ContextModule.name];
+  models = [Authorization.name];
   fields = {
     Authorization: Authorization,
     HttpRequest: ChildAuthorization,
@@ -22,7 +22,7 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
       let auth = asAny(model).Authorization as Authorization;
       if (typeof auth === "string") {
         Trace("Authorization is undefined, aborting");
-        auth = await this.app.store.get(Authorization.constructor.name, auth) as Authorization; // TODO Why is this a never????
+        auth = await this.app.store.get(Authorization.name, auth) as Authorization; // TODO Why is this a never????
       }
       if (typeof auth === "string") {
         Trace("Loading stored Authorization:", auth);

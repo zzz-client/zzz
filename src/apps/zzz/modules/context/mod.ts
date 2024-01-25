@@ -6,7 +6,7 @@ import TemplateModule from "../template/mod.ts";
 import Loader, { Apply, GLOBALS_CONTEXT, ILoader, SESSION_CONTEXT } from "./loader.ts";
 
 export class ContextModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
-  dependencies: string[] = [RequestsModule.constructor.name, TemplateModule.constructor.name];
+  dependencies: string[] = [RequestsModule.name, TemplateModule.name];
   features: Feature[] = [
     {
       name: "all",
@@ -22,7 +22,7 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
       argument: "context",
     },
   ];
-  models = [Context.constructor.name];
+  models = [Context.name];
   fields = {
     Request: {
       variables: "StringToStringMap",

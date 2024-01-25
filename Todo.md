@@ -1,14 +1,10 @@
 # TODO
 
-Why the hell is primevue/menuitem not cached by Deno?
-
 Parsing body, notably as an external file.
 
 Sequence, somehow
 
 Hooks as module?
-
-Cookie jar as module?
 
 find xmlStringify
 

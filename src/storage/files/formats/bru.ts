@@ -1,15 +1,15 @@
 // deno-lint-ignore-file
 import { FileFormat } from "../formats.ts";
 
-import { bruToJson, jsonToBru } from "npm:@bruno/lang";
-const BRU = {
-  parse: bruToJson,
-  stringify: jsonToBru,
-} as FileFormat;
+// import { bruToJson, jsonToBru } from "npm:@bruno/lang";
 // const BRU = {
-//   parse,
-//   stringify,
+//   parse: bruToJson,
+//   stringify: jsonToBru,
 // } as FileFormat;
+const BRU = {
+  parse,
+  stringify,
+} as FileFormat;
 
 export default BRU;
 

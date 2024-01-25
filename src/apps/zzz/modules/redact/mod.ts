@@ -5,7 +5,7 @@ import { ContextModule } from "../context/mod.ts";
 import { CookiesModule } from "../cookies/mod.ts";
 
 export class RedactModule extends Module implements IModuleModifier {
-  dependencies = [ContextModule.constructor.name, CookiesModule.constructor.name];
+  dependencies = [ContextModule.name, CookiesModule.name];
   modify(entity: Model, action: Action): Promise<void> {
     Trace("RedactModule:modify");
     if (!action.features.all && !action.features.execute) {

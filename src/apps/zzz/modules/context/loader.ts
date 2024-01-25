@@ -57,7 +57,7 @@ export default class Loader implements ILoader {
   }
   async context(contextName: string, store: IStore): Promise<Context> {
     try {
-      return await store.get(Context.constructor.name, contextName) as Context; // TODO: Type wrong???
+      return await store.get(Context.name, contextName) as Context; // TODO: Type wrong???
     } catch (_error) {
       return await Promise.resolve(BLANK_ENTITY);
     }
