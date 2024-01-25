@@ -1,7 +1,0 @@
-Variables:
-  auth_path: /services/oauth2/
-  version_path: v{{version}}/
-  standard_path: /services/data/v59.0/ # referencing version_path would require globals referencing globals
-  apexrest_path: /services/apexrest/
-  baseUrl: ""
-  latest_version: "59.0"
