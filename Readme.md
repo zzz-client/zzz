@@ -35,12 +35,14 @@ Zzz came out of the desire for a light replacement to Postman with generally the
 
 Run `--help` for more detail on flag usages and shorthands.
 
-- `--scope <name>`: The name of the scope to use
-- `--context <name>`: The name of the context to use
-- `--execute`: For CLI usage, execute the request instead outputting its contents
 - `--http`: Start the HTTP server, defaults to port 8000
 - `--web`: Start the Web (Vite) server, defaults to port 5173
 
+Other flags are available for CLI usage
+
+- `--scope <name>`: The name of the scope to use
+- `--context <name>`: The name of the context to use
+- `--execute`: execute the request instead outputting its contents
 
 ## Desktop
 
@@ -53,12 +55,7 @@ TODO
 ![Zzz web interface](./screenshots/web.png)
 
 ```shell
-# Starts the web server (Vite)
-$ zzz --web
-
-# ...is how we want to do it,
-# but right now we have to do
-$ deno task web
+$ zzz web
 ```
 
 Currently read only and still a work in progress but coming along very nicely!
@@ -74,11 +71,8 @@ breadcrumbs shouldn't actually be clickable until there's a tab for configuring 
 
 ```shell
 # Makes HTTP request and outputs response
-$ zzz "Folder Name/Request Name"
+$ zzz "Folder Name/Request Name" # Note: no file extension
 ```
-
----
-
 Outside of the sense of a workspace of requests, for the file storage driver, a request can contain every bit of information it needs due to the way melding the files works. That means you can store a request as YAML and run it on demand.
 
 ```yaml
@@ -108,7 +102,7 @@ This is itself an API that serves up the Zzz resources so that they can be used 
 This API can behave in one of two ways:
 
   - GET: Responds with information about the subject Request
-  - POST: Performs the subject Request and responds with its results
+  - PATCH: Performs the subject Request and responds with its results
 
 That is to say, performing a GET on `http://127.0.0.1:8000/Duck.json` would give you the JSON with the definition of the request, something like
 
@@ -120,13 +114,14 @@ That is to say, performing a GET on `http://127.0.0.1:8000/Duck.json` would give
 }
 ```
 
-Meanwhile, performing a POST on `http://127.0.0.1:8000/Duck.json` - that same endpoint - would actually perform `GET https://ddg.gg` and pass along its results.
+Meanwhile, performing a PATCH on `http://127.0.0.1:8000/Duck.json` - that same endpoint - would actually perform `GET https://ddg.gg` and pass along its results.
 
 Adding a file extension to the end will change what format is returned: `http://127.0.0.1:8000/Duck.json` will yield the result as JSON and `http://127.0.0.1:8000/Duck.curl` will do it as the equivalent curl command as plaintext.
 
 - json
 - yml
 - xml
+- bru
 - txt
 - curl
 
@@ -134,40 +129,30 @@ Adding a file extension to the end will change what format is returned: `http://
 
 ## TUI
 
-This would be SO sick and I think it should just be a matter of finding an ncurses-like library for Node and then getting the UI right
-
+The tui package on deno.land/x looks sick!
 
 # Architecture
 
-> NOTE: This is gonna change a lot
+> NOTE: This is probably still gona change
 
 ## Storage
 
-The way that Zzz accesses requests, environments, variables and etc are done through an interface called IStore.
+The way that Zzz accesses any type of model. The constructor parameters are the base directory and the file extension.
 
-- FileStore: Store each request in separate file; can use yml, json, or xml
+Current storage drivers:
+  - Files
 
-## Actors
 
-An Actor is responsible for taking a fully loaded Request, performing an action on it, and yielding a result. Note that Actors are _not_ responsible for formatting the result.
-
-The supported actors are:
-
-- Client: Performs the HTTP request and returns its response. NOTE: just the body for now; nothing else more like headers or status
-- Curl: Outputs an equivalent `curl` command similar to Postman
-- Summary: Outputs the result as plaintext
-- Pass: Just passes the Request through
 
 ## Hooks
 
-TODO: Needs its own modularity, or part of the Store?
-
+TODO: Needs its own modularity
 
 # Models
 
 ### Scope
 
-Replaces Workspace; e.g. "Salesforce Primary"
+(Postman equivalent is Workspace)
 
 ```yml
 Id: string
@@ -178,7 +163,7 @@ Defaults?:
 
 ### Collection
 
-Represents both Collections and Folders
+(Postman equivalent is both Collections and Folders)
 
 ```yml
 Id: string
@@ -189,9 +174,9 @@ Defaults?:
   key: value
 ```
 
-### Entity
+### HttpRequest
 
-Replaces Request
+Would be named just "Request" but there's a standard class named that.
 
 ```yml
 Id: string
@@ -209,7 +194,7 @@ PathParams?:
 
 ### Context
 
-Replaces Environment
+(Postman equivlanet is )Environment)
 
 ```yml
 Id: string
@@ -219,8 +204,6 @@ Defaults?:
 ```
 
 ### Authorization
-
-> Note: This Model is supplied by the Authorization module
 
 An Authorization can be a part of a Workspace, a Collection, or a File, but it can also be defined on its own so that it can be referenced by multiple entities.
 
@@ -280,7 +263,7 @@ Body: filepath ???
 
 ### Authorization
 
-The Authorization module allows reuse of Authorizations so that Models can refer to them by name.
+The Authorization module adds a key for specifying the authorization via key/value instead of having it inside of `Headers`.
 
 Example Entity using a manual Authorization:
 
@@ -309,7 +292,7 @@ Method: GET
 Authorization: foobar
 ```
 
-### Variables
+### Context
 
 This module resolves all variable values for a given Model to help yield an actionable Model. Zzz will apply the following in order:
 
@@ -320,7 +303,7 @@ This module resolves all variable values for a given Model to help yield an acti
 - defaults
 - the model itself
 
-The defaults will walk up the Collection tree applying all defaults as needed.
+The defaults will walk the Collection tree applying all defaults as needed.
 
 As a concrete example let us look at the File store. At the defaults stage, Zzz will check every directory down in the path to the Request for a file named `_defaults.yml`.
 
@@ -343,7 +326,11 @@ This allows `v1/Foo/defaults.yml` to use an `Authorization` like BearerToken whe
 
 # Interfaces
 
+Zzz can work through various interfaces.
+
 ## Interface Definition
+
+Here is a full list of features an interface needs to suply:
 
 1. Specify Context
 2. CRUD
@@ -403,8 +390,6 @@ This allows `v1/Foo/defaults.yml` to use an `Authorization` like BearerToken whe
     - `zzz --delete <id>`
 3. Format = `--format`
 4. Act on Entity = `zzz --execute <id>` or `zzz -x <id>`
-
-
 
 ## TUI
 
