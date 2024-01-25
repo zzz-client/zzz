@@ -39,7 +39,3 @@ export function Log(...args: any[]): void {
 export function Trace(...args: any[]): void {
   Log(...args);
 }
-
-export function asAny(value: any): any {
-  return value as any;
-}
