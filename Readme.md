@@ -57,6 +57,7 @@ Further [documentation](docs) in recommended reading order:
   - [Models](docs/models.md)
   - [Modules](docs/modules.md)
   - [Interfaces](docs/interfaces.md)
+  - [Collaboration](docs/collaboration.md)
   - [Alternatives to Zzz](docs/alternatives.md)
 
 
