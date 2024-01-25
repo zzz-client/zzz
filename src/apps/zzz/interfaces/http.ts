@@ -36,7 +36,7 @@ export class Server {
   listen(): Promise<void> {
     const pls = this;
     function cb(request: Request): Promise<Response> {
-      return pls.respond(request).catch((error: any) => {
+      return pls.respond(request).catch((error) => {
         if (error instanceof Response) {
           return Promise.resolve(error);
         }
@@ -89,6 +89,7 @@ export class Server {
     Trace("Scope IDs:", scopeIds);
     return newResponse(200, this.stringify(scopeIds), STANDARD_HEADERS);
   }
+  // deno-lint-ignore no-explicit-any
   stringify(result: any): string {
     return getFileFormat(".json").stringify(result); // TODO: Hardcoded?
   }

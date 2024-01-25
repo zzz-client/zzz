@@ -55,10 +55,10 @@ export default class Application implements IApplication {
     let promises = Promise.resolve();
     Trace("Executing modules for", model);
     this.modules.forEach((module) => {
-      Trace("Enqueuing module", module.constructor.name);
+      Trace("Enqueuing module", module.name);
       if ("modify" in module) {
         promises = promises.then(() => {
-          Trace("Executing module", module.constructor.name);
+          Trace("Executing module", module.name);
           return (module as unknown as IModuleModifier).modify(model, action);
         });
         return Promise.resolve();
@@ -69,7 +69,7 @@ export default class Application implements IApplication {
   private loadFlags(module: Module) {
     // TODO: Check dependencies via executedModules
     if ("features" in module) { // TODO: IModuleFeatures
-      Trace("Loading flags for", module.constructor.name);
+      Trace("Loading flags for", module.name);
       for (const flag of (module as unknown as IModuleFeatures).features) {
         this.flags[flag.type].push(flag.name);
         this.flags.description[flag.name] = flag.description;

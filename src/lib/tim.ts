@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 export default function tim(data: any, variables: any): void {
   Object.keys(data).forEach((key) => {
     const dataValue = data[key];

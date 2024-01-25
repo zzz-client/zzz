@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 // Run this file to import the necessary modules for the Vite server
 import { DataTable } from "npm:primevue/datatable";
 import { RadioButton } from "npm:primevue/radiobutton";

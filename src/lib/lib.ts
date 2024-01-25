@@ -3,6 +3,11 @@ import { FeatureFlags } from "../apps/mod.ts";
 export interface StringToStringMap {
   [key: string]: string;
 }
+// deno-lint-ignore no-explicit-any
+export function asAny(thing: any): any {
+  // deno-lint-ignore no-explicit-any
+  return thing as any;
+}
 export class Action {
   features: FeatureFlags;
   env: StringToStringMap;

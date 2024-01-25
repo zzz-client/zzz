@@ -9,8 +9,8 @@ import HeaderAuthorizer from "./header.ts";
 import { QueryAuthorizer } from "./query.ts";
 
 export class AuthorizationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
-  dependencies = [RequestsModule.constructor.name, ContextModule.constructor.name];
-  models = [Authorization.constructor.name];
+  dependencies = [RequestsModule.name, ContextModule.name];
+  models = [Authorization.name];
   fields = {
     Authorization: Authorization,
     HttpRequest: ChildAuthorization,
@@ -19,10 +19,10 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
     Trace("AuthorizationModule:modify");
     if (AuthorizationModule.hasFields(model) && model instanceof HttpRequest) {
       Trace("Has Authorization");
-      let auth = (model as any).Authorization;
-      if (auth === undefined) {
+      let auth = asAny(model).Authorization as Authorization;
+      if (typeof auth === "string") {
         Trace("Authorization is undefined, aborting");
-        return;
+        auth = await this.app.store.get(Authorization.name, auth) as Authorization; // TODO Why is this a never????
       }
       if (typeof auth === "string") {
         Trace("Loading stored Authorization:", auth);
@@ -31,7 +31,7 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
       Trace("Authorization:", Authorization);
       if (action.features.all) {
         Trace("Setting Authorization attribute on Model");
-        (model as any).Authorization = auth;
+        asAny(model).Authorization = auth;
       }
       if (action.features.execute) { // TODO: Should this be for format too? if so does this module depend on template? that seems backwards??? Maybe dependencies should only be those that are required, but then how does this class state that it knows about Template?
         Trace("Executing");
@@ -89,7 +89,7 @@ function newAuthorization(type: string): IAuthorizer {
 export interface IAuthorizer {
   authorize(model: Model, data: AuthContents): void;
 }
-export type AuthContents = {};
+export type AuthContents = {}; // TODO
 
 export class Authorization extends Model {
   [key: string]: AuthContents | Authorization;

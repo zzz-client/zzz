@@ -1,6 +1,6 @@
 import Application from "../apps/zzz/app.ts";
 import { Model } from "../storage/mod.ts";
-import { Action } from "./lib.ts";
+import { Action, asAny } from "./lib.ts";
 
 export abstract class Module {
   app: Application;
@@ -12,7 +12,7 @@ export abstract class Module {
     // if (!("fields" in this)) {
     //   return false;
     // }
-    for (const key of Object.keys(this as any)) {
+    for (const key of Object.keys(asAny(this))) {
       if (!(key in model)) {
         return false;
       }
@@ -30,7 +30,7 @@ export interface IModuleFields {
   fields: ModuleFields;
 }
 export interface IModuleRenderer {
-  render(model: Model, action: Action): Promise<any>;
+  render(model: Model, action: Action): Promise<any>; //TODO
 }
 export interface IModuleModifier {
   modify(model: Model, action: Action): Promise<void>;

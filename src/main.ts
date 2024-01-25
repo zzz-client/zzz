@@ -67,6 +67,7 @@ export default function main(): Promise<void> {
 }
 
 // Learn more at https://deno.land/manual/examples/module_metadata#concepts
+// deno-lint-ignore no-explicit-any
 if ((import.meta as any).main) {
   main();
 }

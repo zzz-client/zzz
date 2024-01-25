@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 import { crayon } from "https://deno.land/x/crayon/mod.ts";
 import { Canvas, Tui } from "https://deno.land/x/tui/mod.ts";
 import { handleInput, handleKeyboardControls, handleMouseControls } from "https://deno.land/x/tui/mod.ts";

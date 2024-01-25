@@ -12,13 +12,13 @@ export class RequestsModule extends Module implements IModuleFeatures, IModuleMo
       alias: "x",
     },
   ];
-  models: string[] = [HttpRequest.constructor.name, Collection.constructor.name];
+  models: string[] = [HttpRequest.name, Collection.name];
   fields = {
     HttpRequest: HttpRequest,
   };
   async modify(model: Model, _action: Action): Promise<void> {
     Trace("RequestsModule:modify", model.Id);
-    const loadedModel = await this.app.store.get(model.constructor.name, model.Id);
+    const loadedModel = await this.app.store.get(model.name, model.Id);
     Trace("RequestsModule:modify loaded Model", loadedModel);
     Meld(model, loadedModel);
     return await Promise.resolve();
