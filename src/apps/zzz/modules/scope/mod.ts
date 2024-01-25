@@ -7,5 +7,5 @@ export class ScopeModule extends Module implements IModuleModels {
   models = [Scope.constructor.name];
 }
 export class Scope extends Model implements ParentModel {
-  Children: (CollectionChild)[] = []; // TODO: Had | string at one point for some reason
+  Children: CollectionChild[] = []; // TODO: Had | string at one point for some reason
 }

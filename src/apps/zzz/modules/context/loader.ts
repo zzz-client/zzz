@@ -55,10 +55,12 @@ export default class Loader implements ILoader {
   async local(contextName: string, store: IStore): Promise<Context> {
     return await this.context(contextName + ".local", store);
   }
-  context(contextName: string, store: IStore): Promise<Context> {
-    return store.get("Context", contextName).catch((_error) => { // TODO: Type wrong
-      return Promise.resolve(BLANK_ENTITY);
-    });
+  async context(contextName: string, store: IStore): Promise<Context> {
+    try {
+      return await store.get(Context.constructor.name, contextName) as Context; // TODO: Type wrong???
+    } catch (_error) {
+      return await Promise.resolve(BLANK_ENTITY);
+    }
   }
   async defaults(subjectId: string, store: IStore): Promise<Context> {
     const defaults = new Context();

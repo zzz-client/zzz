@@ -1,4 +1,4 @@
-import { Action, Trace } from "../../../../lib/lib.ts";
+import { Action, asAny, Trace } from "../../../../lib/lib.ts";
 import { IModuleFields, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
@@ -19,7 +19,7 @@ export class PathParamsModule extends Module implements IModuleFields, IModuleMo
     return Promise.resolve();
   }
   private loadPathParams(theRequest: HttpRequest): Promise<void> {
-    const pathParams = (theRequest as any).PathParams;
+    const pathParams = asAny(theRequest).PathParams;
     if (pathParams) {
       for (const key of Object.keys(pathParams)) {
         const value = pathParams[key];

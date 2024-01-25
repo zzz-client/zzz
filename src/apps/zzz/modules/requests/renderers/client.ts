@@ -2,6 +2,8 @@
 import axios from "npm:axios";
 import { HttpRequest } from "../mod.ts";
 import { IModuleRenderer } from "../../../../../lib/module.ts";
+import { parseAstAsync } from "../../../../../../../../notbryant/.cache/deno/npm/registry.npmjs.org/rollup/4.9.2/dist/parseAst.d.ts";
+import { asAny } from "../../../../../lib/lib.ts";
 
 export default class HttpClient implements IModuleRenderer {
   async render(theRequest: HttpRequest): Promise<void> {
@@ -27,7 +29,7 @@ function doRequest(theRequest: HttpRequest): Promise<any> {
     headers: theRequest.Headers,
     params: theRequest.QueryParams,
     url: theRequest.URL,
-    data: (theRequest as any).Body, // TODO: any
+    data: asAny(theRequest).Body,
   }).then((result) => {
     result.data;
     return result.data;

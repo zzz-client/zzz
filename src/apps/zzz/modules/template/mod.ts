@@ -1,4 +1,4 @@
-import { Action, Trace } from "../../../../lib/lib.ts";
+import { Action, asAny, Trace } from "../../../../lib/lib.ts";
 import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { ContextModule } from "../context/mod.ts";
@@ -22,7 +22,7 @@ export default class TemplateModule extends Module implements IModuleFeatures, I
       ContextModule.hasFields(model)
     ) {
       try {
-        tim(model, (model as any).Variables);
+        tim(model, asAny(model).Variables);
       } catch (error) {
         console.warn("Missing tag but we will let it slide for now", "(" + error.message + ")");
       }
