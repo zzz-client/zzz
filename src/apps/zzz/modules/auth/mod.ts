@@ -39,26 +39,27 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
         Trace("AuthType:", authType);
         auth = auth[authType] as Authorization;
         Trace("Authorization:", Authorization);
-        const authorizer = this.newAuthorization(authType);
+        const authorizer = newAuthorization(authType);
         Trace("Authorizer", authorizer);
         return authorizer.authorize(model, auth);
       }
       return Promise.resolve();
     }
   }
-  private newAuthorization(type: string): IAuthorizer {
-    switch (type) {
-      case "BearerToken":
-        return new BearerTokenAuthorizer();
-      case "BasicAuth":
-        return new BasicAuthAuthorizer();
-      case "Header":
-        return new HeaderAuthorizer();
-      case "Query":
-        return new QueryAuthorizer();
-      default:
-        throw new Error(`Unknown Authorization type: $type`);
-    }
+}
+
+function newAuthorization(type: string): IAuthorizer {
+  switch (type) {
+    case "BearerToken":
+      return new BearerTokenAuthorizer();
+    case "BasicAuth":
+      return new BasicAuthAuthorizer();
+    case "Header":
+      return new HeaderAuthorizer();
+    case "Query":
+      return new QueryAuthorizer();
+    default:
+      throw new Error(`Unknown Authorization type: $type`);
   }
 }
 export interface IAuthorizer {
@@ -72,3 +73,52 @@ export class Authorization extends Model {
 class ChildAuthorization {
   Authorization?: Authorization | string;
 }
+
+import { assertEquals } from "../../../../lib/tests.ts";
+Deno.test("newAuthorization: BasicAuth", () => {
+  // GIVEN
+  const type = "BasicAuth";
+  // WHEN
+  const authorization = newAuthorization(type);
+  // THEN
+  assertEquals(authorization instanceof BasicAuthAuthorizer, true, "Incorrect authorization type");
+});
+
+Deno.test("newAuthorization: BearerToken", () => {
+  // GIVEN
+  const type = "BearerToken";
+  // WHEN
+  const authorization = newAuthorization(type);
+  // THEN
+  assertEquals(authorization instanceof BearerTokenAuthorizer, true, "Incorrect authorization type");
+});
+
+Deno.test("newAuthorization: Header", () => {
+  // GIVEN
+  const type = "Header";
+  // WHEN
+  const authorization = newAuthorization(type);
+  // THEN
+  assertEquals(authorization instanceof HeaderAuthorizer, true, "Incorrect authorization type");
+});
+
+Deno.test("newAuthorization: Query", () => {
+  // GIVEN
+  const type = "Query";
+  // WHEN
+  const authorization = newAuthorization(type);
+  // THEN
+  assertEquals(authorization instanceof QueryAuthorizer, true, "Incorrect authorization type");
+});
+
+Deno.test("newAuthorization: Unknown", () => {
+  // GIVEN
+  const type = "asdf";
+  try {
+    // WHEN
+    const authorization = newAuthorization(type);
+    // THEN
+  } catch (e) {
+    assertEquals(e.message, `Unknown Authorization type: $type`, "Incorrect error message");
+  }
+});

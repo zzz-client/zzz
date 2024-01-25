@@ -11,7 +11,9 @@
     "web:build": "cd src/apps/zzz/interfaces/web ; deno run -A --unstable --node-modules-dir npm:vite build",
     "web:preview": "cd src/apps/zzz/interfaces/web ; deno run -A --unstable --node-modules-dir npm:vite --host 127.0.0.1 preview",
     "tauri": "tauri dev",
-    "tauri:build": "tauri build"
+    "tauri:build": "tauri build",
+    "test": "deno test src/**/*.ts && deno coverage",
+    "coverage": "deno coverage --lcov --output=coverage/lcov.info coverage"
   },
   "lock": false,
   "fmt": {

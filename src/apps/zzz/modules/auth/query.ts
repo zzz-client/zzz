@@ -10,3 +10,19 @@ export type Query = AuthContents & {
   Name: string;
   Value: string;
 };
+
+import { assertEquals } from "../../../../lib/tests.ts";
+Deno.test("Query Authorizer", () => {
+  const authorizer = new QueryAuthorizer();
+  // GIVEN
+  const request = new HttpRequest();
+  request.QueryParams = {};
+  const data: Query = {
+    Name: "name",
+    Value: "value",
+  };
+  // WHEN
+  authorizer.authorize(request, data);
+  // THEN
+  assertEquals(request.QueryParams.name, "value", "QueryParams not set correctly");
+});
