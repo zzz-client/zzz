@@ -1,4 +1,4 @@
-import { Action, Trace } from "../../../../lib/lib.ts";
+import { Action, asAny, Trace } from "../../../../lib/lib.ts";
 import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { ContextModule } from "../context/mod.ts";
@@ -48,6 +48,30 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
   }
 }
 
+Deno.test("Authorization Module modify: undefined", async () => {
+  // GIVEN
+  const module = new AuthorizationModule(testApp());
+  const action = new Action({}, {});
+  const model = new Model();
+  // WHEN
+  await module.modify(model, action);
+  // THEN
+  assertEquals(asAny(model).Authorization, undefined, "Authorization should be undefined");
+});
+
+Deno.test("Authorization Module modify: string", async () => {
+  // GIVEN
+  const module = new AuthorizationModule(testApp());
+  const action = new Action({}, {});
+  const model = new Model();
+  asAny(model).Authorization = "asdf";
+  // TODO: Somehow mock testApp().store
+  // WHEN
+  await module.modify(model, action);
+  // THEN
+  assertEquals(asAny(model).Authorization, undefined, "Authorization should be undefined");
+});
+
 function newAuthorization(type: string): IAuthorizer {
   switch (type) {
     case "BearerToken":
@@ -74,7 +98,7 @@ class ChildAuthorization {
   Authorization?: Authorization | string;
 }
 
-import { assertEquals } from "../../../../lib/tests.ts";
+import { assertEquals, testApp } from "../../../../lib/tests.ts";
 Deno.test("newAuthorization: BasicAuth", () => {
   // GIVEN
   const type = "BasicAuth";
