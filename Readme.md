@@ -2,17 +2,20 @@
 
 > Pronounced as "zees" or "zeds" depending on where you live.
 
-Zzz came out of the desire for a light replacement to Postman with generally the same features list. From there came the idea of making it be both storage- and user interface-agnostic. Lastly, different renderers can be used to alter the output
+Zzz came out of the desire for a **REST client** replacement to Postman with generally the same features list. From there came the idea of making it be both storage- and user interface-agnostic. Additionally, Zzz has been made to be very modular.
 
 # Interfaces
 
 #### Desktop/Web
 ![Zzz web interface](./screenshots/web.png)
 ![Zzz_desktop_interface](./screenshots/desktop.png)
+
 #### REST API
 ![Zzz web interface](./screenshots/rest.png)
+
 ### CLI
 ![Zzz cli interface](./screenshots/cli.png)
+
 ### TUI
 TODO
 
