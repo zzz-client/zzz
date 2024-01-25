@@ -30,7 +30,7 @@ Per-request settings? Is a Settings module even needed? how? see Readme.md for l
 - HTTP - PUT `/:id`
 - HTTP - DELETE `/:id`
 - HTTP - POST `/:id`
-- HTTP - Authentications, Contexts, Scope, etc
+- HTTP - Authorizations, Contexts, Scope, etc
 
 - CLI - `--create ...`
 - CLI - `--edit <id> ...`

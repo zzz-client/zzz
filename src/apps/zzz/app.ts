@@ -1,27 +1,31 @@
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { load as loadEnv } from "https://deno.land/std/dotenv/mod.ts";
-import { Action, StringToStringMap } from "../../lib/lib.ts";
+import { Action, StringToStringMap, Trace } from "../../lib/lib.ts";
 import { IModuleFeatures, IModuleModifier, IModuleRenderer, Module } from "../../lib/module.ts";
 import { Model } from "../../storage/mod.ts";
 import IApplication, { ConfigValue, FeatureMap, Flags } from "../mod.ts";
 import FileStore from "./stores/files.ts";
 
+const STANDARD_FLAGS = {
+  string: ["http", "web"],
+  boolean: [] as string[],
+  description: {
+    http: "Start HTTP server",
+    web: "Start web UI server",
+  } as StringToStringMap,
+  argument: {
+    http: "port",
+    web: "port",
+  } as StringToStringMap,
+  default: {} as { [key: string]: ConfigValue },
+  alias: {} as StringToStringMap,
+};
+
 export default class Application implements IApplication {
   store = new FileStore();
   flags = {
     preamble: "Usage: zzz <options>",
-    string: ["http", "web"],
-    boolean: [] as string[],
-    description: {
-      http: "Start HTTP server",
-      web: "Start web UI server",
-    } as StringToStringMap,
-    argument: {
-      http: "port",
-      web: "port",
-    } as StringToStringMap,
-    default: {} as { [key: string]: ConfigValue },
-    alias: {} as StringToStringMap,
+    ...STANDARD_FLAGS,
   } as Flags;
   argv?: Args; // TODO: Should not be optional but needs to wait to be loaded until after registerModule has been called
   features = {} as FeatureMap;
@@ -49,19 +53,23 @@ export default class Application implements IApplication {
   }
   executeModules(action: Action, model: Model): Promise<void> {
     let promises = Promise.resolve();
+    Trace("Executing modules for", model);
     this.modules.forEach((module) => {
-      promises = promises.then(() => {
-        if ("modify" in module) {
+      Trace("Enqueuing module", module.constructor.name);
+      if ("modify" in module) {
+        promises = promises.then(() => {
+          Trace("Executing module", module.constructor.name);
           return (module as unknown as IModuleModifier).modify(model, action);
-        }
+        });
         return Promise.resolve();
-      });
+      }
     });
     return promises;
   }
   private loadFlags(module: Module) {
     // TODO: Check dependencies via executedModules
     if ("features" in module) { // TODO: IModuleFeatures
+      Trace("Loading flags for", module.constructor.name);
       for (const flag of (module as unknown as IModuleFeatures).features) {
         this.flags[flag.type].push(flag.name);
         this.flags.description[flag.name] = flag.description;

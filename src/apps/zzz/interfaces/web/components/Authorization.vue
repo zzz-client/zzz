@@ -52,7 +52,7 @@ console.log("method", method.value);
 watch(
   () => props.method,
   (newValue) => {
-    console.log("authentication", newValue);
+    console.log("authorization", newValue);
     method.value = newValue;
   }
 );

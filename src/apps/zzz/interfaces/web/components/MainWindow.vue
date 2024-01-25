@@ -97,6 +97,9 @@ axios
     console.log(error);
     console.error("ERROR", error.message, `(${error.code})`);
     console.error(error.stack);
+    if (error.message === "Network Error") {
+      error.message += ". Is the HTTP server running?";
+    }
     errorMessage.value = error.response?.data || error.message;
   });
 
@@ -121,13 +124,16 @@ function closeTab(tabIndex) {
 </script>
 
 <template>
-  <Message severity="error" v-if="!!errorMessage" :closable="false">{{ errorMessage }}</Message>
-  <div style="position: relative">
-    <div style="float: right; position: absolute; top: 0.5em; right: 0.5em; z-index: 100">
-      <ToggleButton v-model="viewSecrets" onLabel="Show secrets" offLabel="Hide secrets" />
-    </div>
+  <div v-if="!!errorMessage" style="position: relative; padding: 2em">
+    <h1>(ー。ー) Zzz</h1>
+    <Message severity="error" :closable="false">{{ errorMessage }}</Message>
   </div>
   <Splitter class="absolute" v-if="!errorMessage">
+    <div style="position: relative">
+      <div style="float: right; position: absolute; top: 0.5em; right: 0.5em; z-index: 100">
+        <ToggleButton v-model="viewSecrets" onLabel="Show secrets" offLabel="Hide secrets" />
+      </div>
+    </div>
     <SplitterPanel :size="15" :minSize="20" class="absolute">
       <Collections :collections="collections" />
     </SplitterPanel>

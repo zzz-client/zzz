@@ -1,4 +1,4 @@
-import { Action, StringToStringMap } from "../../../../lib/lib.ts";
+import { Action, StringToStringMap, Trace } from "../../../../lib/lib.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { RequestsModule } from "../requests/mod.ts";
@@ -37,16 +37,14 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
       variables: "StringToStringMap",
     },
   };
-  modify(subjectModel: Model, action: Action): Promise<void> {
+  async modify(subjectModel: Model, action: Action): Promise<void> {
+    Trace("ContextModule:modify");
     const context = action.features.context as string;
     if (action.features.all || action.features.format || action.features.execute) {
-      return this.load(subjectModel.Id, context).then(async (loadedModels) => {
-        for (const loadedModel in loadedModels) {
-          await this.loader.defaults(subjectModel.Id, this.app.store).then((defaults) => {
-            Apply(loadedModel, defaults);
-          });
-        }
-      });
+      const loadedDefaults = await this.load(subjectModel.Id, context);
+      for (const defaults of loadedDefaults) {
+        Apply(subjectModel, defaults);
+      }
     }
     return Promise.resolve();
   }

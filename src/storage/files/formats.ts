@@ -1,8 +1,9 @@
+// deno-lint-ignore-file no-explicit-any
 import * as YAML from "https://deno.land/std/yaml/mod.ts";
 import { parse as xmlParse } from "https://deno.land/x/xml/mod.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
 import BRU from "./formats/bru.ts";
-const xmlStringify = (x: any) => Deno.exit(1); // TODO: find
+const xmlStringify = (_x: any) => Deno.exit(1); // TODO: find
 
 const PrettyJSON = {
   parse: JSON.parse,
@@ -25,7 +26,7 @@ type FileFormat = {
 };
 export type { FileFormat };
 
-// TODO: search denoland for better
+// TODO: search deno land for better
 export function getContentType(resourcePath: string): string {
   const ext = extname(resourcePath).substring(1).toLowerCase();
   switch (ext) {

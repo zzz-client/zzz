@@ -1,6 +1,5 @@
-import { Meld, StringToStringMap } from "../../../../lib/lib.ts";
-import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module, ModuleField } from "../../../../lib/module.ts";
-import { Action } from "../../../../lib/lib.ts";
+import { Action, Meld, StringToStringMap, Trace } from "../../../../lib/lib.ts";
+import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model, ParentModel } from "../../../../storage/mod.ts";
 
 export class RequestsModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
@@ -15,17 +14,14 @@ export class RequestsModule extends Module implements IModuleFeatures, IModuleMo
   ];
   models: string[] = [HttpRequest.constructor.name, Collection.constructor.name];
   fields = {
-    HttpRequest: {
-      ...HttpRequest,
-      description: "Params to be replaced in the URL",
-    } as ModuleField,
+    HttpRequest: HttpRequest,
   };
-  modify(model: Model, action: Action): Promise<void> {
-    return this.app.store.get(model.constructor.name, model.Id)
-      .then((loadedModel) => {
-        Meld(model, loadedModel);
-        return Promise.resolve();
-      });
+  async modify(model: Model, _action: Action): Promise<void> {
+    Trace("RequestsModule:modify", model.Id);
+    const loadedModel = await this.app.store.get(model.constructor.name, model.Id);
+    Trace("RequestsModule:modify loaded Model", loadedModel);
+    Meld(model, loadedModel);
+    return await Promise.resolve();
   }
 }
 export class HttpRequest extends Model {

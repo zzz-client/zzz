@@ -1,30 +1,52 @@
+import { Action, asAny, Trace } from "../../../../lib/lib.ts";
 import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
+import { Model } from "../../../../storage/mod.ts";
+import { ContextModule } from "../context/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 import { BasicAuthAuthorizer } from "./basicAuth.ts";
 import { BearerTokenAuthorizer } from "./bearerToken.ts";
 import HeaderAuthorizer from "./header.ts";
 import { QueryAuthorizer } from "./query.ts";
-import { Action, asAny } from "../../../../lib/lib.ts";
-import { Model } from "../../../../storage/mod.ts";
 
-export class AuthenticationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
-  dependencies = [RequestsModule.constructor.name];
-  models = [Authentication.constructor.name];
+export class AuthorizationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
+  dependencies = [RequestsModule.constructor.name, ContextModule.constructor.name];
+  models = [Authorization.constructor.name];
   fields = {
-    Authentication: Authentication,
+    Authorization: Authorization,
+    HttpRequest: ChildAuthorization,
   };
-  async modify(model: Model, _action: Action): Promise<void> {
-    if (AuthenticationModule.hasFields(model) && model instanceof HttpRequest) {
-      let auth = asAny(model).Authentication as Authentication;
+  async modify(model: Model, action: Action): Promise<void> {
+    Trace("AuthorizationModule:modify");
+    if (AuthorizationModule.hasFields(model) && model instanceof HttpRequest) {
+      Trace("Has Authorization");
+      let auth = asAny(model).Authorization as Authorization;
       if (typeof auth === "string") {
-        auth = await this.app.store.get(Authentication.constructor.name, auth) as Authentication; // TODO Why is this a never????
+        Trace("Authorization is undefined, aborting");
+        auth = await this.app.store.get(Authorization.constructor.name, auth) as Authorization; // TODO Why is this a never????
       }
-      const authType = "BasicAuth"; // TODO: Somehow get root key?
-      const authorizer = this.newAuthentication(authType);
-      return await authorizer.authorize(model, auth);
+      if (typeof auth === "string") {
+        Trace("Loading stored Authorization:", auth);
+        auth = await this.app.store.get(Authorization.name, auth) as Authorization; // TODO Why is this a never????
+      }
+      Trace("Authorization:", Authorization);
+      if (action.features.all) {
+        Trace("Setting Authorization attribute on Model");
+        asAny(model).Authorization = auth;
+      }
+      if (action.features.execute) { // TODO: Should this be for format too? if so does this module depend on template? that seems backwards??? Maybe dependencies should only be those that are required, but then how does this class state that it knows about Template?
+        Trace("Executing");
+        const authType = Object.keys(auth)[0];
+        Trace("AuthType:", authType);
+        auth = auth[authType] as Authorization;
+        Trace("Authorization:", Authorization);
+        const authorizer = this.newAuthorization(authType);
+        Trace("Authorizer", authorizer);
+        return authorizer.authorize(model, auth);
+      }
+      return Promise.resolve();
     }
   }
-  private newAuthentication(type: string): IAuthorizer {
+  private newAuthorization(type: string): IAuthorizer {
     switch (type) {
       case "BearerToken":
         return new BearerTokenAuthorizer();
@@ -35,15 +57,18 @@ export class AuthenticationModule extends Module implements IModuleModels, IModu
       case "Query":
         return new QueryAuthorizer();
       default:
-        throw new Error(`Unknown authentication type: $type`);
+        throw new Error(`Unknown Authorization type: $type`);
     }
   }
 }
 export interface IAuthorizer {
-  authorize(model: HttpRequest, data: AuthContents): void;
+  authorize(model: Model, data: AuthContents): void;
 }
 export type AuthContents = {}; // TODO
 
-export class Authentication extends Model {
-  [key: string]: AuthContents;
+export class Authorization extends Model {
+  [key: string]: AuthContents | Authorization;
+}
+class ChildAuthorization {
+  Authorization?: Authorization | string;
 }

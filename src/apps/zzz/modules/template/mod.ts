@@ -1,9 +1,9 @@
-import { ContextModule } from "../context/mod.ts";
+import { Action, Trace } from "../../../../lib/lib.ts";
 import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../../../lib/module.ts";
-import { RequestsModule } from "../requests/mod.ts";
-import tim from "./tim.ts";
-import { Action } from "../../../../lib/lib.ts";
 import { Model } from "../../../../storage/mod.ts";
+import { ContextModule } from "../context/mod.ts";
+import { RequestsModule } from "../requests/mod.ts";
+import tim from "../../../../lib/tim.ts";
 
 export default class TemplateModule extends Module implements IModuleFeatures, IModuleModifier {
   dependencies = [RequestsModule.constructor.name, ContextModule.constructor.name];
@@ -16,11 +16,16 @@ export default class TemplateModule extends Module implements IModuleFeatures, I
     },
   ];
   modify(model: Model, action: Action): Promise<void> {
+    Trace("TemplateModule:modify");
     if (
       action.features.format &&
       ContextModule.hasFields(model)
     ) {
-      tim(model, (model as any).Variables);
+      try {
+        tim(model, (model as any).Variables);
+      } catch (error) {
+        console.warn("Missing tag but we will let it slide for now", "(" + error.message + ")");
+      }
     }
     return Promise.resolve();
   }

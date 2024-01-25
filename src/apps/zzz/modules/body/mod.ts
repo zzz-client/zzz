@@ -1,7 +1,7 @@
+import { Action, asAny, Trace } from "../../../../lib/lib.ts";
 import { IModuleFields, IModuleModifier, Module } from "../../../../lib/module.ts";
-import { Action, asAny } from "../../../../lib/lib.ts";
-import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 import { Model } from "../../../../storage/mod.ts";
+import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 
 export class BodyModule extends Module implements IModuleModifier, IModuleFields {
   dependencies = [RequestsModule.constructor.name];
@@ -9,10 +9,8 @@ export class BodyModule extends Module implements IModuleModifier, IModuleFields
     HttpRequest: BodyFields,
   };
   async modify(entity: Model, _action: Action): Promise<void> {
-    if (
-      entity instanceof HttpRequest &&
-      BodyModule.hasFields(entity)
-    ) {
+    Trace("BodyModule:modify");
+    if (BodyModule.hasFields(entity) && entity instanceof HttpRequest) {
       await this.loadBody(entity);
     }
   }
