@@ -9,53 +9,46 @@ import { Collection, HttpRequest } from "../modules/requests/mod.ts";
 import { Scope } from "../modules/scope/mod.ts";
 import { IStore } from "./mod.ts";
 
-const SESSION_FILE = "session.local";
-const DirectoryMapping = new Map<string, string>();
-DirectoryMapping.set(HttpRequest.name, "requests");
-DirectoryMapping.set(Scope.name, "requests");
-DirectoryMapping.set(Collection.name, "requests");
-DirectoryMapping.set(Context.name, "contexts");
-DirectoryMapping.set(Authorization.name, "auth");
-DirectoryMapping.set(Cookies.name, "cookies");
-
 export default class FileStore implements IStore {
-  private storage: IStorage = new FileStorage("yml");
+  private FILE_FORMAT = "yml;";
+  private storages: Map<string, IStorage> = new Map([
+    [HttpRequest.name, new FileStorage("requests", this.FILE_FORMAT)],
+    [Scope.name, new FileStorage("requests", this.FILE_FORMAT)],
+    [Collection.name, new FileStorage("requests", this.FILE_FORMAT)],
+    [Context.name, new FileStorage("contexts", this.FILE_FORMAT)],
+    [Authorization.name, new FileStorage("auth", this.FILE_FORMAT)],
+    [Cookies.name, new FileStorage("cookies", this.FILE_FORMAT)],
+  ]);
   async get(modelType: string, id: string): Promise<Model> {
     Trace(`FileStore: Getting model type ${modelType} id ${id}`);
-    const directory = this.getDirectoryForModelType(modelType);
-    if (modelType == Collection.constructor.name) {
-      console.log("Bro what", modelType);
-      throw new Error("Bro what");
-      // ???
-    }
-    const result = await this.storage.get(directory + "/" + id);
+    const result = await this.storage(modelType).get(id) as Model;
     result.Id = id;
     if (!result.Name) { // TODO: Why is this not working when --all is passed
       result.Name = basename(id);
     }
     return result;
   }
-  set(model: Model): Promise<void> {
-    const directory = this.getDirectoryForModelType(model.constructor.name);
-    const sessionId = directory + "." + SESSION_FILE; // TODO
-    return this.storage.set(sessionId, model);
+  async set(modelType: string, model: Model): Promise<void> {
+    await this.storage(modelType).set(modelType, model);
   }
   async list(modelType: string): Promise<Model[]> {
-    const directory = this.getDirectoryForModelType(modelType);
-    const result = await this.storage.get(directory);
+    const result = await this.storage(modelType).get(".");
     const children = (result as ParentModel).Children;
-    console.log("children", children);
     return children;
   }
-  search(searchParams: SearchParams): Promise<Model[]> {
-    return this.storage.search(searchParams);
-  }
-  private getDirectoryForModelType(modelType: string): string {
-    const directory = DirectoryMapping.get(modelType);
-    if (!directory) {
-      throw new Error("Unknown Model type: " + modelType);
+  async search(searchParams: SearchParams): Promise<Model[]> {
+    let result = [] as Model[];
+    for (const modelType of this.storages.keys()) {
+      const searchResults = await this.storage(modelType).search(searchParams);
+      result = [...result, ...searchResults];
     }
-    return directory;
+    return result;
+  }
+  private storage(modelName: string): IStorage {
+    if (!this.storages.get(modelName)) {
+      throw new Error("Unknown Model type: " + modelName);
+    }
+    return this.storages.get(modelName)!;
   }
 }
 

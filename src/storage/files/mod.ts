@@ -7,9 +7,10 @@ import { Meld, Trace } from "../../lib/lib.ts";
 const DEFAULT_MARKER = "_defaults";
 
 export default class FileStorage implements IStorage {
-  private WORKING_DIR = "..";
-  fileExtension: string;
-  constructor(fileExtension: string) {
+  private baseDir;
+  private fileExtension: string;
+  constructor(baseDir: string, fileExtension: string) {
+    this.baseDir = baseDir;
     this.fileExtension = fileExtension;
   }
   async get(fullId: string): Promise<Model> {
@@ -81,9 +82,9 @@ export default class FileStorage implements IStorage {
   }
   private adjustPath(fullPath: string, extension = false): string {
     if (extension) {
-      return this.WORKING_DIR + "/" + fullPath + "." + this.fileExtension;
+      return this.baseDir + "/" + fullPath + "." + this.fileExtension;
     } else {
-      return this.WORKING_DIR + "/" + fullPath;
+      return this.baseDir + "/" + fullPath;
     }
   }
 }
