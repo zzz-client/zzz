@@ -1,15 +1,22 @@
-import { Action, Trace } from "../../../../lib/etc.ts";
-import { IModuleModifier, Module } from "../../../../lib/module.ts";
+import { Action, asAny, Trace } from "../../../../lib/etc.ts";
+import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
-import { ContextModule } from "../context/mod.ts";
-import { CookiesModule } from "../cookies/mod.ts";
 
-export class RedactModule extends Module implements IModuleModifier {
+export class RedactModule extends Module implements IModuleModifier, IModuleFeatures {
   Name = "Redact";
-  dependencies = [ContextModule.name, CookiesModule.name];
+  dependencies = [];
+  features = [{
+    name: "redact",
+    description: "Redact fields from being included in the response",
+    exposed: false,
+    type: "string[]",
+  } as Feature];
   modify(entity: Model, action: Action): Promise<void> {
     Trace("RedactModule:modify");
     if (!action.features.all && !action.features.execute) {
+      for (const key of Object.keys(this.app.features)) {
+        delete asAny(entity)[key];
+      }
       if ("Variables" in entity) {
         delete entity.Variables;
       }

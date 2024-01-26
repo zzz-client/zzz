@@ -46,8 +46,9 @@ export type Feature = {
   name: string;
   description: string;
   type: "string" | "boolean";
+  default?: string | boolean;
   argument?: string;
   alias?: string;
-  default?: string | boolean;
   exposed?: boolean;
+  multi?: boolean;
 };

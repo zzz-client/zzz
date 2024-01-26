@@ -4,7 +4,7 @@ import DI, { newInstance as iNewInstance } from "../../lib/di.ts";
 import { Log, StringToStringMap, Trace } from "../../lib/etc.ts";
 import { IModuleRenderer, Module } from "../../lib/module.ts";
 import * as FileStorage from "../../storage/files/mod.ts";
-import IApplication, { ConfigValue, FeatureMap, Flags, loadFlags } from "../mod.ts";
+import IApplication, { ConfigValue, FeatureMap, Flags, loadFlagsAndFeatures } from "../mod.ts";
 import Cli from "./interfaces/cli.ts";
 import { Server } from "./interfaces/http.ts";
 import * as BasicAuthAuthorizer from "./modules/auth/basicAuth.ts";
@@ -111,7 +111,7 @@ export default class Application implements IApplication {
     Log(":)");
   }
   registerModule(module: Module): void {
-    loadFlags(this, module);
+    loadFlagsAndFeatures(this, module);
     /*
     if (module instanceof IModuleModels) {
       // TODO: IModuleModels

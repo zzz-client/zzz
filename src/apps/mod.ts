@@ -1,5 +1,5 @@
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
-import { Action, StringToStringMap, Trace } from "../lib/etc.ts";
+import { Action, asAny, StringToStringMap, Trace } from "../lib/etc.ts";
 import { IModuleFeatures, IModuleModifier, Module } from "../lib/module.ts";
 import { Model } from "../storage/mod.ts";
 import { IStore } from "./zzz/stores/mod.ts";
@@ -30,16 +30,26 @@ export type FeatureFlags = { [key: string]: FeatureFlagValue };
 
 export type FeatureMap = { [key: string]: ConfigValue };
 
-export function loadFlags(app: IApplication, module: Module): void {
+export function loadFlagsAndFeatures(app: IApplication, module: Module): void {
   // TODO: Check dependencies via executedModules
   if ("features" in module) { // TODO: IModuleFeatures
     Trace("Loading flags for", module.Name);
     for (const flag of (module as unknown as IModuleFeatures).features) {
-      app.flags[flag.type].push(flag.name);
-      app.flags.description[flag.name] = flag.description;
-      if (flag.argument) app.flags.argument[flag.name] = flag.argument;
-      if (flag.alias) app.flags.alias[flag.name] = flag.alias;
-      if (flag.default) app.flags.default[flag.name] = flag.default;
+      if (flag.multi && (flag.type || flag.default || flag.argument || flag.alias)) {
+        throw new Error(`Feature ${flag.name} is multi but has other properties set`);
+      }
+      if (flag.multi) {
+        asAny(app.features)[flag.name] = [];
+      } else if (flag.exposed) {
+        if (!flag.type) {
+          flag.type = "boolean";
+        }
+        asAny(app.flags)[flag.type].push(flag.name);
+        app.flags.description[flag.name] = flag.description;
+        if (flag.argument) app.flags.argument[flag.name] = flag.argument;
+        if (flag.alias) app.flags.alias[flag.name] = flag.alias;
+        if (flag.default) app.flags.default[flag.name] = flag.default;
+      }
     }
   }
 }
