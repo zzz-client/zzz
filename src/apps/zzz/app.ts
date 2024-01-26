@@ -1,5 +1,4 @@
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
-import { load as loadEnv } from "https://deno.land/std/dotenv/mod.ts";
 import { Action, StringToStringMap, Trace } from "../../lib/lib.ts";
 import { IModuleFeatures, IModuleModifier, IModuleRenderer, Module } from "../../lib/module.ts";
 import { Model } from "../../storage/mod.ts";
@@ -34,7 +33,7 @@ export default class Application implements IApplication {
   modules = [] as Module[];
   renderers = [] as IModuleRenderer[];
   constructor() {
-    loadEnv().then((env) => this.env = env);
+    // loadEnv().then((env) => this.env = env);
   }
   registerModule(module: Module): void {
     this.loadFlags(module);

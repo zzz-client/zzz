@@ -11,9 +11,9 @@ function parse(input: string): any {
   const lines = input.split("\n");
   let index = 0;
   while (index < lines.length) {
-    const [block, newIndex] = readBlock(lines, index);
-    result = { ...result, ...parseBlock(block) };
-    index = newIndex;
+    // const [block, newIndex] = readBlock(lines, index); TODO: readBlock
+    // result = { ...result, ...parseBlock(block) }; TODO: parseBlock
+    // index = newIndex;
   }
   return result;
 }

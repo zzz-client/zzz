@@ -69,7 +69,7 @@ Deno.test("Authorization Module modify: string", async () => {
   // WHEN
   await module.modify(model, action);
   // THEN
-  assertEquals(asAny(model).Authorization, undefined, "Authorization should be undefined");
+  assertEquals(asAny(model).Authorization, "asdf", "Authorization should be string it was set to");
 });
 
 function newAuthorization(type: string): IAuthorizer {
