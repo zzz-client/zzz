@@ -2,46 +2,22 @@
 
 > Pronounced as "zees" or "zeds" depending on where you live.
 
-Zzz came out of the desire for a light replacement to Postman with generally the same features list. From there came the idea of making it be both storage- and user interface-agnostic. Lastly, different renderers can be used to alter the output
-
-**Postman feature parity:**
-
-- Request attributes:
-  - Method
-  - URL
-  - Query params
-  - Authorization
-  - Headers
-  - Body
-- Environments and Globals (aka Scopes)
-- Local variables (more Scopes)
-- Default values per folder or collection (aka Variables)
-- Cookie jar
-
-**Planned**:
-
-- Settings (per-request)
-  - Disable cookie jar
-  - Follow redirects (3xx)
-  - Follow original HTTP method (instead of redirecting to GET)
-  - Follow Authorization Header
-  - Remove referrer header on redirect
-  - Enable strict HTTP parser???
-  - Encode URL automatically (path, query parameters, authorization fields)
-  - Maximum number of redirects
-
-
+Zzz came out of the desire for a **REST client** replacement to Postman with generally the same features list. From there came the idea of making it be both storage- and user interface-agnostic. Additionally, Zzz has been made to be very modular.
 
 # Interfaces
 
+#### Desktop/Web
 ![Zzz web interface](./screenshots/web.png)
-
 ![Zzz_desktop_interface](./screenshots/desktop.png)
 
+#### REST API
 ![Zzz web interface](./screenshots/rest.png)
 
+### CLI
 ![Zzz cli interface](./screenshots/cli.png)
 
+### TUI
+TODO
 
 # Usage
 
@@ -75,11 +51,43 @@ Variables:
   auth_path: /services/oauth2/
 ```
 
-
 Further [documentation](docs) in recommended reading order: 
 
   - [Architecture](docs/architecture.md)
   - [Models](docs/models.md)
   - [Modules](docs/modules.md)
   - [Interfaces](docs/interfaces.md)
+  - [Collaboration](docs/collaboration.md)
   - [Alternatives to Zzz](docs/alternatives.md)
+
+
+
+
+
+## Postman feature parity
+
+- Request attributes:
+  - Method
+  - URL
+  - Query params
+  - Authorization
+  - Headers
+  - Body
+- Environments and Globals (aka Scopes)
+- Local variables (more Scopes)
+- Default values per folder or collection (aka Variables)
+- Cookie jar
+
+**Planned**:
+
+- Settings (per-request)
+  - Disable cookie jar
+  - Follow redirects (3xx)
+  - Follow original HTTP method (instead of redirecting to GET)
+  - Follow Authorization Header
+  - Remove referrer header on redirect
+  - Enable strict HTTP parser???
+  - Encode URL automatically (path, query parameters, authorization fields)
+  - Maximum number of redirects
+
+
