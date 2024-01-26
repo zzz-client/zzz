@@ -1,8 +1,7 @@
 import { Action, StringToStringMap, Trace } from "../../../lib/lib.ts";
 import { getFileFormat } from "../../../storage/files/formats.ts";
 import { Model } from "../../../storage/mod.ts";
-import { FeatureFlags } from "../../mod.ts";
-import Application from "../app.ts";
+import IApplication, { FeatureFlags } from "../../mod.ts";
 import { Scope } from "../modules/scope/mod.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
 
@@ -10,8 +9,8 @@ const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-A
 
 export class Server {
   port: number;
-  app: Application;
-  constructor(app: Application) {
+  app: IApplication;
+  constructor(app: IApplication) {
     this.port = app.argv!.http || 8000;
     this.app = app;
   }

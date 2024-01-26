@@ -1,12 +1,12 @@
-import Application from "../apps/zzz/app.ts";
+import IApplication from "../apps/mod.ts";
 import { Model } from "../storage/mod.ts";
 import { Action, asAny } from "./lib.ts";
 
 export abstract class Module {
   Name?: string;
-  app: Application;
+  app: IApplication;
   abstract dependencies: string[];
-  constructor(app: Application) {
+  constructor(app: IApplication) {
     this.app = app;
   }
   static hasFields(model: Model): boolean {

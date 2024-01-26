@@ -39,7 +39,7 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
         Trace("AuthType:", authType);
         auth = auth[authType] as Authorization;
         Trace("Authorization:", Authorization);
-        const authorizer = newAuthorization(authType);
+        const authorizer = DI.getInstance("IAuthorizer", authType) as IAuthorizer;
         Trace("Authorizer", authorizer);
         return authorizer.authorize(model, auth);
       }
@@ -73,6 +73,7 @@ Deno.test("Authorization Module modify: string", async () => {
 });
 
 function newAuthorization(type: string): IAuthorizer {
+  DI.getInstance(type);
   switch (type) {
     case "BearerToken":
       return new BearerTokenAuthorizer();
@@ -86,6 +87,7 @@ function newAuthorization(type: string): IAuthorizer {
       throw new Error(`Unknown Authorization type: $type`);
   }
 }
+export const IAuthorizerDI = "IAuthorizer";
 export interface IAuthorizer {
   authorize(model: Model, data: AuthContents): void;
 }
@@ -99,6 +101,7 @@ class ChildAuthorization {
 }
 
 import { assertEquals, testApp } from "../../../../lib/tests.ts";
+import DI from "../../../../lib/di.ts";
 Deno.test("newAuthorization: BasicAuth", () => {
   // GIVEN
   const type = "BasicAuth";

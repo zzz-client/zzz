@@ -15,7 +15,7 @@
     "tauri": "tauri dev",
     "tauri:build": "tauri build",
     "test": "deno test -A --coverage=coverage src/*",
-    "coverage": "deno coverage --lcov --output=coverage/lcov.info coverage"
+    "coverage": "deno coverage --lcov --output=coverage/lcov.info coverage ; rm coverage/*.json"
   },
   "lock": false,
   "fmt": {
