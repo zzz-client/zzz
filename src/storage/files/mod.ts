@@ -1,7 +1,7 @@
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import { basename, extname } from "https://deno.land/std/path/mod.ts";
 import { newInstance as iNewInstance } from "../../lib/di.ts";
-import { Meld, Trace } from "../../lib/lib.ts";
+import { Meld, Trace } from "../../lib/etc.ts";
 import { IStorage, Model, ParentModel, SearchParams } from "../mod.ts";
 import { getFileFormat } from "./formats.ts";
 const DEFAULT_MARKER = "_defaults";

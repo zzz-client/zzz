@@ -1,4 +1,4 @@
-import { Action, StringToStringMap, Trace } from "../../../../lib/lib.ts";
+import { Action, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { RequestsModule } from "../requests/mod.ts";

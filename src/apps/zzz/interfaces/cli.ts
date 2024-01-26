@@ -1,4 +1,4 @@
-import { Action, Log, Trace } from "../../../lib/lib.ts";
+import { Action, Log, Trace } from "../../../lib/etc.ts";
 import { getFileFormat } from "../../../storage/files/formats.ts";
 import IApplication, { FeatureFlags } from "../../mod.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";

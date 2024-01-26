@@ -1,4 +1,4 @@
-import { Action, StringToStringMap, Trace } from "../../../lib/lib.ts";
+import { Action, StringToStringMap, Trace } from "../../../lib/etc.ts";
 import { getFileFormat } from "../../../storage/files/formats.ts";
 import { Model } from "../../../storage/mod.ts";
 import IApplication, { FeatureFlags } from "../../mod.ts";

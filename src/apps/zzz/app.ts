@@ -1,7 +1,7 @@
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
 import DI, { newInstance as iNewInstance } from "../../lib/di.ts";
-import { Action, StringToStringMap, Trace } from "../../lib/lib.ts";
+import { Action, StringToStringMap, Trace } from "../../lib/etc.ts";
 import { IModuleFeatures, IModuleModifier, IModuleRenderer, Module } from "../../lib/module.ts";
 import { Model } from "../../storage/mod.ts";
 import IApplication, { ConfigValue, FeatureMap, Flags } from "../mod.ts";

@@ -1,6 +1,6 @@
 import { encode64 } from "https://deno.land/x/base64to@v0.0.2/mod.ts";
 import { newInstance as iNewInstance } from "../../../../lib/di.ts";
-import { Trace } from "../../../../lib/lib.ts";
+import { Trace } from "../../../../lib/etc.ts";
 import { HttpRequest } from "../requests/mod.ts";
 import { AuthContents, IAuthorizer } from "./mod.ts";
 

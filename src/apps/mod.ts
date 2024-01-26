@@ -1,5 +1,5 @@
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
-import { Action, StringToStringMap } from "../lib/lib.ts";
+import { Action, StringToStringMap } from "../lib/etc.ts";
 import { Module } from "../lib/module.ts";
 import { Model } from "../storage/mod.ts";
 import { IStore } from "./zzz/stores/mod.ts";

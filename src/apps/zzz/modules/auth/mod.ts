@@ -1,4 +1,4 @@
-import { Action, asAny, Trace } from "../../../../lib/lib.ts";
+import { Action, asAny, Trace } from "../../../../lib/etc.ts";
 import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { ContextModule } from "../context/mod.ts";

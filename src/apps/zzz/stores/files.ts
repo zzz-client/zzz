@@ -1,6 +1,6 @@
 import { basename } from "https://deno.land/std/path/mod.ts";
 import DI, { newInstance as iNewInstance } from "../../../lib/di.ts";
-import { Trace } from "../../../lib/lib.ts";
+import { Trace } from "../../../lib/etc.ts";
 import * as FileStorage from "../../../storage/files/mod.ts";
 import { IStorage, Model, ParentModel, SearchParams } from "../../../storage/mod.ts";
 import { Authorization } from "../modules/auth/mod.ts";

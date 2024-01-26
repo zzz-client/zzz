@@ -1,5 +1,5 @@
 import { newInstance as iNewInstance } from "../../../../lib/di.ts";
-import { Trace } from "../../../../lib/lib.ts";
+import { Trace } from "../../../../lib/etc.ts";
 import { HttpRequest } from "../requests/mod.ts";
 import { AuthContents, IAuthorizer } from "./mod.ts";
 

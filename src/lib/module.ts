@@ -1,6 +1,6 @@
 import IApplication from "../apps/mod.ts";
 import { Model } from "../storage/mod.ts";
-import { Action, asAny } from "./lib.ts";
+import { Action, asAny } from "./etc.ts";
 
 export abstract class Module {
   Name?: string;

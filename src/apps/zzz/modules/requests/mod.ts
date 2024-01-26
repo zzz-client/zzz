@@ -1,4 +1,4 @@
-import { Action, Meld, StringToStringMap, Trace } from "../../../../lib/lib.ts";
+import { Action, Meld, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model, ParentModel } from "../../../../storage/mod.ts";
 

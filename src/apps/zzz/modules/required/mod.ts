@@ -1,4 +1,4 @@
-import { Trace } from "../../../../lib/lib.ts";
+import { Trace } from "../../../../lib/etc.ts";
 import { IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { HttpRequest } from "../requests/mod.ts";

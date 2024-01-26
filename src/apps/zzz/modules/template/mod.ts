@@ -1,4 +1,4 @@
-import { Action, asAny, Trace } from "../../../../lib/lib.ts";
+import { Action, asAny, Trace } from "../../../../lib/etc.ts";
 import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../../../lib/module.ts";
 import tim from "../../../../lib/tim.ts";
 import { Model } from "../../../../storage/mod.ts";
