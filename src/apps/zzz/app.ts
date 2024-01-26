@@ -22,17 +22,20 @@ import * as FileStore from "./stores/files.ts";
 import { IStore } from "./stores/mod.ts";
 import * as FileStorage from "../../storage/files/mod.ts";
 
-DI.register("IAuthorizer", BasicAuthAuthorizer.newInstance, "BasicAuth");
-DI.register("IAuthorizer", BearerTokenAuthorizer.newInstance, "BearerToken");
-DI.register("IAuthorizer", HeaderAuthorizer.newInstance, "HeaderAuthorizer");
-DI.register("IAuthorizer", QueryAuthorizer.newInstance, "QueryAuthorizer");
-DI.register("IStore", FileStore.newInstance);
-DI.register("IStorage:HttpRequest", FileStorage.newInstance, ["request", "yml"]);
-DI.register("IStorage:Scope", FileStorage.newInstance, ["request", "yml"]);
-DI.register("IStorage:Collection", FileStorage.newInstance, ["request", "yml"]);
-DI.register("IStorage:Context", FileStorage.newInstance, ["contexts", "yml"]);
-DI.register("IStorage:Authorization", FileStorage.newInstance, ["auth", "yml"]);
-DI.register("IStorage:Cookies", FileStorage.newInstance, ["cookies", "yml"]);
+// deno-fmt-ignore
+{
+  DI.register("IAuthorizer",            BasicAuthAuthorizer.newInstance, "BasicAuth");
+  DI.register("IAuthorizer",            BearerTokenAuthorizer.newInstance, "BearerToken");
+  DI.register("IAuthorizer",            HeaderAuthorizer.newInstance, "HeaderAuthorizer");
+  DI.register("IAuthorizer",            QueryAuthorizer.newInstance, "QueryAuthorizer");
+  DI.register("IStore",                 FileStore.newInstance);
+  DI.register("IStorage:HttpRequest",   FileStorage.newInstance, ["request", "yml"]);
+  DI.register("IStorage:Scope",         FileStorage.newInstance, ["request", "yml"]);
+  DI.register("IStorage:Collection",    FileStorage.newInstance, ["request", "yml"]);
+  DI.register("IStorage:Context",       FileStorage.newInstance, ["contexts", "yml"]);
+  DI.register("IStorage:Authorization", FileStorage.newInstance, ["auth", "yml"]);
+  DI.register("IStorage:Cookies",       FileStorage.newInstance, ["cookies", "yml"]);
+}
 
 const newInstance = {
   newInstance(): Object {

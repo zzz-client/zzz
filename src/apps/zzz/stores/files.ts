@@ -19,13 +19,14 @@ export { newInstance };
 
 export default class FileStore implements IStore {
   private FILE_FORMAT = "yml;";
+  // deno-fmt-ignore
   private storages: Map<string, IStorage> = new Map([
-    [HttpRequest.name, DI.newInstance("IStorage:HttpRequest", ["requests", this.FILE_FORMAT]) as IStorage],
-    [Scope.name, DI.newInstance("IStorage:Scope", ["requests", this.FILE_FORMAT]) as IStorage],
-    [Collection.name, DI.newInstance("IStorage:Collection", ["requests", this.FILE_FORMAT]) as IStorage],
-    [Context.name, DI.newInstance("IStorage:Context", ["contexts", this.FILE_FORMAT]) as IStorage],
-    [Authorization.name, DI.newInstance("IStorage:Authorization", ["auth", this.FILE_FORMAT]) as IStorage],
-    [Cookies.name, DI.newInstance("IStorage:Cookies", ["cookies", this.FILE_FORMAT]) as IStorage],
+    [HttpRequest.name,    DI.newInstance("IStorage:HttpRequest",    ["requests", this.FILE_FORMAT]) as IStorage],
+    [Scope.name,          DI.newInstance("IStorage:Scope",          ["requests", this.FILE_FORMAT]) as IStorage],
+    [Collection.name,     DI.newInstance("IStorage:Collection",     ["requests", this.FILE_FORMAT]) as IStorage],
+    [Context.name,        DI.newInstance("IStorage:Context",        ["contexts", this.FILE_FORMAT]) as IStorage],
+    [Authorization.name,  DI.newInstance("IStorage:Authorization",  ["auth", this.FILE_FORMAT]) as IStorage],
+    [Cookies.name,        DI.newInstance("IStorage:Cookies",        ["cookies", this.FILE_FORMAT]) as IStorage],
   ]);
   async get(modelType: string, id: string): Promise<Model> {
     Trace(`FileStore: Getting model type ${modelType} id ${id}`);
