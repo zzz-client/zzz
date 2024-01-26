@@ -11,7 +11,7 @@ Zzz came out of the desire for a **REST client** replacement to Postman with gen
 ![Zzz_desktop_interface](./screenshots/desktop.png)
 
 #### REST API
-![Zzz web interface](./screenshots/rest.png)
+![Zzz web interface](./screenshots/api.png)
 
 ### CLI
 ![Zzz cli interface](./screenshots/cli.png)
@@ -21,7 +21,7 @@ TODO
 
 # Usage
 
-Run `--help` for more detail on flag usages and shorthands.
+Run `--help` or `-h` or `?` for more detail on flag usages and shorthands.
 
 - `zzz http`: Start the HTTP server, defaults to port 8000
 - `zzz web`: Start the Web (Vite) server, defaults to port 5173
@@ -32,7 +32,7 @@ Flags are available for CLI usage
 - `--context <name>`: The name of the context to use
 - `--execute`: execute the request instead outputting its contents
 
-Outside of the sense of a workspace of requests, for the file storage driver, a request can contain every bit of information it needs due to the way melding the files works. That means you can store a request as YAML and run it on demand.
+Zzz can be used both as a workspace of requests and variables but it can also be used to run requests entirely stored in a single file, like so:
 
 ```yaml
 Method: POST
@@ -51,7 +51,7 @@ Variables:
   auth_path: /services/oauth2/
 ```
 
-Further [documentation](docs) in recommended reading order: 
+Further [documentation](docs) in recommended reading order:
 
   - [Architecture](docs/architecture.md)
   - [Models](docs/models.md)
