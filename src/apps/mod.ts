@@ -41,9 +41,6 @@ export function loadFlagsAndFeatures(app: IApplication, module: Module): void {
       if (flag.multi) {
         asAny(app.features)[flag.name] = [];
       } else if (flag.exposed) {
-        if (!flag.type) {
-          flag.type = "boolean";
-        }
         asAny(app.flags)[flag.type].push(flag.name);
         app.flags.description[flag.name] = flag.description;
         if (flag.argument) app.flags.argument[flag.name] = flag.argument;
