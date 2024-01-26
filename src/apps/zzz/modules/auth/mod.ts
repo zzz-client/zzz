@@ -5,6 +5,7 @@ import { ContextModule } from "../context/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 
 export class AuthorizationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
+  Name = "Authorization";
   dependencies = [RequestsModule.name, ContextModule.name];
   models = [Authorization.name];
   fields = {

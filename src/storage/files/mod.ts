@@ -21,7 +21,6 @@ export default class FileStorage implements IStorage {
     this.fileExtension = fileExtension;
   }
   async get(fullId: string): Promise<Model> {
-    console.log("FileStorage: get(", fullId + ")");
     if (await this.isFile(fullId)) {
       return this.getFile(fullId);
     } else {

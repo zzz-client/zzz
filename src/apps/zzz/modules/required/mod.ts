@@ -4,6 +4,7 @@ import { Model } from "../../../../storage/mod.ts";
 import { HttpRequest } from "../requests/mod.ts";
 
 export default class RequiredModule extends Module implements IModuleModifier {
+  Name = "Required";
   dependencies = [];
   modify(theRequest: Model): Promise<void> {
     Trace("RequiredModule:modify");

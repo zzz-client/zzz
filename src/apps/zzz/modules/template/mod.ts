@@ -6,6 +6,7 @@ import { ContextModule } from "../context/mod.ts";
 import { RequestsModule } from "../requests/mod.ts";
 
 export default class TemplateModule extends Module implements IModuleFeatures, IModuleModifier {
+  Name = "Template";
   dependencies = [RequestsModule.name, ContextModule.name];
   features: Feature[] = [
     {

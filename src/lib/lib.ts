@@ -37,5 +37,7 @@ export function Log(...args: any[]): void {
 }
 // deno-lint-ignore no-explicit-any
 export function Trace(...args: any[]): void {
-  Log(...args);
+  if (Deno.args.includes("--trace") || Deno.env.get("VERBOSE") === "true") {
+    Log(...args);
+  }
 }

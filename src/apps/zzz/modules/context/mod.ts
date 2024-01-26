@@ -6,6 +6,7 @@ import TemplateModule from "../template/mod.ts";
 import Loader, { Apply, GLOBALS_CONTEXT, ILoader, SESSION_CONTEXT } from "./loader.ts";
 
 export class ContextModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
+  Name = "Context";
   dependencies: string[] = [RequestsModule.name, TemplateModule.name];
   features: Feature[] = [
     {

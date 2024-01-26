@@ -1,4 +1,5 @@
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
+import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
 import DI, { newInstance as iNewInstance } from "../../lib/di.ts";
 import { Action, StringToStringMap, Trace } from "../../lib/lib.ts";
 import { IModuleFeatures, IModuleModifier, IModuleRenderer, Module } from "../../lib/module.ts";
@@ -7,15 +8,31 @@ import IApplication, { ConfigValue, FeatureMap, Flags } from "../mod.ts";
 import * as BasicAuthAuthorizer from "./modules/auth/basicAuth.ts";
 import * as BearerTokenAuthorizer from "./modules/auth/bearerToken.ts";
 import * as HeaderAuthorizer from "./modules/auth/header.ts";
+import { AuthorizationModule } from "./modules/auth/mod.ts";
 import * as QueryAuthorizer from "./modules/auth/query.ts";
+import { BodyModule } from "./modules/body/mod.ts";
+import { ContextModule } from "./modules/context/mod.ts";
+import { CookiesModule } from "./modules/cookies/mod.ts";
+import { PathParamsModule } from "./modules/path-params/mod.ts";
+import { RedactModule } from "./modules/redact/mod.ts";
+import { RequestsModule } from "./modules/requests/mod.ts";
+import { ScopeModule } from "./modules/scope/mod.ts";
+import TemplateModule from "./modules/template/mod.ts";
 import * as FileStore from "./stores/files.ts";
 import { IStore } from "./stores/mod.ts";
+import * as FileStorage from "../../storage/files/mod.ts";
 
 DI.register("IAuthorizer", BasicAuthAuthorizer.newInstance, "BasicAuth");
 DI.register("IAuthorizer", BearerTokenAuthorizer.newInstance, "BearerToken");
 DI.register("IAuthorizer", HeaderAuthorizer.newInstance, "HeaderAuthorizer");
 DI.register("IAuthorizer", QueryAuthorizer.newInstance, "QueryAuthorizer");
 DI.register("IStore", FileStore.newInstance);
+DI.register("IStorage:HttpRequest", FileStorage.newInstance, ["request", "yml"]);
+DI.register("IStorage:Scope", FileStorage.newInstance, ["request", "yml"]);
+DI.register("IStorage:Collection", FileStorage.newInstance, ["request", "yml"]);
+DI.register("IStorage:Context", FileStorage.newInstance, ["contexts", "yml"]);
+DI.register("IStorage:Authorization", FileStorage.newInstance, ["auth", "yml"]);
+DI.register("IStorage:Cookies", FileStorage.newInstance, ["cookies", "yml"]);
 
 const newInstance = {
   newInstance(): Object {
@@ -26,7 +43,7 @@ export { newInstance };
 
 const STANDARD_FLAGS = {
   string: ["http", "web"],
-  boolean: [] as string[],
+  boolean: ["trace"] as string[],
   description: {
     http: "Start HTTP server",
     web: "Start web UI server",
@@ -53,7 +70,44 @@ export default class Application implements IApplication {
   renderers = [] as IModuleRenderer[];
   constructor() {
     // loadEnv().then((env) => this.env = env);
+    this.registerModule(new RequestsModule(this));
+    this.registerModule(new BodyModule(this));
+    this.registerModule(new PathParamsModule(this));
+    this.registerModule(new ScopeModule(this));
+    this.registerModule(new ContextModule(this));
+    this.registerModule(new AuthorizationModule(this));
+    this.registerModule(new TemplateModule(this));
+    this.registerModule(new CookiesModule(this));
+    this.registerModule(new RedactModule(this));
+    this.argv = processFlags(Deno.args, this.flags);
   }
+
+  // if (app.argv._.includes("run")) {
+  //   Trace("Running CLI");
+  //   return Cli(app);
+  // }
+  // if (
+  //   app.argv.all ||
+  //   app.argv.execute ||
+  //   app.argv.format
+  // ) {
+  //   if (app.argv.all) Trace("--all not allowed");
+  //   if (app.argv.execute) Trace("--execute not allowed");
+  //   if (app.argv.format) Trace("--format not allowed");
+  //   throw new Error("Flags not allowed when starting HTTP or Web server");
+  // }
+  // if (app.argv._.includes("web")) {
+  //   Log("Starting web server");
+  //   Deno.args.splice(2);
+  //   // vite;
+  //   Deno.exit(0);
+  //   // TODO
+  // }
+  // if (app.argv._.includes("http")) {
+  //   Log("Starting HTTP server");
+  //   return new Server(app).listen();
+  // }
+  // Log(":)");
   registerModule(module: Module): void {
     this.loadFlags(module);
     /*

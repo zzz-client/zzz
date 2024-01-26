@@ -3,7 +3,6 @@ class DI {
   private args = new Map<string, any[] | any | null>();
   private instances = new Map<string, Object>();
   register(name: string, constructor: newInstance, args: any[] | any | null = null) {
-    console.log("Constructor", name, constructor);
     this.constructors.set(name, constructor);
     this.args.set(name, args);
   }

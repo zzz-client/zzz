@@ -4,6 +4,7 @@ import { Model } from "../../../../storage/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 
 export class CookiesModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
+  Name = "Cookies";
   dependencies = [RequestsModule.name];
   models = [Cookies.name];
   fields = {

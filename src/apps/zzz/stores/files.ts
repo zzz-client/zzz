@@ -12,8 +12,6 @@ import { IStore } from "./mod.ts";
 
 const newInstance = {
   newInstance(): Object {
-    DI.register("IStorage:HttpRequest", FileStorage.newInstance, ["QueryAuthorizer"]);
-    DI.register("IStorage:Scope", FileStorage.newInstance, ["request", "yml"]);
     return new FileStore();
   },
 } as iNewInstance;

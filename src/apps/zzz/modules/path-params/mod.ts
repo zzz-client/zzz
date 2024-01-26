@@ -4,6 +4,7 @@ import { Model } from "../../../../storage/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 
 export class PathParamsModule extends Module implements IModuleFields, IModuleModifier {
+  Name = "PathParams";
   dependencies = [RequestsModule.name];
   fields = {
     PathParams: {

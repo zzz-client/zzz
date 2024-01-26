@@ -3,6 +3,7 @@ import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier
 import { Model, ParentModel } from "../../../../storage/mod.ts";
 
 export class RequestsModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
+  Name = "Requests";
   dependencies = [];
   features: Feature[] = [
     {
