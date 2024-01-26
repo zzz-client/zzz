@@ -40,7 +40,7 @@ export interface ModuleFields {
   [key: string]: ModuleField;
 }
 export interface ModuleField {
-  [key: string]: any;
+  [key: string]: any; // TODO?
 }
 export type Feature = {
   name: string;

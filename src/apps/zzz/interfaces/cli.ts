@@ -1,6 +1,6 @@
 import { Action, Log, Trace } from "../../../lib/etc.ts";
 import { getFileFormat } from "../../../storage/files/formats.ts";
-import IApplication, { FeatureFlags } from "../../mod.ts";
+import IApplication, { executeModules, FeatureFlags } from "../../mod.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";
 
 export default async function Cli(app: IApplication): Promise<void> {
@@ -9,7 +9,7 @@ export default async function Cli(app: IApplication): Promise<void> {
   const action = new Action(flagValues, app.env);
   const model = new HttpRequest();
   try {
-    await app.executeModules(action, model);
+    await executeModules(app.modules, action, model);
   } catch (error) {
     Log(error);
     Deno.exit(1);

@@ -1,12 +1,13 @@
+// deno-lint-ignore-file no-explicit-any
 class DI {
   private constructors = new Map<string, newInstance>();
   private args = new Map<string, any[] | any | null>();
-  private instances = new Map<string, Object>();
+  private instances = new Map<string, object>();
   register(name: string, constructor: newInstance, args: any[] | any | null = null) {
     this.constructors.set(name, constructor);
     this.args.set(name, args);
   }
-  getInstance(name: string): Object {
+  getInstance(name: string): object {
     const instance = this.instances.get(name);
     if (!instance) {
       this.instances.set(name, this._newInstance(this.constructors.get(name)!, this.args.get(name)));
@@ -14,7 +15,7 @@ class DI {
     }
     return instance;
   }
-  newInstance(name: string, args?: any[] | any): Object {
+  newInstance(name: string, args?: any[] | any): object {
     if (args && !Array.isArray(args)) {
       args = [args];
     }
@@ -24,7 +25,7 @@ class DI {
     }
     return this._newInstance(constructor, args);
   }
-  private _newInstance(constructor: newInstance, args?: any[] | any): Object {
+  private _newInstance(constructor: newInstance, args?: any[] | any): object {
     if (args) {
       return constructor.newInstance(...args);
     } else {
@@ -34,7 +35,7 @@ class DI {
 }
 
 export interface newInstance {
-  newInstance(args?: any[] | any | null): Object;
+  newInstance(args?: any[] | any | null): object;
 }
 
 const DumbDi = new DI();

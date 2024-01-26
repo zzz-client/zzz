@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 import { FileFormat, getFileFormat } from "../formats.ts";
 
 const HURL = {

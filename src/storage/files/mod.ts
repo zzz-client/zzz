@@ -7,7 +7,7 @@ import { getFileFormat } from "./formats.ts";
 const DEFAULT_MARKER = "_defaults";
 
 const newInstance = {
-  newInstance(baseDir: string, fileExt: string): Object {
+  newInstance(baseDir: string, fileExt: string): object {
     return new FileStorage(baseDir, fileExt);
   },
 } as iNewInstance;

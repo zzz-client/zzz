@@ -10,7 +10,7 @@ import { Scope } from "../modules/scope/mod.ts";
 import { IStore } from "./mod.ts";
 
 const newInstance = {
-  newInstance(): Object {
+  newInstance(): object {
     return new FileStore();
   },
 } as iNewInstance;

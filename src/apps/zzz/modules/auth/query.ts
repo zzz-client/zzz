@@ -3,7 +3,7 @@ import { HttpRequest } from "../requests/mod.ts";
 import { AuthContents, IAuthorizer } from "./mod.ts";
 
 const newInstance = {
-  newInstance(): Object {
+  newInstance(): object {
     return new QueryAuthorizer();
   },
 } as iNewInstance;

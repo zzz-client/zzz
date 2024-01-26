@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 import { HttpRequest } from "../../../modules/requests/module.ts";
 import { FileFormat } from "../formats.ts";
 

@@ -1,10 +1,12 @@
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
 import DI, { newInstance as iNewInstance } from "../../lib/di.ts";
-import { Action, StringToStringMap, Trace } from "../../lib/etc.ts";
-import { IModuleFeatures, IModuleModifier, IModuleRenderer, Module } from "../../lib/module.ts";
-import { Model } from "../../storage/mod.ts";
-import IApplication, { ConfigValue, FeatureMap, Flags } from "../mod.ts";
+import { Log, StringToStringMap, Trace } from "../../lib/etc.ts";
+import { IModuleRenderer, Module } from "../../lib/module.ts";
+import * as FileStorage from "../../storage/files/mod.ts";
+import IApplication, { ConfigValue, FeatureMap, Flags, loadFlags } from "../mod.ts";
+import Cli from "./interfaces/cli.ts";
+import { Server } from "./interfaces/http.ts";
 import * as BasicAuthAuthorizer from "./modules/auth/basicAuth.ts";
 import * as BearerTokenAuthorizer from "./modules/auth/bearerToken.ts";
 import * as HeaderAuthorizer from "./modules/auth/header.ts";
@@ -20,7 +22,6 @@ import { ScopeModule } from "./modules/scope/mod.ts";
 import TemplateModule from "./modules/template/mod.ts";
 import * as FileStore from "./stores/files.ts";
 import { IStore } from "./stores/mod.ts";
-import * as FileStorage from "../../storage/files/mod.ts";
 
 // deno-fmt-ignore
 {
@@ -38,34 +39,30 @@ import * as FileStorage from "../../storage/files/mod.ts";
 }
 
 const newInstance = {
-  newInstance(): Object {
+  newInstance(): object {
     return new Application();
   },
 } as iNewInstance;
 export { newInstance };
 
-const STANDARD_FLAGS = {
-  string: ["http", "web"],
-  boolean: ["trace"] as string[],
-  description: {
-    http: "Start HTTP server",
-    web: "Start web UI server",
-  } as StringToStringMap,
-  argument: {
-    http: "port",
-    web: "port",
-  } as StringToStringMap,
-  default: {} as { [key: string]: ConfigValue },
-  alias: {} as StringToStringMap,
-};
-
 export default class Application implements IApplication {
   store = DI.newInstance("IStore") as IStore;
   flags = {
     preamble: "Usage: zzz <options>",
-    ...STANDARD_FLAGS,
+    string: ["http", "web"],
+    boolean: ["trace"] as string[],
+    description: {
+      http: "Start HTTP server",
+      web: "Start web UI server",
+    } as StringToStringMap,
+    argument: {
+      http: "port",
+      web: "port",
+    } as StringToStringMap,
+    default: {} as { [key: string]: ConfigValue },
+    alias: {} as StringToStringMap,
   } as Flags;
-  argv?: Args; // TODO: Should not be optional but needs to wait to be loaded until after registerModule has been called
+  argv: Args;
   features = {} as FeatureMap;
   env = {} as StringToStringMap;
   loadedModules = [] as Module[];
@@ -85,34 +82,36 @@ export default class Application implements IApplication {
     this.argv = processFlags(Deno.args, this.flags);
   }
 
-  // if (app.argv._.includes("run")) {
-  //   Trace("Running CLI");
-  //   return Cli(app);
-  // }
-  // if (
-  //   app.argv.all ||
-  //   app.argv.execute ||
-  //   app.argv.format
-  // ) {
-  //   if (app.argv.all) Trace("--all not allowed");
-  //   if (app.argv.execute) Trace("--execute not allowed");
-  //   if (app.argv.format) Trace("--format not allowed");
-  //   throw new Error("Flags not allowed when starting HTTP or Web server");
-  // }
-  // if (app.argv._.includes("web")) {
-  //   Log("Starting web server");
-  //   Deno.args.splice(2);
-  //   // vite;
-  //   Deno.exit(0);
-  //   // TODO
-  // }
-  // if (app.argv._.includes("http")) {
-  //   Log("Starting HTTP server");
-  //   return new Server(app).listen();
-  // }
-  // Log(":)");
+  what() {
+    if (this.argv._.includes("run")) {
+      Trace("Running CLI");
+      return Cli(this);
+    }
+    if (
+      this.argv.all ||
+      this.argv.execute ||
+      this.argv.format
+    ) {
+      if (this.argv.all) Trace("--all not allowed");
+      if (this.argv.execute) Trace("--execute not allowed");
+      if (this.argv.format) Trace("--format not allowed");
+      throw new Error("Flags not allowed when starting HTTP or Web server");
+    }
+    if (this.argv._.includes("web")) {
+      Log("Starting web server");
+      Deno.args.splice(2);
+      // vite;
+      Deno.exit(0);
+      // TODO
+    }
+    if (this.argv._.includes("http")) {
+      Log("Starting HTTP server");
+      return new Server(this).listen();
+    }
+    Log(":)");
+  }
   registerModule(module: Module): void {
-    this.loadFlags(module);
+    loadFlags(this, module);
     /*
     if (module instanceof IModuleModels) {
       // TODO: IModuleModels
@@ -125,33 +124,5 @@ export default class Application implements IApplication {
     }
     */
     this.modules.push(module);
-  }
-  executeModules(action: Action, model: Model): Promise<void> {
-    let promises = Promise.resolve();
-    Trace("Executing modules for", model);
-    this.modules.forEach((module) => {
-      Trace("Enqueuing module", module.Name);
-      if ("modify" in module) {
-        promises = promises.then(() => {
-          Trace("Executing module", module.Name);
-          return (module as unknown as IModuleModifier).modify(model, action);
-        });
-        return Promise.resolve();
-      }
-    });
-    return promises;
-  }
-  private loadFlags(module: Module) {
-    // TODO: Check dependencies via executedModules
-    if ("features" in module) { // TODO: IModuleFeatures
-      Trace("Loading flags for", module.Name);
-      for (const flag of (module as unknown as IModuleFeatures).features) {
-        this.flags[flag.type].push(flag.name);
-        this.flags.description[flag.name] = flag.description;
-        if (flag.argument) this.flags.argument[flag.name] = flag.argument;
-        if (flag.alias) this.flags.alias[flag.name] = flag.alias;
-        if (flag.default) this.flags.default[flag.name] = flag.default;
-      }
-    }
   }
 }

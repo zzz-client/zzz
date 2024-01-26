@@ -1,7 +1,7 @@
 import { Action, StringToStringMap, Trace } from "../../../lib/etc.ts";
 import { getFileFormat } from "../../../storage/files/formats.ts";
 import { Model } from "../../../storage/mod.ts";
-import IApplication, { FeatureFlags } from "../../mod.ts";
+import IApplication, { executeModules, FeatureFlags } from "../../mod.ts";
 import { Scope } from "../modules/scope/mod.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
 
@@ -77,7 +77,7 @@ export class Server {
     }
     return new Response(null, {
       status: 204,
-      headers: headers as any,
+      headers: headers as unknown as HeadersInit,
     });
   }
   async respondToScopesList(): Promise<Response> {
@@ -100,7 +100,7 @@ export class Server {
     flagValues.scope = parts.scope || flagValues.scope;
     const action = new Action(flagValues, this.app.env);
     const model = constructModelFromRequest(request);
-    await this.app.executeModules(action, model);
+    await executeModules(this.app.modules, action, model);
     // (model as any).Body = { foo: "bar" }; // DEBUG
     console.log("result", model);
     // return this._do(request).then((result: Model) => this.respondUsingEntity(result, "Pass"));
