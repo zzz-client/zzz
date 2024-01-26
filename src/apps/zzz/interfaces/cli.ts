@@ -1,10 +1,9 @@
 import { Action, Log, Trace } from "../../../lib/lib.ts";
 import { getFileFormat } from "../../../storage/files/formats.ts";
-import { FeatureFlags } from "../../mod.ts";
-import Application from "../app.ts";
+import IApplication, { FeatureFlags } from "../../mod.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";
 
-export default async function Cli(app: Application): Promise<void> {
+export default async function Cli(app: IApplication): Promise<void> {
   const flagValues = app.argv as FeatureFlags;
   Trace("Flag values:", flagValues);
   const action = new Action(flagValues, app.env);

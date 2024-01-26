@@ -8,16 +8,17 @@ import { Cookies } from "../modules/cookies/mod.ts";
 import { Collection, HttpRequest } from "../modules/requests/mod.ts";
 import { Scope } from "../modules/scope/mod.ts";
 import { IStore } from "./mod.ts";
+import DI from "../../../lib/di.ts";
 
 export default class FileStore implements IStore {
   private FILE_FORMAT = "yml;";
   private storages: Map<string, IStorage> = new Map([
-    [HttpRequest.name, new FileStorage("requests", this.FILE_FORMAT)],
-    [Scope.name, new FileStorage("requests", this.FILE_FORMAT)],
-    [Collection.name, new FileStorage("requests", this.FILE_FORMAT)],
-    [Context.name, new FileStorage("contexts", this.FILE_FORMAT)],
-    [Authorization.name, new FileStorage("auth", this.FILE_FORMAT)],
-    [Cookies.name, new FileStorage("cookies", this.FILE_FORMAT)],
+    [HttpRequest.name, DI.newInstance("IStorage", ["requests", this.FILE_FORMAT]) as IStorage],
+    [Scope.name, DI.newInstance("IStorage", ["requests", this.FILE_FORMAT]) as IStorage],
+    [Collection.name, DI.newInstance("IStorage", ["requests", this.FILE_FORMAT]) as IStorage],
+    [Context.name, DI.newInstance("IStorage", ["contexts", this.FILE_FORMAT]) as IStorage],
+    [Authorization.name, DI.newInstance("IStorage", ["auth", this.FILE_FORMAT]) as IStorage],
+    [Cookies.name, DI.newInstance("IStorage", ["cookies", this.FILE_FORMAT]) as IStorage],
   ]);
   async get(modelType: string, id: string): Promise<Model> {
     Trace(`FileStore: Getting model type ${modelType} id ${id}`);

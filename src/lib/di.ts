@@ -1,22 +1,30 @@
-class DumbDi {
-  private mappings = new Map<string, Map<string, Object>>();
-  register(name: string, value: Object, keyBy: Object | null = null) {
-    if (keyBy === "") {
-      throw new Error("Cannot use a key of blank string for mapping");
-    }
-    if (this.mappings.get(name) != null) {
-      this.mappings.set(name, new Map<string, Object>());
-    }
-    this.mappings.get(name)!.set(keyBy + "", value);
+class DI {
+  private mappings = new Map<string, [Function, Object | null, Object]>();
+  register(name: string, value: Function, param: any[] | any | null = null) {
+    this.mappings.set(name, [value, param, value(...param)]);
   }
-  getInstance(name: string, keyBy: Object | null = null): Object {
-    const result = this.mappings.get(name)?.get(keyBy + "");
-    if (result === undefined) {
-      throw new Error(`No mapping found for ${name} with key ${keyBy}`);
+  getInstance(name: string): Object {
+    const mappedValue = this.mappings.get(name);
+    if (mappedValue === undefined) {
+      throw new Error(`No mapping found for ${name}`);
     }
-    return result;
+    return mappedValue[2];
+  }
+  newInstance(name: string, args?: any[] | any): Object {
+    if (!Array.isArray(args)) {
+      args = [args];
+    }
+    const mappedValue = this.mappings.get(name);
+    if (mappedValue === undefined) {
+      throw new Error(`No mapping found for ${name}`);
+    }
+    return mappedValue[0](...args);
   }
 }
 
-const DI = new DumbDi();
-export default DI;
+export interface DIable {
+  newInstance(args?: any[]): Object;
+}
+
+const DumbDi = new DI();
+export default DumbDi as DI;

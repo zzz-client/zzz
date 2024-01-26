@@ -1,8 +1,9 @@
 import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
-import Application from "./apps/zzz/app.ts";
+import IApplication from "./apps/mod.ts";
 import Cli from "./apps/zzz/interfaces/cli.ts";
 import { Server } from "./apps/zzz/interfaces/http.ts";
-import { AuthorizationModule, IAuthorizerDI } from "./apps/zzz/modules/auth/mod.ts";
+import { BasicAuthAuthorizer } from "./apps/zzz/modules/auth/basicAuth.ts";
+import { AuthorizationModule } from "./apps/zzz/modules/auth/mod.ts";
 import { BodyModule } from "./apps/zzz/modules/body/mod.ts";
 import { ContextModule } from "./apps/zzz/modules/context/mod.ts";
 import { CookiesModule } from "./apps/zzz/modules/cookies/mod.ts";
@@ -11,10 +12,8 @@ import { RedactModule } from "./apps/zzz/modules/redact/mod.ts";
 import { RequestsModule } from "./apps/zzz/modules/requests/mod.ts";
 import { ScopeModule } from "./apps/zzz/modules/scope/mod.ts";
 import TemplateModule from "./apps/zzz/modules/template/mod.ts";
-import { Log, Trace as TraceOutput } from "./lib/lib.ts";
 import DI from "./lib/di.ts";
-import { BasicAuthAuthorizer } from "./apps/zzz/modules/auth/basicAuth.ts";
-import IApplication from "./apps/mod.ts";
+import { Log, Trace as TraceOutput } from "./lib/lib.ts";
 
 // deno-lint-ignore no-explicit-any
 function Trace(arg: any) {
@@ -24,9 +23,9 @@ function Trace(arg: any) {
 // import * as vite from "../node_modules/vite/bin/vite.js";
 
 export default function main(): Promise<void> {
-  DI.register(IAuthorizerDI, BasicAuthAuthorizer.constructor, "BasicAuth");
+  DI.register("IAuthorizer", BasicAuthAuthorizer.constructor, "BasicAuth");
 
-  const app = DI.getInstance(Application.name) as IApplication;
+  const app = DI.newInstance("IApplication") as IApplication;
   try {
     app.registerModule(new RequestsModule(app));
     app.registerModule(new BodyModule(app));

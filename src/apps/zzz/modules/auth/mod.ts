@@ -3,10 +3,6 @@ import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../
 import { Model } from "../../../../storage/mod.ts";
 import { ContextModule } from "../context/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
-import { BasicAuthAuthorizer } from "./basicAuth.ts";
-import { BearerTokenAuthorizer } from "./bearerToken.ts";
-import HeaderAuthorizer from "./header.ts";
-import { QueryAuthorizer } from "./query.ts";
 
 export class AuthorizationModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
   dependencies = [RequestsModule.name, ContextModule.name];
@@ -39,7 +35,7 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
         Trace("AuthType:", authType);
         auth = auth[authType] as Authorization;
         Trace("Authorization:", Authorization);
-        const authorizer = DI.getInstance("IAuthorizer", authType) as IAuthorizer;
+        const authorizer = DI.newInstance("IAuthorizer", authType) as IAuthorizer;
         Trace("Authorizer", authorizer);
         return authorizer.authorize(model, auth);
       }
@@ -50,7 +46,7 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
 
 Deno.test("Authorization Module modify: undefined", async () => {
   // GIVEN
-  const module = new AuthorizationModule(testApp());
+  const module = new AuthorizationModule(DI.getInstance("IApplication") as IApplication);
   const action = new Action({}, {});
   const model = new Model();
   // WHEN
@@ -61,7 +57,7 @@ Deno.test("Authorization Module modify: undefined", async () => {
 
 Deno.test("Authorization Module modify: string", async () => {
   // GIVEN
-  const module = new AuthorizationModule(testApp());
+  const module = new AuthorizationModule(DI.getInstance("IApplication") as IApplication);
   const action = new Action({}, {});
   const model = new Model();
   asAny(model).Authorization = "asdf";
@@ -71,23 +67,6 @@ Deno.test("Authorization Module modify: string", async () => {
   // THEN
   assertEquals(asAny(model).Authorization, "asdf", "Authorization should be string it was set to");
 });
-
-function newAuthorization(type: string): IAuthorizer {
-  DI.getInstance(type);
-  switch (type) {
-    case "BearerToken":
-      return new BearerTokenAuthorizer();
-    case "BasicAuth":
-      return new BasicAuthAuthorizer();
-    case "Header":
-      return new HeaderAuthorizer();
-    case "Query":
-      return new QueryAuthorizer();
-    default:
-      throw new Error(`Unknown Authorization type: $type`);
-  }
-}
-export const IAuthorizerDI = "IAuthorizer";
 export interface IAuthorizer {
   authorize(model: Model, data: AuthContents): void;
 }
@@ -100,52 +79,6 @@ class ChildAuthorization {
   Authorization?: Authorization | string;
 }
 
-import { assertEquals, testApp } from "../../../../lib/tests.ts";
 import DI from "../../../../lib/di.ts";
-Deno.test("newAuthorization: BasicAuth", () => {
-  // GIVEN
-  const type = "BasicAuth";
-  // WHEN
-  const authorization = newAuthorization(type);
-  // THEN
-  assertEquals(authorization instanceof BasicAuthAuthorizer, true, "Incorrect authorization type");
-});
-
-Deno.test("newAuthorization: BearerToken", () => {
-  // GIVEN
-  const type = "BearerToken";
-  // WHEN
-  const authorization = newAuthorization(type);
-  // THEN
-  assertEquals(authorization instanceof BearerTokenAuthorizer, true, "Incorrect authorization type");
-});
-
-Deno.test("newAuthorization: Header", () => {
-  // GIVEN
-  const type = "Header";
-  // WHEN
-  const authorization = newAuthorization(type);
-  // THEN
-  assertEquals(authorization instanceof HeaderAuthorizer, true, "Incorrect authorization type");
-});
-
-Deno.test("newAuthorization: Query", () => {
-  // GIVEN
-  const type = "Query";
-  // WHEN
-  const authorization = newAuthorization(type);
-  // THEN
-  assertEquals(authorization instanceof QueryAuthorizer, true, "Incorrect authorization type");
-});
-
-Deno.test("newAuthorization: Unknown", () => {
-  // GIVEN
-  const type = "asdf";
-  try {
-    // WHEN
-    const authorization = newAuthorization(type);
-    // THEN
-  } catch (e) {
-    assertEquals(e.message, `Unknown Authorization type: $type`, "Incorrect error message");
-  }
-});
+import { assertEquals } from "../../../../lib/tests.ts";
+import IApplication from "../../../mod.ts";

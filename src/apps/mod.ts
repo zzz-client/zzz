@@ -3,8 +3,9 @@ import { Action, StringToStringMap } from "../lib/lib.ts";
 import { Module } from "../lib/module.ts";
 import { Model } from "../storage/mod.ts";
 import { IStore } from "./zzz/stores/mod.ts";
+import { DIable } from "../lib/di.ts";
 
-export default interface IApplication {
+export default interface IApplication extends DIable {
   store: IStore; // TODO: bad, imports from zzz
   flags: Flags;
   argv?: Args; // TODO: Should not be optional but needs to wait to be loaded until after registerModule has been called
