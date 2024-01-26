@@ -1,9 +1,28 @@
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
+import DI, { newInstance as iNewInstance } from "../../lib/di.ts";
 import { Action, StringToStringMap, Trace } from "../../lib/lib.ts";
 import { IModuleFeatures, IModuleModifier, IModuleRenderer, Module } from "../../lib/module.ts";
 import { Model } from "../../storage/mod.ts";
 import IApplication, { ConfigValue, FeatureMap, Flags } from "../mod.ts";
-import FileStore from "./stores/files.ts";
+import * as BasicAuthAuthorizer from "./modules/auth/basicAuth.ts";
+import * as BearerTokenAuthorizer from "./modules/auth/bearerToken.ts";
+import * as HeaderAuthorizer from "./modules/auth/header.ts";
+import * as QueryAuthorizer from "./modules/auth/query.ts";
+import * as FileStore from "./stores/files.ts";
+import { IStore } from "./stores/mod.ts";
+
+DI.register("IAuthorizer", BasicAuthAuthorizer.newInstance, "BasicAuth");
+DI.register("IAuthorizer", BearerTokenAuthorizer.newInstance, "BearerToken");
+DI.register("IAuthorizer", HeaderAuthorizer.newInstance, "HeaderAuthorizer");
+DI.register("IAuthorizer", QueryAuthorizer.newInstance, "QueryAuthorizer");
+DI.register("IStore", FileStore.newInstance);
+
+const newInstance = {
+  newInstance(): Object {
+    return new Application();
+  },
+} as iNewInstance;
+export { newInstance };
 
 const STANDARD_FLAGS = {
   string: ["http", "web"],
@@ -21,7 +40,7 @@ const STANDARD_FLAGS = {
 };
 
 export default class Application implements IApplication {
-  store = new FileStore();
+  store = DI.newInstance("IStore") as IStore;
   flags = {
     preamble: "Usage: zzz <options>",
     ...STANDARD_FLAGS,

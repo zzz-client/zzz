@@ -1,29 +1,41 @@
 class DI {
-  private mappings = new Map<string, [Function, Object | null, Object]>();
-  register(name: string, value: Function, param: any[] | any | null = null) {
-    this.mappings.set(name, [value, param, value(...param)]);
+  private constructors = new Map<string, newInstance>();
+  private args = new Map<string, any[] | any | null>();
+  private instances = new Map<string, Object>();
+  register(name: string, constructor: newInstance, args: any[] | any | null = null) {
+    console.log("Constructor", name, constructor);
+    this.constructors.set(name, constructor);
+    this.args.set(name, args);
   }
   getInstance(name: string): Object {
-    const mappedValue = this.mappings.get(name);
-    if (mappedValue === undefined) {
+    const instance = this.instances.get(name);
+    if (!instance) {
+      this.instances.set(name, this._newInstance(this.constructors.get(name)!, this.args.get(name)));
       throw new Error(`No mapping found for ${name}`);
     }
-    return mappedValue[2];
+    return instance;
   }
   newInstance(name: string, args?: any[] | any): Object {
-    if (!Array.isArray(args)) {
+    if (args && !Array.isArray(args)) {
       args = [args];
     }
-    const mappedValue = this.mappings.get(name);
-    if (mappedValue === undefined) {
+    const constructor = this.constructors.get(name);
+    if (!constructor) {
       throw new Error(`No mapping found for ${name}`);
     }
-    return mappedValue[0](...args);
+    return this._newInstance(constructor, args);
+  }
+  private _newInstance(constructor: newInstance, args?: any[] | any): Object {
+    if (args) {
+      return constructor.newInstance(...args);
+    } else {
+      return constructor.newInstance();
+    }
   }
 }
 
-export interface DIable {
-  newInstance(args?: any[]): Object;
+export interface newInstance {
+  newInstance(args?: any[] | any | null): Object;
 }
 
 const DumbDi = new DI();

@@ -1,9 +1,8 @@
 // import axios from "https://deno.land/x/redaxios/mod.ts";
 import axios from "npm:axios";
-import { HttpRequest } from "../mod.ts";
-import { IModuleRenderer } from "../../../../../lib/module.ts";
-import { parseAstAsync } from "../../../../../../../../notbryant/.cache/deno/npm/registry.npmjs.org/rollup/4.9.2/dist/parseAst.d.ts";
 import { asAny } from "../../../../../lib/lib.ts";
+import { IModuleRenderer } from "../../../../../lib/module.ts";
+import { HttpRequest } from "../mod.ts";
 
 export default class HttpClient implements IModuleRenderer {
   async render(theRequest: HttpRequest): Promise<void> {

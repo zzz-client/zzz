@@ -1,6 +1,7 @@
 import { basename } from "https://deno.land/std/path/mod.ts";
+import DI, { newInstance as iNewInstance } from "../../../lib/di.ts";
 import { Trace } from "../../../lib/lib.ts";
-import FileStorage from "../../../storage/files/mod.ts";
+import * as FileStorage from "../../../storage/files/mod.ts";
 import { IStorage, Model, ParentModel, SearchParams } from "../../../storage/mod.ts";
 import { Authorization } from "../modules/auth/mod.ts";
 import { Context } from "../modules/context/mod.ts";
@@ -8,17 +9,25 @@ import { Cookies } from "../modules/cookies/mod.ts";
 import { Collection, HttpRequest } from "../modules/requests/mod.ts";
 import { Scope } from "../modules/scope/mod.ts";
 import { IStore } from "./mod.ts";
-import DI from "../../../lib/di.ts";
+
+const newInstance = {
+  newInstance(): Object {
+    DI.register("IStorage:HttpRequest", FileStorage.newInstance, ["QueryAuthorizer"]);
+    DI.register("IStorage:Scope", FileStorage.newInstance, ["request", "yml"]);
+    return new FileStore();
+  },
+} as iNewInstance;
+export { newInstance };
 
 export default class FileStore implements IStore {
   private FILE_FORMAT = "yml;";
   private storages: Map<string, IStorage> = new Map([
-    [HttpRequest.name, DI.newInstance("IStorage", ["requests", this.FILE_FORMAT]) as IStorage],
-    [Scope.name, DI.newInstance("IStorage", ["requests", this.FILE_FORMAT]) as IStorage],
-    [Collection.name, DI.newInstance("IStorage", ["requests", this.FILE_FORMAT]) as IStorage],
-    [Context.name, DI.newInstance("IStorage", ["contexts", this.FILE_FORMAT]) as IStorage],
-    [Authorization.name, DI.newInstance("IStorage", ["auth", this.FILE_FORMAT]) as IStorage],
-    [Cookies.name, DI.newInstance("IStorage", ["cookies", this.FILE_FORMAT]) as IStorage],
+    [HttpRequest.name, DI.newInstance("IStorage:HttpRequest", ["requests", this.FILE_FORMAT]) as IStorage],
+    [Scope.name, DI.newInstance("IStorage:Scope", ["requests", this.FILE_FORMAT]) as IStorage],
+    [Collection.name, DI.newInstance("IStorage:Collection", ["requests", this.FILE_FORMAT]) as IStorage],
+    [Context.name, DI.newInstance("IStorage:Context", ["contexts", this.FILE_FORMAT]) as IStorage],
+    [Authorization.name, DI.newInstance("IStorage:Authorization", ["auth", this.FILE_FORMAT]) as IStorage],
+    [Cookies.name, DI.newInstance("IStorage:Cookies", ["cookies", this.FILE_FORMAT]) as IStorage],
   ]);
   async get(modelType: string, id: string): Promise<Model> {
     Trace(`FileStore: Getting model type ${modelType} id ${id}`);

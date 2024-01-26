@@ -1,6 +1,14 @@
+import { newInstance as iNewInstance } from "../../../../lib/di.ts";
 import { Trace } from "../../../../lib/lib.ts";
 import { HttpRequest } from "../requests/mod.ts";
 import { AuthContents, IAuthorizer } from "./mod.ts";
+
+const newInstance = {
+  newInstance(): Object {
+    return new HeaderAuthorizer();
+  },
+} as iNewInstance;
+export { newInstance };
 
 export default class HeaderAuthorizer implements IAuthorizer {
   authorize(theRequest: HttpRequest, data: Header): void {

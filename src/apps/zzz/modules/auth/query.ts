@@ -1,5 +1,13 @@
+import { newInstance as iNewInstance } from "../../../../lib/di.ts";
 import { HttpRequest } from "../requests/mod.ts";
 import { AuthContents, IAuthorizer } from "./mod.ts";
+
+const newInstance = {
+  newInstance(): Object {
+    return new QueryAuthorizer();
+  },
+} as iNewInstance;
+export { newInstance };
 
 export class QueryAuthorizer implements IAuthorizer {
   authorize(theRequest: HttpRequest, data: Query): void {

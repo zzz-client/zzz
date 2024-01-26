@@ -1,6 +1,14 @@
+import { newInstance as iNewInstance } from "../../../../lib/di.ts";
 import { Trace } from "../../../../lib/lib.ts";
 import { HttpRequest } from "../requests/mod.ts";
 import { AuthContents, IAuthorizer } from "./mod.ts";
+
+const newInstance = {
+  newInstance(): Object {
+    return new BearerTokenAuthorizer();
+  },
+} as iNewInstance;
+export { newInstance };
 
 export class BearerTokenAuthorizer implements IAuthorizer {
   authorize(theRequest: HttpRequest, token: BearerToken): void {
