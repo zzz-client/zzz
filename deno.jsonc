@@ -1,9 +1,10 @@
 {
   "name": "zzz",
-  "version": "0.0.10",
+  "version": "0.5.0",
   "description": "Replacement for Postman",
   "tasks": {
     "init": "npm install ; deno task cache",
+    "compile": "deno compile --unstable --allow-all --output=bin/zzz src/main.ts",
     "cache": "deno cache src/**/*.ts",
     "zzz": "deno run -A --unstable src/main.ts",
     "http": "deno run -A --unstable src/main.ts http",

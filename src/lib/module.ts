@@ -3,6 +3,7 @@ import { Model } from "../storage/mod.ts";
 import { Action, asAny } from "./lib.ts";
 
 export abstract class Module {
+  Name?: string;
   app: Application;
   abstract dependencies: string[];
   constructor(app: Application) {

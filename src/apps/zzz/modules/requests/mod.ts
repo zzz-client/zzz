@@ -18,7 +18,7 @@ export class RequestsModule extends Module implements IModuleFeatures, IModuleMo
   };
   async modify(model: Model, _action: Action): Promise<void> {
     Trace("RequestsModule:modify", model.Id);
-    const loadedModel = await this.app.store.get(model.name, model.Id);
+    const loadedModel = await this.app.store.get(model.Name, model.Id);
     Trace("RequestsModule:modify loaded Model", loadedModel);
     Meld(model, loadedModel);
     return await Promise.resolve();

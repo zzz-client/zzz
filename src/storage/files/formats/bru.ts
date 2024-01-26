@@ -67,7 +67,7 @@ function readBlock(lines: string[], index: number): [any, number] {
   }
   const tag = lines[index].substring(0, lines[index].length - 2);
   index++; // Skip the opening brace
-  const block = { tag: tag };
+  const block = { tag: tag } as any;
   while (!lines[index].startsWith("}")) {
     const [key, value] = lines[index].split(": ");
     block[key.trim()] = value;
@@ -77,7 +77,7 @@ function readBlock(lines: string[], index: number): [any, number] {
   return [block, index];
 }
 function parseBlock(block: any): any {
-  const parseMethod = blockParsers[block.tag];
+  const parseMethod = blockParsers.get(block);
   if (!parseMethod) {
     throw new Error(`Unsupported Bru tag: '${block.tag}'`);
   }
@@ -95,13 +95,13 @@ function parseMethodBlock(block: any): any {
   };
 }
 function parseMap(block: any): any {
-  const body = {};
+  const body = {} as any;
   for (const key in block) {
     if (key !== "tag") {
       body[key] = block[key];
     }
   }
-  const result = {};
+  const result = {} as any;
   result[block.tag == "query" ? "QueryParams" : block.tag.toUpperCase()] = body;
   return result;
 }
