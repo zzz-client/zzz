@@ -6,9 +6,9 @@ export class RedactModule extends Module implements IModuleModifier, IModuleFeat
   Name = "Redact";
   dependencies = [];
   features = [{
+    hidden: true,
     name: "redact",
     description: "Redact fields from being included in the response",
-    exposed: false,
     type: "string[]",
   } as Feature];
   modify(entity: Model, action: Action): Promise<void> {

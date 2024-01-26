@@ -45,10 +45,9 @@ export interface ModuleField {
 export type Feature = {
   name: string;
   description: string;
-  type: "string" | "boolean";
+  type: "string" | "boolean" | "string[]";
   default?: string | boolean;
   argument?: string;
   alias?: string;
-  exposed?: boolean;
-  multi?: boolean;
+  hidden?: boolean;
 };

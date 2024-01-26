@@ -35,12 +35,17 @@ export function loadFlagsAndFeatures(app: IApplication, module: Module): void {
   if ("features" in module) { // TODO: IModuleFeatures
     Trace("Loading flags for", module.Name);
     for (const flag of (module as unknown as IModuleFeatures).features) {
-      if (flag.multi && (flag.type || flag.default || flag.argument || flag.alias)) {
-        throw new Error(`Feature ${flag.name} is multi but has other properties set`);
+      if (flag.type == "string[]") {
+        if (!flag.hidden) {
+          throw new Error(`List feature ${flag.name} must be hidden.`);
+        }
+        if (flag.default || flag.argument || flag.alias) {
+          throw new Error(`List feature ${flag.name} cannot be a flag.`);
+        }
       }
-      if (flag.multi) {
+      if (flag.type == "string[]") {
         asAny(app.features)[flag.name] = [];
-      } else if (flag.exposed) {
+      } else {
         asAny(app.flags)[flag.type].push(flag.name);
         app.flags.description[flag.name] = flag.description;
         if (flag.argument) app.flags.argument[flag.name] = flag.argument;
