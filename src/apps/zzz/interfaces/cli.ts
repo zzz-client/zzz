@@ -1,5 +1,5 @@
 import { Action, Log, Trace } from "../../../lib/etc.ts";
-import { getFileFormat } from "../../../stores/storage/files/formats.ts";
+import { getFileFormat } from "../../../storage/files/formats.ts";
 import IApplication, { executeModules, FeatureFlags } from "../../mod.ts";
 import ExecuteActor from "../actors/execute.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";
