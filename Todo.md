@@ -1,7 +1,5 @@
 # TODO
 
-Parsing body, notably as an external file.
-
 Sequence, somehow
 
 Hooks as module?
@@ -14,8 +12,6 @@ Web:
   - form-* Body
   - binary Body
   - Settings tab
-
-Fix HTTP so it returns different formats for different extensions given
 
 Per-request settings? Is a Settings module even needed? how? see Readme.md for list
 
