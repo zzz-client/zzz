@@ -37,7 +37,8 @@ export default class FileStore implements IStore {
     return result;
   }
   async set(modelType: string, model: Model): Promise<void> {
-    await this.storage(modelType).set(modelType, model);
+    // TODO: Delete old file/folder if moved???
+    await this.storage(modelType).put(model);
   }
   async list(modelType: string): Promise<Model[]> {
     const result = await this.storage(modelType).get(".");
@@ -51,6 +52,9 @@ export default class FileStore implements IStore {
       result = [...result, ...searchResults];
     }
     return result;
+  }
+  move(modelType: string, oldId: string, newId: string): Promise<void> {
+    return this.storages.get(modelType)!.move(oldId, newId);
   }
   private storage(modelName: string): IStorage {
     if (!this.storages.get(modelName)) {

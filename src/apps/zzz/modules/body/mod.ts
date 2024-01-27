@@ -30,3 +30,11 @@ export class BodyModule extends Module implements IModuleModifier, IModuleFields
 class BodyFields {
   Body!: string | object;
 }
+
+import { assertEquals } from "../../../../lib/tests.ts";
+Deno.test("Body Module", () => {
+  // const module = new BodyModule();
+  // assertEquals(module.Name, "Body");
+  // assertEquals(module.dependencies, [RequestsModule.name]);
+  // assertEquals(module.fields, { HttpRequest: BodyFields });
+});
