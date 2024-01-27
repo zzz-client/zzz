@@ -19,11 +19,11 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
       let auth = asAny(model).Authorization as Authorization;
       if (typeof auth === "string") {
         Trace("Authorization is undefined, aborting");
-        auth = await this.app.store.get(Authorization.name, auth) as Authorization; // TODO Why is this a never????
+        auth = await this.app.store.get(Authorization.name, auth) as Authorization;
       }
       if (typeof auth === "string") {
         Trace("Loading stored Authorization:", auth);
-        auth = await this.app.store.get(Authorization.name, auth) as Authorization; // TODO Why is this a never????
+        auth = await this.app.store.get(Authorization.name, auth) as Authorization;
       }
       Trace("Authorization:", Authorization);
       if (action.features.all) {

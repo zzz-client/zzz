@@ -37,7 +37,6 @@ export default class FileStore implements IStore {
     return result;
   }
   async set(modelType: string, model: Model): Promise<void> {
-    // TODO: Delete old file/folder if moved???
     await this.storage(modelType).put(model);
   }
   async list(modelType: string): Promise<Model[]> {

@@ -1,9 +1,12 @@
-import { Action, StringToStringMap, Trace } from "../../../lib/etc.ts";
+import { basename } from "https://deno.land/std@0.210.0/path/basename.ts";
+import { Action, Log, StringToStringMap, Trace } from "../../../lib/etc.ts";
 import { getFileFormat } from "../../../storage/files/formats.ts";
 import { Model } from "../../../storage/mod.ts";
 import IApplication, { executeModules, FeatureFlags } from "../../mod.ts";
 import { Scope } from "../modules/scope/mod.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
+import ExecuteActor from "../actors/execute.ts";
+import { HttpRequest } from "../modules/requests/mod.ts";
 
 const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "allow,content-type,x-zzz-context", "Access-Control-Allow-Methods": "GET,PATCH" };
 
@@ -48,22 +51,29 @@ export class Server {
     return Promise.resolve();
   }
   respondToGet(request: Request): Promise<Response> {
-    const { pathname: url } = new URL(request.url);
-    Trace("respondToGet " + url);
-    if (url === "/favicon.ico") {
+    const parts = dissectRequest(request);
+    parts.fullId;
+    Trace("respondToGet " + parts.fullId);
+    if (parts.fullId === "/favicon.ico") {
       Trace("Responding to favicon request");
       return Promise.resolve(newResponse(204, null, STANDARD_HEADERS));
     }
-    if (url === "/") {
+    if (parts.fullId === "/" || basename(parts.fullId) == "/") {
       Trace("Responding to base URL: scope list");
-      return this.respondToScopesList();
+      return this.respondToScopesList(extname(parts.fullId));
     }
-    return this.executeRequest(request);
+    const model = this.executeGet(request);
+    return Promise.resolve(newResponse(200, this.stringify(model, parts.extension), STANDARD_HEADERS));
   }
-  respondToPatch(request: Request): Promise<Response> {
+  async respondToPatch(request: Request): Promise<Response> {
+    const parts = dissectRequest(request);
     Trace("Responding to PATCH");
-    // TODO: Execute
-    throw new Error("Not implemented");
+    const model = await this.executeGet(request);
+    if (!(model instanceof HttpRequest)) {
+      return Promise.resolve(newResponse(400, this.stringify({ message: "PATCH only supported for Requests" }, parts.extension), STANDARD_HEADERS));
+    }
+    const executeResponse = await (new ExecuteActor()).act(model);
+    return Promise.resolve(newResponse(200, this.stringify(executeResponse, parts.extension), STANDARD_HEADERS));
   }
   respondToOptions(request: Request): Response {
     Trace("Responding to OPTIONS");
@@ -80,19 +90,19 @@ export class Server {
       headers: headers as unknown as HeadersInit,
     });
   }
-  async respondToScopesList(): Promise<Response> {
+  async respondToScopesList(fileExtension: string): Promise<Response> {
     Trace("Responding to Scopes list");
     const scopes = await this.app.store.list(Scope.name);
     Trace("Scopes:", scopes);
     const scopeIds = scopes.map((scope: Model) => scope.Id);
     Trace("Scope IDs:", scopeIds);
-    return newResponse(200, this.stringify(scopeIds), STANDARD_HEADERS);
+    return newResponse(200, this.stringify(scopeIds, fileExtension), STANDARD_HEADERS); // TODO: Hardcoded?
   }
   // deno-lint-ignore no-explicit-any
-  stringify(result: any): string {
-    return getFileFormat(".json").stringify(result); // TODO: Hardcoded?
+  private stringify(result: any, fileExtension = "json"): string {
+    return getFileFormat(fileExtension).stringify(result);
   }
-  private async executeRequest(request: Request): Promise<Response> {
+  private async executeGet(request: Request): Promise<Model> {
     const parts = dissectRequest(request);
     const flagValues = this.app.argv as FeatureFlags;
     Trace("Flag values:", flagValues);
@@ -101,10 +111,8 @@ export class Server {
     const action = new Action(flagValues, this.app.env);
     const model = constructModelFromRequest(request);
     await executeModules(this.app.modules, action, model);
-    // (model as any).Body = { foo: "bar" }; // DEBUG
-    console.log("result", model);
-    // return this._do(request).then((result: Model) => this.respondUsingEntity(result, "Pass"));
-    return Promise.resolve(newResponse(500, null, STANDARD_HEADERS));
+    Log("Result", model);
+    return Promise.resolve(model);
   }
 }
 

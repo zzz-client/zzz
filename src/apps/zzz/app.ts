@@ -101,8 +101,8 @@ export default class Application implements IApplication {
       Log("Starting web server");
       Deno.args.splice(2);
       // vite;
+      // TODO: How to start vite from code
       Deno.exit(0);
-      // TODO
     }
     if (this.argv._.includes("http")) {
       Log("Starting HTTP server");

@@ -7,7 +7,7 @@ import { IStore } from "./zzz/stores/mod.ts";
 export default interface IApplication {
   store: IStore; // TODO: bad, imports from zzz
   flags: Flags;
-  argv?: Args; // TODO: Should not be optional but needs to wait to be loaded until after registerModule has been called
+  argv: Args;
   features: FeatureMap;
   env: StringToStringMap;
   modules: Module[];

@@ -1,6 +1,7 @@
 import { Action, Log, Trace } from "../../../lib/etc.ts";
 import { getFileFormat } from "../../../storage/files/formats.ts";
 import IApplication, { executeModules, FeatureFlags } from "../../mod.ts";
+import ExecuteActor from "../actors/execute.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";
 
 export default async function Cli(app: IApplication): Promise<void> {
@@ -14,6 +15,7 @@ export default async function Cli(app: IApplication): Promise<void> {
     Log(error);
     Deno.exit(1);
   }
-  Trace("result", model);
-  console.info(getFileFormat(".json").stringify(model));
+  Trace("Retrieved model", model);
+  const finalResult = app.features.execute ? (await (new ExecuteActor()).act(model)) : model;
+  console.info(getFileFormat(".json").stringify(finalResult));
 }
