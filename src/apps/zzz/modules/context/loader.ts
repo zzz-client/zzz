@@ -10,10 +10,10 @@ const BLANK_ENTITY = {
 } as Context;
 
 export interface ILoader {
-  globals(store: IStore): Promise<Context>;
-  context(contextName: string, store: IStore): Promise<Context>;
-  defaults(collectionPath: string, store: IStore): Promise<Context>;
-  local(contextName: string, store: IStore): Promise<Context>;
+  globals(): Promise<Context>;
+  context(contextName: string): Promise<Context>;
+  defaults(collectionPath: string): Promise<Context>;
+  local(contextName: string): Promise<Context>;
 }
 // deno-lint-ignore no-explicit-any
 export async function Apply(subject: any, defaults: any): Promise<void> {
@@ -49,24 +49,28 @@ export async function Apply(subject: any, defaults: any): Promise<void> {
 }
 
 export default class Loader implements ILoader {
-  async globals(store: IStore): Promise<Context> {
-    return await this.context(GLOBALS_CONTEXT, store);
+  private store: IStore;
+  constructor(store: IStore) {
+    this.store = store;
   }
-  async local(contextName: string, store: IStore): Promise<Context> {
-    return await this.context(contextName + ".local", store);
+  async globals(): Promise<Context> {
+    return await this.context(GLOBALS_CONTEXT);
   }
-  async context(contextName: string, store: IStore): Promise<Context> {
+  async local(contextName: string): Promise<Context> {
+    return await this.context(contextName + ".local");
+  }
+  async context(contextName: string): Promise<Context> {
     try {
-      return await store.get(Context.name, contextName) as Context; // TODO: Type wrong???
+      return await this.store.get(Context.name, contextName) as Context; // TODO: Type wrong???
     } catch (_error) {
       return await Promise.resolve(BLANK_ENTITY);
     }
   }
-  async defaults(subjectId: string, store: IStore): Promise<Context> {
+  async defaults(subjectId: string): Promise<Context> {
     const defaults = new Context();
     while (subjectId.includes("/")) {
       subjectId = subjectId.substring(0, subjectId.lastIndexOf("/"));
-      const parent = await store.get(Collection.name, subjectId);
+      const parent = await this.store.get(Collection.name, subjectId);
       Apply(defaults, parent);
     }
     return Promise.resolve(defaults);

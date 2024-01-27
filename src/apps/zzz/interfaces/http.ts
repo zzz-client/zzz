@@ -1,20 +1,24 @@
 import { basename } from "https://deno.land/std@0.210.0/path/basename.ts";
 import { Action, Log, StringToStringMap, Trace } from "../../../lib/etc.ts";
-import { getFileFormat } from "../../../storage/files/formats.ts";
-import { Model } from "../../../storage/mod.ts";
+import { getFileFormat } from "../../../stores/storage/files/formats.ts";
+import { Model } from "../../../stores/storage/mod.ts";
 import IApplication, { executeModules, FeatureFlags } from "../../mod.ts";
 import { Scope } from "../modules/scope/mod.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
 import ExecuteActor from "../actors/execute.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";
+import Application from "../app.ts";
 
 const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "allow,content-type,x-zzz-context", "Access-Control-Allow-Methods": "GET,PATCH" };
 
 export class Server {
   port: number;
-  app: IApplication;
+  app: Application;
   constructor(app: IApplication) {
     this.port = app.argv!.http || 8000;
+    if (!(app instanceof Application)) {
+      throw new Error("Zzz interface must be used with Zzz Application");
+    }
     this.app = app;
   }
   respond(request: Request): Promise<Response> {
@@ -96,7 +100,7 @@ export class Server {
     Trace("Scopes:", scopes);
     const scopeIds = scopes.map((scope: Model) => scope.Id);
     Trace("Scope IDs:", scopeIds);
-    return newResponse(200, this.stringify(scopeIds, fileExtension), STANDARD_HEADERS); // TODO: Hardcoded?
+    return newResponse(200, this.stringify(scopeIds, fileExtension), STANDARD_HEADERS);
   }
   // deno-lint-ignore no-explicit-any
   private stringify(result: any, fileExtension = "json"): string {

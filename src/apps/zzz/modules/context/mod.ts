@@ -1,6 +1,7 @@
 import { Action, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
+import Application from "../../app.ts";
 import { RequestsModule } from "../requests/mod.ts";
 import TemplateModule from "../template/mod.ts";
 import Loader, { Apply, GLOBALS_CONTEXT, ILoader, SESSION_CONTEXT } from "./loader.ts";
@@ -49,16 +50,16 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
     }
     return Promise.resolve();
   }
-  private loader = new Loader() as ILoader;
+  private loader = new Loader((this.app as Application).store) as ILoader;
 
   private load(modelId: string, contextName: string): Promise<Model[]> {
     return Promise.all([
-      this.loader.globals(this.app.store),
-      this.loader.local(GLOBALS_CONTEXT, this.app.store),
-      this.loader.context(contextName, this.app.store),
-      this.loader.local(contextName, this.app.store),
-      this.loader.defaults(modelId, this.app.store), // TODO: is this right or does it need to be the model's parent's id?
-      this.loader.local(SESSION_CONTEXT, this.app.store),
+      this.loader.globals(),
+      this.loader.local(GLOBALS_CONTEXT),
+      this.loader.context(contextName),
+      this.loader.local(contextName),
+      this.loader.defaults(modelId), // TODO: is this right or does it need to be the model's parent's id?
+      this.loader.local(SESSION_CONTEXT),
     ]);
   }
 }

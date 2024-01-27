@@ -1,11 +1,9 @@
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { Action, asAny, StringToStringMap, Trace } from "../lib/etc.ts";
 import { IModuleFeatures, IModuleModifier, Module } from "../lib/module.ts";
-import { Model } from "../storage/mod.ts";
-import { IStore } from "./zzz/stores/mod.ts";
+import { Model } from "../stores/storage/mod.ts";
 
 export default interface IApplication {
-  store: IStore; // TODO: bad, imports from zzz
   flags: Flags;
   argv: Args;
   features: FeatureMap;
@@ -31,8 +29,7 @@ export type FeatureFlags = { [key: string]: FeatureFlagValue };
 export type FeatureMap = { [key: string]: ConfigValue };
 
 export function loadFlagsAndFeatures(app: IApplication, module: Module): void {
-  // TODO: Check dependencies via executedModules
-  if ("features" in module) { // TODO: IModuleFeatures
+  if ("features" in module) { // TODO: is there a better way to do this?
     Trace("Loading flags for", module.Name);
     for (const flag of (module as unknown as IModuleFeatures).features) {
       if (flag.type == "string[]") {
