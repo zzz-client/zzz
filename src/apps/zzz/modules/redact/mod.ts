@@ -1,6 +1,6 @@
 import { Action, asAny, Trace } from "../../../../lib/etc.ts";
 import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../../../lib/module.ts";
-import { Model } from "../../../../stores/storage/mod.ts";
+import { Model } from "../../../../storage/mod.ts";
 
 export class RedactModule extends Module implements IModuleModifier, IModuleFeatures {
   Name = "Redact";

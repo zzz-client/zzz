@@ -1,7 +1,7 @@
 import { Action, asAny, Trace } from "../../../../lib/etc.ts";
 import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../../../lib/module.ts";
 import tim from "../../../../lib/tim.ts";
-import { Model } from "../../../../stores/storage/mod.ts";
+import { Model } from "../../../../storage/mod.ts";
 import { ContextModule } from "../context/mod.ts";
 import { RequestsModule } from "../requests/mod.ts";
 

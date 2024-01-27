@@ -1,6 +1,6 @@
 import { Action, Meld, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
-import { Model, ParentModel } from "../../../../stores/storage/mod.ts";
+import { Model, ParentModel } from "../../../../storage/mod.ts";
 
 export class RequestsModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
   Name = "Requests";

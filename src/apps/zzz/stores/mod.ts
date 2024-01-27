@@ -1,4 +1,4 @@
-import { Model, SearchParams } from "../../../stores/storage/mod.ts";
+import { Model, SearchParams } from "../../../storage/mod.ts";
 
 export interface IStore {
   get(modelType: string, id: string): Promise<Model>;

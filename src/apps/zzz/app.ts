@@ -3,7 +3,7 @@ import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
 import DI, { newInstance as iNewInstance } from "../../lib/di.ts";
 import { Log, StringToStringMap, Trace } from "../../lib/etc.ts";
 import { IModuleRenderer, Module } from "../../lib/module.ts";
-import * as FileStorage from "../../stores/storage/files/mod.ts";
+import * as FileStorage from "../../storage/files/mod.ts";
 import IApplication, { ConfigValue, FeatureMap, Flags, loadFlagsAndFeatures } from "../mod.ts";
 import Cli from "./interfaces/cli.ts";
 import { Server } from "./interfaces/http.ts";

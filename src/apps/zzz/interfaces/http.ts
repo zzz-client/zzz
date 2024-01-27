@@ -1,7 +1,7 @@
 import { basename } from "https://deno.land/std@0.210.0/path/basename.ts";
 import { Action, Log, StringToStringMap, Trace } from "../../../lib/etc.ts";
-import { getFileFormat } from "../../../stores/storage/files/formats.ts";
-import { Model } from "../../../stores/storage/mod.ts";
+import { getFileFormat } from "../../../storage/files/formats.ts";
+import { Model } from "../../../storage/mod.ts";
 import IApplication, { executeModules, FeatureFlags } from "../../mod.ts";
 import { Scope } from "../modules/scope/mod.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
