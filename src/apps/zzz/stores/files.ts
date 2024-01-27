@@ -30,6 +30,7 @@ export default class FileStore implements IStore {
   async get(modelType: string, id: string): Promise<Model> {
     Trace(`FileStore: Getting model type ${modelType} id ${id}`);
     const result = await this.storage(modelType).get(id) as Model;
+    Trace("xxx", result);
     result.Id = id;
     if (!result.Name) { // TODO: Why is this not working when --all is passed
       result.Name = basename(id);

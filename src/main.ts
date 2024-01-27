@@ -4,9 +4,9 @@ import DI from "./lib/di.ts";
 
 DI.register("IApplication", Zzz.newInstance);
 
-export default function main(): Promise<void> {
+export default async function main(): Promise<void> {
   try {
-    DI.newInstance("IApplication");
+    await DI.newInstance("IApplication");
   } catch (error) {
     console.error("!!!", error);
     Deno.exit(1);

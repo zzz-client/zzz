@@ -80,13 +80,14 @@ export default class Application implements IApplication {
     this.registerModule(new CookiesModule(this));
     this.registerModule(new RedactModule(this));
     this.argv = processFlags(Deno.args, this.flags);
-  }
 
+    this.what();
+  }
   what() {
-    if (this.argv._.includes("run")) {
-      Trace("Running CLI");
-      return Cli(this);
-    }
+    // if (this.argv._.includes("run")) {
+    //   Trace("Running CLI");
+    //   return Cli(this);
+    // }
     if (
       this.argv.all ||
       this.argv.execute ||
@@ -103,6 +104,7 @@ export default class Application implements IApplication {
       // start vite somehow
       Deno.exit(0);
     }
+    console.log(this.argv._);
     if (this.argv._.includes("http")) {
       Log("Starting HTTP server");
       return new Server(this).listen();
