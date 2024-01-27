@@ -1,3 +1,3 @@
-[submodule "requests"]
-	path = requests
+[submodule "library"]
+	path = library
 	url = git@gitlab.com:cat-dev-null/zzz-requests.git
