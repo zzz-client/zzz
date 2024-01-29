@@ -80,10 +80,8 @@ export default class Application implements IApplication {
     this.registerModule(new CookiesModule(this));
     this.registerModule(new RedactModule(this));
     this.argv = processFlags(Deno.args, this.flags);
-
-    this.what();
   }
-  what() {
+  run(): Promise<void> {
     // if (this.argv._.includes("run")) {
     //   Trace("Running CLI");
     //   return Cli(this);
@@ -110,6 +108,7 @@ export default class Application implements IApplication {
       return new Server(this).listen();
     }
     Log(":)");
+    return Promise.resolve();
   }
   registerModule(module: Module): void {
     loadFlagsAndFeatures(this, module);

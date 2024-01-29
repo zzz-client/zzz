@@ -1,6 +1,7 @@
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { Action, asAny, StringToStringMap, Trace } from "../lib/etc.ts";
 import { IModuleFeatures, IModuleModifier, Module } from "../lib/module.ts";
+import { Model } from "../storage/mod.ts";
 
 export default interface IApplication {
   flags: Flags;
@@ -10,6 +11,7 @@ export default interface IApplication {
   modules: Module[];
   // renderers: IModuleRenderer[];
   registerModule(module: Module): void;
+  run(): Promise<void>;
 }
 export type ConfigValue = string | boolean | number;
 

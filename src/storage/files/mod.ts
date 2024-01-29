@@ -65,7 +65,10 @@ export default class FileStorage implements IStorage {
     Trace(`Getting file ${fileFormat} ${fullPath}`);
     const fileContents = await Deno.readTextFile(this.adjustPath(fullPath, true));
     Trace("File contents:", fileContents);
-    return fileFormat.parse(fileContents) as Model;
+    const model = fileFormat.parse(fileContents) as Model;
+    model.Id = fullPath;
+    model.Name = basename(fullPath);
+    return Promise.resolve(model);
   }
   private async getFolder(fullPath: string): Promise<ParentModel> {
     const model = { Id: fullPath, Name: basename(fullPath), Children: [] as Model[] } as ParentModel;

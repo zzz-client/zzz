@@ -67,7 +67,7 @@ export class Server {
       return this.respondToScopesList(extname(parts.fullId));
     }
     const model = this.executeGet(request);
-    return Promise.resolve(newResponse(200, this.stringify(model, parts.extension), STANDARD_HEADERS));
+    return Promise.resolve(newResponse(200, this.stringify(model, parts.extension || "json"), STANDARD_HEADERS));
   }
   async respondToPatch(request: Request): Promise<Response> {
     const parts = dissectRequest(request);
@@ -77,7 +77,7 @@ export class Server {
       return Promise.resolve(newResponse(400, this.stringify({ message: "PATCH only supported for Requests" }, parts.extension), STANDARD_HEADERS));
     }
     const executeResponse = await (new ExecuteActor()).act(model);
-    return Promise.resolve(newResponse(200, this.stringify(executeResponse, parts.extension), STANDARD_HEADERS));
+    return Promise.resolve(newResponse(200, this.stringify(executeResponse, parts.extension || "json"), STANDARD_HEADERS));
   }
   respondToOptions(request: Request): Response {
     Trace("Responding to OPTIONS");
@@ -132,7 +132,7 @@ function constructModelFromRequest(request: Request): Model {
 }
 function dissectRequest(request: Request): RequestParts {
   const { searchParams, pathname } = new URL(request.url);
-  const extension = extname(pathname);
+  const extension = extname(pathname).replace("\.");
   const decodedPathname = decodeURI(pathname.replace(/^\//, ""));
   const scope = decodedPathname.split("/")[0];
   const entityId = decodedPathname.substring(scope.length + 1, decodedPathname.length - extension.length).replace(/^\./, "");
