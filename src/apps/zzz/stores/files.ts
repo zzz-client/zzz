@@ -27,6 +27,31 @@ export default class FileStore implements IStore {
     [Authorization.name,  DI.newInstance("IStorage:Authorization",  ["auth", this.FILE_FORMAT]) as IStorage],
     [Cookies.name,        DI.newInstance("IStorage:Cookies",        ["cookies", this.FILE_FORMAT]) as IStorage],
   ]);
+  async getModelType(id: string): Promise<string> {
+    if (id.startsWith("cookies")) {
+      return Cookies.constructor.name;
+    }
+    if (id.startsWith("auth")) {
+      return Authorization.constructor.name;
+    }
+    if (id.startsWith("contexts")) {
+      return Context.constructor.name;
+    }
+    if (!id.startsWith("requests")) {
+      throw new Error("Unable to determine model type for ID: " + id);
+    }
+    let substring = id.substring("requests/".length);
+    if (!substring.includes("/")) {
+      return Scope.constructor.name;
+    }
+    try {
+      await this.get(Collection.constructor.name, id);
+      return Collection.constructor.name;
+    } catch (error) {
+      await this.get(HttpRequest.constructor.name, id);
+      return HttpRequest.constructor.name;
+    }
+  }
   async get(modelType: string, id: string): Promise<Model> {
     Trace(`FileStore: Getting model type ${modelType} id ${id}`);
     const result = await this.storage(modelType).get(id) as Model;

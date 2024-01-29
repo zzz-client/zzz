@@ -6,4 +6,5 @@ export interface IStore {
   move(modelType: string, oldId: string, newId: string): Promise<void>;
   search(searchParams: SearchParams): Promise<Model[]>;
   list(modelType: string): Promise<Model[]>;
+  getModelType(id: string): Promise<string>;
 }
