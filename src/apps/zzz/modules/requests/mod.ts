@@ -21,9 +21,15 @@ export class RequestsModule extends Module implements IModuleFeatures, IModuleMo
   };
   async modify(model: Model, _action: Action): Promise<void> {
     Trace("RequestsModule:modify", model.Id, model.Name);
-    // const modelType = model.Name; // TODO: THis is not set yet! How can we determine it???
-    const modelType = await this.store().getModelType(model.Id);
-    const loadedModel = await this.store().get(modelType, model.Id);
+    // // const modelType = model.Name; // TODO: THis is not set yet! How can we determine it???
+    let loadedModel;
+    try {
+      loadedModel = await this.store().get(HttpRequest.name, model.Id);
+    } catch (error) {
+      loadedModel = await this.store().get(Collection.name, model.Id);
+    }
+    // const modelType = await this.store().getModelType(model.Id);
+    // const loadedModel = await this.store().get(modelType, model.Id);
     Trace("RequestsModule:modify loaded Model", loadedModel);
     Meld(model, loadedModel);
     return await Promise.resolve();

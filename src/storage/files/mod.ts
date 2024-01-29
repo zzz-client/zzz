@@ -85,9 +85,9 @@ export default class FileStorage implements IStorage {
   }
   private adjustPath(fullPath: string, extension = false): string {
     if (extension) {
-      return this.baseDir + "/" + fullPath + "." + this.fileExtension;
+      return Deno.cwd() + "/" + this.baseDir + "/" + fullPath + "." + this.fileExtension;
     } else {
-      return this.baseDir + "/" + fullPath;
+      return Deno.cwd() + "/" + this.baseDir + "/" + fullPath;
     }
   }
   private async readDirectoryToFolder(model: ParentModel): Promise<void> {

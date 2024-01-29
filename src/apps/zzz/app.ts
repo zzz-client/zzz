@@ -73,7 +73,7 @@ export default class Application implements IApplication {
     this.registerModule(new RequestsModule(this));
     this.registerModule(new BodyModule(this));
     this.registerModule(new PathParamsModule(this));
-    this.registerModule(new ScopeModule(this));
+    // this.registerModule(new ScopeModule(this));
     this.registerModule(new ContextModule(this));
     this.registerModule(new AuthorizationModule(this));
     this.registerModule(new TemplateModule(this));

@@ -6,7 +6,7 @@ import IApplication, { executeModules, FeatureFlags } from "../../mod.ts";
 import { Scope } from "../modules/scope/mod.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
 import ExecuteActor from "../actors/execute.ts";
-import { HttpRequest } from "../modules/requests/mod.ts";
+import { Collection, HttpRequest } from "../modules/requests/mod.ts";
 import Application from "../app.ts";
 
 const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "allow,content-type,x-zzz-context", "Access-Control-Allow-Methods": "GET,PATCH" };
@@ -126,7 +126,12 @@ function newResponse(status: number, body: any, headers: StringToStringMap): Res
 function constructModelFromRequest(request: Request): Model {
   const parts = dissectRequest(request);
   Trace("Deconstructed request", parts);
-  const model = new Model();
+  let model;
+  if (parts.entityId.includes(".")) {
+    model = new HttpRequest();
+  } else {
+    model = new Collection();
+  }
   model.Id = parts.fullId;
   return model;
 }
