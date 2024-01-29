@@ -1,6 +1,8 @@
 import { Action, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
+import Application from "../../app.ts";
+import { IStore } from "../../stores/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 
 export class CookiesModule extends Module implements IModuleModels, IModuleFields, IModuleModifier {
@@ -20,7 +22,7 @@ export class CookiesModule extends Module implements IModuleModels, IModuleField
   }
   private async loadCookies(theRequest: HttpRequest): Promise<void> {
     const cookieId = new URL(theRequest.URL).host;
-    const cookies = await this.app.store.get(Cookies.name, cookieId) as Cookies;
+    const cookies = await this.store().get(Cookies.name, cookieId) as Cookies;
     if (cookies) {
       theRequest.Headers.Cookie = this.getHeaderString(cookies);
     }
@@ -34,6 +36,9 @@ export class CookiesModule extends Module implements IModuleModels, IModuleField
       }
     }
     return header;
+  }
+  private store(): IStore {
+    return (this.app as Application).store;
   }
 }
 export class Cookies extends Model {

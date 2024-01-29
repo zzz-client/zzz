@@ -132,7 +132,7 @@ function constructModelFromRequest(request: Request): Model {
 }
 function dissectRequest(request: Request): RequestParts {
   const { searchParams, pathname } = new URL(request.url);
-  const extension = extname(pathname).replace("\.");
+  const extension = extname(pathname).replace("\.", "");
   const decodedPathname = decodeURI(pathname.replace(/^\//, ""));
   const scope = decodedPathname.split("/")[0];
   const entityId = decodedPathname.substring(scope.length + 1, decodedPathname.length - extension.length).replace(/^\./, "");
