@@ -11,7 +11,13 @@ build-job: # This job runs in the build stage, which runs first.
     - deno task cli:build
     - deno task http:build
     # - deno task web:build
-    # - deno task tauri:build
+    - deno task tauri:build
+    # - mv src\apps\zzz\interfaces\desktop\target\release
+  artifacts:
+    paths:
+      - bin/zzz
+      - bin/zzz-server
+      - src/apps/zzz/interfaces/desktop/target/release/zzz-desktop
 
 unit-test-job: # This job runs in the test stage.
   stage: test # It only starts when the job in the build stage completes successfully.

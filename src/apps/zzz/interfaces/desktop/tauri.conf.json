@@ -21,7 +21,7 @@
     "bundle": {
       "active": true,
       "category": "DeveloperTool",
-      "copyright": "",
+      "copyright": "Copyright 2024 Jonny Petraglia",
       "deb": {
         "depends": []
       },
