@@ -1,10 +1,13 @@
 image: denoland/deno:latest
 # image: rustdocker/rust:stable
 
+# curl -fsSL https://deno.land/install.sh | sh
+# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
 stages:
   - Build
   - Test
-  - deploy
+  - Deploy
 
 Cli:
   stage: Build
@@ -24,14 +27,14 @@ Http:
 #   stage: Build
 #   script: deno task web:build
 
-Tauri:
-  stage: Build
-  script:
-    deno task tauri:build
-    # - mv src\apps\zzz\interfaces\desktop\target\release
+# Tauri:
+#   stage: Build
+#   script:
+#     - deno task tauri:build
+# - mv src\apps\zzz\interfaces\desktop\target\release
 
-Tests: # This job runs in the test stage.
-  stage: test # It only starts when the job in the build stage completes successfully.
+Tests:
+  stage: Test
   script:
     - deno task test
     - deno task coverage
@@ -42,7 +45,7 @@ Lint:
     - deno task lint
     - deno fmt --check
 
-deploy-job:
+DeployWeb:
   stage: Deploy
   environment: production
   script:
