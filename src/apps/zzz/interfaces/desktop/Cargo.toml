@@ -5,7 +5,7 @@ description = "A REST client"
 authors = ["cat /dev/null"]
 license = "OSL"
 repository = "https://gitlab.com/cat-dev-null/zzz"
-default-run = "app"
+default-run = "zzz"
 edition = "2021"
 rust-version = "1.57"
 
