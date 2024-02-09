@@ -1,9 +1,9 @@
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
 import DI, { newInstance as iNewInstance } from "../../../../lib/di.ts";
-import { StringToStringMap } from "../../../../lib/etc.ts";
-import { IModuleRenderer, Module } from "../../../../lib/module.ts";
-import IApplication, { ConfigValue, Flags, loadFlagsAndFeatures } from "../../../mod.ts";
+import { asAny, StringToStringMap, Trace } from "../../../../lib/etc.ts";
+import { IModuleFeatures, IModuleRenderer, Module } from "../../../../lib/module.ts";
+import IApplication, { ConfigValue, Flags } from "../../../mod.ts";
 import Cli from "./cli.ts";
 
 import { AuthorizationModule } from "../../modules/auth/mod.ts";
@@ -57,7 +57,7 @@ export default class Application implements IApplication {
     return Cli(this);
   }
   registerModule(module: Module): void {
-    loadFlagsAndFeatures(this, module);
+    loadFlagsFromFeatures(this, module);
     /*
     if (module instanceof IModuleModels) {
       // TODO: IModuleModels
@@ -70,5 +70,28 @@ export default class Application implements IApplication {
     }
     */
     this.modules.push(module);
+  }
+}
+
+function loadFlagsFromFeatures(app: IApplication, module: Module): void {
+  if ("features" in module) { // TODO: is there a better way to do this?
+    Trace("Loading flags for", module.Name);
+    for (const flag of (module as unknown as IModuleFeatures).features) {
+      if (flag.type == "string[]") {
+        if (!flag.hidden) {
+          throw new Error(`List feature ${flag.name} must be hidden.`);
+        }
+        if (flag.default || flag.argument || flag.alias) {
+          throw new Error(`List feature ${flag.name} cannot be a flag.`);
+        }
+        asAny(app.flags)[flag.name] = [];
+      } else {
+        asAny(app.flags)[flag.type].push(flag.name);
+        app.flags.description[flag.name] = flag.description;
+        if (flag.argument) app.flags.argument[flag.name] = flag.argument;
+        if (flag.alias) app.flags.alias[flag.name] = flag.alias;
+        if (flag.default) app.flags.default[flag.name] = flag.default;
+      }
+    }
   }
 }

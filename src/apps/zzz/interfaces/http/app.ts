@@ -3,7 +3,7 @@ import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
 import DI, { newInstance as iNewInstance } from "../../../../lib/di.ts";
 import { StringToStringMap } from "../../../../lib/etc.ts";
 import { IModuleRenderer, Module } from "../../../../lib/module.ts";
-import IApplication, { ConfigValue, Flags, loadFlagsAndFeatures } from "../../../mod.ts";
+import IApplication, { ConfigValue, Flags } from "../../../mod.ts";
 import { AuthorizationModule } from "../../modules/auth/mod.ts";
 import { BodyModule } from "../../modules/body/mod.ts";
 import { ContextModule } from "../../modules/context/mod.ts";
@@ -58,7 +58,6 @@ export default class Application implements IApplication {
     return new Server(this).listen();
   }
   registerModule(module: Module): void {
-    loadFlagsAndFeatures(this, module);
     /*
     if (module instanceof IModuleModels) {
       // TODO: IModuleModels
