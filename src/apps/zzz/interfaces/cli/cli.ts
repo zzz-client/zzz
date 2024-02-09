@@ -1,12 +1,10 @@
-import { Action, Log, Trace } from "../../../lib/etc.ts";
-import { getFileFormat } from "../../../storage/files/formats.ts";
-import { Model } from "../../../storage/mod.ts";
-import { executeModules, FeatureFlags } from "../../mod.ts";
-import ExecuteActor from "../actors/execute.ts";
-import { IZZZApplication } from "../app.ts";
-import { HttpRequest } from "../modules/requests/mod.ts";
+import { Action, Log, Trace } from "../../../../lib/etc.ts";
+import { getFileFormat } from "../../../../storage/files/formats.ts";
+import { Model } from "../../../../storage/mod.ts";
+import IApplication, { executeModules, FeatureFlags } from "../../../mod.ts";
+import ExecuteActor from "../../actors/execute.ts";
 
-export default async function Cli(app: IZZZApplication): Promise<void> {
+export default async function Cli(app: IApplication): Promise<void> {
   const flagValues = app.argv as FeatureFlags;
   const action = new Action(flagValues, app.env);
   const modelId = app.argv._[app.argv._.length - 1] as string;

@@ -1,9 +1,8 @@
 import IApplication from "./apps/mod.ts";
-import * as Zzz from "./apps/zzz/app.ts";
+import { newInstance as zzzCli } from "./apps/zzz/interfaces/cli/app.ts";
 import DI from "./lib/di.ts";
-// import * as vite from "../node_modules/vite/bin/vite.js";
 
-DI.register("IApplication", Zzz.newInstance);
+DI.register("IApplication", zzzCli);
 
 export default async function main(): Promise<void> {
   try {

@@ -1,13 +1,13 @@
 import { basename } from "https://deno.land/std@0.210.0/path/basename.ts";
-import { Action, Log, StringToStringMap, Trace } from "../../../lib/etc.ts";
-import { getFileFormat } from "../../../storage/files/formats.ts";
-import { Model } from "../../../storage/mod.ts";
-import IApplication, { executeModules, FeatureFlags } from "../../mod.ts";
-import { Scope } from "../modules/scope/mod.ts";
+import { Action, Log, StringToStringMap, Trace } from "../../../../lib/etc.ts";
+import { getFileFormat } from "../../../../storage/files/formats.ts";
+import { Model } from "../../../../storage/mod.ts";
+import IApplication, { executeModules, FeatureFlags } from "../../../mod.ts";
+import { Scope } from "../../modules/scope/mod.ts";
 import { extname } from "https://deno.land/std/path/mod.ts";
-import ExecuteActor from "../actors/execute.ts";
-import { Collection, HttpRequest } from "../modules/requests/mod.ts";
-import Application from "../app.ts";
+import ExecuteActor from "../../actors/execute.ts";
+import { Collection, HttpRequest } from "../../modules/requests/mod.ts";
+import Application from "../cli/app.ts";
 
 const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "allow,content-type,x-zzz-context", "Access-Control-Allow-Methods": "GET,PATCH" };
 

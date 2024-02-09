@@ -1,7 +1,7 @@
 import { Action, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
-import Application from "../../app.ts";
+import Application from "../../interfaces/cli/app.ts";
 import { RequestsModule } from "../requests/mod.ts";
 import TemplateModule from "../template/mod.ts";
 import Loader, { Apply, GLOBALS_CONTEXT, ILoader, SESSION_CONTEXT } from "./loader.ts";

@@ -2,16 +2,17 @@ import axios from "https://deno.land/x/redaxios/mod.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";
 import { asAny } from "../../../lib/etc.ts";
 import { FileFormat } from "../../../storage/files/formats.ts";
+import { Model } from "../../../storage/mod.ts";
 
 // TODO: Move to own file?
 export interface IActor {
-  act(theRequest: HttpRequest): Promise<any>;
+  act(theRequest: Model): Promise<any>;
 }
 
 export default class ExecuteActor implements IActor {
-  async act(theRequest: HttpRequest): Promise<any> {
+  async act(theModel: Model): Promise<any> {
     try {
-      return await doRequest(theRequest);
+      return await doRequest(theModel as HttpRequest); // TODO: Naughty cast
     } catch (error) {
       throw formatError(error);
     }

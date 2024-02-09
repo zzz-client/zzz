@@ -9,6 +9,7 @@ export default interface IApplication {
   // features: FeatureMap;
   env: StringToStringMap;
   modules: Module[];
+  store: any; // TODO: IStore;
   // renderers: IModuleRenderer[];
   registerModule(module: Module): void;
   run(): Promise<void>;

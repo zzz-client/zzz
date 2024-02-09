@@ -1,7 +1,7 @@
 import { Action, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
-import Application from "../../app.ts";
+import Application from "../../interfaces/cli/app.ts";
 import { IStore } from "../../stores/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 
