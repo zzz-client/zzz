@@ -63,7 +63,7 @@ export default class Application implements IApplication {
     alias: {} as StringToStringMap,
   } as Flags;
   argv: Args;
-  features = {} as FeatureMap;
+  // features = {} as FeatureMap;
   env = {} as StringToStringMap;
   loadedModules = [] as Module[];
   modules = [] as Module[];
@@ -102,7 +102,6 @@ export default class Application implements IApplication {
       // start vite somehow
       Deno.exit(0);
     }
-    console.log(this.argv._);
     if (this.argv._.includes("http")) {
       Log("Starting HTTP server");
       return new Server(this).listen();

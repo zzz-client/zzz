@@ -37,7 +37,7 @@ export async function Apply(subject: any, defaults: any): Promise<void> {
         if (typeof subject[key] != typeof defaults[key]) {
           throw new Error("Mismatching types, source: " + typeof subject[key] + ", defaults: " + typeof defaults[key]);
         }
-        return Apply(subject[key], defaults[key]);
+        await Apply(subject[key], defaults[key]); // this used to be return instead of await
       } else {
         await Apply(subject[key], defaults[key]);
       }

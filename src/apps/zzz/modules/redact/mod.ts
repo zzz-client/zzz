@@ -14,7 +14,7 @@ export class RedactModule extends Module implements IModuleModifier, IModuleFeat
   modify(entity: Model, action: Action): Promise<void> {
     Trace("RedactModule:modify");
     if (!action.features.all && !action.features.execute) {
-      for (const key of Object.keys(this.app.features)) {
+      for (const key of Object.keys(action.features)) {
         delete asAny(entity)[key];
       }
       if ("Variables" in entity) {

@@ -45,7 +45,7 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
     if (action.features.all || action.features.format || action.features.execute) {
       const loadedDefaults = await this.load(subjectModel.Id, context);
       for (const defaults of loadedDefaults) {
-        Apply(subjectModel, defaults);
+        await Apply(subjectModel, defaults);
       }
     }
     return Promise.resolve();

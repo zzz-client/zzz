@@ -14,6 +14,7 @@ export class BodyModule extends Module implements IModuleModifier, IModuleFields
     if (BodyModule.hasFields(entity) && entity instanceof HttpRequest) {
       await this.loadBody(entity);
     }
+    return Promise.resolve();
   }
   private loadBody(entity: Model): Promise<void> {
     let body = asAny(entity).Body;

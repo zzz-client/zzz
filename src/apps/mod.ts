@@ -6,7 +6,7 @@ import { Model } from "../storage/mod.ts";
 export default interface IApplication {
   flags: Flags;
   argv: Args;
-  features: FeatureMap;
+  // features: FeatureMap;
   env: StringToStringMap;
   modules: Module[];
   // renderers: IModuleRenderer[];
@@ -40,9 +40,7 @@ export function loadFlagsAndFeatures(app: IApplication, module: Module): void {
         if (flag.default || flag.argument || flag.alias) {
           throw new Error(`List feature ${flag.name} cannot be a flag.`);
         }
-      }
-      if (flag.type == "string[]") {
-        asAny(app.features)[flag.name] = [];
+        asAny(app.flags)[flag.name] = [];
       } else {
         asAny(app.flags)[flag.type].push(flag.name);
         app.flags.description[flag.name] = flag.description;
@@ -54,19 +52,13 @@ export function loadFlagsAndFeatures(app: IApplication, module: Module): void {
   }
 }
 
-export function executeModules(modules: Module[], action: Action, model: Model): Promise<void> {
-  let promises = Promise.resolve();
+export async function executeModules(modules: Module[], action: Action, model: Model): Promise<void> {
   Trace("Executing modules for", model);
-  modules.forEach((module) => {
+  for (const module of modules) {
     Trace("Enqueuing module", module.Name);
     if ("modify" in module) {
-      promises = promises.then(() => {
-        Trace("Executing module", module.Name);
-        Trace("Model", model);
-        return (module as unknown as IModuleModifier).modify(model, action);
-      });
-      return Promise.resolve();
+      Trace("Executing module", module.Name);
+      await (module as unknown as IModuleModifier).modify(model, action);
     }
-  });
-  return promises;
+  }
 }
