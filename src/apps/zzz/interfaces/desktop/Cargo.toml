@@ -1,8 +1,8 @@
 [package]
 name = "zzz"
-version = "0.1.0"
+version = "0.7.0"
 description = "A REST client"
-authors = ["Jonny Petraglia"]
+authors = ["cat /dev/null"]
 license = "OSL"
 repository = "https://gitlab.com/cat-dev-null/zzz"
 default-run = "app"
