@@ -41,7 +41,7 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
   };
   async modify(subjectModel: Model, action: Action): Promise<void> {
     Trace("ContextModule:modify");
-    const context = action.features.context as string;
+    const context = this.getContext(action);
     if (action.features.all || action.features.format || action.features.execute) {
       const loadedDefaults = await this.load(subjectModel.Id, context);
       for (const defaults of loadedDefaults) {
@@ -50,8 +50,10 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
     }
     return Promise.resolve();
   }
+  private getContext(action: Action): string {
+    return (action.features.context || this.app.env["ZZZ_CONTEXT"]) as string;
+  }
   private loader = new Loader((this.app as Application).store) as ILoader;
-
   private load(modelId: string, contextName: string): Promise<Model[]> {
     return Promise.all([
       this.loader.globals(),

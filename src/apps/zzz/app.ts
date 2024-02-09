@@ -73,6 +73,7 @@ export default class Application implements IZZZApplication {
   modules = [] as Module[];
   renderers = [] as IModuleRenderer[];
   constructor() {
+    this.env = Deno.env.toObject();
     // loadEnv().then((env) => this.env = env);
     this.registerModule(new RequestsModule(this));
     this.registerModule(new BodyModule(this));

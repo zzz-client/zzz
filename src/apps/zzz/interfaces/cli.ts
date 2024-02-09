@@ -11,8 +11,8 @@ export default async function Cli(app: IZZZApplication): Promise<void> {
   const action = new Action(flagValues, app.env);
   const modelId = app.argv._[app.argv._.length - 1] as string;
   const modelType = await app.store.getModelType(modelId);
-  const model = new Model();
-  model.Id = modelId + "";
+  const model = new Model(); // TODO Construct properly using modelType
+  model.Id = modelId;
   try {
     await executeModules(app.modules, action, model);
   } catch (error) {
