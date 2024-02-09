@@ -15,9 +15,6 @@ import { RedactModule } from "../../modules/redact/mod.ts";
 import { RequestsModule } from "../../modules/requests/mod.ts";
 import TemplateModule from "../../modules/template/mod.ts";
 import { IStore } from "../../stores/mod.ts";
-import { initDi } from "../../app.ts";
-
-initDi();
 
 const newInstance = {
   newInstance(): object {

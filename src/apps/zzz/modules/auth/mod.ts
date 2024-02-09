@@ -46,6 +46,7 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
 }
 
 Deno.test("Authorization Module modify: undefined", async () => {
+  mockApp();
   // GIVEN
   const module = new AuthorizationModule(DI.getInstance("IApplication") as IApplication);
   const action = new Action({}, {});
@@ -57,6 +58,7 @@ Deno.test("Authorization Module modify: undefined", async () => {
 });
 
 Deno.test("Authorization Module modify: string", async () => {
+  mockApp();
   // GIVEN
   const module = new AuthorizationModule(DI.getInstance("IApplication") as IApplication);
   const action = new Action({}, {});
@@ -81,5 +83,5 @@ class ChildAuthorization {
 }
 
 import DI from "../../../../lib/di.ts";
-import { assertEquals } from "../../../../lib/tests.ts";
+import { assertEquals, mockApp } from "../../../../lib/tests.ts";
 import IApplication from "../../../mod.ts";
