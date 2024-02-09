@@ -45,7 +45,11 @@ const newInstance = {
 } as iNewInstance;
 export { newInstance };
 
-export default class Application implements IApplication {
+export interface IZZZApplication extends IApplication {
+  store: IStore;
+}
+
+export default class Application implements IZZZApplication {
   store = DI.newInstance("IStore") as IStore;
   flags = {
     preamble: "Usage: zzz <options>",
