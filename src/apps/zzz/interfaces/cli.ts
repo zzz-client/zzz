@@ -17,16 +17,11 @@ export default async function Cli(app: IApplication): Promise<void> {
     Log(error);
     Deno.exit(1);
   }
-  console.log("Retrieved model", model);
-  // TODO: Only execute for HttpRequest
+  // console.log("Retrieved model", model);
   let finalResult = model;
   const actor = new ExecuteActor();
   if (action.features.execute) {
-    console.log(model);
-    // if (!(model instanceof HttpRequest)) {
-    //   console.error("Can only execute requests");
-    //   Deno.exit(1);
-    // }
+    // TODO: Only execute for HttpRequest
     finalResult = await actor.act(model);
   }
   console.info(getFileFormat(".json").stringify(finalResult));
