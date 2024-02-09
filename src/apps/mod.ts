@@ -62,6 +62,7 @@ export function executeModules(modules: Module[], action: Action, model: Model):
     if ("modify" in module) {
       promises = promises.then(() => {
         Trace("Executing module", module.Name);
+        Trace("Model", model);
         return (module as unknown as IModuleModifier).modify(model, action);
       });
       return Promise.resolve();

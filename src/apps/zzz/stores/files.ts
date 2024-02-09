@@ -17,7 +17,7 @@ const newInstance = {
 export { newInstance };
 
 export default class FileStore implements IStore {
-  private FILE_FORMAT = "yml;";
+  private FILE_FORMAT = "yml";
   // deno-fmt-ignore
   private storages: Map<string, IStorage> = new Map([
     [HttpRequest.name,    DI.newInstance("IStorage:HttpRequest",    ["library", this.FILE_FORMAT]) as IStorage],
@@ -28,29 +28,13 @@ export default class FileStore implements IStore {
     [Cookies.name,        DI.newInstance("IStorage:Cookies",        ["cookies", this.FILE_FORMAT]) as IStorage],
   ]);
   async getModelType(id: string): Promise<string> {
-    if (id.startsWith("cookies")) {
-      return Cookies.constructor.name;
+    Trace(`FileStore: Getting model type for ID: ${id}`);
+    for (const modelType of this.storages.keys()) {
+      if (await this.storages.get(modelType)!.has(id)) {
+        return modelType;
+      }
     }
-    if (id.startsWith("auth")) {
-      return Authorization.constructor.name;
-    }
-    if (id.startsWith("contexts")) {
-      return Context.constructor.name;
-    }
-    if (!id.startsWith("requests")) {
-      throw new Error("Unable to determine model type for ID: " + id);
-    }
-    let substring = id.substring("requests/".length);
-    // if (!substring.includes("/")) {
-    //   return Scope.constructor.name;
-    // }
-    try {
-      await this.get(Collection.constructor.name, id);
-      return Collection.constructor.name;
-    } catch (error) {
-      await this.get(HttpRequest.constructor.name, id);
-      return HttpRequest.constructor.name;
-    }
+    throw new Error("Unable to determine model type for ID: " + id);
   }
   async get(modelType: string, id: string): Promise<Model> {
     Trace(`FileStore: Getting model type ${modelType} id ${id}`);

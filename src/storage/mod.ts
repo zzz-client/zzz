@@ -8,6 +8,7 @@ export interface ParentModel extends Model {
 export type SearchParams = string;
 
 export interface IStorage {
+  has(id: string): Promise<boolean>;
   get(id: string): Promise<Model>;
   put(model: Model): Promise<void>;
   delete(id: string): Promise<void>;

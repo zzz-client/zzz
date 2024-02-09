@@ -5,6 +5,7 @@ import { Meld, Trace } from "../../lib/etc.ts";
 import { IStorage, Model, ParentModel, SearchParams } from "../mod.ts";
 import { getFileFormat } from "./formats.ts";
 import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
+import { join } from "https://deno.land/std/path/mod.ts";
 const DEFAULT_MARKER = "_defaults";
 
 const newInstance = {
@@ -20,6 +21,10 @@ export default class FileStorage implements IStorage {
   constructor(baseDir: string, fileExtension: string) {
     this.baseDir = baseDir;
     this.fileExtension = fileExtension;
+  }
+  async has(id: string): Promise<boolean> {
+    Trace("FileStorage: Checking if exists: " + this.adjustPath(id, true));
+    return (await exists(this.adjustPath(id, false))) || (await exists(this.adjustPath(id, true)));
   }
   async get(fullId: string): Promise<Model> {
     if (await this.isFile(fullId)) {
@@ -53,16 +58,15 @@ export default class FileStorage implements IStorage {
     return (await this.getFolder(directory)).Children;
   }
   private async isFile(fullId: string): Promise<boolean> {
-    Trace("FileStorage: Checking if file: " + fullId);
     try {
-      return (await Deno.stat(this.adjustPath(fullId))).isFile;
-    } catch (_error) {
       return (await Deno.stat(this.adjustPath(fullId, true))).isFile;
+    } catch (_error) {
+      return (await Deno.stat(this.adjustPath(fullId, false))).isFile;
     }
   }
   private async getFile(fullPath: string): Promise<Model> {
     const fileFormat = getFileFormat(this.fileExtension);
-    Trace(`Getting file ${fileFormat} ${fullPath}`);
+    Trace(`Getting file ${fullPath}`);
     const fileContents = await Deno.readTextFile(this.adjustPath(fullPath, true));
     Trace("File contents:", fileContents);
     const model = fileFormat.parse(fileContents) as Model;
@@ -85,9 +89,9 @@ export default class FileStorage implements IStorage {
   }
   private adjustPath(fullPath: string, extension = false): string {
     if (extension) {
-      return Deno.cwd() + "/" + this.baseDir + "/" + fullPath + "." + this.fileExtension;
+      return join(Deno.cwd(), this.baseDir, fullPath + "." + this.fileExtension);
     } else {
-      return Deno.cwd() + "/" + this.baseDir + "/" + fullPath;
+      return join(Deno.cwd(), this.baseDir, fullPath);
     }
   }
   private async readDirectoryToFolder(model: ParentModel): Promise<void> {

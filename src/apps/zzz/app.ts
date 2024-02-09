@@ -82,10 +82,10 @@ export default class Application implements IApplication {
     this.argv = processFlags(Deno.args, this.flags);
   }
   run(): Promise<void> {
-    // if (this.argv._.includes("run")) {
-    //   Trace("Running CLI");
-    //   return Cli(this);
-    // }
+    if (this.argv._.includes("cli")) {
+      Trace("Running CLI");
+      return Cli(this);
+    }
     if (
       this.argv.all ||
       this.argv.execute ||
