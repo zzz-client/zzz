@@ -1,38 +1,49 @@
 image: denoland/deno:latest
+# image: rustdocker/rust:stable
 
-stages: # List of stages for jobs, and their order of execution
-  - build
-  - test
+stages:
+  - Build
+  - Test
   - deploy
 
-build-job: # This job runs in the build stage, which runs first.
-  stage: build
-  script:
-    - deno task cli:build
-    - deno task http:build
-    # - deno task web:build
-    - deno task tauri:build
-    # - mv src\apps\zzz\interfaces\desktop\target\release
+Cli:
+  stage: Build
+  script: deno task cli:build
   artifacts:
     paths:
       - bin/zzz
-      - bin/zzz-server
-      - src/apps/zzz/interfaces/desktop/target/release/zzz-desktop
 
-unit-test-job: # This job runs in the test stage.
+Http:
+  stage: Build
+  script: deno task http:build
+  artifacts:
+    paths:
+      - bin/zzz-server
+
+# Web:
+#   stage: Build
+#   script: deno task web:build
+
+Tauri:
+  stage: Build
+  script:
+    deno task tauri:build
+    # - mv src\apps\zzz\interfaces\desktop\target\release
+
+Tests: # This job runs in the test stage.
   stage: test # It only starts when the job in the build stage completes successfully.
   script:
     - deno task test
     - deno task coverage
 
-lint-test-job: # This job also runs in the test stage.
-  stage: test # It can run at the same time as unit-test-job (in parallel).
+Lint:
+  stage: Test
   script:
     - deno task lint
     - deno fmt --check
 
-deploy-job: # This job runs in the deploy stage.
-  stage: deploy # It only runs when *both* jobs in the test stage complete successfully.
+deploy-job:
+  stage: Deploy
   environment: production
   script:
     - echo "Deploying application..."
