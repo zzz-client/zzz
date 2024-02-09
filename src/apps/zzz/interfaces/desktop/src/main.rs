@@ -8,3 +8,6 @@ fn main() {
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
+
+// This might be a way to run the HTTP server as well:
+// https://github.com/tauri-apps/tauri/discussions/2751#discussioncomment-5622761
