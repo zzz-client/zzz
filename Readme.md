@@ -6,9 +6,13 @@ Zzz came out of the desire for a **REST client** replacement to Postman with gen
 
 # Interfaces
 
-#### Desktop/Web
+#### Web
 ![Zzz web interface](./screenshots/web.png)
+
+### Desktop
 ![Zzz_desktop_interface](./screenshots/desktop.png)
+
+Yeah, it's broken, but how cool is it that tauri builds?
 
 #### REST API
 ![Zzz web interface](./screenshots/api.png)
