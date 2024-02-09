@@ -11,20 +11,20 @@ stages:
 
 Cli:
   stage: Build
-  script: deno task cli:build
+  script: deno task cli:build ; mv bin/zzz ./
   artifacts:
     name: zzz-cli
     paths:
-      - bin/zzz
+      - ./zzz
     expire_in: 1 week
 
 Http:
   stage: Build
-  script: deno task http:build
+  script: deno task http:build ; mv bin/zzz-server ./
   artifacts:
     name: zzz-server
     paths:
-      - bin/zzz-server
+      - ./zzz-server
     expire_in: 1 week
 
 # Web:
