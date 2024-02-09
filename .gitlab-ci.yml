@@ -31,11 +31,14 @@ Http:
 #   stage: Build
 #   script: deno task web:build
 
-# Tauri:
-#   stage: Build
-#   script:
-#     - deno task tauri:build
-# - mv src\apps\zzz\interfaces\desktop\target\release
+Tauri:
+  stage: Build
+  script: deno task tauri:build ; mv src/apps/zzz/interfaces/desktop/target/release/zzz ./zzz-desktop
+  artifacts:
+    name: zzz-desktop
+    paths:
+      - ./zzz-desktop
+    expire_in: 1 week
 
 Tests:
   stage: Test
@@ -55,3 +58,4 @@ DeployWeb:
   script:
     - echo "Deploying application..."
     - echo "Application successfully deployed."
+# https://docs.gitlab.com/ee/user/project/releases/release_cicd_examples.html
