@@ -14,8 +14,6 @@ for (const collection of collections.value) {
   };
 }
 
-expandedKeys.value["Salesforce Primary"] = true;
-
 function expand(items: [], value: boolean) {
   for (const item of items) {
     expandedKeys.value[item.key] = value;
@@ -44,6 +42,7 @@ function collapseAll() {
 .logo {
   margin: 0.4em;
   flex: 1;
+  text-wrap: nowrap;
 }
 button {
   border-radius: 8px;

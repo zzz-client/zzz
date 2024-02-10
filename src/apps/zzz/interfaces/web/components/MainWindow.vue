@@ -60,7 +60,8 @@ function addEntityToNodes(noteList, entity) {
     key: fullPath,
     label: entity.Name
   } as MenuItem;
-  if (entity.Type == "Entity") {
+  if (entity.Method) {
+    // TODO: Could have a better way to determine this
     newNode.command = clickRequest;
   }
   if (entity.Children) {

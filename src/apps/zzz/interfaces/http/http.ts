@@ -126,12 +126,13 @@ function constructModelFromRequest(request: Request): Model {
   const parts = dissectRequest(request);
   Trace("Deconstructed request", parts);
   let model;
-  if (parts.entityId.includes(".")) {
+  if (parts.extension) {
     model = new HttpRequest();
+    model.Id = parts.fullId.substring(0, parts.fullId.indexOf("."));
   } else {
     model = new Collection();
+    model.Id = parts.fullId;
   }
-  model.Id = parts.fullId;
   return model;
 }
 function dissectRequest(request: Request): RequestParts {

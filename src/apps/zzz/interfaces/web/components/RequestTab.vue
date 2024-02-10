@@ -14,7 +14,8 @@ import Authorization from "./Authorization.vue";
 import Response from "./Response.vue";
 import Body from "./Body.vue";
 import { ref, toRefs } from "vue";
-import { Entity, StringToStringMap } from "../../../core/models";
+import { StringToStringMap } from "../../../../../lib/etc";
+import { Model } from "../../../../../storage/mod";
 const basename = (path) => path.split("/").reverse()[0];
 
 const props = defineProps(["value", "viewSecrets", "title"]);
@@ -43,7 +44,7 @@ function addQueryParams(base: string): string {
 
 function refreshTabTitle() {
   console.log("refresh", requestData.value);
-  window.emitter.emit("set-tab-title", requestData.value as Entity);
+  window.emitter.emit("set-tab-title", requestData.value as Model);
 }
 async function fetchRequest(value: string): Promise<any> {
   console.log("LOL", "http://localhost:8000/" + value + ".json");
