@@ -46,14 +46,11 @@ export interface IServer {
 export class Server implements IServer {
   port: number;
   app: Application;
-  constructor(app: IApplication) {
+  constructor(app: Application) {
     this.port = app.argv!.http || 8000;
-    if (!(app instanceof Application)) {
-      throw new Error("Zzz interface must be used with Zzz Application");
-    }
     this.app = app;
   }
-  respondToGet(request: Request): Promise<Response> {
+  async respondToGet(request: Request): Promise<Response> {
     const parts = dissectRequest(request);
     parts.fullId;
     Trace("respondToGet " + parts.fullId);
@@ -65,7 +62,7 @@ export class Server implements IServer {
       Trace("Responding to base URL: scope list");
       return this.respondToScopesList(extname(parts.fullId));
     }
-    const model = this.executeGet(request);
+    const model = await this.executeGet(request);
     return Promise.resolve(newResponse(200, this.stringify(model, parts.extension || "json"), STANDARD_HEADERS));
   }
   async respondToPatch(request: Request): Promise<Response> {

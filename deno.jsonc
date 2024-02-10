@@ -4,10 +4,10 @@
   "description": "Replacement for Postman",
   "tasks": {
     "init": "npm install ; deno task cache",
+    "cli": "deno run -A --unstable src/cli.ts",
     "cli:build": "deno compile --unstable --allow-all --output=bin/zzz src/cli.ts",
     "cache": "deno cache src/**/*.ts",
-    "zzz": "deno run -A --unstable src/main.ts",
-    "http": "deno run -A --unstable src/main.ts http",
+    "http": "deno run -A --unstable src/http.ts http",
     "http:build": "deno compile --unstable --allow-all --output=bin/zzz-server src/http.ts",
     "vite": "cd src/apps/zzz/interfaces/web ; deno run -A --unstable --node-modules-dir npm:vite",
     "web": "deno task vite --host 127.0.0.1",
