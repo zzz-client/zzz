@@ -28,8 +28,13 @@ Http:
     expire_in: 1 week
 
 Web:
+  image: node:latest
   stage: Build
-  script: deno task web:build
+  script:
+    - cd src/apps/zzz/interfaces/web
+    - npm install
+    - npm install vite
+    - npx vite build
   artifacts:
     name: zzz-web
     paths:
@@ -39,7 +44,12 @@ Web:
 Desktop:
   image: rustdocker/rust:stable
   stage: Build
-  script: deno task desktop:build ; mv src/apps/zzz/interfaces/desktop/target/release/Zzz ./zzz-desktop
+  script:
+    - cd src/apps/zzz/interfaces/desktop/
+    - cargo install tauri-cli
+    # - deno task desktop:build ; mv src/apps/zzz/interfaces/desktop/target/release/Zzz ./zzz-desktop
+    - cargo tauri build
+    - mv src/apps/zzz/interfaces/desktop/target/release/Zzz ./zzz-desktop
   artifacts:
     name: zzz-desktop
     paths:
