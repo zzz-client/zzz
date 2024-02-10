@@ -13,7 +13,7 @@ import { RedactModule } from "../../modules/redact/mod.ts";
 import { RequestsModule } from "../../modules/requests/mod.ts";
 import TemplateModule from "../../modules/template/mod.ts";
 import { IStore } from "../../stores/mod.ts";
-import { Server } from "./http.ts";
+import { listen, Server } from "./http.ts";
 import { initDi } from "../../app.ts";
 
 initDi();
@@ -55,7 +55,7 @@ export default class Application implements IApplication {
     this.argv = processFlags(Deno.args, this.flags);
   }
   run(): Promise<void> {
-    return new Server(this).listen();
+    return listen(new Server(this));
   }
   registerModule(module: Module): void {
     /*

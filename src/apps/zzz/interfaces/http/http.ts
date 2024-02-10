@@ -11,25 +11,17 @@ import Application from "../cli/app.ts";
 
 const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "allow,content-type,x-zzz-context", "Access-Control-Allow-Methods": "GET,PATCH" };
 
-export class Server {
-  port: number;
-  app: Application;
-  constructor(app: IApplication) {
-    this.port = app.argv!.http || 8000;
-    if (!(app instanceof Application)) {
-      throw new Error("Zzz interface must be used with Zzz Application");
-    }
-    this.app = app;
-  }
-  respond(request: Request): Promise<Response> {
+export function listen(server: Server): Promise<void> {
+  Trace("Starting server on port " + server.port);
+  Deno.serve({ port: server.port }, (request: Request): Promise<Response> => {
     Trace("Server:Respond: Responding to " + request.method, request.url);
     switch (request.method) {
       case "GET":
-        return this.respondToGet(request);
+        return server.respondToGet(request);
       case "PATCH":
-        return this.respondToPatch(request);
+        return server.respondToPatch(request);
       case "OPTIONS":
-        return Promise.resolve(this.respondToOptions(request));
+        return Promise.resolve(server.respondToOptions(request));
       default:
         return Promise.reject(
           new Response("Unsupported request method: " + request.method, {
@@ -38,21 +30,28 @@ export class Server {
           }),
         );
     }
-  }
-  listen(): Promise<void> {
-    const pls = this;
-    function cb(request: Request): Promise<Response> {
-      return pls.respond(request).catch((error) => {
-        if (error instanceof Response) {
-          return Promise.resolve(error);
-        }
-        return Promise.resolve(newResponse(400, error, STANDARD_HEADERS));
-      });
+  });
+  Trace("Server started (asynchronously)");
+  return Promise.resolve();
+}
+
+export interface IServer {
+  port: number;
+  app: IApplication;
+  respondToGet(request: Request): Promise<Response>;
+  respondToPatch(request: Request): Promise<Response>;
+  respondToOptions(request: Request): Promise<Response>;
+}
+
+export class Server implements IServer {
+  port: number;
+  app: Application;
+  constructor(app: IApplication) {
+    this.port = app.argv!.http || 8000;
+    if (!(app instanceof Application)) {
+      throw new Error("Zzz interface must be used with Zzz Application");
     }
-    Trace("Starting server on port " + this.port);
-    Deno.serve({ port: this.port }, cb);
-    Trace("Server started (asynchronously)");
-    return Promise.resolve();
+    this.app = app;
   }
   respondToGet(request: Request): Promise<Response> {
     const parts = dissectRequest(request);
@@ -79,7 +78,7 @@ export class Server {
     const executeResponse = await (new ExecuteActor()).act(model);
     return Promise.resolve(newResponse(200, this.stringify(executeResponse, parts.extension || "json"), STANDARD_HEADERS));
   }
-  respondToOptions(request: Request): Response {
+  respondToOptions(request: Request): Promise<Response> {
     Trace("Responding to OPTIONS");
     const headers = {
       "Allow": ["OPTIONS", "GET"],
@@ -89,10 +88,12 @@ export class Server {
       Trace("PATCH allowed to execute requests");
       headers.Allow.push("PATCH}");
     }
-    return new Response(null, {
-      status: 204,
-      headers: headers as unknown as HeadersInit,
-    });
+    return Promise.resolve(
+      new Response(null, {
+        status: 204,
+        headers: headers as unknown as HeadersInit,
+      }),
+    );
   }
   async respondToScopesList(fileExtension: string): Promise<Response> {
     Trace("Responding to Scopes list");
