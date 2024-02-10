@@ -31,9 +31,9 @@ Http:
 #   stage: Build
 #   script: deno task web:build
 
-Tauri:
+Desktop:
   stage: Build
-  script: deno task tauri:build ; mv src/apps/zzz/interfaces/desktop/target/release/zzz ./zzz-desktop
+  script: deno task desktop:build ; mv src/apps/zzz/interfaces/desktop/target/release/zzz ./zzz-desktop
   artifacts:
     name: zzz-desktop
     paths:

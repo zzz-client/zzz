@@ -1,5 +1,5 @@
 
-# Comparison 
+# Comparison
 
 More than a comparison, I give this list of recommendations I recommend trying if Zzz doesn't fit your needs.
 
@@ -10,7 +10,7 @@ More than a comparison, I give this list of recommendations I recommend trying i
     - TUI TODO
     - REST/Act
     - Web
-    - Desktop (Tauri) TODO
+    - Desktop (Tauri)
     - Browser extensions? TODO
   - Technologies:
     - Runtime: Deno
