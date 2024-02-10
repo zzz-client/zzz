@@ -6,7 +6,7 @@ import { Authorization } from "../modules/auth/mod.ts";
 import { Context } from "../modules/context/mod.ts";
 import { Cookies } from "../modules/cookies/mod.ts";
 import { Collection, HttpRequest } from "../modules/requests/mod.ts";
-import { Scope } from "../modules/scope/mod.ts";
+// import { Scope } from "../modules/scope/mod.ts";
 import { IStore } from "./mod.ts";
 
 const newInstance = {

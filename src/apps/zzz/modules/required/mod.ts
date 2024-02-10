@@ -15,6 +15,7 @@ export default class RequiredModule extends Module implements IModuleModifier {
   }
 }
 const REQUIRED_ON_REQUEST = ["Method", "URL"];
+// deno-lint-ignore no-explicit-any
 function checkRequired(fileContents: any): void {
   for (const key of REQUIRED_ON_REQUEST) {
     if (!fileContents[key]) {

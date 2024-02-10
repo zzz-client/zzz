@@ -1,7 +1,7 @@
+// deno-lint-ignore-file no-explicit-any
 import axios from "https://deno.land/x/redaxios/mod.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";
 import { asAny } from "../../../lib/etc.ts";
-import { FileFormat } from "../../../storage/files/formats.ts";
 import { Model } from "../../../storage/mod.ts";
 
 // TODO: Move to own file?

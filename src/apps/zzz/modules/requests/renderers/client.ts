@@ -13,6 +13,7 @@ export default class HttpClient implements IModuleRenderer {
     }
   }
 }
+// deno-lint-ignore no-explicit-any
 function formatError(error: any) {
   let result = new Error(error);
   if (error.response?.data) {
@@ -22,6 +23,7 @@ function formatError(error: any) {
   }
   return result;
 }
+// deno-lint-ignore no-explicit-any
 function doRequest(theRequest: HttpRequest): Promise<any> {
   return axios({
     method: theRequest.Method,

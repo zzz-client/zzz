@@ -32,7 +32,7 @@ class BodyFields {
   Body!: string | object;
 }
 
-import { assertEquals } from "../../../../lib/tests.ts";
+// import { assertEquals } from "../../../../lib/tests.ts";
 Deno.test("Body Module", () => {
   // const module = new BodyModule();
   // assertEquals(module.Name, "Body");

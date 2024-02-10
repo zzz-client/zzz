@@ -1,4 +1,4 @@
-import { Action, Log, Trace } from "../../../../lib/etc.ts";
+import { Action, Log } from "../../../../lib/etc.ts";
 import { getFileFormat } from "../../../../storage/files/formats.ts";
 import { Model } from "../../../../storage/mod.ts";
 import IApplication, { executeModules, FeatureFlags } from "../../../mod.ts";
@@ -8,7 +8,7 @@ export default async function Cli(app: IApplication): Promise<void> {
   const flagValues = app.argv as FeatureFlags;
   const action = new Action(flagValues, app.env);
   const modelId = app.argv._[app.argv._.length - 1] as string;
-  const modelType = await app.store.getModelType(modelId);
+  // const modelType = await app.store.getModelType(modelId);
   const model = new Model(); // TODO Construct properly using modelType
   model.Id = modelId;
   try {

@@ -128,6 +128,7 @@ export default class FileStorage implements IStorage {
     }
     const defaultFilePath = model.Id + "/" + DEFAULT_MARKER;
     // TODO: Does this work as intended?
+    // deno-lint-ignore no-explicit-any
     const what = { ...model } as any;
     delete what.Id;
     delete what.Name;

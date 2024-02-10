@@ -120,6 +120,7 @@ export class Server {
   }
 }
 
+// deno-lint-ignore no-explicit-any
 function newResponse(status: number, body: any, headers: StringToStringMap): Response {
   return new Response(body, { status, headers });
 }

@@ -31,6 +31,7 @@ export interface IModuleFields {
   fields: ModuleFields;
 }
 export interface IModuleRenderer {
+  // deno-lint-ignore no-explicit-any
   render(model: Model, action: Action): Promise<any>; //TODO
 }
 export interface IModuleModifier {
@@ -40,6 +41,7 @@ export interface ModuleFields {
   [key: string]: ModuleField;
 }
 export interface ModuleField {
+  // deno-lint-ignore no-explicit-any
   [key: string]: any; // TODO?
 }
 export type Feature = {

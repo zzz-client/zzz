@@ -73,6 +73,7 @@ Deno.test("Authorization Module modify: string", async () => {
 export interface IAuthorizer {
   authorize(model: Model, data: AuthContents): void;
 }
+// deno-lint-ignore ban-types
 export type AuthContents = {}; // TODO
 
 export class Authorization extends Model {
