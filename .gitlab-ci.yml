@@ -42,20 +42,20 @@ Web:
       - ./src/apps/zzz/interfaces/web/dist
     expire_in: 1 week
 
-Desktop:
-  image: rustdocker/rust:stable
-  stage: Build
-  script:
-    - cd src/apps/zzz/interfaces/desktop/
-    - cargo install tauri-cli
-    # - deno task desktop:build ; mv src/apps/zzz/interfaces/desktop/target/release/Zzz ./zzz-desktop
-    - cargo tauri build
-    - mv src/apps/zzz/interfaces/desktop/target/release/Zzz ./zzz-desktop
-  artifacts:
-    name: zzz-desktop
-    paths:
-      - ./zzz-desktop
-    expire_in: 1 week
+# Desktop:
+#   image: rustdocker/rust:stable
+#   stage: Build
+#   script:
+#     - cd src/apps/zzz/interfaces/desktop/
+#     - cargo install tauri-cli
+#     # - deno task desktop:build ; mv src/apps/zzz/interfaces/desktop/target/release/Zzz ./zzz-desktop
+#     - cargo tauri build
+#     - mv src/apps/zzz/interfaces/desktop/target/release/Zzz ./zzz-desktop
+#   artifacts:
+#     name: zzz-desktop
+#     paths:
+#       - ./zzz-desktop
+#     expire_in: 1 week
 
 Tests:
   stage: Test
