@@ -1,5 +1,5 @@
-image: denoland/deno:latest
-# image: rustdocker/rust:stable
+default:
+  image: denoland/deno:latest
 
 # curl -fsSL https://deno.land/install.sh | sh
 # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -27,11 +27,17 @@ Http:
       - ./zzz-server
     expire_in: 1 week
 
-# Web:
-#   stage: Build
-#   script: deno task web:build
+Web:
+  stage: Build
+  script: deno task web:build
+  artifacts:
+    name: zzz-web
+    paths:
+      - ./src/apps/zzz/interfaces/web/dist
+    expire_in: 1 week
 
 Desktop:
+  image: rustdocker/rust:stable
   stage: Build
   script: deno task desktop:build ; mv src/apps/zzz/interfaces/desktop/target/release/Zzz ./zzz-desktop
   artifacts:
