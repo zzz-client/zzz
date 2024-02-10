@@ -1,7 +1,6 @@
 import { Action, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
-import Application from "../../interfaces/cli/app.ts";
 import { RequestsModule } from "../requests/mod.ts";
 import TemplateModule from "../template/mod.ts";
 import Loader, { Apply, GLOBALS_CONTEXT, ILoader, SESSION_CONTEXT } from "./loader.ts";
@@ -51,9 +50,9 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
     return Promise.resolve();
   }
   private getContext(action: Action): string {
-    return (action.features.context || this.app.env["ZZZ_CONTEXT"]) as string;
+    return (action.features.context || Deno.env.get("ZZZ_CONTEXT")) as string;
   }
-  private loader = new Loader((this.app as Application).store) as ILoader;
+  private loader = new Loader(this.store) as ILoader;
   private load(modelId: string, contextName: string): Promise<Model[]> {
     return Promise.all([
       this.loader.globals(),

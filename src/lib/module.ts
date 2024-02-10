@@ -1,13 +1,12 @@
-import IApplication from "../apps/mod.ts";
-import { Model } from "../storage/mod.ts";
+import { IStore, Model } from "../storage/mod.ts";
 import { Action, asAny } from "./etc.ts";
 
 export abstract class Module {
   Name?: string;
-  app: IApplication;
+  store: IStore;
   abstract dependencies: string[];
-  constructor(app: IApplication) {
-    this.app = app;
+  constructor(store: IStore) {
+    this.store = store;
   }
   static hasFields(model: Model): boolean {
     // if (!("fields" in this)) {

@@ -1,13 +1,12 @@
 import { basename } from "https://deno.land/std/path/mod.ts";
 import DI, { newInstance as iNewInstance } from "../../../lib/di.ts";
 import { Trace } from "../../../lib/etc.ts";
-import { IStorage, Model, ParentModel, SearchParams } from "../../../storage/mod.ts";
+import { IStorage, IStore, Model, ParentModel, SearchParams } from "../../../storage/mod.ts";
 import { Authorization } from "../modules/auth/mod.ts";
 import { Context } from "../modules/context/mod.ts";
 import { Cookies } from "../modules/cookies/mod.ts";
 import { Collection, HttpRequest } from "../modules/requests/mod.ts";
 // import { Scope } from "../modules/scope/mod.ts";
-import { IStore } from "./mod.ts";
 
 const newInstance = {
   newInstance(): object {

@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { initDi } from "./apps/zzz/app.ts";
 import Application from "./apps/zzz/interfaces/http/app.ts";
 

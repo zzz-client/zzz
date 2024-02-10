@@ -1,8 +1,6 @@
 import { Action, Meld, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { Feature, IModuleFeatures, IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model, ParentModel } from "../../../../storage/mod.ts";
-import Application from "../../interfaces/cli/app.ts";
-import { IStore } from "../../stores/mod.ts";
 
 export class RequestsModule extends Module implements IModuleFeatures, IModuleModels, IModuleFields, IModuleModifier {
   Name = "Requests";
@@ -21,14 +19,11 @@ export class RequestsModule extends Module implements IModuleFeatures, IModuleMo
   };
   async modify(model: Model, _action: Action): Promise<void> {
     Trace("RequestsModule:modify", model.Id, model.Name);
-    const modelType = await this.store().getModelType(model.Id);
-    const loadedModel = await this.store().get(modelType, model.Id);
+    const modelType = await this.store.getModelType(model.Id);
+    const loadedModel = await this.store.get(modelType, model.Id);
     Trace("RequestsModule:modify loaded Model", loadedModel);
     Meld(model, loadedModel);
     return await Promise.resolve();
-  }
-  private store(): IStore {
-    return (this.app as Application).store;
   }
 }
 export class HttpRequest extends Model {

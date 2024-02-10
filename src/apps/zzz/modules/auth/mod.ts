@@ -1,6 +1,6 @@
 import { Action, asAny, Trace } from "../../../../lib/etc.ts";
 import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
-import { Model } from "../../../../storage/mod.ts";
+import { IStore, Model } from "../../../../storage/mod.ts";
 import { ContextModule } from "../context/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 
@@ -19,11 +19,11 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
       let auth = asAny(model).Authorization as Authorization;
       if (typeof auth === "string") {
         Trace("Authorization is undefined, aborting");
-        auth = await this.app.store.get(Authorization.name, auth) as Authorization;
+        auth = await this.store.get(Authorization.name, auth) as Authorization;
       }
       if (typeof auth === "string") {
         Trace("Loading stored Authorization:", auth);
-        auth = await this.app.store.get(Authorization.name, auth) as Authorization;
+        auth = await this.store.get(Authorization.name, auth) as Authorization;
       }
       Trace("Authorization:", Authorization);
       if (action.features.all) {
@@ -48,7 +48,7 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
 Deno.test("Authorization Module modify: undefined", async () => {
   mockApp();
   // GIVEN
-  const module = new AuthorizationModule(DI.getInstance("IApplication") as IApplication);
+  const module = new AuthorizationModule(DI.getInstance("IStore") as IStore);
   const action = new Action({}, {});
   const model = new Model();
   // WHEN
@@ -60,7 +60,7 @@ Deno.test("Authorization Module modify: undefined", async () => {
 Deno.test("Authorization Module modify: string", async () => {
   mockApp();
   // GIVEN
-  const module = new AuthorizationModule(DI.getInstance("IApplication") as IApplication);
+  const module = new AuthorizationModule(DI.getInstance("IStore") as IStore);
   const action = new Action({}, {});
   const model = new Model();
   asAny(model).Authorization = "asdf";

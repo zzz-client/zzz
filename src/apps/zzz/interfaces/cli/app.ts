@@ -14,7 +14,7 @@ import { PathParamsModule } from "../../modules/path-params/mod.ts";
 import { RedactModule } from "../../modules/redact/mod.ts";
 import { RequestsModule } from "../../modules/requests/mod.ts";
 import TemplateModule from "../../modules/template/mod.ts";
-import { IStore } from "../../stores/mod.ts";
+import { IStore } from "../../../../storage/mod.ts";
 
 const newInstance = {
   newInstance(): object {
@@ -41,16 +41,15 @@ export default class Application implements IApplication {
   renderers = [] as IModuleRenderer[];
   constructor() {
     this.env = Deno.env.toObject();
-    // loadEnv().then((env) => this.env = env);
-    this.registerModule(new RequestsModule(this));
-    this.registerModule(new BodyModule(this));
-    this.registerModule(new PathParamsModule(this));
-    // this.registerModule(new ScopeModule(this));
-    this.registerModule(new ContextModule(this));
-    this.registerModule(new AuthorizationModule(this));
-    this.registerModule(new TemplateModule(this));
-    this.registerModule(new CookiesModule(this));
-    this.registerModule(new RedactModule(this));
+    this.registerModule(new RequestsModule(this.store));
+    this.registerModule(new BodyModule(this.store));
+    this.registerModule(new PathParamsModule(this.store));
+    // this.registerModule(new ScopeModule(this.store));
+    this.registerModule(new ContextModule(this.store));
+    this.registerModule(new AuthorizationModule(this.store));
+    this.registerModule(new TemplateModule(this.store));
+    this.registerModule(new CookiesModule(this.store));
+    this.registerModule(new RedactModule(this.store));
     this.argv = processFlags(Deno.args, this.flags);
   }
   run(): Promise<void> {
