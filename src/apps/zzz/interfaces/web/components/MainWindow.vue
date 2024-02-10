@@ -51,23 +51,23 @@ window.emitter.on("set-tab-title", (result) => {
 });
 
 let keys = [] as string[];
-function addEntityToNodes(noteList, entity) {
-  let fullPath = entity.Id;
+function addModelToNodes(noteList, model) {
+  let fullPath = model.Id;
   if (fullPath.substring(0, 1) == "/") {
     fullPath = fullPath.substring(1);
   }
   const newNode = {
     key: fullPath,
-    label: entity.Name
+    label: model.Name
   } as MenuItem;
-  if (entity.Method) {
+  if (model.Method) {
     // TODO: Could have a better way to determine this
     newNode.command = clickRequest;
   }
-  if (entity.Children) {
+  if (model.Children) {
     newNode.items = [];
-    entity.Children.forEach((child) => {
-      addEntityToNodes(newNode.items, child);
+    model.Children.forEach((child) => {
+      addModelToNodes(newNode.items, child);
     });
   }
   noteList.push(newNode);
@@ -90,8 +90,8 @@ axios
   })
   .then((res) => {
     console.log("Got initial data", res.data);
-    res.data.Children.forEach((entity) => {
-      addEntityToNodes(collections.value, entity);
+    res.data.Children.forEach((model) => {
+      addModelToNodes(collections.value, model);
     });
   })
   .catch((error) => {
