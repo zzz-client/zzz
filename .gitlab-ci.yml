@@ -34,6 +34,7 @@ Web:
     - cd src/apps/zzz/interfaces/web
     - npm install
     - npm install vite
+    - npm install vue
     - npx vite build
   artifacts:
     name: zzz-web
