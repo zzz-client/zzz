@@ -16,8 +16,8 @@
     "desktop:build": "cd $INIT_CWD/src/apps/zzz/interfaces/desktop/; cargo tauri build",
     "desktop:run": "$INIT_CWD/src/apps/zzz/interfaces/desktop/target/release/Zzz",
     "vite": "cd src/apps/zzz/interfaces/web ; deno run -A --unstable --node-modules-dir npm:vite",
-    "test": "deno test -A --coverage=coverage",
-    "coverage": "deno coverage --lcov --output=coverage/lcov.info coverage ; deno coverage --html coverage ; rm coverage/*.json",
+    "test": " rm coverage/*.json ; deno test -A --coverage=coverage",
+    "coverage": "deno coverage --lcov --output=coverage/lcov.info coverage && deno coverage --html coverage && deno coverage",
     "coverage:open": "code coverage/html/index.html",
     "lint": "deno lint --unstable src/"
   },
