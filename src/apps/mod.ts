@@ -40,3 +40,14 @@ export async function executeModules(modules: Module[], action: Action, model: M
     }
   }
 }
+
+// ----------------------------------------- TESTS -----------------------------------------
+
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { fail } from "https://deno.land/std/assert/fail.ts";
+
+describe("executeModules", () => {
+  it("works", async () => {
+    fail("Write this test");
+  });
+});

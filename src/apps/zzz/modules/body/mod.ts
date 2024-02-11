@@ -33,14 +33,12 @@ class BodyFields {
 }
 
 // ----------------------------------------- TESTS -----------------------------------------
-import { assertEquals } from "../../../../lib/tests.ts";
+
 import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { fail } from "https://deno.land/std/assert/fail.ts";
 
 describe("Bearer Token Authorizer", () => {
   it("sets header correctly", async () => {
-    // const module = new BodyModule();
-    // assertEquals(module.Name, "Body");
-    // assertEquals(module.dependencies, [RequestsModule.name]);
-    // assertEquals(module.fields, { HttpRequest: BodyFields });
+    fail("Write this test");
   });
 });

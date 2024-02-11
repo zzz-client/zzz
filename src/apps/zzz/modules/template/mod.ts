@@ -30,3 +30,16 @@ export default class TemplateModule extends Module implements IModuleFeatures, I
     return Promise.resolve();
   }
 }
+
+// ----------------------------------------- TESTS -----------------------------------------
+
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { fail } from "https://deno.land/std/assert/fail.ts";
+
+describe("TemplateModule", () => {
+  describe("modify", () => {
+    it("works", async () => {
+      fail("Write this test");
+    });
+  });
+});

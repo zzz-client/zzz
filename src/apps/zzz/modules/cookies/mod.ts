@@ -39,3 +39,26 @@ export class CookiesModule extends Module implements IModuleModels, IModuleField
 export class Cookies extends Model {
   Cookies!: StringToStringMap; // TODO: Ideally this would not need another nested level but unsure if that's possible or actually really good
 }
+
+// ----------------------------------------- TESTS -----------------------------------------
+
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { fail } from "https://deno.land/std/assert/fail.ts";
+
+describe("CookiesModule", () => {
+  describe("modify", () => {
+    it("sets header correctly", async () => {
+      fail("Write this test");
+    });
+  });
+  describe("loadCookies", () => {
+    it("sets header correctly", async () => {
+      fail("Write this test");
+    });
+  });
+  describe("getHeaderString", () => {
+    it("sets header correctly", async () => {
+      fail("Write this test");
+    });
+  });
+});

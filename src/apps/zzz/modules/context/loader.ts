@@ -76,3 +76,35 @@ export default class Loader implements ILoader {
     return Promise.resolve(defaults);
   }
 }
+
+// ----------------------------------------- TESTS -----------------------------------------
+
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { fail } from "https://deno.land/std/assert/fail.ts";
+
+describe("Apply", () => {
+  it("skips Id and Children", async () => {
+    fail("Write this test");
+  });
+  it("loads Body", async () => {
+    fail("Write this test");
+  });
+  it("sets values", async () => {
+    fail("Write this test");
+  });
+});
+
+describe("Context Loader", () => {
+  it("globals", async () => {
+    fail("Write this test");
+  });
+  it("local", async () => {
+    fail("Write this test");
+  });
+  it("context", async () => {
+    fail("Write this test");
+  });
+  it("defaults", async () => {
+    fail("Write this test");
+  });
+});

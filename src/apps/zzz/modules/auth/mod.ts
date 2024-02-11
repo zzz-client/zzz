@@ -69,9 +69,11 @@ class ChildAuthorization {
 }
 
 // ----------------------------------------- TESTS -----------------------------------------
+
 import { describe, it } from "https://deno.land/std/testing/bdd.ts";
 import { assertSpyCall, resolvesNext, stub } from "https://deno.land/x/mock/mod.ts";
 import { assertEquals, TestStore } from "../../../../lib/tests.ts";
+import { fail } from "https://deno.land/std/assert/fail.ts";
 
 describe("Authorization Module ", () => {
   describe("modify", () => {
@@ -128,6 +130,17 @@ describe("Authorization Module ", () => {
       // THEN
       assertEquals(asAny(testRequest).Authorization, { BearerToken: "asdf" }, "Authorization should be string it was set to");
       getStub.restore();
+    });
+    it("sets .Authorization when all feature is enabled", async () => {
+      fail();
+    });
+    it("executes when the execute feature is enabled", async () => {
+      fail("Write this test");
+    });
+  });
+  describe("execute", () => {
+    it("executes", () => {
+      fail("Write this test");
     });
   });
 });

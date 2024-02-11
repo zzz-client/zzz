@@ -22,6 +22,7 @@ export type Header = AuthContents & {
 };
 
 // ----------------------------------------- TESTS -----------------------------------------
+
 import { assertEquals } from "../../../../lib/tests.ts";
 import { describe, it } from "https://deno.land/std/testing/bdd.ts";
 

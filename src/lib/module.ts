@@ -49,3 +49,16 @@ export type Feature = {
   alias?: string;
   hidden?: boolean;
 };
+
+// ----------------------------------------- TESTS -----------------------------------------
+
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { fail } from "https://deno.land/std/assert/fail.ts";
+
+describe("Module", () => {
+  describe("hasFields", () => {
+    it("works", async () => {
+      fail("Write this test");
+    });
+  });
+});

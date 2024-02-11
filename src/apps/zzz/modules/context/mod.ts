@@ -68,3 +68,26 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
 export class Context extends Model {
   Variables: StringToStringMap = {};
 }
+
+// ----------------------------------------- TESTS -----------------------------------------
+
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { fail } from "https://deno.land/std/assert/fail.ts";
+
+describe("ContextModule", () => {
+  describe("modify", () => {
+    it("???", async () => {
+      fail("Write this test");
+    });
+  });
+  describe("getContext", () => {
+    it("???", async () => {
+      fail("Write this test");
+    });
+  });
+  describe("load", () => {
+    it("???", async () => {
+      fail("Write this test");
+    });
+  });
+});

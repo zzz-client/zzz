@@ -40,3 +40,26 @@ export interface newInstance {
 
 const DumbDi = new DI();
 export default DumbDi as DI;
+
+// ----------------------------------------- TESTS -----------------------------------------
+
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { fail } from "https://deno.land/std/assert/fail.ts";
+
+describe("DumbDI", () => {
+  describe("register", () => {
+    it("works", async () => {
+      fail("Write this test");
+    });
+  });
+  describe("getInstance", () => {
+    it("works", async () => {
+      fail("Write this test");
+    });
+  });
+  describe("newInstance", () => {
+    it("works", async () => {
+      fail("Write this test");
+    });
+  });
+});

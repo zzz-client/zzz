@@ -38,3 +38,16 @@ export class Collection extends Model implements ParentModel {
 }
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
+
+// ----------------------------------------- TESTS -----------------------------------------
+
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { fail } from "https://deno.land/std/assert/fail.ts";
+
+describe("RequestsModule", () => {
+  describe("modify", () => {
+    it("works", async () => {
+      fail("Write this test");
+    });
+  });
+});

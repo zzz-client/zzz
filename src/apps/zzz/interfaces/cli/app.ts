@@ -94,3 +94,5 @@ function loadFlagsFromFeatures(app: IApplication, module: Module): void {
     }
   }
 }
+
+// TODO: Tests

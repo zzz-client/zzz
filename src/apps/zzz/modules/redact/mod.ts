@@ -29,3 +29,16 @@ export class RedactModule extends Module implements IModuleModifier, IModuleFeat
     return Promise.resolve();
   }
 }
+
+// ----------------------------------------- TESTS -----------------------------------------
+
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { fail } from "https://deno.land/std/assert/fail.ts";
+
+describe("RedactModule", () => {
+  describe("modify", () => {
+    it("works", async () => {
+      fail("Write this test");
+    });
+  });
+});

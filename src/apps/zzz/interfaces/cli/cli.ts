@@ -26,3 +26,5 @@ export default async function Cli(app: IApplication): Promise<void> {
   }
   console.info(getFileFormat(".json").stringify(finalResult));
 }
+
+// TODO: Tests

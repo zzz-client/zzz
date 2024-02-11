@@ -20,6 +20,7 @@ export class BearerTokenAuthorizer implements IAuthorizer {
 export type BearerToken = AuthContents & string;
 
 // ----------------------------------------- TESTS -----------------------------------------
+
 import { describe, it } from "https://deno.land/std/testing/bdd.ts";
 import { assertEquals } from "../../../../lib/tests.ts";
 

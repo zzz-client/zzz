@@ -38,3 +38,26 @@ async function doRequest(theRequest: HttpRequest): Promise<any> {
     })
   ).data;
 }
+
+// ----------------------------------------- TESTS -----------------------------------------
+
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { fail } from "https://deno.land/std/assert/fail.ts";
+
+describe("ExecuteActor", () => {
+  describe("act", () => {
+    it("sets header correctly", async () => {
+      fail("Write this test");
+    });
+  });
+  describe("formatError", () => {
+    it("sets header correctly", async () => {
+      fail("Write this test");
+    });
+  });
+  describe("doRequest", () => {
+    it("sets header correctly", async () => {
+      fail("Write this test");
+    });
+  });
+});
