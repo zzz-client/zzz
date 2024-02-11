@@ -1,6 +1,7 @@
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
 import { Action, asAny, Trace } from "../../../../lib/etc.ts";
 import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
-import { IStore, Model } from "../../../../storage/mod.ts";
+import { Model } from "../../../../storage/mod.ts";
 import { ContextModule } from "../context/mod.ts";
 import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 
@@ -14,18 +15,22 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
   };
   async modify(model: Model, action: Action): Promise<void> {
     Trace("AuthorizationModule:modify");
-    if (AuthorizationModule.hasFields(model) && model instanceof HttpRequest) {
+    if (AuthorizationModule.hasFields(model)) {
       Trace("Has Authorization");
       let auth = asAny(model).Authorization as Authorization;
-      if (typeof auth === "string") {
+      if (!auth) {
         Trace("Authorization is undefined, aborting");
+        return Promise.resolve();
+      }
+      if (typeof auth === "string") {
+        Trace("Looking up Authorization profile:", auth);
         auth = await this.store.get(Authorization.name, auth) as Authorization;
       }
       if (typeof auth === "string") {
         Trace("Loading stored Authorization:", auth);
         auth = await this.store.get(Authorization.name, auth) as Authorization;
       }
-      Trace("Authorization:", Authorization);
+      Trace("Authorization:", auth);
       if (action.features.all) {
         Trace("Setting Authorization attribute on Model");
         asAny(model).Authorization = auth;
@@ -44,32 +49,6 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
     }
   }
 }
-
-Deno.test("Authorization Module modify: undefined", async () => {
-  mockApp();
-  // GIVEN
-  const module = new AuthorizationModule(DI.getInstance("IStore") as IStore);
-  const action = new Action({}, {});
-  const model = new Model();
-  // WHEN
-  await module.modify(model, action);
-  // THEN
-  assertEquals(asAny(model).Authorization, undefined, "Authorization should be undefined");
-});
-
-Deno.test("Authorization Module modify: string", async () => {
-  mockApp();
-  // GIVEN
-  const module = new AuthorizationModule(DI.getInstance("IStore") as IStore);
-  const action = new Action({}, {});
-  const model = new Model();
-  asAny(model).Authorization = "asdf";
-  // TODO: Somehow mock testApp().store
-  // WHEN
-  await module.modify(model, action);
-  // THEN
-  assertEquals(asAny(model).Authorization, "asdf", "Authorization should be string it was set to");
-});
 export interface IAuthorizer {
   authorize(model: Model, data: AuthContents): void;
 }
@@ -83,6 +62,43 @@ class ChildAuthorization {
   Authorization?: Authorization | string;
 }
 
+describe("Authorization Module ", () => {
+  describe("modify", () => {
+    it("returns nothing when .Authorization is undefined", async () => {
+      const testStore = new TestStore();
+      const testRequest = new HttpRequest();
+      asAny(testRequest).Authorization = undefined;
+      // GIVEN
+      const module = new AuthorizationModule(testStore);
+      const action = new Action({}, {});
+      const model = new Model();
+      // WHEN
+      await module.modify(model, action);
+      // THEN
+      assertEquals(asAny(model).Authorization, undefined, "Authorization should be undefined");
+    });
+    it("loads a profile when .Authorization is a string", async () => {
+      const testStore = new TestStore();
+      const testRequest = new HttpRequest();
+      const getStub = stub(testStore, "get", resolvesNext([testRequest]));
+      // GIVEN
+      const module = new AuthorizationModule(testStore);
+      const action = new Action({}, {});
+      asAny(testRequest).Authorization = "asdf";
+      // WHEN
+      await module.modify(testRequest, action);
+      // THEN
+      assertEquals(asAny(testRequest).Authorization, "asdf", "Authorization should be string it was set to");
+      assertSpyCall(getStub, 0, {
+        args: ["Authorization", "asdf"],
+        returned: Promise.resolve(testRequest),
+      });
+      getStub.restore();
+    });
+  });
+});
+
 import DI from "../../../../lib/di.ts";
-import { assertEquals, mockApp } from "../../../../lib/tests.ts";
-import IApplication from "../../../mod.ts";
+import { assertEquals, TestStore } from "../../../../lib/tests.ts";
+import { assertSpyCall, resolvesNext, spy, stub } from "https://deno.land/x/mock/mod.ts";
+import { assertSpyCalls } from "https://deno.land/x/mock@0.15.2/asserts.ts";

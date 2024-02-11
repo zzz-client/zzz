@@ -1,7 +1,7 @@
 import { Args } from "https://deno.land/std/cli/parse_args.ts";
 import { Action, StringToStringMap, Trace } from "../lib/etc.ts";
 import { IModuleModifier, Module } from "../lib/module.ts";
-import { Model } from "../storage/mod.ts";
+import { IStore, Model } from "../storage/mod.ts";
 
 export default interface IApplication {
   flags: Flags;
@@ -9,8 +9,7 @@ export default interface IApplication {
   // features: FeatureMap;
   env: StringToStringMap;
   modules: Module[];
-  // deno-lint-ignore no-explicit-any
-  store: any; // TODO: IStore;
+  store: IStore;
   // renderers: IModuleRenderer[];
   registerModule(module: Module): void;
   run(): Promise<void>;
