@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import axios from "axios";
-import TabView from "primevue/tabview";
-import TabPanel from "primevue/tabpanel";
-import InputText from "primevue/inputtext";
-import Button from "primevue/button";
 import Breadcrumb from "primevue/breadcrumb";
+import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
+import InputText from "primevue/inputtext";
 import type { MenuItem } from "primevue/menuitem";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
-import KeyValueTable from "./KeyValueTable.vue";
-import Authorization from "./Authorization.vue";
-import Response from "./Response.vue";
-import Body from "./Body.vue";
+import TabPanel from "primevue/tabpanel";
+import TabView from "primevue/tabview";
 import { ref, toRefs } from "vue";
 import { StringToStringMap } from "../../../../../lib/etc";
 import { Model } from "../../../../../storage/mod";
+import Authorization from "./Authorization.vue";
+import Body from "./Body.vue";
+import KeyValueTable from "./KeyValueTable.vue";
+import Response from "./Response.vue";
 const basename = (path) => path.split("/").reverse()[0];
 
 const props = defineProps(["value", "viewSecrets", "title"]);

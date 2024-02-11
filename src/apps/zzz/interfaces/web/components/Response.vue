@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, toRef, toRefs, watch } from "vue";
-import TabView from "primevue/tabview";
-import TabPanel from "primevue/tabpanel";
-import Dropdown from "primevue/dropdown";
 import Badge from "primevue/badge";
+import Dropdown from "primevue/dropdown";
+import TabPanel from "primevue/tabpanel";
+import TabView from "primevue/tabview";
+import { ref, toRefs, watch } from "vue";
 import KeyValueTable from "./KeyValueTable.vue";
 const props = defineProps(["data"]);
 

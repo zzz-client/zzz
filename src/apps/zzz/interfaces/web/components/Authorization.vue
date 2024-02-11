@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Dropdown from "primevue/dropdown";
-import Password from "primevue/password";
-import InputText from "primevue/inputtext";
 import Divider from "primevue/divider";
+import Dropdown from "primevue/dropdown";
+import InputText from "primevue/inputtext";
+import Password from "primevue/password";
 
-import { ref, toRef, toRefs, watch } from "vue";
+import { ref, toRefs, watch } from "vue";
 
 const props = defineProps(["method"]);
 

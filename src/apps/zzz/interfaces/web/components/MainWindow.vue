@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import "primevue/resources/themes/arya-purple/theme.css";
+import axios from "axios";
 import Badge from "primevue/badge";
+import type { MenuItem } from "primevue/menuitem";
+import Message from "primevue/message";
+import "primevue/resources/themes/arya-purple/theme.css";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import Message from "primevue/message";
 import ToggleButton from "primevue/togglebutton";
 import { ref } from "vue";
 import Collections from "./Collections.vue";
 import Cookies from "./Cookies.vue";
 import RequestTab from "./RequestTab.vue";
-import axios from "axios";
-import type { MenuItem } from "primevue/menuitem";
 const basename = (path) => path.split("/").reverse()[0];
 
 const tabs = ref([] as { title: string; value: string }[]);

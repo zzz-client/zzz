@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import Column from "primevue/column";
 import DataTable from "primevue/datatable";
 import InputText from "primevue/inputtext";
-import Column from "primevue/column";
-import { ref, toRef, watch } from "vue";
+import { toRef, watch } from "vue";
 
 interface KeyValue {
   key: string;
