@@ -26,16 +26,16 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
   models = [Context.name];
   fields = {
     Request: {
-      variables: "StringToStringMap",
+      Variables: "StringToStringMap",
     },
     Collection: {
-      variables: "StringToStringMap",
+      Variables: "StringToStringMap",
     },
     Scope: {
-      variables: "StringToStringMap",
+      Variables: "StringToStringMap",
     },
     Context: {
-      variables: "StringToStringMap",
+      Variables: "StringToStringMap",
     },
   };
   async modify(subjectModel: Model, action: Action): Promise<void> {

@@ -8,11 +8,8 @@ export abstract class Module {
   constructor(store: IStore) {
     this.store = store;
   }
-  static hasFields(model: Model): boolean {
-    // if (!("fields" in this)) {
-    //   return false;
-    // }
-    for (const key of Object.keys(asAny(this))) {
+  static hasFields(model: Model, fields: string[]): boolean {
+    for (const key of fields) {
       if (!(key in model)) {
         return false;
       }

@@ -7,14 +7,13 @@ export class PathParamsModule extends Module implements IModuleFields, IModuleMo
   Name = "PathParams";
   dependencies = [RequestsModule.name];
   fields = {
-    PathParams: {
-      type: "StringToStringMap",
-      description: "Params to be replaced in the URL",
+    HttpRequest: {
+      PathParams: "StringToStringMap",
     },
   };
   async modify(entity: Model, _action: Action): Promise<void> {
     Trace("PathParamsModule:modify");
-    if (entity instanceof HttpRequest && PathParamsModule.hasFields(entity)) {
+    if (entity instanceof HttpRequest && Module.hasFields(entity, Object.keys(this.fields))) {
       await this.loadPathParams(entity as HttpRequest);
     }
     return Promise.resolve();

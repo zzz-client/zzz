@@ -11,7 +11,7 @@ export class BodyModule extends Module implements IModuleModifier, IModuleFields
   };
   async modify(entity: Model, _action: Action): Promise<void> {
     Trace("BodyModule:modify");
-    if (BodyModule.hasFields(entity) && entity instanceof HttpRequest) {
+    if (Module.hasFields(entity, ["Body"]) && entity instanceof HttpRequest) {
       await this.loadBody(entity);
     }
     return Promise.resolve();

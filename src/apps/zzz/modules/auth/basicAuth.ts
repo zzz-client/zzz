@@ -26,8 +26,15 @@ export type BasicAuth = AuthContents & {
 import { assertEquals } from "../../../../lib/tests.ts";
 import { describe, it } from "https://deno.land/std/testing/bdd.ts";
 
+describe("newInstance", () => {
+  it("constructs a BasicAuthAuthorizer", () => {
+    const authorizer = newInstance.newInstance();
+    assertEquals(authorizer instanceof BasicAuthAuthorizer, true, "authorizer not created");
+  });
+});
+
 describe("Basic Auth Authorizer", () => {
-  it("sets header correctly", async () => {
+  it("sets header correctly", () => {
     const authorizer = new BasicAuthAuthorizer();
     // GIVEN
     const request = new HttpRequest();

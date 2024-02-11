@@ -23,8 +23,15 @@ export type Query = AuthContents & {
 import { assertEquals } from "../../../../lib/tests.ts";
 import { describe, it } from "https://deno.land/std/testing/bdd.ts";
 
+describe("newInstance", () => {
+  it("constructs a QueryAuthorizer", () => {
+    const authorizer = newInstance.newInstance();
+    assertEquals(authorizer instanceof QueryAuthorizer, true, "authorizer not created");
+  });
+});
+
 describe("Query Authorizer", () => {
-  it("sets header correctly", async () => {
+  it("sets header correctly", () => {
     const authorizer = new QueryAuthorizer();
     // GIVEN
     const request = new HttpRequest();

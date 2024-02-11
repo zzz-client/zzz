@@ -23,8 +23,15 @@ export type BearerToken = AuthContents & string;
 import { describe, it } from "https://deno.land/std/testing/bdd.ts";
 import { assertEquals } from "../../../../lib/tests.ts";
 
+describe("newInstance", () => {
+  it("constructs a BearerTokenAuthorizer", () => {
+    const authorizer = newInstance.newInstance();
+    assertEquals(authorizer instanceof BearerTokenAuthorizer, true, "authorizer not created");
+  });
+});
+
 describe("Bearer Token Authorizer", () => {
-  it("sets header correctly", async () => {
+  it("sets header correctly", () => {
     const authorizer = new BearerTokenAuthorizer();
     // GIVEN
     const request = new HttpRequest();

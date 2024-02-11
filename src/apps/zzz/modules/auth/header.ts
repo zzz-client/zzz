@@ -25,6 +25,13 @@ export type Header = AuthContents & {
 import { assertEquals } from "../../../../lib/tests.ts";
 import { describe, it } from "https://deno.land/std/testing/bdd.ts";
 
+describe("newInstance", () => {
+  it("constructs a HeaderAuthorizer", () => {
+    const authorizer = newInstance.newInstance();
+    assertEquals(authorizer instanceof HeaderAuthorizer, true, "authorizer not created");
+  });
+});
+
 describe("Header Authorizer", () => {
   it("sets header correctly", async () => {
     const authorizer = new HeaderAuthorizer();
