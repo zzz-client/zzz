@@ -1,4 +1,3 @@
-contexts/*.local.*
 *-lock.json
 *.lock
 

@@ -22,8 +22,8 @@ export default class FileStore implements IStore {
     [HttpRequest.name,        DI.newInstance("IStorage:HttpRequest",    ["library", this.FILE_FORMAT]) as IStorage],
     // [Scope.name,          DI.newInstance("IStorage:Scope",          ["library", this.FILE_FORMAT]) as IStorage],
     [Collection.name,         DI.newInstance("IStorage:Collection",     ["library", this.FILE_FORMAT]) as IStorage],
-    [Context.name,            DI.newInstance("IStorage:Context",        ["contexts", this.FILE_FORMAT]) as IStorage],
-    [Context.name + "local",  DI.newInstance("IStorage:Context",        ["contexts", this.FILE_FORMAT]) as IStorage],
+    [Context.name,            DI.newInstance("IStorage:Context",        ["library/contexts", this.FILE_FORMAT]) as IStorage],
+    [Context.name + "local",  DI.newInstance("IStorage:Context",        ["library/contexts", this.FILE_FORMAT]) as IStorage],
     [Authorization.name,      DI.newInstance("IStorage:Authorization",  ["library/auth", this.FILE_FORMAT]) as IStorage],
     [Cookies.name,            DI.newInstance("IStorage:Cookies",        ["cookies", this.FILE_FORMAT]) as IStorage],
   ]);
