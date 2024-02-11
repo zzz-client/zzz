@@ -21,18 +21,23 @@ export type Header = AuthContents & {
   Value: string;
 };
 
+// ----------------------------------------- TESTS -----------------------------------------
 import { assertEquals } from "../../../../lib/tests.ts";
-Deno.test("Header Authorizer", () => {
-  const authorizer = new HeaderAuthorizer();
-  // GIVEN
-  const request = new HttpRequest();
-  request.Headers = {};
-  const data: Header = {
-    Name: "name",
-    Value: "value",
-  };
-  // WHEN
-  authorizer.authorize(request, data);
-  // THEN
-  assertEquals(request.Headers.name, "value", "Header not set correctly");
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+
+describe("Header Authorizer", () => {
+  it("sets header correctly", async () => {
+    const authorizer = new HeaderAuthorizer();
+    // GIVEN
+    const request = new HttpRequest();
+    request.Headers = {};
+    const data: Header = {
+      Name: "name",
+      Value: "value",
+    };
+    // WHEN
+    authorizer.authorize(request, data);
+    // THEN
+    assertEquals(request.Headers.name, "value", "Header not set correctly");
+  });
 });

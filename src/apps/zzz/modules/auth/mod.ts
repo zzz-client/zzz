@@ -1,5 +1,5 @@
-import { describe, it } from "https://deno.land/std/testing/bdd.ts";
-import { Action, asAny, Trace } from "../../../../lib/etc.ts";
+import DI from "../../../../lib/di.ts";
+import { Action, asAny } from "../../../../lib/etc.ts";
 import { IModuleFields, IModuleModels, IModuleModifier, Module } from "../../../../lib/module.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { ContextModule } from "../context/mod.ts";
@@ -68,6 +68,11 @@ class ChildAuthorization {
   Authorization?: Authorization | string;
 }
 
+// ----------------------------------------- TESTS -----------------------------------------
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { assertSpyCall, resolvesNext, stub } from "https://deno.land/x/mock/mod.ts";
+import { assertEquals, TestStore } from "../../../../lib/tests.ts";
+
 describe("Authorization Module ", () => {
   describe("modify", () => {
     it("returns nothing when .Authorization is undefined", async () => {
@@ -117,8 +122,3 @@ describe("Authorization Module ", () => {
     });
   });
 });
-
-import DI from "../../../../lib/di.ts";
-import { assertEquals, TestStore } from "../../../../lib/tests.ts";
-import { assertSpyCall, resolvesNext, spy, stub } from "https://deno.land/x/mock/mod.ts";
-import { assertSpyCalls } from "https://deno.land/x/mock@0.15.2/asserts.ts";

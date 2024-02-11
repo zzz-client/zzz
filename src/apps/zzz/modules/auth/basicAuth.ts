@@ -22,18 +22,23 @@ export type BasicAuth = AuthContents & {
   Password: string;
 };
 
+// ----------------------------------------- TESTS -----------------------------------------
 import { assertEquals } from "../../../../lib/tests.ts";
-Deno.test("Basic Auth Authorizer", () => {
-  const authorizer = new BasicAuthAuthorizer();
-  // GIVEN
-  const request = new HttpRequest();
-  request.Headers = {};
-  const data: BasicAuth = {
-    Username: "user",
-    Password: "pass",
-  };
-  // WHEN
-  authorizer.authorize(request, data);
-  // THEN
-  assertEquals(request.Headers.Authorization, "Basic dXNlcnBhc3M=", "Authorization header not set correctly");
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+
+describe("Basic Auth Authorizer", () => {
+  it("sets header correctly", async () => {
+    const authorizer = new BasicAuthAuthorizer();
+    // GIVEN
+    const request = new HttpRequest();
+    request.Headers = {};
+    const data: BasicAuth = {
+      Username: "user",
+      Password: "pass",
+    };
+    // WHEN
+    authorizer.authorize(request, data);
+    // THEN
+    assertEquals(request.Headers.Authorization, "Basic dXNlcnBhc3M=", "Authorization header not set correctly");
+  });
 });
