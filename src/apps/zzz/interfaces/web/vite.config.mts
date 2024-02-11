@@ -3,9 +3,9 @@ import vue from "npm:@vitejs/plugin-vue";
 import viteDeno from "https://deno.land/x/vite_deno_plugin/mod.ts";
 
 // NOTE(bartlomieju): this is a papercut that shouldn't be required, see README.md
-// import "npm:vue";
+import "npm:vue";
 // Above line fails when running outside of Deno
-import "vue";
+// import "vue";
 
 // https://vitejs.dev/config/
 export default defineConfig({
