@@ -1,5 +1,5 @@
 // deno-lint-ignore-file
-import { HttpRequest } from "../../../modules/requests/module.ts";
+import { HttpRequest } from "../../../apps/zzz/modules/requests/mod.ts";
 import { FileFormat } from "../formats.ts";
 
 const CURL = {
