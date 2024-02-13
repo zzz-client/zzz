@@ -20,7 +20,8 @@ export type Query = AuthContents & {
 };
 
 // ----------------------------------------- TESTS -----------------------------------------
-import { assertEquals } from "../../../../lib/tests.ts";
+
+import { assertEquals } from "https://deno.land/std/assert/mod.ts";
 import { describe, it } from "https://deno.land/std/testing/bdd.ts";
 
 describe("newInstance", () => {

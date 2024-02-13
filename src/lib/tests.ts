@@ -2,12 +2,6 @@
 
 import DI from "../lib/di.ts";
 import { IStore, Model } from "../storage/mod.ts";
-import { assertEquals } from "https://deno.land/std@0.135.0/testing/asserts.ts";
-
-export { assertEquals };
-
-// class Application implements IApplication {
-// }
 
 export class TestStore implements IStore {
   get(modelType: string, id: string): Promise<Model> {

@@ -9,5 +9,11 @@ import "npm:vue";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  resolve: {
+    alias: {
+      "npm:axios": "axios",
+      "npm:primevue/menuitem": "primevue/menuitem",
+    },
+  },
   plugins: [vue(), viteDeno({ importMapFilename: "../../../../../deno.jsonc" })],
 });
