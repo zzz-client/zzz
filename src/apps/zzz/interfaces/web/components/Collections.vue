@@ -8,6 +8,17 @@ const props = defineProps(["collections"]);
 
 const { collections } = toRefs(props);
 
+export interface Domain {
+  name: string;
+  cookies: Cookie[];
+}
+export interface Cookie {
+  key: string;
+  value: string;
+  path: string;
+  expires: Date;
+}
+
 for (const collection of collections.value) {
   collection.command = (event: MenuItemCommandEvent) => {
     console.log("butts lol", event);

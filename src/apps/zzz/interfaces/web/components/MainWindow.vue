@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import axios from "axios";
 import Badge from "primevue/badge";
-import type { MenuItem } from "primevue/menuitem";
 import Message from "primevue/message";
 import "primevue/resources/themes/arya-purple/theme.css";
 import Splitter from "primevue/splitter";
@@ -12,103 +10,20 @@ import ToggleButton from "primevue/togglebutton";
 import { ref } from "vue";
 import Collections from "./Collections.vue";
 import Cookies from "./Cookies.vue";
+import { setRefs, newTab } from "./MainWindow";
 import RequestTab from "./RequestTab.vue";
-const basename = (path) => path.split("/").reverse()[0];
+import { doTheThing } from "./MainWindow.axios";
 
 const tabs = ref([] as { title: string; value: string }[]);
 const collections = ref([] as any[]);
 const dirty = ref([] as boolean[]);
 const errorMessage = ref("");
 const scope = ref("Salesforce Primary");
-
-let lastClick = -1;
-function clickRequest(uwu) {
-  const currentClick = Date.now();
-  if (lastClick >= 0 && currentClick - lastClick < 500) {
-    console.log("lastClick", lastClick, currentClick, uwu.item.key);
-    openTab(uwu.item.key);
-  }
-  lastClick = currentClick;
-}
-function openTab(key: string) {
-  for (let i = 0; i < tabs.value.length; i++) {
-    if (tabs.value[i].value == key) {
-      // activeTab.value = i;
-      return;
-    }
-  }
-  tabs.value.push({ title: "...", value: key });
-  // activeTab.value = tabs.value.length - 1;
-}
-
-window.emitter.on("set-tab-title", (result) => {
-  const { Id, Name } = result;
-  tabs.value.forEach((tab) => {
-    if (tab.value == Id) {
-      tab.title = Name;
-    }
-  });
-});
-
-let keys = [] as string[];
-function addModelToNodes(noteList, model) {
-  let fullPath = model.Id;
-  if (fullPath.substring(0, 1) == "/") {
-    fullPath = fullPath.substring(1);
-  }
-  const newNode = {
-    key: fullPath,
-    label: model.Name
-  } as MenuItem;
-  if (model.Method) {
-    // TODO: Could have a better way to determine this
-    newNode.command = clickRequest;
-  }
-  if (model.Children) {
-    newNode.items = [];
-    model.Children.forEach((child) => {
-      addModelToNodes(newNode.items, child);
-    });
-  }
-  noteList.push(newNode);
-  keys.push(newNode.Id!);
-}
 const viewSecrets = ref(false);
-function addQueryParams(base: string): string {
-  if (viewSecrets.value) {
-    return base + "?format";
-  } else {
-    return base;
-  }
-}
 
-axios
-  .get(addQueryParams("http://localhost:8000/" + scope.value), {
-    headers: {
-      "X-Zzz-Context": "integrate"
-    }
-  })
-  .then((res) => {
-    console.log("Got initial data", res.data);
-    res.data.Children.forEach((model) => {
-      addModelToNodes(collections.value, model);
-    });
-  })
-  .catch((error) => {
-    console.log(error);
-    console.error("ERROR", error.message, `(${error.code})`);
-    console.error(error.stack);
-    if (error.message === "Network Error") {
-      error.message += ". Is the HTTP server running?";
-    }
-    errorMessage.value = error.response?.data || error.message;
-  });
+setRefs({ tabs, collections, dirty, errorMessage, scope, viewSecrets });
 
-function newTab(): void {
-  tabs.value.push({ title: "Untitled Request", value: "" });
-  const index = tabs.value.length - 1;
-  dirty.value[index] = true;
-}
+doTheThing();
 
 function onTabChange(event: any) {
   console.log(event.originalEvent.target.textContent);
@@ -118,10 +33,18 @@ function onTabChange(event: any) {
     newTab();
   }
 }
-
 function closeTab(tabIndex) {
   tabs.value.splice(tabIndex, 1);
 }
+
+window.emitter.on("set-tab-title", (result: any) => {
+  const { Id, Name } = result;
+  tabs.value.forEach((tab) => {
+    if (tab.value == Id) {
+      tab.title = Name;
+    }
+  });
+});
 </script>
 
 <template>

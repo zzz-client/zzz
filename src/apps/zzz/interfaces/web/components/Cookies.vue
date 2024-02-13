@@ -10,7 +10,9 @@ import InputGroupAddon from "primevue/inputgroupaddon";
 import Divider from "primevue/divider";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import { ref, toRef, toRefs } from "vue";
+import { ref } from "vue";
+import { setRefs, addDomain, addAllowedDomain } from "./Cookies";
+import { Domain } from "./Collections.vue";
 
 const visible = ref(false);
 const newDomainToAllow = ref("");
@@ -34,69 +36,16 @@ const domains = ref([
   }
 ] as Domain[]);
 let activeDomains = ref([] as number[]);
-function addDomain() {
-  try {
-    for (let i = 0; i < domains.value.length; i++) {
-      if (domains.value[i].name == newDomain.value) {
-        activeDomains.value = [i];
-        throw new Error("Domain already in list " + activeDomains.value);
-      }
-    }
-    domains.value.push({
-      name: newDomain.value,
-      cookies: [] as Cookie[]
-    });
-    newDomain.value = "";
-  } catch (error) {
-    console.error(error);
-  }
-}
-function addAllowedDomain() {
-  try {
-    for (let i = 0; i < domainsToAllow.value.length; i++) {
-      if (domainsToAllow.value[i].name == newDomainToAllow.value) {
-        throw new Error("Domain already in list");
-      }
-    }
-    domainsToAllow.value.push({
-      name: newDomainToAllow.value
-    });
-    newDomainToAllow.value = "";
-  } catch (error) {
-    console.error(error);
-  }
-}
-function closeCallback() {
-  console.log("closeCallback");
-}
-interface Domain {
-  name: string;
-  cookies: Cookie[];
-}
-interface Cookie {
-  key: string;
-  value: string;
-  path: string;
-  expires: Date;
-}
-interface KeyValue {
-  key: string;
-  value: string;
-}
+
+setRefs({ visible, newDomainToAllow, newDomain, domainsToAllow, domains, activeDomains });
+
 window.emitter.on("show-cookies", (isOpen) => {
   visible.value = true;
 });
 </script>
 
 <template>
-  <Dialog
-    v-model:visible="visible"
-    modal
-    header="Cookies"
-    :style="{ width: '50rem' }"
-    :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
-    @closeCallback="closeCallback"
-  >
+  <Dialog v-model:visible="visible" modal header="Cookies" :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
     <p class="mb-5">
       <InputGroup>
         <InputText type="text" v-model="newDomain" style="width: 35em" placeholder="Type a domain name" />
