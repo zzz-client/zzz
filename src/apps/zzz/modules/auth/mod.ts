@@ -159,11 +159,23 @@ describe("Authorization Module ", () => {
     });
   });
   describe("execute", () => {
-    it("applies an IAuthorizer to the model", () => {
+    it.only("applies an IAuthorizer to the model", () => {
+      const testStore = new TestStore();
+      const testRequest = new HttpRequest();
+      const module = new AuthorizationModule(testStore);
+      const testAuthorizer = {
+        authorize(model: Model, data: AuthContents): void {
+        },
+      } as IAuthorizer;
+      const authorizeStub = stub(testAuthorizer, "authorize");
       // GIVEN
-      DI.register;
+      DI.register("IAuthorizer", () => testAuthorizer);
       // WHEN
+      module.execute(testRequest, { BearerToken: "asdf" });
       // THEN
+      assertSpyCall(authorizeStub, 0, {
+        args: [testRequest, "asdf"],
+      });
     });
   });
 });
