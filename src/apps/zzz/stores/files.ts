@@ -1,5 +1,5 @@
 import { basename } from "../../../lib/deps.ts";
-import DI, { newInstance as iNewInstance } from "../../../lib/di.ts";
+import DI from "../../../lib/di.ts";
 import { Trace } from "../../../lib/etc.ts";
 import { IStorage, IStore, Model, ParentModel, SearchParams } from "../../../storage/mod.ts";
 import { Authorization } from "../modules/auth/mod.ts";
@@ -7,13 +7,6 @@ import { Context } from "../modules/context/mod.ts";
 import { Cookies } from "../modules/cookies/mod.ts";
 import { Collection, HttpRequest } from "../modules/requests/mod.ts";
 // import { Scope } from "../modules/scope/mod.ts";
-
-const newInstance = {
-  newInstance(): object {
-    return new FileStore();
-  },
-} as iNewInstance;
-export { newInstance };
 
 export default class FileStore implements IStore {
   private FILE_FORMAT = "yml";

@@ -43,7 +43,7 @@ export class AuthorizationModule extends Module implements IModuleModels, IModul
     return Promise.resolve();
   }
   // deno-lint-ignore no-explicit-any
-  private execute(model: Model, auth: any): void {
+  public execute(model: Model, auth: any): void {
     Trace("Executing");
     const authType = Object.keys(auth)[0];
     Trace("AuthType:", authType);
@@ -70,14 +70,14 @@ class ChildAuthorization {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { assertEquals, assertSpyCall, describe, fail, it, resolvesNext, stub, TestStore } from "../../../../lib/tests.ts";
+import { assertEquals, assertSpyCall, describe, it, resolvesNext, stub, TestStore } from "../../../../lib/tests.ts";
 
 describe("Authorization Module ", () => {
   describe("modify", () => {
     it("does nothing if the model does not have the module fields", async () => {
       const testRequest = new HttpRequest();
-      // GIVEN
       const module = new AuthorizationModule(new TestStore());
+      // GIVEN
       const action = new Action({}, {});
       // WHEN
       await module.modify(testRequest, action);
@@ -88,8 +88,8 @@ describe("Authorization Module ", () => {
       const testStore = new TestStore();
       const testRequest = new HttpRequest();
       asAny(testRequest).Authorization = undefined;
-      // GIVEN
       const module = new AuthorizationModule(testStore);
+      // GIVEN
       const action = new Action({}, {});
       // WHEN
       await module.modify(testRequest, action);
@@ -100,8 +100,8 @@ describe("Authorization Module ", () => {
       const testStore = new TestStore();
       const testRequest = new HttpRequest();
       const getStub = stub(testStore, "get", resolvesNext([testRequest]));
-      // GIVEN
       const module = new AuthorizationModule(testStore);
+      // GIVEN
       const action = new Action({}, {});
       asAny(testRequest).Authorization = "asdf";
       // WHEN
@@ -118,8 +118,8 @@ describe("Authorization Module ", () => {
       const testStore = new TestStore();
       const testRequest = new HttpRequest();
       const getStub = stub(testStore, "get", resolvesNext([testRequest]));
-      // GIVEN
       const module = new AuthorizationModule(testStore);
+      // GIVEN
       const action = new Action({}, {});
       asAny(testRequest).Authorization = { BearerToken: "asdf" };
       // WHEN
@@ -129,15 +129,41 @@ describe("Authorization Module ", () => {
       getStub.restore();
     });
     it("sets .Authorization when all feature is enabled", async () => {
-      fail();
+      const testStore = new TestStore();
+      const testRequest = new HttpRequest();
+      const module = new AuthorizationModule(testStore);
+      // GIVEN
+      const action = new Action({ all: true }, {});
+      asAny(testRequest).Authorization = { BearerToken: "asdf" };
+      // WHEN
+      await module.modify(testRequest, action);
+      // THEN
+      assertEquals(asAny(testRequest).Authorization, { BearerToken: "asdf" }, "Authorization should be string it was set to");
     });
     it("executes when the execute feature is enabled", async () => {
-      fail("Write this test");
+      const testStore = new TestStore();
+      const testRequest = new HttpRequest();
+      const module = new AuthorizationModule(testStore);
+      const executeStub = stub(module, "execute");
+      const testAuth = { BearerToken: "asdf" };
+      // GIVEN
+      const action = new Action({ execute: true }, {});
+      asAny(testRequest).Authorization = testAuth;
+      // WHEN
+      await module.modify(testRequest, action);
+      // THEN
+      assertSpyCall(executeStub, 0, {
+        args: [testRequest, testAuth],
+      });
+      executeStub.restore();
     });
   });
   describe("execute", () => {
-    it("executes", () => {
-      fail("Write this test");
+    it("applies an IAuthorizer to the model", () => {
+      // GIVEN
+      DI.register;
+      // WHEN
+      // THEN
     });
   });
 });

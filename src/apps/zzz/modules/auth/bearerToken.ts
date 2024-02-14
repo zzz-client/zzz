@@ -1,14 +1,6 @@
-import { newInstance as iNewInstance } from "../../../../lib/di.ts";
 import { Trace } from "../../../../lib/etc.ts";
 import { HttpRequest } from "../requests/mod.ts";
 import { AuthContents, IAuthorizer } from "./mod.ts";
-
-const newInstance = {
-  newInstance(): object {
-    return new BearerTokenAuthorizer();
-  },
-} as iNewInstance;
-export { newInstance };
 
 export class BearerTokenAuthorizer implements IAuthorizer {
   authorize(theRequest: HttpRequest, token: BearerToken): void {
@@ -22,13 +14,6 @@ export type BearerToken = AuthContents & string;
 // ----------------------------------------- TESTS -----------------------------------------
 
 import { assertEquals, describe, it } from "../../../../lib/tests.ts";
-
-describe("newInstance", () => {
-  it("constructs a BearerTokenAuthorizer", () => {
-    const authorizer = newInstance.newInstance();
-    assertEquals(authorizer instanceof BearerTokenAuthorizer, true, "authorizer not created");
-  });
-});
 
 describe("Bearer Token Authorizer", () => {
   it("sets header correctly", () => {

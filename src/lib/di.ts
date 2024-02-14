@@ -8,10 +8,10 @@ class DI {
     this.args.set(name, args);
   }
   getInstance(name: string): object {
-    const instance = this.instances.get(name);
+    let instance = this.instances.get(name);
     if (!instance) {
-      this.instances.set(name, this._newInstance(this.constructors.get(name)!, this.args.get(name)));
-      throw new Error(`No mapping found for ${name}`);
+      instance = this._newInstance(this.constructors.get(name)!, this.args.get(name));
+      this.instances.set(name, instance);
     }
     return instance;
   }
@@ -27,16 +27,14 @@ class DI {
   }
   private _newInstance(constructor: newInstance, args?: any[] | any): object {
     if (args) {
-      return constructor.newInstance(...args);
+      return constructor(...args);
     } else {
-      return constructor.newInstance();
+      return constructor();
     }
   }
 }
 
-export interface newInstance {
-  newInstance(args?: any[] | any | null): object;
-}
+type newInstance = (args?: any[] | any | null) => object;
 
 const DumbDi = new DI();
 export default DumbDi as DI;

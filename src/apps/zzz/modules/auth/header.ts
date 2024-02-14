@@ -1,14 +1,6 @@
-import { newInstance as iNewInstance } from "../../../../lib/di.ts";
 import { Trace } from "../../../../lib/etc.ts";
 import { HttpRequest } from "../requests/mod.ts";
 import { AuthContents, IAuthorizer } from "./mod.ts";
-
-const newInstance = {
-  newInstance(): object {
-    return new HeaderAuthorizer();
-  },
-} as iNewInstance;
-export { newInstance };
 
 export default class HeaderAuthorizer implements IAuthorizer {
   authorize(theRequest: HttpRequest, data: Header): void {
@@ -24,13 +16,6 @@ export type Header = AuthContents & {
 // ----------------------------------------- TESTS -----------------------------------------
 
 import { assertEquals, describe, it } from "../../../../lib/tests.ts";
-
-describe("newInstance", () => {
-  it("constructs a HeaderAuthorizer", () => {
-    const authorizer = newInstance.newInstance();
-    assertEquals(authorizer instanceof HeaderAuthorizer, true, "authorizer not created");
-  });
-});
 
 describe("Header Authorizer", () => {
   it("sets header correctly", async () => {

@@ -1,4 +1,4 @@
-import DI, { newInstance as iNewInstance } from "../../../../lib/di.ts";
+import DI from "../../../../lib/di.ts";
 import { asAny, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { IModuleFeatures, IModuleRenderer, Module } from "../../../../lib/module.ts";
 import IApplication, { ConfigValue, Flags } from "../../../mod.ts";
@@ -14,13 +14,6 @@ import { PathParamsModule } from "../../modules/path-params/mod.ts";
 import { RedactModule } from "../../modules/redact/mod.ts";
 import { RequestsModule } from "../../modules/requests/mod.ts";
 import TemplateModule from "../../modules/template/mod.ts";
-
-const newInstance = {
-  newInstance(): object {
-    return new Application();
-  },
-} as iNewInstance;
-export { newInstance };
 
 export default class Application implements IApplication {
   store = DI.newInstance("IStore") as IStore;

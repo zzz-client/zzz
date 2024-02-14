@@ -1,16 +1,8 @@
 import { basename, exists, extname, join } from "../../lib/deps.ts";
-import { newInstance as iNewInstance } from "../../lib/di.ts";
 import { Meld, Trace } from "../../lib/etc.ts";
 import { IStorage, Model, ParentModel, SearchParams } from "../mod.ts";
 import { getFileFormat } from "./formats.ts";
 const DEFAULT_MARKER = "_defaults";
-
-const newInstance = {
-  newInstance(baseDir: string, fileExt: string): object {
-    return new FileStorage(baseDir, fileExt);
-  },
-} as iNewInstance;
-export { newInstance };
 
 export default class FileStorage implements IStorage {
   private baseDir;

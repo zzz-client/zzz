@@ -1,5 +1,5 @@
 import DI from "../../lib/di.ts";
-import * as BasicAuthAuthorizer from "./modules/auth/basicAuth.ts";
+import BasicAuthAuthorizer from "./modules/auth/basicAuth.ts";
 import * as BearerTokenAuthorizer from "./modules/auth/bearerToken.ts";
 import * as HeaderAuthorizer from "./modules/auth/header.ts";
 import * as FileStorage from "./../../storage/files/mod.ts";
@@ -8,7 +8,7 @@ import * as FileStore from "./stores/files.ts";
 
 // deno-fmt-ignore
 export function initDi(): void{
-  DI.register("IAuthorizer",            BasicAuthAuthorizer.newInstance, "BasicAuth");
+  DI.register("IAuthorizer",            () => new BasicAuthAuthorizer("BasicAuth"));
   DI.register("IAuthorizer",            BearerTokenAuthorizer.newInstance, "BearerToken");
   DI.register("IAuthorizer",            HeaderAuthorizer.newInstance, "HeaderAuthorizer");
   DI.register("IAuthorizer",            QueryAuthorizer.newInstance, "QueryAuthorizer");

@@ -1,5 +1,5 @@
 import { Args, processFlags } from "../../../../lib/deps.ts";
-import DI, { newInstance as iNewInstance } from "../../../../lib/di.ts";
+import DI from "../../../../lib/di.ts";
 import { StringToStringMap } from "../../../../lib/etc.ts";
 import { IModuleRenderer, Module } from "../../../../lib/module.ts";
 import { IStore } from "../../../../storage/mod.ts";
@@ -16,13 +16,6 @@ import TemplateModule from "../../modules/template/mod.ts";
 import { listen, Server } from "./http.ts";
 
 initDi();
-
-const newInstance = {
-  newInstance(): object {
-    return new Application();
-  },
-} as iNewInstance;
-export { newInstance };
 
 export default class Application implements IApplication {
   store = DI.newInstance("IStore") as IStore;
