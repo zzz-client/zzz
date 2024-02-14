@@ -1,12 +1,12 @@
 import axios from "npm:axios";
 import type { MenuItem } from "npm:primevue/menuitem";
-import { clickRequest, REFS } from "./MainWindow.ts";
+import { clickRequest, collections, errorMessage, scope, viewSecrets } from "./MainWindow.ts";
 import { Model } from "../../../../../storage/mod.ts";
 
 let keys = [] as string[];
 export function doTheThing(): Promise<void> {
   return axios
-    .get(addQueryParams("http://localhost:8000/" + REFS.scope.value), {
+    .get(addQueryParams("http://localhost:8000/" + scope.value), {
       headers: {
         "X-Zzz-Context": "integrate",
       },
@@ -14,7 +14,7 @@ export function doTheThing(): Promise<void> {
     .then((res) => {
       console.log("Got initial data", res.data);
       res.data.Children.forEach((model) => {
-        addModelToNodes(REFS.collections.value, model);
+        addModelToNodes(collections.value, model);
       });
     })
     .catch((error) => {
@@ -24,7 +24,7 @@ export function doTheThing(): Promise<void> {
       if (error.message === "Network Error") {
         error.message += ". Is the HTTP server running?";
       }
-      REFS.errorMessage.value = error.response?.data || error.message;
+      errorMessage.value = error.response?.data || error.message;
     });
 }
 function addModelToNodes(noteList, model: Model) {
@@ -50,7 +50,7 @@ function addModelToNodes(noteList, model: Model) {
   keys.push(newNode.Id!);
 }
 function addQueryParams(base: string): string {
-  if (REFS.viewSecrets.value) {
+  if (viewSecrets.value) {
     return base + "?format";
   } else {
     return base;

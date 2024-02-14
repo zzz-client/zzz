@@ -7,21 +7,12 @@ import SplitterPanel from "primevue/splitterpanel";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
 import ToggleButton from "primevue/togglebutton";
-import { ref } from "vue";
 import Collections from "./Collections.vue";
 import Cookies from "./Cookies.vue";
-import { setRefs, newTab } from "./MainWindow";
+import { newTab, tabs, collections, dirty, errorMessage, scope, viewSecrets } from "./MainWindow";
 import RequestTab from "./RequestTab.vue";
 import { doTheThing } from "./MainWindow.axios";
-
-const tabs = ref([] as { title: string; value: string }[]);
-const collections = ref([] as any[]);
-const dirty = ref([] as boolean[]);
-const errorMessage = ref("");
-const scope = ref("Salesforce Primary");
-const viewSecrets = ref(false);
-
-setRefs({ tabs, collections, dirty, errorMessage, scope, viewSecrets });
+import { emitter } from "../../../../../lib/bus";
 
 doTheThing();
 
@@ -37,7 +28,7 @@ function closeTab(tabIndex) {
   tabs.value.splice(tabIndex, 1);
 }
 
-window.emitter.on("set-tab-title", (result: any) => {
+emitter.on("set-tab-title", (result: any) => {
   const { Id, Name } = result;
   tabs.value.forEach((tab) => {
     if (tab.value == Id) {

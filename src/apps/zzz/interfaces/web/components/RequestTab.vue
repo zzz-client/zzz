@@ -16,6 +16,7 @@ import Authorization from "./Authorization.vue";
 import Body from "./Body.vue";
 import KeyValueTable from "./KeyValueTable.vue";
 import Response from "./Response.vue";
+import { emitter } from "../../../../../lib/bus";
 const basename = (path) => path.split("/").reverse()[0];
 
 const props = defineProps(["value", "viewSecrets", "title"]);
@@ -44,7 +45,7 @@ function addQueryParams(base: string): string {
 
 function refreshTabTitle() {
   console.log("refresh", requestData.value);
-  window.emitter.emit("set-tab-title", requestData.value as Model);
+  emitter.emit("set-tab-title", requestData.value as Model);
 }
 async function fetchRequest(value: string): Promise<any> {
   console.log("LOL", "http://localhost:8000/" + value + ".json");
@@ -130,7 +131,7 @@ if (value) {
 }
 function showCookies() {
   console.log("ha");
-  window.emitter.emit("show-cookies");
+  emitter.emit("show-cookies");
 }
 </script>
 
