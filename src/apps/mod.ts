@@ -1,4 +1,4 @@
-import { Args } from "https://deno.land/std/cli/parse_args.ts";
+import { Args } from "../lib/deps.ts";
 import { Action, StringToStringMap, Trace } from "../lib/etc.ts";
 import { IModuleModifier, Module } from "../lib/module.ts";
 import { IStore, Model } from "../storage/mod.ts";
@@ -43,8 +43,7 @@ export async function executeModules(modules: Module[], action: Action, model: M
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, it } from "https://deno.land/std/testing/bdd.ts";
-import { fail } from "https://deno.land/std/assert/fail.ts";
+import { describe, fail, it } from "../lib/tests.ts";
 
 describe("executeModules", () => {
   it("works", async () => {

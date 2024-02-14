@@ -1,4 +1,4 @@
-import { basename } from "https://deno.land/std/path/mod.ts";
+import { basename } from "../../../lib/deps.ts";
 import DI, { newInstance as iNewInstance } from "../../../lib/di.ts";
 import { Trace } from "../../../lib/etc.ts";
 import { IStorage, IStore, Model, ParentModel, SearchParams } from "../../../storage/mod.ts";
@@ -84,8 +84,7 @@ export default class FileStore implements IStore {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, it } from "https://deno.land/std/testing/bdd.ts";
-import { fail } from "https://deno.land/std/assert/fail.ts";
+import { describe, fail, it } from "../../../lib/tests.ts";
 
 describe("FileStore", () => {
   describe("getModelType", () => {

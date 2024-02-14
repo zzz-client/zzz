@@ -34,8 +34,7 @@ class BodyFields {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, it } from "https://deno.land/std/testing/bdd.ts";
-import { fail } from "https://deno.land/std/assert/fail.ts";
+import { describe, fail, it } from "../../../../lib/tests.ts";
 
 describe("Bearer Token Authorizer", () => {
   it("sets header correctly", async () => {

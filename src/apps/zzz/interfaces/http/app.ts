@@ -1,9 +1,10 @@
-import { Args } from "https://deno.land/std/cli/parse_args.ts";
-import { processFlags } from "https://deno.land/x/flags_usage/mod.ts";
+import { Args, processFlags } from "../../../../lib/deps.ts";
 import DI, { newInstance as iNewInstance } from "../../../../lib/di.ts";
 import { StringToStringMap } from "../../../../lib/etc.ts";
 import { IModuleRenderer, Module } from "../../../../lib/module.ts";
+import { IStore } from "../../../../storage/mod.ts";
 import IApplication, { ConfigValue, Flags } from "../../../mod.ts";
+import { initDi } from "../../app.ts";
 import { AuthorizationModule } from "../../modules/auth/mod.ts";
 import { BodyModule } from "../../modules/body/mod.ts";
 import { ContextModule } from "../../modules/context/mod.ts";
@@ -13,8 +14,6 @@ import { RedactModule } from "../../modules/redact/mod.ts";
 import { RequestsModule } from "../../modules/requests/mod.ts";
 import TemplateModule from "../../modules/template/mod.ts";
 import { listen, Server } from "./http.ts";
-import { initDi } from "../../app.ts";
-import { IStore } from "../../../../storage/mod.ts";
 
 initDi();
 

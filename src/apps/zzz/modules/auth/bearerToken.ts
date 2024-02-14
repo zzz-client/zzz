@@ -21,8 +21,7 @@ export type BearerToken = AuthContents & string;
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { assertEquals } from "https://deno.land/std/assert/mod.ts";
-import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { assertEquals, describe, it } from "../../../../lib/tests.ts";
 
 describe("newInstance", () => {
   it("constructs a BearerTokenAuthorizer", () => {

@@ -70,11 +70,7 @@ class ChildAuthorization {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { assertEquals } from "https://deno.land/std/assert/mod.ts";
-import { describe, it } from "https://deno.land/std/testing/bdd.ts";
-import { assertSpyCall, resolvesNext, stub } from "https://deno.land/x/mock/mod.ts";
-import { TestStore } from "../../../../lib/tests.ts";
-import { fail } from "https://deno.land/std/assert/fail.ts";
+import { assertEquals, assertSpyCall, describe, fail, it, resolvesNext, stub, TestStore } from "../../../../lib/tests.ts";
 
 describe("Authorization Module ", () => {
   describe("modify", () => {

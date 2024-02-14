@@ -1,8 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
-import axios from "https://deno.land/x/redaxios/mod.ts";
-import { HttpRequest } from "../modules/requests/mod.ts";
+import { axios } from "../../../lib/deps.ts";
 import { asAny } from "../../../lib/etc.ts";
 import { Model } from "../../../storage/mod.ts";
+import { HttpRequest } from "../modules/requests/mod.ts";
 
 // TODO: Move to own file?
 export interface IActor {
@@ -41,8 +41,7 @@ async function doRequest(theRequest: HttpRequest): Promise<any> {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, it } from "https://deno.land/std/testing/bdd.ts";
-import { fail } from "https://deno.land/std/assert/fail.ts";
+import { describe, fail, it } from "../../../lib/tests.ts";
 
 describe("ExecuteActor", () => {
   describe("act", () => {

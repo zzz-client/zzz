@@ -1,5 +1,4 @@
-// import axios from "https://deno.land/x/redaxios/mod.ts";
-import axios from "npm:axios";
+import { axios } from "../../../../../lib/deps.ts";
 import { asAny } from "../../../../../lib/etc.ts";
 import { IModuleRenderer } from "../../../../../lib/module.ts";
 import { HttpRequest } from "../mod.ts";

@@ -1,11 +1,8 @@
-import { exists } from "https://deno.land/std/fs/mod.ts";
-import { basename, extname } from "https://deno.land/std/path/mod.ts";
+import { basename, exists, extname, join } from "../../lib/deps.ts";
 import { newInstance as iNewInstance } from "../../lib/di.ts";
 import { Meld, Trace } from "../../lib/etc.ts";
 import { IStorage, Model, ParentModel, SearchParams } from "../mod.ts";
 import { getFileFormat } from "./formats.ts";
-import { existsSync } from "https://deno.land/std@0.210.0/fs/exists.ts";
-import { join } from "https://deno.land/std/path/mod.ts";
 const DEFAULT_MARKER = "_defaults";
 
 const newInstance = {
@@ -132,7 +129,7 @@ export default class FileStorage implements IStorage {
     const what = { ...model } as any;
     delete what.Id;
     delete what.Name;
-    if (Object.keys(what).length > 0 || await existsSync(defaultFilePath)) {
+    if (Object.keys(what).length > 0 || await exists(defaultFilePath)) {
       const fileFormat = getFileFormat(this.fileExtension);
       Trace(`Putting folder defaults ${fileFormat} ${model.Id}`);
       await Deno.writeTextFile(defaultFilePath, fileFormat.stringify(what));
@@ -142,8 +139,7 @@ export default class FileStorage implements IStorage {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, it } from "https://deno.land/std/testing/bdd.ts";
-import { fail } from "https://deno.land/std/assert/fail.ts";
+import { describe, fail, it } from "../../lib/tests.ts";
 
 describe("FileStorage", () => {
   describe("has", () => {

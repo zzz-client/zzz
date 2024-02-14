@@ -1,7 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { extname } from "https://deno.land/std/path/mod.ts";
-import * as YAML from "https://deno.land/std/yaml/mod.ts";
-import { parse as xmlParse } from "https://deno.land/x/xml/mod.ts";
+import { extname, xmlParse, YAML } from "../../lib/deps.ts";
 import BRU from "./formats/bru.ts";
 const xmlStringify = (_x: any) => Deno.exit(1);
 

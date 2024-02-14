@@ -32,8 +32,7 @@ export class PathParamsModule extends Module implements IModuleFields, IModuleMo
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, it } from "https://deno.land/std/testing/bdd.ts";
-import { fail } from "https://deno.land/std/assert/fail.ts";
+import { describe, fail, it } from "../../../../lib/tests.ts";
 
 describe("PathParamsModule", () => {
   describe("modify", () => {

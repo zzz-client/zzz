@@ -1,4 +1,4 @@
-import { encode64 } from "https://deno.land/x/base64to@v0.0.2/mod.ts";
+import { encode64 } from "../../../../lib/deps.ts";
 import { newInstance as iNewInstance } from "../../../../lib/di.ts";
 import { Trace } from "../../../../lib/etc.ts";
 import { HttpRequest } from "../requests/mod.ts";
@@ -24,8 +24,7 @@ export type BasicAuth = AuthContents & {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { assertEquals } from "https://deno.land/std/assert/mod.ts";
-import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { assertEquals, describe, it } from "../../../../lib/tests.ts";
 
 describe("newInstance", () => {
   it("constructs a BasicAuthAuthorizer", () => {
