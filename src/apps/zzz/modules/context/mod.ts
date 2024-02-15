@@ -50,7 +50,7 @@ export class ContextModule extends Module implements IModuleFeatures, IModuleMod
     return Promise.resolve();
   }
   private getContext(action: Action): string {
-    return (action.features.context || Deno.env.get("ZZZ_CONTEXT")) as string;
+    return (action.features.context || action.env["ZZZ_CONTEXT"]) as string;
   }
   private loader = new Loader(this.store) as ILoader;
   private load(modelId: string, contextName: string): Promise<Model[]> {
