@@ -1,22 +1,22 @@
 import DI from "../../lib/di.ts";
 import BasicAuthAuthorizer from "./modules/auth/basicAuth.ts";
-import * as BearerTokenAuthorizer from "./modules/auth/bearerToken.ts";
-import * as HeaderAuthorizer from "./modules/auth/header.ts";
-import * as FileStorage from "./../../storage/files/mod.ts";
-import * as QueryAuthorizer from "./modules/auth/query.ts";
-import * as FileStore from "./stores/files.ts";
+import BearerTokenAuthorizer from "./modules/auth/bearerToken.ts";
+import HeaderAuthorizer from "./modules/auth/header.ts";
+import FileStorage from "./../../storage/files/mod.ts";
+import QueryAuthorizer from "./modules/auth/query.ts";
+import FileStore from "./stores/files.ts";
 
 // deno-fmt-ignore
 export function initDi(): void{
-  DI.register("IAuthorizer",            () => new BasicAuthAuthorizer("BasicAuth"));
-  DI.register("IAuthorizer",            BearerTokenAuthorizer.newInstance, "BearerToken");
-  DI.register("IAuthorizer",            HeaderAuthorizer.newInstance, "HeaderAuthorizer");
-  DI.register("IAuthorizer",            QueryAuthorizer.newInstance, "QueryAuthorizer");
-  DI.register("IStore",                 FileStore.newInstance);
-  DI.register("IStorage:HttpRequest",   FileStorage.newInstance, ["request", "yml"]);
-  DI.register("IStorage:Scope",         FileStorage.newInstance, ["request", "yml"]);
-  DI.register("IStorage:Collection",    FileStorage.newInstance, ["request", "yml"]);
-  DI.register("IStorage:Context",       FileStorage.newInstance, ["contexts", "yml"]);
-  DI.register("IStorage:Authorization", FileStorage.newInstance, ["auth", "yml"]);
-  DI.register("IStorage:Cookies",       FileStorage.newInstance, ["cookies", "yml"]);
+  DI.register("IAuthorizer",            () => new BasicAuthAuthorizer());
+  DI.register("IAuthorizer",            () => new BearerTokenAuthorizer());
+  DI.register("IAuthorizer",            () => new HeaderAuthorizer());
+  DI.register("IAuthorizer",            () => new QueryAuthorizer());
+  DI.register("IStore",                 () => new FileStore());
+  DI.register("IStorage:HttpRequest",   () => new FileStorage('library', 'yml'));
+  DI.register("IStorage:Scope",         () => new FileStorage('library', 'yml'));
+  DI.register("IStorage:Collection",    () => new FileStorage('library', 'yml'));
+  DI.register("IStorage:Context",       () => new FileStorage('library/contexts', 'yml'));
+  DI.register("IStorage:Authorization", () => new FileStorage('library/auth', 'yml'));
+  DI.register("IStorage:Cookies",       () => new FileStorage('library/cookies', 'yml'));
 }

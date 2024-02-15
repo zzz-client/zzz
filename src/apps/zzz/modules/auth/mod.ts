@@ -159,7 +159,7 @@ describe("Authorization Module ", () => {
     });
   });
   describe("execute", () => {
-    it.only("applies an IAuthorizer to the model", () => {
+    it("applies an IAuthorizer to the model", () => {
       const testStore = new TestStore();
       const testRequest = new HttpRequest();
       const module = new AuthorizationModule(testStore);

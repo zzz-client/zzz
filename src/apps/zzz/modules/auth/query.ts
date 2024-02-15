@@ -1,7 +1,7 @@
 import { HttpRequest } from "../requests/mod.ts";
 import { AuthContents, IAuthorizer } from "./mod.ts";
 
-export class QueryAuthorizer implements IAuthorizer {
+export default class QueryAuthorizer implements IAuthorizer {
   authorize(theRequest: HttpRequest, data: Query): void {
     theRequest.QueryParams[data.Name] = data.Value;
   }
