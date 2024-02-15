@@ -40,11 +40,9 @@ Http:
     expire_in: 1 day
 
 Web:
-  services:
-    - node:latest
   stage: Build
   script:
-    - npm install vue primevue
+    - deno cache src/lib/npm_deps.ts
     - deno task vite build
   artifacts:
     name: zzz-web
