@@ -5,9 +5,21 @@ default:
 # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 stages:
-  - Build
   - Test
+  - Build
   - Deploy
+
+Tests:
+  stage: Test
+  script:
+    - deno task tests
+    - deno task coverage
+
+Lint:
+  stage: Test
+  script:
+    - deno task lint
+    - deno fmt --check
 
 Cli:
   stage: Build
@@ -60,18 +72,6 @@ Web:
 #     paths:
 #       - ./zzz-desktop
 #     expire_in: 1 week
-
-Tests:
-  stage: Test
-  script:
-    - deno task tests
-    - deno task coverage
-
-Lint:
-  stage: Test
-  script:
-    - deno task lint
-    - deno fmt --check
 
 DeployWeb:
   stage: Deploy
