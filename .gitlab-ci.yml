@@ -1,6 +1,11 @@
 default:
   image: denoland/deno:latest
 
+services:
+  - denoland/deno:latest
+  - rustdocker/rust:stable
+  - node:latest
+
 # curl -fsSL https://deno.land/install.sh | sh
 # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
