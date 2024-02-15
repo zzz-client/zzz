@@ -1,5 +1,5 @@
 import { IStore, Model } from "../storage/mod.ts";
-import { Action, asAny } from "./etc.ts";
+import { Action } from "./etc.ts";
 
 export abstract class Module {
   Name?: string;
@@ -52,7 +52,7 @@ export type Feature = {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, fail, it } from "./tests.ts";
+import { describe, it } from "./tests.ts";
 
 describe("Module", () => {
   describe("hasFields", () => {

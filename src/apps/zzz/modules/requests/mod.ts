@@ -41,7 +41,7 @@ type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, fail, it } from "../../../../lib/tests.ts";
+import { describe, it } from "../../../../lib/tests.ts";
 
 describe("RequestsModule", () => {
   describe("modify", () => {

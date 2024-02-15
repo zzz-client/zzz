@@ -32,7 +32,7 @@ export class RedactModule extends Module implements IModuleModifier, IModuleFeat
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, fail, it } from "../../../../lib/tests.ts";
+import { describe, it } from "../../../../lib/tests.ts";
 
 describe("RedactModule", () => {
   describe("modify", () => {

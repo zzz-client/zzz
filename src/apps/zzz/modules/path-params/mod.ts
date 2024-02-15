@@ -32,7 +32,7 @@ export class PathParamsModule extends Module implements IModuleFields, IModuleMo
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, fail, it } from "../../../../lib/tests.ts";
+import { describe, it } from "../../../../lib/tests.ts";
 
 describe("PathParamsModule", () => {
   describe("modify", () => {

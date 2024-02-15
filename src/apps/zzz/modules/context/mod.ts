@@ -71,7 +71,7 @@ export class Context extends Model {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, fail, it } from "../../../../lib/tests.ts";
+import { describe, it } from "../../../../lib/tests.ts";
 
 describe("ContextModule", () => {
   describe("modify", () => {

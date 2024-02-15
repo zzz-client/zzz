@@ -131,7 +131,7 @@ export default class FileStorage implements IStorage {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, fail, it } from "../../lib/tests.ts";
+import { describe, it } from "../../lib/tests.ts";
 
 describe("FileStorage", () => {
   describe("has", () => {

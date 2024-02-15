@@ -49,6 +49,7 @@
       "**/node_nodules",
       "src/apps/zzz/interfaces/desktop/target",
       "src/apps/zzz/interfaces/web/dist",
+      "src/apps/zzz/interfaces/web/components",
       "src/apps/zzz/interfaces/web/node_modules"
     ]
   },

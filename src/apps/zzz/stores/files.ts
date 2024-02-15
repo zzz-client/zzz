@@ -77,7 +77,7 @@ export default class FileStore implements IStore {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, fail, it } from "../../../lib/tests.ts";
+import { describe, it } from "../../../lib/tests.ts";
 
 describe("FileStore", () => {
   describe("getModelType", () => {

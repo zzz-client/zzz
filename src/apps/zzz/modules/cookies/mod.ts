@@ -42,7 +42,7 @@ export class Cookies extends Model {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, fail, it } from "../../../../lib/tests.ts";
+import { describe, it } from "../../../../lib/tests.ts";
 
 describe("CookiesModule", () => {
   describe("modify", () => {
