@@ -3,7 +3,7 @@ import { Feature, IModuleFeatures, IModuleModifier, Module } from "../../../../l
 import tim from "../../../../lib/tim.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { ContextModule } from "../context/mod.ts";
-import { RequestsModule } from "../requests/mod.ts";
+import { HttpRequest, RequestsModule } from "../requests/mod.ts";
 
 export default class TemplateModule extends Module implements IModuleFeatures, IModuleModifier {
   Name = "Template";
@@ -18,27 +18,77 @@ export default class TemplateModule extends Module implements IModuleFeatures, I
   ];
   modify(model: Model, action: Action): Promise<void> {
     Trace("TemplateModule:modify");
-    if (
-      (action.features.format) || action.features.execute
-    ) {
-      try {
-        tim(model, asAny(model).Variables);
-      } catch (error) {
-        console.warn("Missing tag but we will let it slide for now", "(" + error.message + ")");
-      }
+    if (action.features.format || action.features.execute) {
+      helpers.templateize(model, asAny(model).Variables);
     }
     return Promise.resolve();
   }
 }
 
+const helpers = {
+  templateize(model: Model, variables: any): void {
+    try {
+      tim(model, variables);
+    } catch (error) {
+      console.warn("Missing tag but we will let it slide for now", "(" + error.message + ")");
+    }
+  },
+};
+
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, fail, it } from "../../../../lib/tests.ts";
+import { assertSpyCall, assertSpyCalls, describe, it, spy, TestStore } from "../../../../lib/tests.ts";
 
 describe("TemplateModule", () => {
   describe("modify", () => {
-    it("works", async () => {
-      // fail("Write this test");
+    it.only("works when format feature is enabled", async () => {
+      const testStore = new TestStore();
+      const module = new TemplateModule(testStore);
+      const templateizeSpy = spy(helpers, "templateize");
+      const testRequest = new HttpRequest();
+      const testVariables = { foo: "bar" };
+      asAny(testRequest).Variables = testVariables;
+      // GIVEN
+      const action = new Action({ format: true }, {});
+      // WHEN
+      module.modify(testRequest, action);
+      // THEN
+      assertSpyCall(templateizeSpy, 0, {
+        args: [testRequest, testVariables],
+      });
+      templateizeSpy.restore();
+    });
+    it.only("works when format execute is enabled", async () => {
+      const testStore = new TestStore();
+      const module = new TemplateModule(testStore);
+      const templateizeSpy = spy(helpers, "templateize");
+      const testRequest = new HttpRequest();
+      const testVariables = { foo: "bar" };
+      asAny(testRequest).Variables = testVariables;
+      // GIVEN
+      const action = new Action({ execute: true }, {});
+      // WHEN
+      module.modify(testRequest, action);
+      // THEN
+      assertSpyCall(templateizeSpy, 0, {
+        args: [testRequest, testVariables],
+      });
+      templateizeSpy.restore();
+    });
+    it.only("does not work when no applicable features are enabled", async () => {
+      const testStore = new TestStore();
+      const module = new TemplateModule(testStore);
+      const templateizeSpy = spy(helpers, "templateize");
+      const testRequest = new HttpRequest();
+      const testVariables = { foo: "bar" };
+      asAny(testRequest).Variables = testVariables;
+      // GIVEN
+      const action = new Action({}, {});
+      // WHEN
+      module.modify(testRequest, action);
+      // THEN
+      assertSpyCalls(templateizeSpy, 0);
+      templateizeSpy.restore();
     });
   });
 });
