@@ -11,8 +11,6 @@ stages:
 
 Cli:
   stage: Build
-  only:
-    - main
   script: deno task cli:build ; mv bin/zzz ./
   artifacts:
     name: zzz-cli
@@ -22,8 +20,6 @@ Cli:
 
 Http:
   stage: Build
-  only:
-    - main
   script: deno task http:build ; mv bin/zzz-server ./
   artifacts:
     name: zzz-server
