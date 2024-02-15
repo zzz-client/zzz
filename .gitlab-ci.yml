@@ -11,6 +11,8 @@ stages:
 
 Cli:
   stage: Build
+  only:
+    - main
   script: deno task cli:build ; mv bin/zzz ./
   artifacts:
     name: zzz-cli
@@ -20,6 +22,8 @@ Cli:
 
 Http:
   stage: Build
+  only:
+    - main
   script: deno task http:build ; mv bin/zzz-server ./
   artifacts:
     name: zzz-server
@@ -30,6 +34,8 @@ Http:
 Web:
   image: node:latest
   stage: Build
+  only:
+    - main
   script:
     - cd src/apps/zzz/interfaces/web
     - npm install
@@ -45,6 +51,8 @@ Web:
 # Desktop:
 #   image: rustdocker/rust:stable
 #   stage: Build
+# only:
+#   - main
 #   script:
 #     - cd src/apps/zzz/interfaces/desktop/
 #     - cargo install tauri-cli
@@ -71,6 +79,8 @@ Lint:
 
 DeployWeb:
   stage: Deploy
+  only:
+    - main
   environment: production
   script:
     - echo "Deploying application..."
