@@ -44,11 +44,7 @@ Web:
     - node:latest
   stage: Build
   script:
-    - cd src/apps/zzz/interfaces/web
-    - npm install
-    - npm install vite
-    - npm install vue
-    - npx vite build
+    - deno task vite build
   artifacts:
     name: zzz-web
     paths:
