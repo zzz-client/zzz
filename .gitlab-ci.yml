@@ -42,8 +42,6 @@ Http:
 Web:
   image: node:latest
   stage: Build
-  only:
-    - main
   script:
     - cd src/apps/zzz/interfaces/web
     - npm install
