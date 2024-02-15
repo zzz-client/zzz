@@ -68,7 +68,7 @@ Web:
 Tests:
   stage: Test
   script:
-    - deno task test
+    - deno task tests
     - deno task coverage
 
 Lint:
