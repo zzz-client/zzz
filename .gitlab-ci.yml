@@ -28,7 +28,7 @@ Cli:
     name: zzz-cli
     paths:
       - ./zzz
-    expire_in: 1 week
+    expire_in: 1 day
 
 Http:
   stage: Build
@@ -37,7 +37,7 @@ Http:
     name: zzz-server
     paths:
       - ./zzz-server
-    expire_in: 1 week
+    expire_in: 1 day
 
 Web:
   image: node:latest
@@ -54,7 +54,7 @@ Web:
     name: zzz-web
     paths:
       - ./src/apps/zzz/interfaces/web/dist
-    expire_in: 1 week
+    expire_in: 1 day
 
 # Desktop:
 #   image: rustdocker/rust:stable
@@ -71,7 +71,7 @@ Web:
 #     name: zzz-desktop
 #     paths:
 #       - ./zzz-desktop
-#     expire_in: 1 week
+#     expire_in: 1 day
 
 DeployWeb:
   stage: Deploy

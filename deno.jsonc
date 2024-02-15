@@ -17,7 +17,7 @@
     "desktop:run": "$INIT_CWD/src/apps/zzz/interfaces/desktop/target/release/Zzz",
     "vite": "cd src/apps/zzz/interfaces/web ; deno run -A --unstable --node-modules-dir npm:vite",
     "test": "rm coverage/*.json 2>/dev/null; deno test -A --coverage=coverage",
-    "tests": "deno task test 'src/**/*.ts'",
+    "tests": "deno task test 'src/*'",
     "coverage": "deno coverage --lcov --output=coverage/lcov.info coverage && deno coverage --html coverage && deno coverage",
     "coverage:open": "code coverage/html/index.html",
     "lint": "deno lint --unstable src/"
@@ -41,7 +41,7 @@
     ]
   },
   "lint": {
-    "include": ["src/"],
+    "include": ["*.ts"],
     "exclude": [
       "src/testdata/",
       "data/fixtures/**/*.ts",
@@ -54,7 +54,7 @@
     ]
   },
   "test": {
-    "include": ["src/apps/zzz/modules/auth"],
+    "include": ["src/*.ts"],
     "exclude": [
       "src/testdata/",
       "data/fixtures/**/*.ts",
