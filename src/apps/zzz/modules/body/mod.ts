@@ -33,7 +33,6 @@ class BodyFields {
 // ----------------------------------------- TESTS -----------------------------------------
 
 import { assertEquals, assertSpyCall, describe, it, returnsNext, stub, TestStore } from "../../../../lib/tests.ts";
-import { returnsArg } from "https://deno.land/x/mock@0.15.2/mod.ts";
 
 describe("Body Module", () => {
   it("sets object body correctly", async () => {
@@ -59,7 +58,6 @@ describe("Body Module", () => {
     const action = new Action({}, {});
     // WHEN
     module.modify(request, action);
-    console.log("BODY", asAny(request).Body);
     // THEN
     assertSpyCall(readTextFileStub, 0, {
       args: ["test/file/path"],
