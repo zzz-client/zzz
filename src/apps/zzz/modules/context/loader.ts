@@ -79,7 +79,7 @@ export default class Loader implements ILoader {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, fail, it } from "../../../../lib/tests.ts";
+import { describe, it } from "../../../../lib/tests.ts";
 
 describe("Apply", () => {
   it("skips Id and Children", async () => {

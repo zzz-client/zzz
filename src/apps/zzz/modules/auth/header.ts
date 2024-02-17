@@ -18,7 +18,7 @@ export type Header = AuthContents & {
 import { assertEquals, describe, it } from "../../../../lib/tests.ts";
 
 describe("Header Authorizer", () => {
-  it("sets header correctly", async () => {
+  it("sets header correctly", () => {
     const authorizer = new HeaderAuthorizer();
     // GIVEN
     const request = new HttpRequest();

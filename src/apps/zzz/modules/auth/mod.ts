@@ -64,6 +64,7 @@ export class Authorization extends Model {
   [key: string]: AuthContents | Authorization;
 }
 // deno-coverage-ignore
+// deno-lint-ignore no-unused-vars
 class ChildAuthorization {
   Authorization?: Authorization | string;
 }
@@ -164,7 +165,7 @@ describe("Authorization Module ", () => {
       const testRequest = new HttpRequest();
       const module = new AuthorizationModule(testStore);
       const testAuthorizer = {
-        authorize(model: Model, data: AuthContents): void {
+        authorize(_model: Model, _data: AuthContents): void {
         },
       } as IAuthorizer;
       const authorizeStub = stub(testAuthorizer, "authorize");

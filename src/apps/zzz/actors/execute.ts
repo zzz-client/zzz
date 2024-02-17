@@ -41,7 +41,7 @@ async function doRequest(theRequest: HttpRequest): Promise<any> {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, fail, it } from "../../../lib/tests.ts";
+import { describe, it } from "../../../lib/tests.ts";
 
 describe("ExecuteActor", () => {
   describe("act", () => {

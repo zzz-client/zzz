@@ -35,7 +35,7 @@ class BodyFields {
 import { assertEquals, assertSpyCall, describe, it, returnsNext, stub, TestStore } from "../../../../lib/tests.ts";
 
 describe("Body Module", () => {
-  it("sets object body correctly", async () => {
+  it("sets object body correctly", () => {
     const testStore = new TestStore();
     const module = new BodyModule(testStore);
     // GIVEN
@@ -47,7 +47,7 @@ describe("Body Module", () => {
     // THEN
     assertEquals(asAny(request).Body, { foo: "bar" }, "Body attribute not set correctly");
   });
-  it("sets file body correctly", async () => {
+  it("sets file body correctly", () => {
     const testStore = new TestStore();
     const module = new BodyModule(testStore);
     const testBodyContents = '{"foo":"bar"}';

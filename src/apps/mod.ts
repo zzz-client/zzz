@@ -43,7 +43,7 @@ export async function executeModules(modules: Module[], action: Action, model: M
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, fail, it } from "../lib/tests.ts";
+import { describe, it } from "../lib/tests.ts";
 
 describe("executeModules", () => {
   it("works", async () => {

@@ -26,6 +26,7 @@ export default class TemplateModule extends Module implements IModuleFeatures, I
 }
 
 const helpers = {
+  // deno-lint-ignore no-explicit-any
   templateize(model: Model, variables: any): void {
     try {
       tim(model, variables);
@@ -41,7 +42,7 @@ import { assertSpyCall, assertSpyCalls, describe, it, spy, TestStore } from "../
 
 describe("TemplateModule", () => {
   describe("modify", () => {
-    it.only("works when format feature is enabled", async () => {
+    it("works when format feature is enabled", () => {
       const testStore = new TestStore();
       const module = new TemplateModule(testStore);
       const templateizeSpy = spy(helpers, "templateize");
@@ -58,7 +59,7 @@ describe("TemplateModule", () => {
       });
       templateizeSpy.restore();
     });
-    it.only("works when format execute is enabled", async () => {
+    it("works when format execute is enabled", () => {
       const testStore = new TestStore();
       const module = new TemplateModule(testStore);
       const templateizeSpy = spy(helpers, "templateize");
@@ -75,7 +76,7 @@ describe("TemplateModule", () => {
       });
       templateizeSpy.restore();
     });
-    it.only("does not work when no applicable features are enabled", async () => {
+    it("does not work when no applicable features are enabled", () => {
       const testStore = new TestStore();
       const module = new TemplateModule(testStore);
       const templateizeSpy = spy(helpers, "templateize");
