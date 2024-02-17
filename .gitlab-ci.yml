@@ -23,7 +23,10 @@ Lint:
 
 Cli:
   stage: Build
-  script: deno task cli:build ; mv bin/zzz ./
+  script:
+    - apt-get install zip unzip
+    - deno task cli:build
+    - mv bin/zzz ./
   artifacts:
     name: zzz-cli
     paths:
@@ -32,7 +35,10 @@ Cli:
 
 Http:
   stage: Build
-  script: deno task http:build ; mv bin/zzz-server ./
+  script:
+    - apt-get install zip unzip
+    - mv bin/zzz-server
+    - deno task http:build
   artifacts:
     name: zzz-server
     paths:
