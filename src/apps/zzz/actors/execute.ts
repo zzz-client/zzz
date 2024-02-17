@@ -12,12 +12,13 @@ export interface IActor {
 export default class ExecuteActor implements IActor {
   async act(theModel: Model): Promise<any> {
     try {
-      return await doRequest(theModel as HttpRequest); // TODO: Naughty cast
+      return await helpers.doRequest(theModel as HttpRequest); // TODO: Naughty cast
     } catch (error) {
-      throw formatError(error);
+      throw helpers.formatError(error);
     }
   }
 }
+const helpers = { formatError, doRequest };
 function formatError(error: any) {
   if (error.response && error.response.data) {
     return error.response.data;
@@ -45,18 +46,30 @@ import { describe, it } from "../../../lib/tests.ts";
 
 describe("ExecuteActor", () => {
   describe("act", () => {
+    it("calls doRequest", async () => {
+      // fail("Write this test");
+    });
+    it("calls formatError on error", async () => {
+      // fail("Write this test");
+    });
     it("sets header correctly", async () => {
       // fail("Write this test");
     });
   });
-  describe("formatError", () => {
-    it("sets header correctly", async () => {
-      // fail("Write this test");
-    });
+});
+describe("formatError", () => {
+  it("returns response data if present", async () => {
+    // fail("Write this test");
   });
-  describe("doRequest", () => {
-    it("sets header correctly", async () => {
-      // fail("Write this test");
-    });
+  it("returns code if present and response data is missing", async () => {
+    // fail("Write this test");
+  });
+  it("returns input if response data and code are not present", async () => {
+    // fail("Write this test");
+  });
+});
+describe("doRequest", () => {
+  it("calls axios", async () => {
+    // fail("Write this test");
   });
 });

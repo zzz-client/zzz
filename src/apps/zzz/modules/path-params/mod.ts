@@ -11,7 +11,7 @@ export class PathParamsModule extends Module implements IModuleFields, IModuleMo
       PathParams: "StringToStringMap",
     },
   };
-  async modify(entity: Model, _action: Action): Promise<void> {
+  modify(entity: Model, _action: Action): Promise<void> {
     Trace("PathParamsModule:modify");
     if (entity instanceof HttpRequest && Module.hasFields(entity, Object.keys(this.fields.HttpRequest))) {
       helpers.loadPathParams(entity);
@@ -34,7 +34,7 @@ function loadPathParams(theRequest: HttpRequest): void {
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { assertEquals, assertSpyCall, assertSpyCalls, describe, fail, it, stub, TestStore } from "../../../../lib/tests.ts";
+import { assertEquals, assertSpyCall, assertSpyCalls, describe, it, stub, TestStore } from "../../../../lib/tests.ts";
 
 describe("PathParamsModule", () => {
   describe("modify", () => {
@@ -90,7 +90,7 @@ describe("PathParamsModule", () => {
   });
 });
 describe("loadPathParams", () => {
-  it("replaces the params in the URL", async () => {
+  it("replaces the params in the URL", () => {
     // GIVEN
     const model = new HttpRequest();
     model.URL = "my/:first/path?foo=:second";
