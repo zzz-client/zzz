@@ -41,12 +41,31 @@ type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, it } from "../../../../lib/tests.ts";
+import { assertSpyCall, assertSpyCalls, describe, it, resolvesNext, stub, TestStore } from "../../../../lib/tests.ts";
 
 describe("RequestsModule", () => {
   describe("modify", () => {
     it("works", async () => {
-      // fail("Write this test");
+      const testStore = new TestStore();
+      const testId = "42";
+      // GIVEN
+      const testModel = new HttpRequest();
+      testModel.Id = testId;
+      const getTypeStub = stub(testStore, "getModelType", resolvesNext(["HttpRequest"]));
+      const getStub = stub(testStore, "get", resolvesNext([testModel]));
+      // WHEN
+      await new RequestsModule(testStore).modify(testModel, new Action({}, {}));
+      // THEN
+      assertSpyCalls(getTypeStub, 1);
+      assertSpyCall(getTypeStub, 0, {
+        args: [testId],
+      });
+      assertSpyCalls(getStub, 1);
+      assertSpyCall(getStub, 0, {
+        args: ["HttpRequest", testId],
+      });
+      getStub.restore();
+      getTypeStub.restore();
     });
   });
 });
