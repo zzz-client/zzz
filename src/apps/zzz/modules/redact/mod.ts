@@ -45,7 +45,7 @@ import { assert, describe, it, TestStore } from "../../../../lib/tests.ts";
 import { HttpRequest } from "../requests/mod.ts";
 
 describe("RedactModule", () => {
-  describe("modify", async () => {
+  describe("modify", () => {
     it("redacts Variables when the all and execute features are not enabled", async () => {
       const testStore = new TestStore();
       const httpRequest = new HttpRequest();
