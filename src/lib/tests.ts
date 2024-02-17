@@ -4,7 +4,7 @@ import { IStore, Model } from "../storage/mod.ts";
 
 export { describe, it } from "https://deno.land/std/testing/bdd.ts";
 export { fail } from "https://deno.land/std/assert/fail.ts";
-export { assertEquals } from "https://deno.land/std/assert/mod.ts";
+export { assert, assertEquals } from "https://deno.land/std/assert/mod.ts";
 export { assertSpyCall, assertSpyCalls, resolvesNext, returnsNext, spy, stub } from "https://deno.land/std/testing/mock.ts";
 
 export class TestStore implements IStore {
