@@ -8,6 +8,7 @@ import KeyValueTable from "./KeyValueTable.vue";
 const props = defineProps(["data"]);
 
 const { data } = toRefs(props);
+console.log("data", data.value);
 
 const bodyTypes = ["Auto", "Text", "JSON", "XML", "HTML"];
 
@@ -48,7 +49,7 @@ watch(
       <Dropdown v-model="bodyType" :options="bodyTypes" style="min-width: 6em" />
       <pre>{{ data }}</pre>
     </TabPanel>
-    <TabPanel header="Cookies">fewawef</TabPanel>
+    <TabPanel header="Cookies"></TabPanel>
     <TabPanel header="Headers">
       <KeyValueTable :data="headers" :readOnly="true"></KeyValueTable>
     </TabPanel>
