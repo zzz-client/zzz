@@ -1,9 +1,6 @@
 import axios from "npm:axios";
-import type { MenuItem } from "npm:primevue/menuitem";
-import { clickRequest, collections, errorMessage, scope, viewSecrets } from "./MainWindow.ts";
-import { Model } from "../../../../../storage/mod.ts";
+import { addModelToNodes, clickRequest, collections, errorMessage, scope, viewSecrets } from "./MainWindow.ts";
 
-let keys = [] as string[];
 export function doTheThing(): Promise<void> {
   return axios
     .get(addQueryParams("http://localhost:8000/" + scope.value), {
@@ -27,28 +24,7 @@ export function doTheThing(): Promise<void> {
       errorMessage.value = error.response?.data || error.message;
     });
 }
-function addModelToNodes(noteList, model: Model) {
-  let fullPath = model.Id;
-  if (fullPath.substring(0, 1) == "/") {
-    fullPath = fullPath.substring(1);
-  }
-  const newNode = {
-    key: fullPath,
-    label: model.Name,
-  } as MenuItem;
-  if (model.Method) {
-    // TODO: Could have a better way to determine this
-    newNode.command = clickRequest;
-  }
-  if (model.Children) {
-    newNode.items = [];
-    model.Children.forEach((child) => {
-      addModelToNodes(newNode.items, child);
-    });
-  }
-  noteList.push(newNode);
-  keys.push(newNode.Id!);
-}
+
 function addQueryParams(base: string): string {
   if (viewSecrets.value) {
     return base + "?format";
