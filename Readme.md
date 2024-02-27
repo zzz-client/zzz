@@ -2,39 +2,11 @@
 
 > Pronounced as "zees" or "zeds" depending on where you live.
 
-Zzz came out of the desire for a **REST client** replacement to Postman with generally the same features list. From there came the idea of making it be both storage- and user interface-agnostic. Additionally, Zzz has been made to be very modular.
+Zzz is a flexible storage-agnostic interface-agnostic module **REST client**. It is meant to be a replacement to Postman with generally the same features list.
 
-# Interfaces
+With Zzz's modular nature, there are different modules for each Interface. Binaries for each should be found in [Releases](https://gitlab.com/cat-dev-null/zzz/-/releases).
 
-#### Web
-![Zzz web interface](./screenshots/web.png)
 
-### Desktop
-![Zzz_desktop_interface](./screenshots/desktop.png)
-
-Yeah, it's broken, but how cool is it that tauri builds?
-
-#### REST API
-![Zzz web interface](./screenshots/api.png)
-
-### CLI
-![Zzz cli interface](./screenshots/cli.png)
-
-### TUI
-TODO
-
-# Usage
-
-Run `--help` or `-h` or `?` for more detail on flag usages and shorthands.
-
-- `zzz http`: Start the HTTP server, defaults to port 8000
-- `zzz web`: Start the Web (Vite) server, defaults to port 5173
-
-Flags are available for CLI usage
-
-- `--scope <name>`: The name of the scope to use
-- `--context <name>`: The name of the context to use
-- `--execute`: execute the request instead outputting its contents
 
 Zzz can be used both as a workspace of requests and variables but it can also be used to run requests entirely stored in a single file, like so:
 
@@ -65,9 +37,6 @@ Further [documentation](docs) in recommended reading order:
   - [Alternatives to Zzz](docs/alternatives.md)
 
 
-
-
-
 ## Postman feature parity
 
 - Request attributes:
@@ -95,3 +64,26 @@ Further [documentation](docs) in recommended reading order:
   - Maximum number of redirects
 
 
+# Interfaces
+
+#### Web
+![Zzz web interface](./screenshots/web.png)
+
+Presently this also requires the REST API to be running
+
+### Desktop
+![Zzz_desktop_interface](./screenshots/desktop.png)
+
+Yeah, it's broken, but how cool is it that tauri builds?
+
+#### REST API
+![Zzz web interface](./screenshots/api.png)
+
+### CLI
+![Zzz cli interface](./screenshots/cli.png)
+
+Run `--help` or `-h` or `?` for more detail on flag usages and shorthands.
+
+### TUI
+
+TODO
