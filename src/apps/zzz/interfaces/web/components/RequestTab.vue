@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import axios from "axios";
 import Breadcrumb from "primevue/breadcrumb";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
@@ -9,62 +8,23 @@ import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { ref, toRefs } from "vue";
-import { StringToStringMap } from "../../../../../lib/etc";
+import { emitter } from "../../../../../lib/bus";
 import { Model } from "../../../../../storage/mod";
 import Authorization from "./Authorization.vue";
 import Body from "./Body.vue";
 import KeyValueTable from "./KeyValueTable.vue";
+import { methods, newInstance } from "./RequestTab";
+import { executeRequest, loadRequest } from "./RequestTab.axios";
 import Response from "./Response.vue";
-import { emitter } from "../../../../../lib/bus";
 const basename = (path) => path.split("/").reverse()[0];
-
 const props = defineProps(["value", "viewSecrets", "title"]);
-const { value, viewSecrets, title } = toRefs(props);
-const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
-const method = ref("GET");
-const requestData = ref({} as any);
-const breadcrumbs = ref([] as MenuItem[]);
-const authorization = ref("None");
-const response = ref(
-  {} as {
-    status: number;
-    statusText: string;
-    headers: StringToStringMap;
-    data: any;
-  }
-);
 
-function addQueryParams(base: string): string {
-  if (viewSecrets.value) {
-    return base + "?format";
-  } else {
-    return base;
-  }
-}
+const State = newInstance(props);
 
 function refreshTabTitle() {
-  console.log("refresh", requestData.value);
-  emitter.emit("set-tab-title", requestData.value as Model);
+  emitter.emit("set-tab-title", State.requestData.value as Model);
 }
-async function fetchRequest(value: string): Promise<any> {
-  console.log("LOL", "http://localhost:8000/" + value + ".json");
-  return axios
-    .get(addQueryParams("http://localhost:8000/" + value + ".json"), {
-      headers: {
-        "X-Zzz-Context": "integrate"
-      }
-    })
-    .then((res) => {
-      console.log("Data", res.data);
-      return res.data;
-    })
-    .catch((error) => {
-      console.log("ERROR", error.message, `(${error.code})`);
-      console.log(error.response?.data);
-    });
-}
-function doTheThing(newValue: string) {
+function load(newValue: string) {
   const newBreadcrumbs = [] as MenuItem[];
   let href = "";
   for (const pathPart of newValue.split("/")) {
@@ -77,72 +37,44 @@ function doTheThing(newValue: string) {
       command: () => alert("Fix breadcrumbs, yo dolt")
     });
   }
-  breadcrumbs.value = newBreadcrumbs;
-  fetchRequest(newValue)
-    .then((data) => {
-      console.log("tab loaded", data);
-      if (data.Method) {
-        requestData.value = data;
-        refreshTabTitle();
-      }
-      title.value = data.Name;
-      method.value = data.Method;
-    })
-    .catch((error) => {
-      console.log("ERROR", error.message, `(${error.code})`);
-      console.log(error.stack);
-      return Promise.reject(error);
-    });
+  State.breadcrumbs.value = newBreadcrumbs;
+  loadRequest(newValue).then((loadedRequest) => {
+    console.log("loaded", loadedRequest);
+    State.requestData.value = loadedRequest.data;
+    refreshTabTitle();
+  });
 }
 function send(): void {
-  console.log("Context");
-  axios
-    .patch(
-      "http://localhost:8000/" + value.value,
-      {},
-      {
-        headers: {
-          "X-Zzz-Context": "integrate"
-        }
-      }
-    )
-    .then((what) => {
-      console.log("Send response", what);
-      response.value = {
-        data: what.data,
-        status: what.status,
-        statusText: what.statusText,
-        headers: what.headers as StringToStringMap
-      };
-    })
-    .catch((error) => {
-      console.error("Send error", error);
-      response.value = {
-        data: error.response.data,
-        status: error.response.status,
-        statusText: error.response.statusText,
-        headers: error.response.headers as StringToStringMap
-      };
-    });
+  //   executeRequest(State.value.value).then((executedResponse) => {
+  //     State.response.value = executedResponse;
+  //   });
 }
 
-if (value) {
-  doTheThing(value.value);
+if (State.value) {
+  load(State.value.value);
 }
 function showCookies() {
   console.log("ha");
   emitter.emit("show-cookies");
 }
+
+const method = State.method;
+const requestData = State.requestData;
+const breadcrumbs = State.breadcrumbs;
+const authorization = State.authorization;
+const response = State.response;
 </script>
 
 <template>
   <Splitter layout="vertical">
     <SplitterPanel :minSize="10">
+      <Button label="Save" severity="secondary" icon="pi pi-save" @click="save" style="float: right">Save</Button>
       <Breadcrumb :model="breadcrumbs" />
+
       <div class="flex">
-        <Dropdown id="qwerty" disabled v-model="method" :options="methods" class="w-full md:w-14rem" />
-        <InputText id="asdf" disabled type="text" :value="requestData.URL" />
-        <Button id="zxcvb" label="Send" @click="send">Send</Button>
+        <Dropdown disabled v-model="method" :options="methods" class="w-full md:w-14rem" />
+        <InputText disabled type="text" :value="requestData.URL" />
+        <Button label="Send" @click="send">Send</Button>
       </div>
       <div class="flex">
         <TabView style="flex: 1">
