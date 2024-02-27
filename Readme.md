@@ -1,14 +1,12 @@
 # (ー。ー) Zzz
 
-> Pronounced as "zees" or "zeds" depending on where you live.
+>
 
-Zzz is a flexible storage-agnostic interface-agnostic module **REST client**. It is meant to be a replacement to Postman with generally the same features list.
+Zzz (pronounced as "zees" or "zeds" depending on where you live) is a **REST client** meant to be a replacement to Postman with generally the same features list.
 
-With Zzz's modular nature, there are different modules for each Interface. Binaries for each should be found in [Releases](https://gitlab.com/cat-dev-null/zzz/-/releases).
+What sets it apart from other Postman alternatives is its modularity and the way it approaches modularity. The result is many different interfaces to access many different types of storage.
 
-
-
-Zzz can be used both as a workspace of requests and variables but it can also be used to run requests entirely stored in a single file, like so:
+Zzz can be used as a workspace of requests and variables, but it can also be used to run requests entirely stored in a single file, like so:
 
 ```yaml
 Method: POST
