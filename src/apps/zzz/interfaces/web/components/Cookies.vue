@@ -13,7 +13,6 @@ import Column from "primevue/column";
 import { ref } from "vue";
 import { setRefs, addDomain, addAllowedDomain } from "./Cookies";
 import { Domain } from "./Collections.vue";
-import { emitter } from "../../../../../lib/bus";
 
 const visible = ref(false);
 const newDomainToAllow = ref("");
@@ -39,10 +38,6 @@ const domains = ref([
 let activeDomains = ref([] as number[]);
 
 setRefs({ visible, newDomainToAllow, newDomain, domainsToAllow, domains, activeDomains });
-
-emitter.on("show-cookies", (isOpen) => {
-  visible.value = true;
-});
 </script>
 
 <template>

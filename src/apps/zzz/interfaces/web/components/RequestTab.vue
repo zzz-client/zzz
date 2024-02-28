@@ -8,7 +8,6 @@ import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { emitter } from "../../../../../lib/bus";
 import { Model } from "../../../../../storage/mod";
 import Authorization from "./Authorization.vue";
 import Body from "./Body.vue";
@@ -18,10 +17,7 @@ import Response from "./Response.vue";
 const basename = (path) => path.split("/").reverse()[0];
 const props = defineProps(["value", "viewSecrets", "title"]);
 import { ref, toRefs } from "vue";
-
-import { createStore, select, withProps } from "@ngneat/elf";
-
-import VuePreferences from "npm:vue-preferences";
+import Session, { SessionProps } from "./Session";
 
 export const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 
@@ -53,7 +49,6 @@ function load(newValue: string, viewSecrets: boolean) {
   loadRequest(newValue, viewSecrets).then((loadedRequest) => {
     console.log("loaded", loadedRequest);
     requestData.value = loadedRequest.data;
-    refreshTabTitle();
   });
 }
 function send(): void {
@@ -66,8 +61,10 @@ if (value) {
   load(value.value, false); // TODO: How is this set through config?
 }
 function showCookies() {
-  console.log("ha");
-  emitter.emit("show-cookies");
+  Session.update((state: SessionProps) => ({
+    ...state,
+    showCookies: true
+  }));
 }
 </script>
 

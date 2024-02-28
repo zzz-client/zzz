@@ -12,30 +12,23 @@ import Cookies from "./Cookies.vue";
 import { newTab, tabs, collections, dirty, errorMessage, scope, viewSecrets } from "./MainWindow";
 import RequestTab from "./RequestTab.vue";
 import { doTheThing } from "./MainWindow.axios";
-import { emitter } from "../../../../../lib/bus";
+import Session, { SessionProps } from "./Session";
 
 doTheThing();
 
 function onTabChange(event: any) {
-  console.log(event.originalEvent.target.textContent);
-  const tab = tabs.value[event.index - 1];
-  console.log("tab", tabs.value, event.index, tab);
   if (event.index === tabs.value.length && tab !== null) {
     newTab();
+    return;
   }
+  Session.update((state: SessionProps) => ({
+    ...state,
+    activeTab: event.index
+  }));
 }
 function closeTab(tabIndex) {
   tabs.value.splice(tabIndex, 1);
 }
-
-emitter.on("set-tab-title", (result: any) => {
-  const { Id, Name } = result;
-  tabs.value.forEach((tab) => {
-    if (tab.value == Id) {
-      tab.title = Name;
-    }
-  });
-});
 </script>
 
 <template>
