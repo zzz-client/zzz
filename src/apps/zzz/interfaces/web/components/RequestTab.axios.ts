@@ -1,6 +1,5 @@
 import axios from "npm:axios";
 import { StringToStringMap } from "../../../../../lib/etc.ts";
-import { State } from "./RequestTab.ts";
 
 type Response = {
   data: any;
@@ -9,16 +8,16 @@ type Response = {
   headers: StringToStringMap;
 };
 
-function addQueryParams(base: string): string {
-  if (State.viewSecrets.value) {
+function addQueryParams(base: string, viewSecrets: boolean): string {
+  if (viewSecrets) {
     return base + "?format";
   } else {
     return base;
   }
 }
-export function loadRequest(requestId: string): Promise<Response> {
+export function loadRequest(requestId: string, viewSecrets: boolean): Promise<Response> {
   return axios
-    .get(addQueryParams("http://localhost:8000/" + requestId + ".json"), {
+    .get(addQueryParams("http://localhost:8000/" + requestId + ".json", viewSecrets), {
       headers: {
         "X-Zzz-Context": "integrate",
       },

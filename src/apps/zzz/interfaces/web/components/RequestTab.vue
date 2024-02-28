@@ -13,18 +13,30 @@ import { Model } from "../../../../../storage/mod";
 import Authorization from "./Authorization.vue";
 import Body from "./Body.vue";
 import KeyValueTable from "./KeyValueTable.vue";
-import { methods, newInstance } from "./RequestTab";
 import { executeRequest, loadRequest } from "./RequestTab.axios";
 import Response from "./Response.vue";
 const basename = (path) => path.split("/").reverse()[0];
 const props = defineProps(["value", "viewSecrets", "title"]);
+import { ref, toRefs } from "vue";
 
-const State = newInstance(props);
+import { createStore, select, withProps } from "@ngneat/elf";
 
-function refreshTabTitle() {
-  emitter.emit("set-tab-title", State.requestData.value as Model);
-}
-function load(newValue: string) {
+import VuePreferences from "npm:vue-preferences";
+
+export const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
+
+const { value, viewSecrets, title } = toRefs(props.value);
+const method = ref("GET");
+const requestData = ref({});
+const breadcrumbs = ref([]);
+const authorization = ref("None");
+const response = ref({
+  status: 0,
+  statusText: "",
+  headers: {},
+  data: null
+});
+function load(newValue: string, viewSecrets: boolean) {
   const newBreadcrumbs = [] as MenuItem[];
   let href = "";
   for (const pathPart of newValue.split("/")) {
@@ -37,32 +49,26 @@ function load(newValue: string) {
       command: () => alert("Fix breadcrumbs, yo dolt")
     });
   }
-  State.breadcrumbs.value = newBreadcrumbs;
-  loadRequest(newValue).then((loadedRequest) => {
+  breadcrumbs.value = newBreadcrumbs;
+  loadRequest(newValue, viewSecrets).then((loadedRequest) => {
     console.log("loaded", loadedRequest);
-    State.requestData.value = loadedRequest.data;
+    requestData.value = loadedRequest.data;
     refreshTabTitle();
   });
 }
 function send(): void {
-  //   executeRequest(State.value.value).then((executedResponse) => {
-  //     State.response.value = executedResponse;
+  //   executeRequest(value.value).then((executedResponse) => {
+  //     response.value = executedResponse;
   //   });
 }
 
-if (State.value) {
-  load(State.value.value);
+if (value) {
+  load(value.value, false); // TODO: How is this set through config?
 }
 function showCookies() {
   console.log("ha");
   emitter.emit("show-cookies");
 }
-
-const method = State.method;
-const requestData = State.requestData;
-const breadcrumbs = State.breadcrumbs;
-const authorization = State.authorization;
-const response = State.response;
 </script>
 
 <template>
