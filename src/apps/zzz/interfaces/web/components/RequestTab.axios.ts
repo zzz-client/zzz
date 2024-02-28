@@ -1,5 +1,7 @@
 import axios from "npm:axios";
 import { StringToStringMap } from "../../../../../lib/etc.ts";
+import Session, { SessionProps } from "./Session.ts";
+import { select } from "npm:@ngneat/elf";
 
 type Response = {
   data: any;
@@ -8,16 +10,16 @@ type Response = {
   headers: StringToStringMap;
 };
 
-function addQueryParams(base: string, viewSecrets: boolean): string {
-  if (viewSecrets) {
+function addQueryParams(base: string): string {
+  if (Session.pipe(select((state: SessionProps) => state.showSecrets))) {
     return base + "?format";
   } else {
     return base;
   }
 }
-export function loadRequest(requestId: string, viewSecrets: boolean): Promise<Response> {
+export function loadRequest(requestId: string): Promise<Response> {
   return axios
-    .get(addQueryParams("http://localhost:8000/" + requestId + ".json", viewSecrets), {
+    .get(addQueryParams("http://localhost:8000/" + requestId + ".json"), {
       headers: {
         "X-Zzz-Context": "integrate",
       },

@@ -15,13 +15,13 @@ import KeyValueTable from "./KeyValueTable.vue";
 import { executeRequest, loadRequest } from "./RequestTab.axios";
 import Response from "./Response.vue";
 const basename = (path) => path.split("/").reverse()[0];
-const props = defineProps(["value", "viewSecrets", "title"]);
+const props = defineProps(["value", "title"]);
 import { ref, toRefs } from "vue";
 import Session, { SessionProps } from "./Session";
 
 export const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 
-const { value, viewSecrets, title } = toRefs(props.value);
+const { value } = toRefs(props.value);
 const method = ref("GET");
 const requestData = ref({});
 const breadcrumbs = ref([]);
@@ -32,7 +32,7 @@ const response = ref({
   headers: {},
   data: null
 });
-function load(newValue: string, viewSecrets: boolean) {
+function load(newValue: string) {
   const newBreadcrumbs = [] as MenuItem[];
   let href = "";
   for (const pathPart of newValue.split("/")) {
@@ -46,7 +46,7 @@ function load(newValue: string, viewSecrets: boolean) {
     });
   }
   breadcrumbs.value = newBreadcrumbs;
-  loadRequest(newValue, viewSecrets).then((loadedRequest) => {
+  loadRequest(newValue).then((loadedRequest) => {
     console.log("loaded", loadedRequest);
     requestData.value = loadedRequest.data;
   });

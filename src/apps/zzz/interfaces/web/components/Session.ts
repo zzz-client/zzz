@@ -1,6 +1,7 @@
 import { createStore, select, withProps } from "npm:@ngneat/elf";
 
 export interface SessionProps {
+  showSecrets: boolean;
   showCookies: boolean;
   tabs: { title: string; value: string }[];
   activeTab: number;
@@ -8,7 +9,7 @@ export interface SessionProps {
 
 const Session = createStore(
   { name: "session" },
-  withProps<SessionProps>({ activeTab: 0, showCookies: false, tabs: [] }),
+  withProps<SessionProps>({ showSecrets: false, activeTab: 0, showCookies: false, tabs: [] }),
 );
 export default Session;
 

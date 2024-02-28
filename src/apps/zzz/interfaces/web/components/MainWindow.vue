@@ -9,15 +9,20 @@ import TabView from "primevue/tabview";
 import ToggleButton from "primevue/togglebutton";
 import Collections from "./Collections.vue";
 import Cookies from "./Cookies.vue";
-import { newTab, tabs, collections, dirty, errorMessage, scope, viewSecrets } from "./MainWindow";
+import { newTab, tabs, collections, dirty, errorMessage } from "./MainWindow";
 import RequestTab from "./RequestTab.vue";
 import { doTheThing } from "./MainWindow.axios";
 import Session, { SessionProps } from "./Session";
+import { ref } from "vue";
+
+const viewSecrets = ref(false);
+Session.subscribe((state: SessionProps) => {
+  viewSecrets.value = state.showSecrets;
+});
 
 doTheThing();
-
 function onTabChange(event: any) {
-  if (event.index === tabs.value.length && tab !== null) {
+  if (event.index === tabs.value.length) {
     newTab();
     return;
   }
@@ -49,7 +54,7 @@ function closeTab(tabIndex) {
     <SplitterPanel :size="75" class="absolute">
       <TabView class="absolute" @tab-click="onTabChange">
         <TabPanel v-for="(tab, i) in tabs" :key="tab.value" :header="tab.title" class="absolute">
-          <RequestTab :value="tab.value" :viewSecrets="viewSecrets" class="absolute"></RequestTab>
+          <RequestTab :value="tab.value" class="absolute"></RequestTab>
           <template #header>
             <Badge v-if="dirty[i]" style="margin-left: 0.5em; margin-right: 0.5em"></Badge>
             <Badge style="" value="x" @click="closeTab(i)"></Badge>

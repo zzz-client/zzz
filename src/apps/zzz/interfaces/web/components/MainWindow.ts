@@ -6,7 +6,6 @@ export const collections = ref([] as any[]);
 export const dirty = ref([] as boolean[]);
 export const errorMessage = ref("");
 export const scope = ref("Salesforce Primary");
-export const viewSecrets = ref(false);
 import type { MenuItem } from "npm:primevue/menuitem";
 
 let lastClick = -1;

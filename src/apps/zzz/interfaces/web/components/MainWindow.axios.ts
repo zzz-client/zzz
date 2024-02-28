@@ -1,5 +1,8 @@
 import axios from "npm:axios";
-import { addModelToNodes, clickRequest, collections, errorMessage, scope, viewSecrets } from "./MainWindow.ts";
+import { addModelToNodes, clickRequest, collections, errorMessage, scope } from "./MainWindow.ts";
+import Session from "./Session.ts";
+import { select } from "npm:@ngneat/elf";
+import { SessionProps } from "./Session.ts";
 
 export function doTheThing(): Promise<void> {
   return axios
@@ -26,7 +29,7 @@ export function doTheThing(): Promise<void> {
 }
 
 function addQueryParams(base: string): string {
-  if (viewSecrets.value) {
+  if (Session.pipe(select((state: SessionProps) => state.showSecrets))) {
     return base + "?format";
   } else {
     return base;
