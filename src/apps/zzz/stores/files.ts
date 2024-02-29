@@ -31,19 +31,18 @@ export default class FileStore implements IStore {
   }
   async get(modelType: string, id: string): Promise<Model> {
     Trace(`FileStore: Getting model type ${modelType} id ${id}`);
-    const result = await this.storage(modelType).get(id) as Model;
+    const result = await this.storage(modelType).retrieve(id) as Model;
     Trace("FileStore: got", result);
-    result.Id = id;
-    if (!result.Name) { // TODO: Why is this not working when --all is passed
-      result.Name = basename(id);
-    }
     return result;
   }
   async set(modelType: string, model: Model): Promise<void> {
     await this.storage(modelType).put(model);
   }
+  async remove(modelType: string, id: string): Promise<void> {
+    await this.storage(modelType).delete(id);
+  }
   async list(modelType: string): Promise<Model[]> {
-    const result = await this.storage(modelType).get(".");
+    const result = await this.storage(modelType).retrieve(".");
     const children = (result as ParentModel).Children;
     return children;
   }
@@ -56,7 +55,7 @@ export default class FileStore implements IStore {
     return result;
   }
   move(modelType: string, oldId: string, newId: string): Promise<void> {
-    return this.storages.get(modelType)!.move(oldId, newId);
+    return this.storages.get(modelType)!.rename(oldId, newId);
   }
   private storage(modelName: string): IStorage {
     if (!this.storages.get(modelName)) {

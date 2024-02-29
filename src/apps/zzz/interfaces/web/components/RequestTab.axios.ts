@@ -28,18 +28,44 @@ export function loadRequest(requestId: string): Promise<Response> {
       return {
         data: what.data,
         status: what.status,
+        success: true,
         statusText: what.statusText,
         headers: what.headers as StringToStringMap,
       };
     })
-    .catch((error) => {
+    .catch(catchError);
+}
+export function saveRequest(requestId: string, body: any): Promise<Response> {
+  return axios
+    .put(
+      "http://localhost:8000/" + requestId,
+      body,
+      {
+        headers: {
+          "X-Zzz-Context": "integrate",
+        },
+      },
+    )
+    .then((what) => {
       return {
-        data: error.response.data,
-        status: error.response.status,
-        statusText: error.response.statusText,
-        headers: error.response.headers as StringToStringMap,
+        data: what.data,
+        status: what.status,
+        statusText: what.statusText,
+        success: what.status < 400,
+        headers: what.headers as StringToStringMap,
       };
-    });
+    })
+    .catch(catchError);
+}
+
+function catchError(error: any) {
+  return {
+    data: error.response.data,
+    status: error.response.status,
+    statusText: error.response.statusText,
+    success: false,
+    headers: error.response.headers as StringToStringMap,
+  };
 }
 
 export function executeRequest(requestId: string): Promise<Response> {

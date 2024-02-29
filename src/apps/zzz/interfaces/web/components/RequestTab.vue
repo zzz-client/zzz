@@ -12,9 +12,14 @@ import { ref, toRefs } from "vue";
 import Authorization from "./Authorization.vue";
 import Body from "./Body.vue";
 import KeyValueTable from "./KeyValueTable.vue";
-import { executeRequest, loadRequest } from "./RequestTab.axios";
+import { executeRequest, loadRequest, saveRequest } from "./RequestTab.axios";
 import Response from "./Response.vue";
 const basename = (path) => path.split("/").reverse()[0];
+import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
+
+const toast = useToast();
+toast.add({ summary: "Unauthenticated", severity: "error" });
 
 import Session, { SessionProps } from "./Session";
 
@@ -57,12 +62,12 @@ function load(newValue: string) {
   });
 }
 function send(): void {
-  executeRequest(tab.value.fullName).then((executedResponse) => {
+  executeRequest(tab.value.id).then((executedResponse) => {
     response.value = executedResponse;
   });
 }
 
-load(tab.value.fullName);
+load(tab.value.id);
 
 function showCookies() {
   Session.update((state: SessionProps) => ({
@@ -70,9 +75,20 @@ function showCookies() {
     showCookies: true
   }));
 }
+function save() {
+  saveRequest(tab.value.id, requestData.value).then((response) => {
+    if (response.status < 300) {
+      console.log("saved", response);
+    } else {
+      console.error("error", response);
+    }
+  });
+}
 </script>
 
 <template>
+  Radda
+  <Toast />
   <Splitter layout="vertical">
     <SplitterPanel :minSize="10">
       <Button label="Save" severity="secondary" icon="pi pi-save" @click="save" style="float: right">Save</Button>

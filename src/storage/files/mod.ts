@@ -15,12 +15,16 @@ export default class FileStorage implements IStorage {
     Trace("FileStorage: Checking if exists: " + this.adjustPath(id, true));
     return (await exists(this.adjustPath(id, false))) || (await exists(this.adjustPath(id, true)));
   }
-  async get(fullId: string): Promise<Model> {
+  async retrieve(fullId: string): Promise<Model> {
     if (await this.isFile(fullId)) {
       return this.getFile(fullId);
     } else {
       return this.getFolder(fullId);
     }
+  }
+  async rename(oldId: string, newId: string): Promise<void> {
+    // TODO
+    throw new Error("Method not implemented.");
   }
   async put(model: Model): Promise<void> {
     if (await this.isFile(model.Id)) {
@@ -108,8 +112,10 @@ export default class FileStorage implements IStorage {
   }
   private async putFile(model: Model): Promise<void> {
     const fileFormat = getFileFormat(this.fileExtension);
-    Trace(`Putting file ${fileFormat} ${model.Id}`);
-    await Deno.writeTextFile(model.Id, fileFormat.stringify(model));
+    console.log("PUTTING FILE", model);
+    const fullPath = this.adjustPath(model.Id, await this.isFile(model.Id));
+    delete model.Id;
+    await Deno.writeTextFile(fullPath, fileFormat.stringify(model));
   }
   private async putFolder(model: Model): Promise<void> {
     if (!(await exists(model.Id))) {

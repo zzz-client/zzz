@@ -44,14 +44,14 @@ function openTab(key: string) {
     }
   }
   console.log("HERE", key);
-  const what = ref({ title: "...", fullName: key });
+  const what = ref({ title: "...", id: key });
   console.log("HERE", what);
   tabs.value.push(what);
   // activeTab.value = tabs.value.length - 1;
 }
 
 function newTab(): void {
-  tabs.value.push({ title: "Untitled Request", fullName: "" });
+  tabs.value.push({ title: "Untitled Request", id: "" });
   const index = tabs.value.length - 1;
   dirty.value[index] = true;
 }
@@ -130,7 +130,7 @@ function closeTab(tabIndex) {
 
     <SplitterPanel :size="75" class="absolute">
       <TabView class="absolute" @tab-click="onTabChange">
-        <TabPanel v-for="(tab, i) in tabs" :key="tab.value.fullName" :header="tab.value.title" class="absolute">
+        <TabPanel v-for="(tab, i) in tabs" :key="tab.value.id" :header="tab.value.title" class="absolute">
           {{ tab.title }}
           <RequestTab v-model:tab="tabs[i].value" class="absolute"></RequestTab>
           <template #header>

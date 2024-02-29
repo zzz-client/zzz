@@ -2,21 +2,25 @@ import { basename, extname } from "../../../../lib/deps.ts";
 import { Action, Log, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { getFileFormat } from "../../../../storage/files/formats.ts";
 import { Model } from "../../../../storage/mod.ts";
-import IApplication, { executeModules, FeatureFlags } from "../../../mod.ts";
+import IApplication, { FeatureFlags } from "../../../mod.ts";
 import ExecuteActor from "../../actors/execute.ts";
 import { Collection, HttpRequest } from "../../modules/requests/mod.ts";
 import { Scope } from "../../modules/scope/mod.ts";
 import Application from "../cli/app.ts";
 
-const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "allow,content-type,x-zzz-context", "Access-Control-Allow-Methods": "GET,PATCH" };
+const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "allow,content-type,x-zzz-context", "Access-Control-Allow-Methods": "GET,PUT,PATCH" };
 
-export function listen(server: Server): Promise<void> {
+export function listen(server: IServer): Promise<void> {
   Trace("Starting server on port " + server.port);
   Deno.serve({ port: server.port }, (request: Request): Promise<Response> => {
     Trace("Server:Respond: Responding to " + request.method, request.url);
     switch (request.method) {
       case "GET":
         return server.respondToGet(request);
+      case "POST":
+        return server.respondToPost(request);
+      case "PUT":
+        return server.respondToPut(request);
       case "PATCH":
         return server.respondToPatch(request);
       case "OPTIONS":
@@ -38,7 +42,10 @@ export interface IServer {
   port: number;
   app: IApplication;
   respondToGet(request: Request): Promise<Response>;
+  respondToPost(request: Request): Promise<Response>;
+  respondToPut(request: Request): Promise<Response>;
   respondToPatch(request: Request): Promise<Response>;
+  respondToDelete(request: Request): Promise<Response>;
   respondToOptions(request: Request): Promise<Response>;
 }
 
@@ -53,7 +60,7 @@ export class Server implements IServer {
     const parts = dissectRequest(request);
     parts.fullId;
     Trace("respondToGet " + parts.fullId);
-    if (parts.fullId === "/favicon.ico") {
+    if (parts.fullId === "/favicon.ico" || basename(parts.fullId) === "favicon") {
       Trace("Responding to favicon request");
       return Promise.resolve(newResponse(204, null, STANDARD_HEADERS));
     }
@@ -64,6 +71,18 @@ export class Server implements IServer {
     const model = await this.executeGet(request);
     return Promise.resolve(newResponse(200, this.stringify(model, parts.extension || "json"), STANDARD_HEADERS));
   }
+  async respondToPut(request: Request): Promise<Response> {
+    const parts = dissectRequest(request);
+    Trace("Responding to PUT");
+    await this.executePut(request);
+    return Promise.resolve(newResponse(200, this.stringify("^_^", parts.extension || "json"), STANDARD_HEADERS)); // TODO: What response? empty? what code?
+  }
+  async respondToPost(request: Request): Promise<Response> {
+    Trace("Responding to POST");
+    const parts = dissectRequest(request);
+    await this.executePost(request);
+    return Promise.resolve(newResponse(200, this.stringify("^_^", parts.extension || "json"), STANDARD_HEADERS)); // TODO: What response? empty? what code?
+  }
   async respondToPatch(request: Request): Promise<Response> {
     const parts = dissectRequest(request);
     Trace("Responding to PATCH");
@@ -73,6 +92,12 @@ export class Server implements IServer {
     }
     const executeResponse = await (new ExecuteActor()).act(model);
     return Promise.resolve(newResponse(200, this.stringify(executeResponse, parts.extension || "json"), STANDARD_HEADERS));
+  }
+  async respondToDelete(request: Request): Promise<Response> {
+    Trace("Responding to DELETE");
+    const parts = dissectRequest(request);
+    await this.executeDelete(request);
+    return Promise.resolve(newResponse(200, this.stringify("^_^", parts.extension || "json"), STANDARD_HEADERS)); // TODO: What response? empty? what code?
   }
   respondToOptions(request: Request): Promise<Response> {
     Trace("Responding to OPTIONS");
@@ -110,10 +135,22 @@ export class Server implements IServer {
     flagValues.context = parts.context || flagValues.context;
     flagValues.scope = parts.scope || flagValues.scope;
     const action = new Action(flagValues, this.app.env);
-    const model = constructModelFromRequest(request);
-    await executeModules(this.app.modules, action, model);
+    const modelId = getModelIdFromRequest(request);
+    const model = await this.app.getModel(modelId, action);
     Log("Result", model);
     return Promise.resolve(model);
+  }
+  private async executePost(request: Request): Promise<void> {
+    const model = await request.json() as Model;
+    await this.app.insertModel(model);
+  }
+  private async executePut(request: Request): Promise<void> {
+    const model = await request.json() as Model;
+    await this.app.updateModel(model);
+  }
+  private async executeDelete(request: Request): Promise<void> {
+    const parts = dissectRequest(request);
+    await this.app.deleteModel(parts.fullId);
   }
 }
 
@@ -121,18 +158,13 @@ export class Server implements IServer {
 function newResponse(status: number, body: any, headers: StringToStringMap): Response {
   return new Response(body, { status, headers });
 }
-function constructModelFromRequest(request: Request): Model {
+function getModelIdFromRequest(request: Request): string {
   const parts = dissectRequest(request);
-  Trace("Deconstructed request", parts);
-  let model;
   if (parts.extension) {
-    model = new HttpRequest();
-    model.Id = parts.fullId.substring(0, parts.fullId.indexOf("."));
+    return parts.fullId.substring(0, parts.fullId.indexOf("."));
   } else {
-    model = new Collection();
-    model.Id = parts.fullId;
+    return parts.fullId;
   }
-  return model;
 }
 function dissectRequest(request: Request): RequestParts {
   const { searchParams, pathname } = new URL(request.url);

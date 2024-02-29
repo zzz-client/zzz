@@ -1,11 +1,11 @@
 import DI from "../../../../lib/di.ts";
-import { asAny, StringToStringMap, Trace } from "../../../../lib/etc.ts";
+import { Action, asAny, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { IModuleFeatures, IModuleRenderer, Module } from "../../../../lib/module.ts";
-import IApplication, { ConfigValue, Flags } from "../../../mod.ts";
+import IApplication, { ConfigValue, executeModules, Flags } from "../../../mod.ts";
 import Cli from "./cli.ts";
 
 import { Args, processFlags } from "../../../../lib/deps.ts";
-import { IStore } from "../../../../storage/mod.ts";
+import { IStore, Model } from "../../../../storage/mod.ts";
 import { AuthorizationModule } from "../../modules/auth/mod.ts";
 import { BodyModule } from "../../modules/body/mod.ts";
 import { ContextModule } from "../../modules/context/mod.ts";
@@ -61,6 +61,35 @@ export default class Application implements IApplication {
     }
     */
     this.modules.push(module);
+  }
+  async getModel(id: string, action: Action): Promise<Model> {
+    const model = { Id: id } as Model;
+    await executeModules(this.modules, action, model);
+    return model;
+  }
+  async insertModel(model: Model): Promise<void> {
+    const modelType = await this.store.getModelType(model.Id);
+    const existing = await this.store.get(modelType, model.Id);
+    if (existing) {
+      throw new Error(`Already exists: ${model.Id}`);
+    }
+    return this.store.set(modelType, model);
+  }
+  async updateModel(model: Model): Promise<void> {
+    const modelType = await this.store.getModelType(model.Id);
+    const existing = await this.store.get(modelType, model.Id);
+    if (!existing) {
+      throw new Error(`Does not exist: ${model.Id}`);
+    }
+    return this.store.set(modelType, model);
+  }
+  async moveModel(id: string, newId: string): Promise<void> {
+    const modelType = await this.store.getModelType(id);
+    return this.store.move(modelType, id, newId);
+  }
+  async deleteModel(id: string): Promise<void> {
+    const modelType = await this.store.getModelType(id);
+    return this.store.remove(modelType, id);
   }
 }
 
