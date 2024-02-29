@@ -19,9 +19,11 @@ const basename = (path) => path.split("/").reverse()[0];
 import Session, { SessionProps } from "./Session";
 
 const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
-const props = defineProps({ value: String, title: String });
 
-const { value, title } = toRefs(props);
+const tab = defineModel("tab");
+
+console.log("Tab!", tab);
+
 const method = ref("GET");
 const requestData = ref({});
 const breadcrumbs = ref([]);
@@ -49,19 +51,19 @@ function load(newValue: string) {
   loadRequest(newValue).then((loadedRequest) => {
     console.log("loaded", loadedRequest);
     requestData.value = loadedRequest.data;
+    console.log("loaded", loadedRequest.data.Name);
+    tab.value.title = loadedRequest.data.Name;
+    console.log(tab.value.title);
   });
 }
 function send(): void {
-  executeRequest(value.value).then((executedResponse) => {
+  executeRequest(tab.value.fullName).then((executedResponse) => {
     response.value = executedResponse;
   });
 }
 
-console.log("title", title);
-console.log("value", value);
-if (value) {
-  // load(value.value); // TODO: How is this set through config?
-}
+load(tab.value.fullName);
+
 function showCookies() {
   Session.update((state: SessionProps) => ({
     ...state,

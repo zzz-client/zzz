@@ -21,9 +21,7 @@ Session.subscribe((state: SessionProps) => {
   viewSecrets.value = state.showSecrets;
 });
 
-type Tab = { title: string; value: string };
-
-const tabs = ref([] as Tab[]);
+const tabs = ref([]);
 const collections = ref([] as any[]);
 const dirty = ref([] as boolean[]);
 const errorMessage = ref("");
@@ -46,14 +44,14 @@ function openTab(key: string) {
     }
   }
   console.log("HERE", key);
-  const what = { title: "...", value: key } as Tab;
+  const what = ref({ title: "...", fullName: key });
   console.log("HERE", what);
   tabs.value.push(what);
   // activeTab.value = tabs.value.length - 1;
 }
 
 function newTab(): void {
-  tabs.value.push({ title: "Untitled Request", value: "" });
+  tabs.value.push({ title: "Untitled Request", fullName: "" });
   const index = tabs.value.length - 1;
   dirty.value[index] = true;
 }
@@ -132,8 +130,9 @@ function closeTab(tabIndex) {
 
     <SplitterPanel :size="75" class="absolute">
       <TabView class="absolute" @tab-click="onTabChange">
-        <TabPanel v-for="(tab, i) in tabs" :key="tab.value" :header="tab.title" class="absolute">
-          <RequestTab :title="tab.title" :value="tab.value" class="absolute"></RequestTab>
+        <TabPanel v-for="(tab, i) in tabs" :key="tab.value.fullName" :header="tab.value.title" class="absolute">
+          {{ tab.title }}
+          <RequestTab v-model:tab="tabs[i].value" class="absolute"></RequestTab>
           <template #header>
             <Badge v-if="dirty[i]" style="margin-left: 0.5em; margin-right: 0.5em"></Badge>
             <Badge style="" value="x" @click="closeTab(i)"></Badge>
