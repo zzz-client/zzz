@@ -19,7 +19,7 @@ const props = defineProps(["value", "title"]);
 import { ref, toRefs } from "vue";
 import Session, { SessionProps } from "./Session";
 
-export const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
+const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 
 const { value } = toRefs(props.value);
 const method = ref("GET");

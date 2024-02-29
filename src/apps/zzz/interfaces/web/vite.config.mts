@@ -13,6 +13,7 @@ export default defineConfig({
       "npm:primevue/menuitem": "primevue/menuitem",
       "npm:vue": "vue",
       "npm:mitt": "mitt",
+      "npm:@ngneat/elf": "@ngneat/elf",
     },
   },
   plugins: [vue(), viteDeno({ importMapFilename: "../../../../../deno.jsonc" })],
