@@ -1,21 +1,18 @@
 import axios from "npm:axios";
-import { addModelToNodes, clickRequest, collections, errorMessage, scope } from "./MainWindow.ts";
 import Session from "./Session.ts";
 import { select } from "npm:@ngneat/elf";
 import { SessionProps } from "./Session.ts";
 
-export function doTheThing(): Promise<void> {
+export function doTheThing(scope: string, cb: Function): Promise<void> {
   return axios
-    .get(addQueryParams("http://localhost:8000/" + scope.value), {
+    .get(addQueryParams("http://localhost:8000/" + scope), {
       headers: {
         "X-Zzz-Context": "integrate",
       },
     })
     .then((res) => {
       console.log("Got initial data", res.data);
-      res.data.Children.forEach((model) => {
-        addModelToNodes(collections.value, model);
-      });
+      res.data.Children.forEach(cb);
     })
     .catch((error) => {
       console.log(error);
@@ -24,7 +21,7 @@ export function doTheThing(): Promise<void> {
       if (error.message === "Network Error") {
         error.message += ". Is the HTTP server running?";
       }
-      errorMessage.value = error.response?.data || error.message;
+      throw new Error(error.response?.data || error.message);
     });
 }
 

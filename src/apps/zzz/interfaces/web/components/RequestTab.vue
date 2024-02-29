@@ -8,17 +8,17 @@ import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { Model } from "../../../../../storage/mod";
+import { ref, toRefs } from "vue";
 import Authorization from "./Authorization.vue";
 import Body from "./Body.vue";
 import KeyValueTable from "./KeyValueTable.vue";
 import { executeRequest, loadRequest } from "./RequestTab.axios";
 import Response from "./Response.vue";
 const basename = (path) => path.split("/").reverse()[0];
-const props = defineProps(["value", "title"]);
-import { ref, toRefs } from "vue";
+
 import Session, { SessionProps } from "./Session";
 
+const props = defineProps(["value", "title"]);
 const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 
 const { value } = toRefs(props.value);
@@ -52,13 +52,14 @@ function load(newValue: string) {
   });
 }
 function send(): void {
-  //   executeRequest(value.value).then((executedResponse) => {
-  //     response.value = executedResponse;
-  //   });
+  executeRequest(value.value).then((executedResponse) => {
+    response.value = executedResponse;
+  });
 }
 
+console.log("value", value);
 if (value) {
-  load(value.value, false); // TODO: How is this set through config?
+  load(value.value); // TODO: How is this set through config?
 }
 function showCookies() {
   Session.update((state: SessionProps) => ({
