@@ -2,7 +2,7 @@
 import RadioButton from "primevue/radiobutton";
 import { ref, toRefs, watch } from "vue";
 
-const props = defineProps(["body"]);
+const props = defineProps({ body: String });
 
 const bodyType = ref("none");
 

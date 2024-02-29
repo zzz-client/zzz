@@ -14,13 +14,16 @@ import Cookies from "./Cookies.vue";
 import { doTheThing } from "./MainWindow.axios";
 import RequestTab from "./RequestTab.vue";
 import Session, { SessionProps } from "./Session";
+import { Model } from "../../../../../storage/mod";
 
 const viewSecrets = ref(false);
 Session.subscribe((state: SessionProps) => {
   viewSecrets.value = state.showSecrets;
 });
 
-const tabs = ref([] as { title: string; value: string }[]);
+type Tab = { title: string; value: string };
+
+const tabs = ref([] as Tab[]);
 const collections = ref([] as any[]);
 const dirty = ref([] as boolean[]);
 const errorMessage = ref("");
@@ -42,7 +45,10 @@ function openTab(key: string) {
       return;
     }
   }
-  tabs.value.push({ title: "...", value: key });
+  console.log("HERE", key);
+  const what = { title: "...", value: key } as Tab;
+  console.log("HERE", what);
+  tabs.value.push(what);
   // activeTab.value = tabs.value.length - 1;
 }
 
@@ -127,7 +133,7 @@ function closeTab(tabIndex) {
     <SplitterPanel :size="75" class="absolute">
       <TabView class="absolute" @tab-click="onTabChange">
         <TabPanel v-for="(tab, i) in tabs" :key="tab.value" :header="tab.title" class="absolute">
-          <RequestTab :value="tab.value" class="absolute"></RequestTab>
+          <RequestTab :title="tab.title" :value="tab.value" class="absolute"></RequestTab>
           <template #header>
             <Badge v-if="dirty[i]" style="margin-left: 0.5em; margin-right: 0.5em"></Badge>
             <Badge style="" value="x" @click="closeTab(i)"></Badge>

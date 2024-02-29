@@ -6,7 +6,7 @@ import Password from "primevue/password";
 
 import { ref, toRefs, watch } from "vue";
 
-const props = defineProps(["method"]);
+const props = defineProps({ method: String });
 
 const basicAuth = ref({
   username: "",

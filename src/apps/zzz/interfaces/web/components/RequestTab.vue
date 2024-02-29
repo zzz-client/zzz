@@ -18,10 +18,10 @@ const basename = (path) => path.split("/").reverse()[0];
 
 import Session, { SessionProps } from "./Session";
 
-const props = defineProps(["value", "title"]);
 const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
+const props = defineProps({ value: String, title: String });
 
-const { value } = toRefs(props.value);
+const { value, title } = toRefs(props);
 const method = ref("GET");
 const requestData = ref({});
 const breadcrumbs = ref([]);
@@ -57,9 +57,10 @@ function send(): void {
   });
 }
 
+console.log("title", title);
 console.log("value", value);
 if (value) {
-  load(value.value); // TODO: How is this set through config?
+  // load(value.value); // TODO: How is this set through config?
 }
 function showCookies() {
   Session.update((state: SessionProps) => ({
