@@ -35,36 +35,31 @@ const response = ref({
   data: null
 });
 function load(newValue: string) {
-  const newBreadcrumbs = [] as MenuItem[];
-  let href = "";
-  for (const pathPart of newValue.split("/")) {
-    href += "/" + pathPart;
-    if (href.startsWith("/")) {
-      href = href.substring(1);
-    }
-    newBreadcrumbs.push({
+  if (!newValue) {
+    breadcrumbs.value = [{ label: "Unsaved Request" }];
+  } else {
+    breadcrumbs.value = newValue.split("/").map((pathPart) => ({
       label: basename(pathPart),
       command: () => alert("Fix breadcrumbs, yo dolt")
+    }));
+    loadRequest(newValue).then((loadedRequest) => {
+      console.log("response", loadedRequest);
+      requestData.value = loadedRequest.data;
+      tab.value.title = loadedRequest.data.Name;
     });
   }
-  breadcrumbs.value = newBreadcrumbs;
-  loadRequest(newValue).then((loadedRequest) => {
-    console.log("response", loadedRequest);
-    requestData.value = loadedRequest.data;
-    tab.value.title = loadedRequest.data.Name;
-  });
 }
-function send(): void {
-  executeRequest(tab.value.id).then((executedResponse) => {
+function send(): Promise<void> {
+  return executeRequest(tab.value.id).then((executedResponse) => {
     response.value = executedResponse;
   });
 }
-function showCookies() {
+function showCookies(): void {
   Session.update(setProp("showCookies", true));
 }
-function save() {
+function save(): Promise<void> {
   console.log("Saving", JSON.stringify(requestData.value));
-  saveRequest(tab.value.id, requestData.value).then((response) => {
+  return saveRequest(tab.value.id, requestData.value).then((response) => {
     if (response.status < 300) {
       console.log(response);
       toast.add({ summary: "Saved", severity: "success", life: 5000 });
@@ -75,9 +70,7 @@ function save() {
   });
 }
 
-if (tab.value.id) {
-  load(tab.value.id);
-}
+load(tab.value.id);
 </script>
 
 <template>

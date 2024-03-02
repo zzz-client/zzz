@@ -3,7 +3,7 @@ import Session from "./Session.ts";
 import { select } from "npm:@ngneat/elf";
 import { SessionProps } from "./Session.ts";
 
-export function doTheThing(scope: string, cb: Function): Promise<void> {
+export function loadCollections(scope: string): Promise<void> {
   return axios
     .get(addQueryParams("http://localhost:8000/" + scope), {
       headers: {
@@ -12,7 +12,7 @@ export function doTheThing(scope: string, cb: Function): Promise<void> {
     })
     .then((res) => {
       console.log("Got initial data", res.data);
-      res.data.Children.forEach(cb);
+      return Promise.resolve(res.data.Children);
     })
     .catch((error) => {
       console.log(error);
@@ -21,7 +21,7 @@ export function doTheThing(scope: string, cb: Function): Promise<void> {
       if (error.message === "Network Error") {
         error.message += ". Is the HTTP server running?";
       }
-      throw new Error(error.response?.data || error.message);
+      return Promise.reject(error.response?.data || error.message);
     });
 }
 

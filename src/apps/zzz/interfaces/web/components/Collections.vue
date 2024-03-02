@@ -2,29 +2,22 @@
 import type { MenuItemCommandEvent } from "primevue/menuitem";
 import PanelMenu from "primevue/panelmenu";
 import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
+import Session, { SessionProps, setProp } from "./Session";
+import { loadCollections } from "./MainWindow.axios";
+
 import { ref, toRefs } from "vue";
 const expandedKeys = ref({} as [string: boolean]);
+const collections = ref([] as any[]);
 
-const props = defineProps(["collections"]);
+const scopes = ref([Session.getValue().scope]);
+const scope = ref(Session.getValue().scope);
+const viewSecrets = ref(Session.getValue().viewSecrets);
 
-const { collections } = toRefs(props);
-
-export interface Domain {
-  name: string;
-  cookies: Cookie[];
-}
-export interface Cookie {
-  key: string;
-  value: string;
-  path: string;
-  expires: Date;
-}
-
-for (const collection of collections.value) {
-  collection.command = (event: MenuItemCommandEvent) => {
-    console.log("butts lol", event);
-  };
-}
+Session.subscribe((state) => {
+  scope.value = state.scope;
+  viewSecrets.value = state.viewSecrets;
+});
 
 function expand(items: [], value: boolean) {
   for (const item of items) {
@@ -40,6 +33,71 @@ function expandAll() {
 function collapseAll() {
   expand(collections.value, false);
 }
+let lastClick = -1;
+function clickRequest(uwu: any) {
+  const currentClick = Date.now();
+  if (lastClick >= 0 && currentClick - lastClick < 500) {
+    console.log("lastClick", lastClick, currentClick, uwu.item.key);
+    openTab(uwu.item.key);
+  }
+  lastClick = currentClick;
+}
+function openTab(key: string) {
+  const tabs = Session.getValue().tabs;
+  console.log("Yeet", key, tabs);
+  for (let i = 0; i < tabs.length; i++) {
+    if (tabs[i].value == key) {
+      Session.update(setProp("activeTab", i));
+      activeTab.value = i;
+      return;
+    }
+  }
+  newTab({ title: "...", id: key });
+}
+function newTab(tab: Tab): void {
+  Session.update((state: SessionProps) => ({
+    ...state,
+    tabs: [...state.tabs, tab],
+    activeTab: state.tabs.length
+  }));
+}
+function addModelToNodes(collectionList: any[], model: Model) {
+  let fullPath = model.Id;
+  if (fullPath.substring(0, 1) == "/") {
+    fullPath = fullPath.substring(1);
+  }
+  const newNode = {
+    key: fullPath,
+    label: model.Name
+  } as MenuItem;
+  if (model.Method) {
+    // TODO: Could have a better way to determine this
+    newNode.command = clickRequest;
+  }
+  if (model.Children) {
+    newNode.items = [];
+    model.Children.forEach((child) => {
+      addModelToNodes(newNode.items, child);
+    });
+  }
+  collectionList.push(newNode);
+}
+interface Collection {
+  key: string;
+  label: string;
+  command: (event: any) => void;
+  items?: MenuItem[];
+}
+export interface Cookie {
+  key: string;
+  value: string;
+  path: string;
+  expires: Date;
+}
+
+loadCollections(scope.value).then((models) => {
+  models.forEach((model) => addModelToNodes(collections.value, model));
+});
 </script>
 <template>
   <div class="justify-content-right" style="display: flex">
@@ -48,6 +106,10 @@ function collapseAll() {
     <Button type="button" icon="pi pi-minus" label="Collapse All" @click="collapseAll">-</Button>
   </div>
   <PanelMenu v-model:expandedKeys="expandedKeys" :model="collections"> </PanelMenu>
+  <div style="position: absolute; bottom: 1em; left: 1em">
+    <ToggleButton v-model="viewSecrets" onLabel="Show secrets" offLabel="Hide secrets" />
+    <Dropdown v-model="scope" :options="scopes" placeholder="Select a Scope" checkmark :highlightOnSelect="false" />
+  </div>
 </template>
 
 <style scoped>

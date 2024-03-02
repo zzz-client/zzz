@@ -37,6 +37,11 @@ const domains = ref([
 ] as Domain[]);
 let activeDomains = ref([] as number[]);
 
+interface Domain {
+  name: string;
+  cookies: Cookie[];
+}
+
 setRefs({ visible, newDomainToAllow, newDomain, domainsToAllow, domains, activeDomains });
 </script>
 
