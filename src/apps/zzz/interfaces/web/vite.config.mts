@@ -14,6 +14,7 @@ export default defineConfig({
       "npm:vue": "vue",
       "npm:mitt": "mitt",
       "npm:@ngneat/elf": "@ngneat/elf",
+      "npm:@ngneat/elf-persist-state": "@ngneat/elf-persist-state",
     },
   },
   plugins: [vue(), viteDeno({ importMapFilename: "../../../../../deno.jsonc" })],

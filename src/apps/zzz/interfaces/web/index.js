@@ -12,6 +12,6 @@ app.use(PrimeVue);
 app.use(ToastService);
 
 app.component("Toast", Toast);
-app.component("Toast", Badge);
+// app.component("Toast", Badge);
 app.directive("badge", BadgeDirective);
 app.mount("#app");

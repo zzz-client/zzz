@@ -13,19 +13,29 @@ import Collections from "./Collections.vue";
 import Cookies from "./Cookies.vue";
 import { doTheThing } from "./MainWindow.axios";
 import RequestTab from "./RequestTab.vue";
-import Session, { SessionProps } from "./Session";
+import Session, { SessionProps, setProp } from "./Session";
 import { Model } from "../../../../../storage/mod";
 
-const viewSecrets = ref(false);
-Session.subscribe((state: SessionProps) => {
-  viewSecrets.value = state.showSecrets;
-});
+const viewSecrets = ref(Session.getValue().showSecrets);
+const tabs = ref(Session.getValue().tabs || []);
+const activeTab = ref(Session.getValue().activeTab);
+const scope = ref(Session.getValue().scope);
 
-const tabs = ref([]);
+console.log("active", activeTab.value);
+
 const collections = ref([] as any[]);
 const dirty = ref([] as boolean[]);
 const errorMessage = ref("");
-const scope = ref("Salesforce Primary");
+
+function closeAllTabs() {
+  Session.update(setProp("tabs", []));
+}
+// closeAllTabs();
+
+Session.subscribe((state) => {
+  console.log("subscribe", state.tabs, tabs.value);
+  tabs.value = state.tabs || [];
+});
 
 let lastClick = -1;
 function clickRequest(uwu: any) {
@@ -39,21 +49,22 @@ function clickRequest(uwu: any) {
 function openTab(key: string) {
   for (let i = 0; i < tabs.value.length; i++) {
     if (tabs.value[i].value == key) {
-      // activeTab.value = i;
+      Session.update(setProp("activeTab", i));
+      activeTab.value = i;
       return;
     }
   }
-  console.log("HERE", key);
-  const what = ref({ title: "...", id: key });
-  console.log("HERE", what);
-  tabs.value.push(what);
-  // activeTab.value = tabs.value.length - 1;
+  tabs.value.push({ title: "...", id: key });
+  Session.update(setProp("tabs", tabs.value));
+  console.log("Done", Session.getValue());
+  activeTab.value = tabs.value.length - 1;
 }
 
 function newTab(): void {
   tabs.value.push({ title: "Untitled Request", id: "" });
   const index = tabs.value.length - 1;
   dirty.value[index] = true;
+  Session.update(setProp("tabs", tabs));
 }
 
 interface Collection {
@@ -129,10 +140,9 @@ function closeTab(tabIndex) {
     </SplitterPanel>
 
     <SplitterPanel :size="75" class="absolute">
-      <TabView class="absolute" @tab-click="onTabChange">
-        <TabPanel v-for="(tab, i) in tabs" :key="tab.value.id" :header="tab.value.title" class="absolute">
-          {{ tab.title }}
-          <RequestTab v-model:tab="tabs[i].value" class="absolute"></RequestTab>
+      <TabView class="absolute" @tab-click="onTabChange" v-model:activeIndex="activeTab">
+        <TabPanel v-for="(tab, i) in tabs" :key="tab.id" :header="tab.title" class="absolute">
+          <RequestTab v-model="tabs[i]" class="absolute"></RequestTab>
           <template #header>
             <Badge v-if="dirty[i]" style="margin-left: 0.5em; margin-right: 0.5em"></Badge>
             <Badge style="" value="x" @click="closeTab(i)"></Badge>

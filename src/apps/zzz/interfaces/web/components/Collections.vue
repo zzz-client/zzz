@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { MenuItemCommandEvent } from "primevue/menuitem";
 import PanelMenu from "primevue/panelmenu";
+import Button from "primevue/button";
 import { ref, toRefs } from "vue";
 const expandedKeys = ref({} as [string: boolean]);
 

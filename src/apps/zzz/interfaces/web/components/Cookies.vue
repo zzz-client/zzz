@@ -51,7 +51,7 @@ setRefs({ visible, newDomainToAllow, newDomain, domainsToAllow, domains, activeD
     <p class="mb-5">
       <Accordion :multiple="true" :activeIndex="activeDomains">
         <AccordionTab v-for="(domain, _i) in domains" :key="_i" :header="domain.name">
-          <KeyValueTable v-model:data="domain.cookies"></KeyValueTable>
+          <KeyValueTable v-model="domain.cookies"></KeyValueTable>
         </AccordionTab>
       </Accordion>
       <Divider />

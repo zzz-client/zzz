@@ -4,42 +4,29 @@ import DataTable from "primevue/datatable";
 import InputText from "primevue/inputtext";
 import { toRef, watch } from "vue";
 
-interface KeyValue {
-  key: string;
-  value: string;
-}
+// interface KeyValue {
+//   key: string;
+//   value: string;
+// }
+
+const model = defineModel({ type: Object, default: {} });
+
+// const what = [];
+// for (const key of model) {
+//   what.push(key.value);
+// }
+const what = Object.keys(model.value).map((key) => ({ key, value: model.value[key] }));
+console.log("model", model);
+console.log("what", what);
 
 const props = defineProps<{
-  data: KeyValue[];
   readOnly?: boolean;
 }>();
-
-const data = toRef(props.data);
-
-watch(
-  () => props.data,
-  (newValue) => {
-    // const newParams = [] as { key: string; value: string; description: string }[];
-    const newValues = [] as any;
-    Object.keys(newValue).forEach((param) => {
-      newValues.push({
-        key: param,
-        value: newValue[param]
-        // description: ""
-      });
-    });
-    data.value = newValues;
-  }
-);
-
-function onCellEditComplete(change) {
-  console.log("onCellEditComplete", change);
-}
 </script>
 
 <template>
   <div class="uwu">
-    <DataTable :value="data" :editMode="props.readOnly ? 'row' : 'cell'">
+    <DataTable :value="what" :editMode="props.readOnly ? 'row' : 'cell'">
       <!-- editMode="cell"-->
       <Column key="key" field="key" header="Key">
         <template #editor="{ data, field }">

@@ -25,9 +25,7 @@ import Session, { SessionProps } from "./Session";
 
 const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 
-const tab = defineModel("tab");
-
-console.log("Tab!", tab);
+const tab = defineModel();
 
 const method = ref("GET");
 const requestData = ref({});
@@ -54,11 +52,8 @@ function load(newValue: string) {
   }
   breadcrumbs.value = newBreadcrumbs;
   loadRequest(newValue).then((loadedRequest) => {
-    console.log("loaded", loadedRequest);
     requestData.value = loadedRequest.data;
-    console.log("loaded", loadedRequest.data.Name);
     tab.value.title = loadedRequest.data.Name;
-    console.log(tab.value.title);
   });
 }
 function send(): void {
@@ -76,6 +71,7 @@ function showCookies() {
   }));
 }
 function save() {
+  console.log("Saving", JSON.stringify(requestData.value));
   saveRequest(tab.value.id, requestData.value).then((response) => {
     if (response.status < 300) {
       console.log("saved", response);
@@ -87,7 +83,6 @@ function save() {
 </script>
 
 <template>
-  Radda
   <Toast />
   <Splitter layout="vertical">
     <SplitterPanel :minSize="10">
@@ -95,8 +90,8 @@ function save() {
       <Breadcrumb :model="breadcrumbs" />
 
       <div class="flex">
-        <Dropdown disabled v-model="method" :options="methods" class="w-full md:w-14rem" />
-        <InputText disabled type="text" :value="requestData.URL" />
+        <Dropdown v-model="method" :options="methods" class="w-full md:w-14rem" />
+        <InputText type="text" v-model="requestData.URL" />
         <Button label="Send" @click="send">Send</Button>
       </div>
       <div class="flex">
@@ -104,10 +99,10 @@ function save() {
           <TabPanel header="Authorization">
             <Authorization :method="authorization"></Authorization>
           </TabPanel>
-          <TabPanel header="Params"><KeyValueTable :data="requestData.QueryParams"></KeyValueTable></TabPanel>
-          <TabPanel header="Headers"><KeyValueTable :data="requestData.Headers"></KeyValueTable></TabPanel>
+          <TabPanel header="Params"><KeyValueTable v-model="requestData.QueryParams"></KeyValueTable></TabPanel>
+          <TabPanel header="Headers"><KeyValueTable v-model="requestData.Headers"></KeyValueTable></TabPanel>
           <TabPanel header="Body">
-            <Body :body="requestData.Body"></Body>
+            <Body v-model="requestData.Body"></Body>
           </TabPanel>
           <TabPanel header="Settings"></TabPanel>
           <TabPanel header="Source">
@@ -117,9 +112,9 @@ function save() {
         <a style="font-weight: bold; margin: 1em; cursor: pointer" @click="showCookies">Cookies</a>
       </div>
     </SplitterPanel>
-    <SplitterPanel :minSize="10">
+    <!-- <SplitterPanel :minSize="10">
       <Response :v-if="response != {}" :data="response"></Response>
-    </SplitterPanel>
+    </SplitterPanel> -->
   </Splitter>
 </template>
 
