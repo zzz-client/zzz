@@ -16,8 +16,8 @@ const model = defineModel({ type: Object, default: {} });
 //   what.push(key.value);
 // }
 const what = Object.keys(model.value).map((key) => ({ key, value: model.value[key] }));
-console.log("model", model);
-console.log("what", what);
+// console.log("model", model);
+// console.log("keyValue", what);
 
 const props = defineProps<{
   readOnly?: boolean;

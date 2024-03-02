@@ -47,12 +47,12 @@ const methods = [
   }
 ];
 
-console.log("method", method.value);
+// console.log("method", method.value);
 
 watch(
   () => props.method,
   (newValue) => {
-    console.log("authorization", newValue);
+    // console.log("authorization", newValue);
     method.value = newValue;
   }
 );

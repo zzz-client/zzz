@@ -17,15 +17,12 @@ import Response from "./Response.vue";
 const basename = (path) => path.split("/").reverse()[0];
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
-
-const toast = useToast();
-toast.add({ summary: "Unauthenticated", severity: "error" });
-
-import Session, { SessionProps } from "./Session";
+import Session, { SessionProps, setProp } from "./Session";
 
 const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 
 const tab = defineModel();
+const toast = useToast();
 
 const method = ref("GET");
 const requestData = ref({});
@@ -52,6 +49,7 @@ function load(newValue: string) {
   }
   breadcrumbs.value = newBreadcrumbs;
   loadRequest(newValue).then((loadedRequest) => {
+    console.log("response", loadedRequest);
     requestData.value = loadedRequest.data;
     tab.value.title = loadedRequest.data.Name;
   });
@@ -61,24 +59,24 @@ function send(): void {
     response.value = executedResponse;
   });
 }
-
-load(tab.value.id);
-
 function showCookies() {
-  Session.update((state: SessionProps) => ({
-    ...state,
-    showCookies: true
-  }));
+  Session.update(setProp("showCookies", true));
 }
 function save() {
   console.log("Saving", JSON.stringify(requestData.value));
   saveRequest(tab.value.id, requestData.value).then((response) => {
     if (response.status < 300) {
-      console.log("saved", response);
+      console.log(response);
+      toast.add({ summary: "Saved", severity: "success", life: 5000 });
     } else {
-      console.error("error", response);
+      console.error(response);
+      toast.add({ summary: "Error", detail: response.data, severity: "error" });
     }
   });
+}
+
+if (tab.value.id) {
+  load(tab.value.id);
 }
 </script>
 
@@ -112,9 +110,9 @@ function save() {
         <a style="font-weight: bold; margin: 1em; cursor: pointer" @click="showCookies">Cookies</a>
       </div>
     </SplitterPanel>
-    <!-- <SplitterPanel :minSize="10">
-      <Response :v-if="response != {}" :data="response"></Response>
-    </SplitterPanel> -->
+    <SplitterPanel :minSize="10">
+      <Response v-if="response.status > 0" :data="response"></Response>
+    </SplitterPanel>
   </Splitter>
 </template>
 
