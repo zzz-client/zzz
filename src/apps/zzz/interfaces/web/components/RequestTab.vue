@@ -27,7 +27,7 @@ const toast = useToast();
 const method = ref("GET");
 const requestData = ref({});
 const breadcrumbs = ref([]);
-const authorization = ref("None");
+const authorizationType = ref("None");
 const response = ref({
   status: 0,
   statusText: "",
@@ -81,14 +81,14 @@ load(tab.value.id);
       <Breadcrumb :model="breadcrumbs" />
 
       <div class="flex">
-        <Dropdown v-model="method" :options="methods" class="w-full md:w-14rem" />
+        <Dropdown v-model="requestData.Authorization" :options="methods" class="w-full md:w-14rem" />
         <InputText type="text" v-model="requestData.URL" />
         <Button label="Send" @click="send">Send</Button>
       </div>
       <div class="flex">
         <TabView style="flex: 1">
           <TabPanel header="Authorization">
-            <Authorization :method="authorization"></Authorization>
+            <Authorization v-model="requestData.Authorization"></Authorization>
           </TabPanel>
           <TabPanel header="Params"><KeyValueTable v-model="requestData.QueryParams"></KeyValueTable></TabPanel>
           <TabPanel header="Headers"><KeyValueTable v-model="requestData.Headers"></KeyValueTable></TabPanel>

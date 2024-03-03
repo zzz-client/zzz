@@ -6,25 +6,31 @@ import Password from "primevue/password";
 
 import { ref, toRefs, watch } from "vue";
 
-const props = defineProps({ method: String });
+const requestAuthorization = defineModel();
 
-const basicAuth = ref({
-  username: "",
-  password: ""
-});
-const header = ref({
-  key: "",
-  value: ""
-});
-const query = ref({
-  key: "",
-  value: ""
-});
-const bearerToken = ref("");
-const { method } = toRefs(props);
-const newMethod = ref(method.value);
+function getMethodFromRequestAuthorization(requestAuthorizationValue) {
+  return (requestAuthorizationValue && Object.keys(requestAuthorizationValue)[0]) || "Hmm";
+}
+const chosenMethod = ref("None");
 
-const methods = [
+const methodValues = ref({
+  None: {},
+  BasicAuth: {
+    username: "",
+    password: ""
+  },
+  BearerToken: "",
+  Header: {
+    key: "",
+    value: ""
+  },
+  Query: {
+    key: "",
+    value: ""
+  }
+});
+
+const methodOptions = [
   {
     label: "No Auth",
     value: "None"
@@ -47,13 +53,23 @@ const methods = [
   }
 ];
 
-// console.log("method", method.value);
-
 watch(
-  () => props.method,
-  (newValue) => {
-    // console.log("authorization", newValue);
-    method.value = newValue;
+  () => requestAuthorization.value,
+  (newRequestAuthorization) => {
+    const newAuthMethod = getMethodFromRequestAuthorization(newRequestAuthorization);
+    chosenMethod.value = newAuthMethod;
+    methodValues.value[newAuthMethod] = newRequestAuthorization[newAuthMethod];
+  }
+);
+watch(
+  () => chosenMethod.value,
+  (newChosenMethod) => {
+    methodOptions.forEach((option) => {
+      if (option.value !== newChosenMethod) {
+        delete requestAuthorization.value[option.value];
+      }
+    });
+    requestAuthorization.value[newChosenMethod] = methodValues.value[newChosenMethod];
   }
 );
 </script>
@@ -63,43 +79,43 @@ watch(
     <p class="m-0" style="width: 20em">
       <label for="method">Method</label>
       <br />
-      <Dropdown inputId="method" v-model="newMethod" :options="methods" optionLabel="label" optionValue="value" />
+      <Dropdown inputId="method" v-model="chosenMethod" :options="methodOptions" optionLabel="label" optionValue="value" />
     </p>
     <Divider layout="vertical" />
-    <p v-if="'BasicAuth' === newMethod" class="m-1">
+    <p v-if="'BasicAuth' === chosenMethod" class="m-1">
       <span class="p-float-label floating-label" style="margin-bottom: 1.5em">
-        <InputText type="text" v-model="basicAuth.username" inputId="username" />
+        <InputText type="text" v-model="methodValues.BasicAuth.username" inputId="username" />
         <label for="username">Username</label>
       </span>
       <span class="p-float-label floating-label">
-        <Password v-model="basicAuth.password" :feedback="false" inputId="password" toggleMask />
+        <Password v-model="methodValues.BasicAuth.password" :feedback="false" inputId="password" toggleMask />
         <label for="password">Password</label>
       </span>
     </p>
-    <p v-if="'BearerToken' === newMethod" class="m-1">
+    <p v-if="'BearerToken' === chosenMethod" class="m-1">
       <span class="p-float-label floating-label">
         <!-- TODO: this field should be way wider -->
-        <Password v-model="bearerToken" :feedback="false" inputId="token" toggleMask />
+        <Password v-model="methodValues.BearerToken" :feedback="false" inputId="token" toggleMask />
         <label for="token">Token</label>
       </span>
     </p>
-    <p v-if="'Header' === newMethod" class="m-1">
+    <p v-if="'Header' === chosenMethod" class="m-1">
       <span class="p-float-label floating-label" style="margin-bottom: 1.5em">
-        <InputText type="text" v-model="header.key" inputId="headerKey" />
+        <InputText type="text" v-model="methodValues.Header.key" inputId="headerKey" />
         <label for="headerKey">Key</label>
       </span>
       <span class="p-float-label floating-label" style="margin-bottom: 1.5em">
-        <InputText type="text" v-model="header.value" inputId="headerValue" />
+        <InputText type="text" v-model="methodValues.Header.value" inputId="headerValue" />
         <label for="headerValue">Value</label>
       </span>
     </p>
-    <p v-if="'Query' === newMethod" class="m-1">
+    <p v-if="'Query' === chosenMethod" class="m-1">
       <span class="p-float-label floating-label" style="margin-bottom: 1.5em">
-        <InputText type="text" v-model="query.key" inputId="queryKey" />
+        <InputText type="text" v-model="methodValues.Query.key" inputId="queryKey" />
         <label for="queryKey">Key</label>
       </span>
       <span class="p-float-label floating-label" style="margin-bottom: 1.5em">
-        <InputText type="text" v-model="query.value" inputId="queryValue" />
+        <InputText type="text" v-model="methodValues.Query.value" inputId="queryValue" />
         <label for="queryValue">Value</label>
       </span>
     </p>
