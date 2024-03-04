@@ -2,15 +2,15 @@
 import RadioButton from "primevue/radiobutton";
 import { ref, toRefs, watch } from "vue";
 
-const props = defineProps({ body: String });
-
+const body = defineModel();
 const bodyType = ref("none");
 
-const { body } = toRefs(props);
+console.log("body", body.value);
 
 watch(
-  () => props.body,
+  () => body.value,
   (newValue) => {
+    console.log("What", newValue);
     if (newValue == null) {
       bodyType.value = "none";
       body!.value = newValue;
@@ -28,11 +28,11 @@ watch(
       <label for="none" class="ml-2">none</label>
     </div>
     <div class="flex align-items-center">
-      <RadioButton v-model="bodyType" inputId="form-data" name="BodyType" value="form-data" />
+      <RadioButton v-model="bodyType" disabled inputId="form-data" name="BodyType" value="form-data" />
       <label for="form-data" class="ml-2">form-data</label>
     </div>
     <div class="flex align-items-center">
-      <RadioButton v-model="bodyType" inputId="x-www-form-urlencoded" name="BodyType" value="x-www-form-urlencoded" />
+      <RadioButton v-model="bodyType" disabled inputId="x-www-form-urlencoded" name="BodyType" value="x-www-form-urlencoded" />
       <label for="x-www-form-urlencoded" class="ml-2">x-www-form-urlencoded</label>
     </div>
     <div class="flex align-items-center">
@@ -40,7 +40,7 @@ watch(
       <label for="raw" class="ml-2">raw</label>
     </div>
     <div class="flex align-items-center">
-      <RadioButton v-model="bodyType" inputId="binary" name="BodyType" value="binary" />
+      <RadioButton v-model="bodyType" disabled inputId="binary" name="BodyType" value="binary" />
       <label for="binary" class="ml-2">binary</label>
     </div>
   </div>
