@@ -66,7 +66,7 @@ TODO: The tui package on deno.land/x looks sick!
 
 # Interface Definition
 
-Here is a full list of features an interface needs to suply:
+Here is a full list of features an interface needs to supply:
 
 1. Specify Context
 2. CRUD
