@@ -4,32 +4,20 @@ import { localStorageStrategy, persistState } from "npm:@ngneat/elf-persist-stat
 
 export interface SessionProps {
   showSecrets: boolean;
-  showCookies: boolean;
+  showCookies: boolean; // TODO: Do not need this, I think
   tabs: { title: string; value: string }[];
   activeTab: number;
   scope: string;
+  context: string | null;
 }
 
 const Session = createStore(
   { name: "session" },
-  withProps<SessionProps>({ showSecrets: false, activeTab: 0, showCookies: false, tabs: [], scope: "Salesforce Primary" }),
+  withProps<SessionProps>({ showSecrets: false, activeTab: 0, showCookies: false, tabs: [], scope: "", context: null }),
 );
 export default Session;
 
-const persist = persistState(Session, {
+persistState(Session, {
   key: "session",
   storage: localStorageStrategy,
 });
-
-// Examples from https://ngneat.github.io/elf/docs/store
-
-// Session.subscribe((state: SessionProps) => ({
-//   ...state,
-//   activeTab: event.index
-// }));
-// const user$ = authStore.pipe(select((state) => state.user));
-
-// Session.update((state: SessionProps) => ({
-//   ...state,
-//   activeTab: event.index
-// }));

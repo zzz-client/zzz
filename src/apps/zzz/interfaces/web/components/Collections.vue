@@ -10,7 +10,7 @@ import { ref, toRefs } from "vue";
 const expandedKeys = ref({} as [string: boolean]);
 const collections = ref([] as any[]);
 
-const scopes = ref([Session.getValue().scope]);
+const scopes = ref([Session.getValue().scope]); // TODO: how do we load this?
 const scope = ref(Session.getValue().scope);
 const viewSecrets = ref(Session.getValue().viewSecrets);
 

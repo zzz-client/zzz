@@ -17,10 +17,9 @@ import { Model } from "../../../../../storage/mod";
 
 const tabs = ref([]);
 const activeTab = ref(0);
-const scope = ref("Salesforce Primary");
-// const tabs = ref(Session.getValue().tabs);
-// const activeTab = ref(Session.getValue().activeTab);
-// const scope = ref(Session.getValue().scope);
+const scope = ref(Session.getValue().scope);
+const context = ref(Session.getValue().context);
+const contexts = ref([Session.getValue().context]); // TODO: how do we load this?
 
 const dirty = ref([] as boolean[]);
 const errorMessage = ref("");
@@ -90,6 +89,11 @@ function newTab(tab: Tab = { title: "Untitled Request", id: "" }): void {
     </SplitterPanel>
 
     <SplitterPanel :size="75" min-size="40" class="absolute">
+      {{ Session.getValue() }}
+      <div style="position: absolute; top: 1em; right: 10em">
+        Contexts: {{ contexts }}
+        <Dropdown v-model="context" :options="contexts" placeholder="Select a Context" checkmark :highlightOnSelect="true" />
+      </div>
       <div v-if="tabs.length === 0" class="absolute" style="font-size: 1.5em; position: relative; left: 40%; top: 40%; margin: auto">
         Nothing to see!
         <br />

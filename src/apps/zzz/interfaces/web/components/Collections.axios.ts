@@ -1,13 +1,12 @@
 import axios from "npm:axios";
-import Session from "./Session.ts";
 import { select } from "npm:@ngneat/elf";
-import { SessionProps } from "./Session.ts";
+import Session, { SessionProps } from "./Session.ts";
 
 export function loadCollections(scope: string): Promise<void> {
   return axios
     .get(addQueryParams("http://localhost:8000/" + scope), {
       headers: {
-        "X-Zzz-Context": "integrate",
+        "X-Zzz-Context": Session.getValue().context,
       },
     })
     .then((res) => {
