@@ -108,7 +108,7 @@ loadContexts().then((resultContexts) => {
           <RequestTab v-model="tabs[i]" class="absolute"></RequestTab>
           <template #header>
             <Badge v-if="dirty[i]" style="margin-left: 0.5em; margin-right: 0.5em"></Badge>
-            <Badge style="" value="x" @click="closeTab(i)"></Badge>
+            <Badge style="margin-left: 0.5em" value="x" @click="closeTab(i)"></Badge>
           </template>
         </TabPanel>
         <TabPanel v-if="tabs.length > 0" header="+" />

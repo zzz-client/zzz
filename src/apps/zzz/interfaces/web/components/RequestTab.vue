@@ -81,7 +81,7 @@ load(tab.value.id);
       <Breadcrumb :model="breadcrumbs" />
 
       <div class="flex">
-        <Dropdown v-model="requestData.Authorization" :options="methods" class="w-full md:w-14rem" />
+        <Dropdown v-model="requestData.Method" :options="methods" class="w-full md:w-14rem" />
         <InputText type="text" v-model="requestData.URL" />
         <Button label="Send" @click="send">Send</Button>
       </div>
