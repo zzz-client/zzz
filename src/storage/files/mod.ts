@@ -64,11 +64,17 @@ export default class FileStorage implements IStorage {
     Trace("File contents:", fileContents);
     const model = fileFormat.parse(fileContents) as Model;
     model.Id = fullPath;
+    if (model.Id.startsWith("./")) {
+      model.Id = model.Id.substring("./".length);
+    }
     model.Name = basename(fullPath);
     return Promise.resolve(model);
   }
   private async getFolder(fullPath: string): Promise<ParentModel> {
     const model = { Id: fullPath, Name: basename(fullPath), Children: [] as Model[] } as ParentModel;
+    if (model.Id.startsWith("./")) {
+      model.Id = model.Id.substring("./".length);
+    }
     Trace("Getting folder " + fullPath);
     await this.readDirectoryToFolder(model);
     await this.readDirectoryDefaults(model);
