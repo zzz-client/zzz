@@ -12,6 +12,7 @@ import { CookiesModule } from "../../modules/cookies/mod.ts";
 import { PathParamsModule } from "../../modules/path-params/mod.ts";
 import { RedactModule } from "../../modules/redact/mod.ts";
 import { RequestsModule } from "../../modules/requests/mod.ts";
+import { ScopeModule } from "../../modules/scope/mod.ts";
 import TemplateModule from "../../modules/template/mod.ts";
 import { listen, Server } from "./http.ts";
 
@@ -38,7 +39,7 @@ export default class Application implements IApplication {
     this.registerModule(new RequestsModule(this.store));
     this.registerModule(new BodyModule(this.store));
     this.registerModule(new PathParamsModule(this.store));
-    // this.registerModule(new ScopeModule(this));
+    this.registerModule(new ScopeModule(this.store));
     this.registerModule(new ContextModule(this.store));
     this.registerModule(new AuthorizationModule(this.store));
     this.registerModule(new TemplateModule(this.store));
