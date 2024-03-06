@@ -4,13 +4,13 @@ import PanelMenu from "primevue/panelmenu";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
 import Session, { SessionProps, setProp } from "./Session";
-import { loadCollections } from "./Collections.axios";
+import { loadCollections, loadScopes } from "./Collections.axios";
 
 import { ref, toRefs } from "vue";
 const expandedKeys = ref({} as [string: boolean]);
 const collections = ref([] as any[]);
 
-const scopes = ref([Session.getValue().scope]); // TODO: how do we load this?
+const scopes = ref([]);
 const scope = ref(Session.getValue().scope);
 const viewSecrets = ref(Session.getValue().viewSecrets);
 
@@ -97,6 +97,11 @@ export interface Cookie {
 
 loadCollections(scope.value).then((models) => {
   models.forEach((model) => addModelToNodes(collections.value, model));
+});
+loadScopes().then((resultScopes) => {
+  resultScopes.forEach((resultScope) => {
+    scopes.value.push(resultScope);
+  });
 });
 </script>
 <template>

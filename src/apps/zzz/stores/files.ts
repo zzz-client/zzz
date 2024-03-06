@@ -42,7 +42,18 @@ export default class FileStore implements IStore {
   }
   async list(modelType: string): Promise<Model[]> {
     const result = await this.storage(modelType).retrieve(".");
-    const children = (result as ParentModel).Children;
+    let children = (result as ParentModel).Children;
+    if (modelType === Scope.name) {
+      const baseDirs = Array.from(this.storages.values())
+        .map((storage: IStorage) => storage.baseDir)
+        .filter((dir: string) => dir.startsWith(this.storages.get(HttpRequest.name).baseDir + "/"))
+        .map((dir: string) => dir.substring((this.storages.get(HttpRequest.name).baseDir + "/").length));
+      console.log("baseDirs", baseDirs);
+      children = children.filter((child: Model) => {
+        // console.log("child", child);
+        return !baseDirs.includes(child.Id);
+      });
+    }
     return children;
   }
   async search(searchParams: SearchParams): Promise<Model[]> {
@@ -76,6 +87,7 @@ export default class FileStore implements IStore {
 // ----------------------------------------- TESTS -----------------------------------------
 
 import { describe, it } from "../../../lib/tests.ts";
+import { Scope } from "../modules/scope/mod.ts";
 
 describe("FileStore", () => {
   describe("getModelType", () => {

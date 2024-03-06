@@ -4,6 +4,7 @@ import { getFileFormat } from "../../../../storage/files/formats.ts";
 import { Model } from "../../../../storage/mod.ts";
 import IApplication, { FeatureFlags } from "../../../mod.ts";
 import ExecuteActor from "../../actors/execute.ts";
+import { Context } from "../../modules/context/mod.ts";
 import { Collection, HttpRequest } from "../../modules/requests/mod.ts";
 import { Scope } from "../../modules/scope/mod.ts";
 import Application from "../cli/app.ts";
@@ -58,15 +59,15 @@ export class Server implements IServer {
   }
   async respondToGet(request: Request): Promise<Response> {
     const parts = dissectRequest(request);
-    parts.fullId;
+    const { pathname } = new URL(request.url);
     Trace("respondToGet " + parts.fullId);
-    if (parts.fullId === "/favicon.ico" || basename(parts.fullId) === "favicon") {
+    if (pathname === "/favicon.ico") {
       Trace("Responding to favicon request");
       return Promise.resolve(newResponse(204, null, STANDARD_HEADERS));
     }
-    if (parts.fullId === "/" || basename(parts.fullId) == "/") {
+    if (pathname === "/") {
       Trace("Responding to base URL: scope list");
-      return this.respondToScopesList(extname(parts.fullId));
+      return this.respondToList("json"); // TODO: At some point this should be configurable by the client somehow
     }
     const model = await this.executeGet(request);
     return Promise.resolve(newResponse(200, this.stringify(model, parts.extension || "json"), STANDARD_HEADERS));
@@ -116,13 +117,21 @@ export class Server implements IServer {
       }),
     );
   }
-  async respondToScopesList(fileExtension: string): Promise<Response> {
-    Trace("Responding to Scopes list");
+  async respondToList(fileExtension: string): Promise<Response> {
+    Trace("Responding to list");
     const scopes = await this.app.store.list(Scope.name);
     Trace("Scopes:", scopes);
     const scopeIds = scopes.map((scope: Model) => scope.Id);
     Trace("Scope IDs:", scopeIds);
-    return newResponse(200, this.stringify(scopeIds, fileExtension), STANDARD_HEADERS);
+    const contexts = await this.app.store.list(Context.name);
+    Trace("Contexts:", contexts);
+    const contextIds = contexts.map((context: Model) => context.Id); // .filter((contextId: string) => !contextId.includes(".local") && contextId != "globals")
+    Trace("Context IDs:", contextIds);
+    const body = {
+      scopes: scopeIds,
+      contexts: contextIds,
+    };
+    return newResponse(200, this.stringify(body, fileExtension), STANDARD_HEADERS);
   }
   // deno-lint-ignore no-explicit-any
   private stringify(result: any, fileExtension = "json"): string {
