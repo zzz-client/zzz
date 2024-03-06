@@ -4,7 +4,7 @@ import PanelMenu from "primevue/panelmenu";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
 import Session, { SessionProps, setProp } from "./Session";
-import { loadCollections } from "./MainWindow.axios";
+import { loadCollections } from "./Collections.axios";
 
 import { ref, toRefs } from "vue";
 const expandedKeys = ref({} as [string: boolean]);
