@@ -8,10 +8,11 @@ import IApplication from "../../../mod.ts";
 import { Collection, HttpRequest } from "../../modules/requests/mod.ts";
 import { Model } from "../../../../storage/mod.ts";
 import { Scope } from "../../modules/scope/mod.ts";
+import { asAny } from "../../../../lib/etc.ts";
 
 export default async function Tui(app: IApplication): Promise<void> {
   const req = await app.store.get(HttpRequest.name, "Salesforce Primary/BasicFunctionality") as HttpRequest;
-  const collections = (await app.store.get(Scope.name, "Salesforce Primary")).Children;
+  const collections = asAny(await app.store.get(Scope.name, "Salesforce Primary")).Children;
 
   return run(app, collections, req);
 }
@@ -54,7 +55,7 @@ async function run(app: IApplication, collections: Model[], req: HttpRequest): P
     headers: [
       { title: "(ー。ー) Zzz                        " }, // extra space because Table does auto width to header contents
     ],
-    data: collections.map((model: Model) => [model.Method ? model.Name : `› ${model.Name}`]),
+    data: collections.map((model: Model) => [asAny(model).Method ? model.Name : `› ${model.Name}`]),
     charMap: "rounded",
     zIndex: 0,
   } as TableOptions;
@@ -204,20 +205,20 @@ async function run(app: IApplication, collections: Model[], req: HttpRequest): P
     const selectedIndex = collectionTable.selectedRow.value;
     const selectedModel = collections[selectedIndex];
     if (key === "return") {
-      if (selectedModel.Method) {
+      if (asAny(selectedModel).Method) {
         openRequest(selectedModel as HttpRequest);
       } else {
         expandCollection(selectedModel as Collection);
       }
     }
     if (key === "right") {
-      if (!selectedModel.Method) {
+      if (!asAny(selectedModel).Method) {
         // `right` == expand: change carot to ⌄?
         expandCollection(selectedModel as Collection);
       }
     }
     if (key === "left") {
-      if (!selectedModel.Method) {
+      if (!asAny(selectedModel).Method) {
         // `left` == collapse: change carot back to ›
         collapsedCollection(selectedModel as Collection);
       }
