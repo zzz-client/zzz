@@ -14,6 +14,7 @@ import { PathParamsModule } from "../../modules/path-params/mod.ts";
 import { RedactModule } from "../../modules/redact/mod.ts";
 import { RequestsModule } from "../../modules/requests/mod.ts";
 import TemplateModule from "../../modules/template/mod.ts";
+import { ScopeModule } from "../../modules/scope/mod.ts";
 
 export default class Application implements IApplication {
   store = DI.newInstance("IStore") as IStore;
@@ -36,7 +37,7 @@ export default class Application implements IApplication {
     this.registerModule(new RequestsModule(this.store));
     this.registerModule(new BodyModule(this.store));
     this.registerModule(new PathParamsModule(this.store));
-    // this.registerModule(new ScopeModule(this.store));
+    this.registerModule(new ScopeModule(this.store));
     this.registerModule(new ContextModule(this.store));
     this.registerModule(new AuthorizationModule(this.store));
     this.registerModule(new TemplateModule(this.store));
