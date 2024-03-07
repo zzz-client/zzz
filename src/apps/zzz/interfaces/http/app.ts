@@ -1,8 +1,8 @@
 import { Args, processFlags } from "../../../../lib/deps.ts";
 import DI from "../../../../lib/di.ts";
-import { Action, StringToStringMap } from "../../../../lib/etc.ts";
+import { StringToStringMap } from "../../../../lib/etc.ts";
 import { IModuleRenderer, Module } from "../../../../lib/module.ts";
-import { IStore, Model } from "../../../../storage/mod.ts";
+import { IStore } from "../../../../storage/mod.ts";
 import IApplication, { ConfigValue, Flags } from "../../../mod.ts";
 import { initDi } from "../../app.ts";
 import { AuthorizationModule } from "../../modules/auth/mod.ts";

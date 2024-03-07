@@ -1,5 +1,5 @@
 import DI from "../../../lib/di.ts";
-import { Trace } from "../../../lib/etc.ts";
+import { asAny, Trace } from "../../../lib/etc.ts";
 import { IStorage, IStore, Model, ParentModel, SearchParams } from "../../../storage/mod.ts";
 import { Authorization } from "../modules/auth/mod.ts";
 import { Context } from "../modules/context/mod.ts";
@@ -41,7 +41,7 @@ export default class FileStore implements IStore {
   }
   async list(modelType: string): Promise<Model[]> {
     const result = await this.storage(modelType).retrieve(".");
-    let children = (result as ParentModel).Children;
+    const children = asAny(result as ParentModel).Children;
     // if (modelType === Scope.name) {
     //   const baseDirs = Array.from(this.storages.values())
     //     .map((storage: IStorage) => storage.baseDir)
