@@ -1,6 +1,6 @@
-import { Trace } from "../../../../lib/etc.ts";
-import { IModuleModifier, Module } from "../../../../lib/module.ts";
-import { Model } from "../../../../storage/mod.ts";
+import { Trace } from "../..//etc.ts";
+import { IModuleModifier, Module } from "../..//module.ts";
+import { Model } from "../..//storage/mod.ts";
 import { HttpRequest } from "../requests/mod.ts";
 
 export default class RequiredModule extends Module implements IModuleModifier {

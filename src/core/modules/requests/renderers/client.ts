@@ -1,6 +1,6 @@
-import { axios } from "../../../../../lib/deps.ts";
-import { asAny } from "../../../../../lib/etc.ts";
-import { IModuleRenderer } from "../../../../../lib/module.ts";
+import { axios } from "../../..//deps.ts";
+import { asAny } from "../../..//etc.ts";
+import { IModuleRenderer } from "../../..//module.ts";
 import { HttpRequest } from "../mod.ts";
 
 export default class HttpClient implements IModuleRenderer {

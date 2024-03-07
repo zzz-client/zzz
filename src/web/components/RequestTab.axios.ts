@@ -1,5 +1,5 @@
 import axios from "npm:axios";
-import { StringToStringMap } from "../../../../../lib/etc.ts";
+import { StringToStringMap } from "../../core/etc.ts";
 import Session, { SessionProps } from "./Session.ts";
 import { select } from "npm:@ngneat/elf";
 

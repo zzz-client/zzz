@@ -1,4 +1,4 @@
-import { IModuleRenderer } from "../../../../../lib/module.ts";
+import { IModuleRenderer } from "../../..//module.ts";
 import { HttpRequest } from "../mod.ts";
 
 export default class PassThru implements IModuleRenderer {
