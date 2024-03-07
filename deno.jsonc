@@ -5,22 +5,26 @@
   "tasks": {
     "init": "npm install ; deno task cache",
     "cache": "deno cache src/**/*.ts",
-    "cli": "deno run -A --unstable src/cli.ts",
-    "cli:build": "deno compile --unstable --allow-all --output=bin/zzz src/cli.ts",
-    "http": "deno run -A --unstable src/http.ts http",
-    "http:build": "deno compile --unstable --allow-all --output=bin/zzz-server src/http.ts",
-    "web": "deno task vite --host 127.0.0.1",
-    "web:build": "deno task vite build",
-    "web:preview": "deno task vite --host 127.0.0.1 preview",
-    "desktop": "cargo tauri dev",
-    "desktop:build": "cd $INIT_CWD/src/apps/zzz/interfaces/desktop/; cargo tauri build",
-    "desktop:run": "$INIT_CWD/src/apps/zzz/interfaces/desktop/target/release/Zzz",
-    "vite": "cd src/apps/zzz/interfaces/web ; deno run -A --unstable --node-modules-dir npm:vite",
     "test": "rm coverage/*.json 2>/dev/null; deno test -A --coverage=coverage",
     "tests": "deno task test 'src/*'",
     "coverage": "deno coverage --lcov --output=coverage/lcov.info coverage && deno coverage --html coverage && deno coverage",
     "coverage:open": "code coverage/html/index.html",
-    "lint": "deno lint --unstable src/"
+    "lint": "deno lint --unstable src/",
+
+    "cli": "deno run -A --unstable src/cli.ts",
+    "cli:build": "deno compile --unstable --allow-all --output=bin/zzz src/cli.ts",
+    "tui": "deno run -A --unstable src/tui.ts",
+    "tui:build": "deno compile --unstable --allow-all --output=bin/zzz-tui src/tui.ts",
+    "http": "deno run -A --unstable src/http.ts http",
+    "http:build": "deno compile --unstable --allow-all --output=bin/zzz-server src/http.ts",
+    "web": "deno task vite --host 127.0.0.1",
+    "web:build": "deno task vite build",
+    "desktop": "cargo tauri dev",
+    "desktop:build": "cd $INIT_CWD/src/apps/zzz/interfaces/desktop/; cargo tauri build",
+    "desktop:run": "$INIT_CWD/src/apps/zzz/interfaces/desktop/target/release/Zzz",
+
+    "web:preview": "deno task vite --host 127.0.0.1 preview",
+    "vite": "cd src/apps/zzz/interfaces/web ; deno run -A --unstable --node-modules-dir npm:vite"
   },
   "lock": false,
   "fmt": {

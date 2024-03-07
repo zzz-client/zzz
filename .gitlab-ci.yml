@@ -30,6 +30,15 @@ Cli:
       - ./zzz
     expire_in: 1 day
 
+Tui:
+  stage: Build
+  script: deno task tui:build ; mv bin/zzz ./
+  artifacts:
+    name: zzz-tui
+    paths:
+      - ./zzz
+    expire_in: 1 day
+
 Http:
   stage: Build
   script: deno task http:build ; mv bin/zzz-server ./

@@ -83,5 +83,6 @@ Yeah, it's broken, but how cool is it that tauri builds?
 Run `--help` or `-h` or `?` for more detail on flag usages and shorthands.
 
 ### TUI
+![Zzz tui interface](./screenshots/tui.png)
 
 TODO
