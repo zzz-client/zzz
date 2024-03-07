@@ -1,5 +1,5 @@
 default:
-  image: denoland/deno:1.40.4 # unzip is not included > 1.40.5; seehttps://github.com/denoland/deno_docker/issues/344
+  image: denoland/deno:1.40.4 # unzip is not included > 1.40.5; see https://github.com/denoland/deno_docker/issues/344
 
 # curl -fsSL https://deno.land/install.sh | sh
 # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -32,7 +32,7 @@ Cli:
 
 Tui:
   stage: Build
-  script: deno task tui:build ; mv dist/zzz ./
+  script: deno task tui:build ; mv dist/zzz-tui ./
   artifacts:
     name: zzz-tui
     paths:
@@ -51,8 +51,8 @@ Http:
 Web:
   stage: Build
   script:
-    - deno cache src/core/npm_deps.ts
-    - deno task build:web
+    # - deno cache src/core/npm_deps.ts
+    - deno task web:build
     - mv dist/web ./zzz-web
   artifacts:
     name: zzz-web
