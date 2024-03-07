@@ -22,7 +22,7 @@ export default class FileStorage implements IStorage {
       return this.getFolder(fullId);
     }
   }
-  async rename(oldId: string, newId: string): Promise<void> {
+  rename(_oldId: string, _newId: string): Promise<void> {
     // TODO
     throw new Error("Method not implemented.");
   }
@@ -120,7 +120,7 @@ export default class FileStorage implements IStorage {
     const fileFormat = getFileFormat(this.fileExtension);
     console.log("PUTTING FILE", model);
     const fullPath = this.adjustPath(model.Id, await this.isFile(model.Id));
-    delete (model as any).Id;
+    delete asAny(model).Id;
     await Deno.writeTextFile(fullPath, fileFormat.stringify(model));
   }
   private async putFolder(model: Model): Promise<void> {

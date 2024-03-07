@@ -1,11 +1,11 @@
-import { basename, extname } from "../../../../lib/deps.ts";
+import { extname } from "../../../../lib/deps.ts";
 import { Action, Log, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { getFileFormat } from "../../../../storage/files/formats.ts";
 import { Model } from "../../../../storage/mod.ts";
 import IApplication, { FeatureFlags } from "../../../mod.ts";
 import ExecuteActor from "../../actors/execute.ts";
 import { Context } from "../../modules/context/mod.ts";
-import { Collection, HttpRequest } from "../../modules/requests/mod.ts";
+import { HttpRequest } from "../../modules/requests/mod.ts";
 import { Scope } from "../../modules/scope/mod.ts";
 import Application from "../cli/app.ts";
 

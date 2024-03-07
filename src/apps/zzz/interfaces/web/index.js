@@ -1,10 +1,9 @@
-import { createApp } from "vue";
-import PrimeVue from "primevue/config";
-import App from "./App.vue";
-import ToastService from "primevue/toastservice";
-import Toast from "primevue/toast";
-import Badge from "primevue/badge";
 import BadgeDirective from "primevue/badgedirective";
+import PrimeVue from "primevue/config";
+import Toast from "primevue/toast";
+import ToastService from "primevue/toastservice";
+import { createApp } from "vue";
+import App from "./App.vue";
 
 const app = createApp(App);
 

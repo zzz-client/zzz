@@ -1,11 +1,11 @@
 import DI from "../../../../lib/di.ts";
-import { Action, asAny, StringToStringMap, Trace } from "../../../../lib/etc.ts";
-import { IModuleFeatures, IModuleRenderer, Module } from "../../../../lib/module.ts";
+import { StringToStringMap } from "../../../../lib/etc.ts";
+import { IModuleRenderer, Module } from "../../../../lib/module.ts";
 import IApplication, { ConfigValue, Flags } from "../../../mod.ts";
 import Tui from "./tui.ts";
 
 import { Args, processFlags } from "../../../../lib/deps.ts";
-import { IStore, Model } from "../../../../storage/mod.ts";
+import { IStore } from "../../../../storage/mod.ts";
 import { AuthorizationModule } from "../../modules/auth/mod.ts";
 import { BodyModule } from "../../modules/body/mod.ts";
 import { ContextModule } from "../../modules/context/mod.ts";
@@ -13,8 +13,8 @@ import { CookiesModule } from "../../modules/cookies/mod.ts";
 import { PathParamsModule } from "../../modules/path-params/mod.ts";
 import { RedactModule } from "../../modules/redact/mod.ts";
 import { RequestsModule } from "../../modules/requests/mod.ts";
-import TemplateModule from "../../modules/template/mod.ts";
 import { ScopeModule } from "../../modules/scope/mod.ts";
+import TemplateModule from "../../modules/template/mod.ts";
 
 export default class Application implements IApplication {
   store = DI.newInstance("IStore") as IStore;
