@@ -60,22 +60,21 @@ Web:
       - ./zzz-web
     expire_in: 1 day
 
-# Desktop:
-#   image: rustdocker/rust:stable
-#   stage: Build
-# only:
-#   - main
-#   script:
-#     - cd src/desktop/
-#     - cargo install tauri-cli
-#     # - deno task desktop:build ; mv dist/release/Zzz ./zzz-desktop
-#     - cargo tauri build
-#     - mv src/desktop/target/release/Zzz ./zzz-desktop
-#   artifacts:
-#     name: zzz-desktop
-#     paths:
-#       - ./zzz-desktop
-#     expire_in: 1 day
+Desktop:
+  image: rustdocker/rust:stable
+  stage: Build
+  only:
+    - main
+  script:
+    - cd src/desktop/
+    - cargo install tauri-cli
+    - deno task desktop:build
+    - mv src/desktop/target/release/Zzz ./zzz-desktop
+  artifacts:
+    name: zzz-desktop
+    paths:
+      - ./zzz-desktop
+    expire_in: 1 day
 
 DeployWeb:
   stage: Deploy
