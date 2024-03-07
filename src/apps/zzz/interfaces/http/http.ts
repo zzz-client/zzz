@@ -2,7 +2,7 @@ import { extname } from "../../../../lib/deps.ts";
 import { Action, Log, StringToStringMap, Trace } from "../../../../lib/etc.ts";
 import { getFileFormat } from "../../../../storage/files/formats.ts";
 import { Model } from "../../../../storage/mod.ts";
-import IApplication, { FeatureFlags } from "../../../mod.ts";
+import IApplication, { executeModules, FeatureFlags } from "../../../mod.ts";
 import ExecuteActor from "../../actors/execute.ts";
 import { Context } from "../../modules/context/mod.ts";
 import { HttpRequest } from "../../modules/requests/mod.ts";
@@ -145,21 +145,25 @@ export class Server implements IServer {
     flagValues.scope = parts.scope || flagValues.scope;
     const action = new Action(flagValues, this.app.env);
     const modelId = getModelIdFromRequest(request);
-    const model = await this.app.getModel(modelId, action);
+    const model = { Id: modelId } as Model;
+    await executeModules(this.app.modules, action, model);
     Log("Result", model);
     return Promise.resolve(model);
   }
   private async executePost(request: Request): Promise<void> {
     const model = await request.json() as Model;
-    await this.app.insertModel(model);
+    const modelType = await this.app.store.getModelType(model.Id);
+    await this.app.store.set(modelType, model);
   }
   private async executePut(request: Request): Promise<void> {
     const model = await request.json() as Model;
-    await this.app.updateModel(model);
+    const modelType = await this.app.store.getModelType(model.Id);
+    await this.app.store.set(modelType, model);
   }
   private async executeDelete(request: Request): Promise<void> {
-    const parts = dissectRequest(request);
-    await this.app.deleteModel(parts.fullId);
+    const modelId = getModelIdFromRequest(request);
+    const modelType = await this.app.store.getModelType(modelId);
+    await this.app.store.remove(modelType, modelId);
   }
 }
 
