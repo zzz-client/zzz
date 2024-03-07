@@ -19,7 +19,7 @@
     "http": "deno run -A --unstable src/http/http.ts",
     "http:build": "deno compile --unstable --allow-all --output=dist/zzz-server src/http/http.ts",
     "web": "deno task vite --host 127.0.0.1",
-    "web:build": "deno task vite build",
+    "web:build": "deno task vite build && cp src/web/serve.sh dist/web/",
     "desktop": "cd src/desktop/ ; cargo tauri dev",
     "desktop:build": "cd src/desktop/ ; CARGO_TARGET_DIR=../../dist cargo tauri build",
     "desktop:clean": "cd src/desktop/ ; cargo clean",

@@ -8,10 +8,14 @@ import "npm:vue";
 // https://vitejs.dev/config/
 export default defineConfig({
   root: "./",
+  server: {
+    port: 5173,
+  },
   build: {
     rollupOptions: {
       input: "./index.html",
     },
+    emptyOutDir: true,
     outDir: "../../dist/web",
   },
   resolve: {
