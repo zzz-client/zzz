@@ -1,6 +1,6 @@
 {
   "name": "zzz",
-  "version": "0.5.0",
+  "version": "0.8.0",
   "description": "Replacement for Postman",
   "tasks": {
     "init": "npm install ; cd src/web ; npm install ; cd ../.. ; deno task vite -v ; deno task cache",
