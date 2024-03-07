@@ -25,7 +25,7 @@ export function listen(server: IServer): Promise<void> {
       case "PATCH":
         return server.respondToPatch(request);
       case "OPTIONS":
-        return Promise.resolve(server.respondToOptions(request));
+        return server.respondToOptions(request);
       default:
         return Promise.reject(
           new Response("Unsupported request method: " + request.method, {
