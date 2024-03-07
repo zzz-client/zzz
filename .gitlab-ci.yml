@@ -66,11 +66,11 @@ Web:
 # only:
 #   - main
 #   script:
-#     - cd src/apps/zzz/interfaces/desktop/
+#     - cd src/desktop/
 #     - cargo install tauri-cli
-#     # - deno task desktop:build ; mv src/apps/zzz/interfaces/desktop/target/release/Zzz ./zzz-desktop
+#     # - deno task desktop:build ; mv src/desktop/target/release/Zzz ./zzz-desktop
 #     - cargo tauri build
-#     - mv src/apps/zzz/interfaces/desktop/target/release/Zzz ./zzz-desktop
+#     - mv src/desktop/target/release/Zzz ./zzz-desktop
 #   artifacts:
 #     name: zzz-desktop
 #     paths:

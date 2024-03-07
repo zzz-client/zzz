@@ -22,7 +22,6 @@
     "web:build": "deno task vite build",
     "desktop": "cd src/desktop/ ; cargo tauri dev",
     "desktop:build": "cd src/desktop/ ; cargo tauri build",
-    "desktop:bin": "src/desktop/target/release/Zzz",
 
     "web:preview": "deno task vite --host 127.0.0.1 preview",
     "vite": "cd src/web ; deno run -A --unstable --node-modules-dir npm:vite"
