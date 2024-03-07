@@ -68,7 +68,7 @@ Web:
 #   script:
 #     - cd src/desktop/
 #     - cargo install tauri-cli
-#     # - deno task desktop:build ; mv src/desktop/target/release/Zzz ./zzz-desktop
+#     # - deno task desktop:build ; mv dist/release/Zzz ./zzz-desktop
 #     - cargo tauri build
 #     - mv src/desktop/target/release/Zzz ./zzz-desktop
 #   artifacts:

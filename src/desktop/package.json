@@ -4,6 +4,7 @@
   },
   "scripts": {
     "dev": "tauri dev",
-    "build": "tauri build"
+    "build": "tauri build",
+    "clean": "cargo clean"
   }
 }
