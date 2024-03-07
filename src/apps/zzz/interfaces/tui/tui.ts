@@ -1,8 +1,8 @@
 // deno-lint-ignore-file
 import { crayon } from "https://deno.land/x/crayon/mod.ts";
-import { Canvas, Tui as TuiMod } from "https://deno.land/x/tui/mod.ts";
+import { Canvas, Theme, Tui as TuiMod } from "https://deno.land/x/tui/mod.ts";
 import { handleInput, handleKeyboardControls, handleMouseControls } from "https://deno.land/x/tui/mod.ts";
-import { Button, ComboBox, ComboBoxOptions, Frame, FrameOptions, Input, InputOptions, Label, LabelOptions, Table, TableOptions, Text, TextBox, TextOptions } from "https://deno.land/x/tui/src/components/mod.ts";
+import { Box, Button, ButtonOptions, ComboBox, ComboBoxOptions, Frame, FrameOptions, Input, InputOptions, Label, LabelOptions, Table, TableOptions, Text, TextBox, TextOptions } from "https://deno.land/x/tui/src/components/mod.ts";
 import { Computed, Signal } from "https://deno.land/x/tui/mod.ts";
 import IApplication from "../../../mod.ts";
 import { Collection, HttpRequest } from "../../modules/requests/mod.ts";
@@ -17,6 +17,13 @@ export default async function Tui(app: IApplication): Promise<void> {
 }
 
 const HTTP_METHODS = ["GET", "POST", "PUT", "DELETE"];
+
+const baseTheme: Theme = {
+  base: crayon.bgLightBlue,
+  focused: crayon.bgCyan,
+  active: crayon.bgBlue,
+  disabled: crayon.bgLightBlack.black,
+};
 
 async function run(app: IApplication, collections: Model[], req: HttpRequest): Promise<void> {
   const tui = new TuiMod({
@@ -42,10 +49,10 @@ async function run(app: IApplication, collections: Model[], req: HttpRequest): P
     rectangle: {
       column: 0,
       row: 0,
-      height: 20,
+      height: Deno.consoleSize().rows,
     },
     headers: [
-      { title: "(ー。ー) Zzz                        " },
+      { title: "(ー。ー) Zzz                        " }, // extra space because Table does auto width to header contents
     ],
     data: collections.map((model: Model) => [model.Method ? model.Name : `› ${model.Name}`]),
     charMap: "rounded",
@@ -61,8 +68,8 @@ async function run(app: IApplication, collections: Model[], req: HttpRequest): P
     rectangle: {
       column: 40,
       row: 1,
-      height: 20,
-      width: 100,
+      height: collectionOptions.rectangle.height! - 2,
+      width: Deno.consoleSize().columns - 40 - 2,
     },
     zIndex: 0,
   } as FrameOptions;
@@ -82,7 +89,7 @@ async function run(app: IApplication, collections: Model[], req: HttpRequest): P
     },
     zIndex: 0,
     text: req.Name,
-  } as LabelOptions;
+  } as TextOptions;
 
   const methodBoxOptions = {
     parent: tui,
@@ -119,7 +126,7 @@ async function run(app: IApplication, collections: Model[], req: HttpRequest): P
       width: 6,
     },
     zIndex: 0,
-  };
+  } as ButtonOptions;
   const urlOptions = {
     parent: tui,
     placeholder: "Enter URL",
@@ -142,12 +149,56 @@ async function run(app: IApplication, collections: Model[], req: HttpRequest): P
     text: req.URL,
   } as InputOptions;
 
-  const reqFrame = new Frame(requestFrameOptions);
-  const nameLabel = new Label({ ...nameOptions, parent: reqFrame });
-  const urlInput = new Input({ ...urlOptions, parent: reqFrame });
-  const sendButton = new Button({ ...sendOptions, parent: reqFrame });
-  const methodBox = new ComboBox({ ...methodBoxOptions, parent: reqFrame });
+  const responseFrameOptions = {
+    parent: tui,
+    charMap: "rounded",
+    theme: {
+      base: crayon.white,
+    },
+    rectangle: {
+      column: methodBoxOptions.rectangle.column!,
+      row: methodBoxOptions.rectangle.row! + 8,
+      height: requestFrameOptions.rectangle.height! - 10,
+      width: requestFrameOptions.rectangle.width! - 2,
+    },
+    zIndex: -1,
+  } as FrameOptions;
+
+  const responseBodyLabelOptions = {
+    parent: tui,
+    align: {
+      horizontal: "left",
+      vertical: "top",
+    },
+    theme: {
+      base: crayon,
+    },
+    rectangle: {
+      column: responseFrameOptions.rectangle.column! + 1,
+      row: responseFrameOptions.rectangle.row!,
+      width: responseFrameOptions.rectangle.width! - 2,
+    },
+    zIndex: 0,
+    text: JSON.stringify(
+      {
+        status: 0,
+        headers: {},
+        data: null,
+      },
+      null,
+      4,
+    ),
+  } as LabelOptions;
+
   const collectionTable = new Table(collectionOptions);
+  const requestFrame = new Frame({ ...requestFrameOptions, parent: tui });
+  const nameLabel = new Text({ ...nameOptions, parent: requestFrame });
+  const urlInput = new Input({ ...urlOptions, parent: requestFrame });
+  const sendButton = new Button({ ...sendOptions, parent: requestFrame });
+  const methodBox = new ComboBox({ ...methodBoxOptions, parent: requestFrame });
+
+  const responseFrame = new Frame({ ...responseFrameOptions, parent: requestFrame });
+  const responseBodyLabel = new Label({ ...responseBodyLabelOptions, parent: responseFrame });
 
   collectionTable.on("keyPress", ({ key, ctrl, meta, shift }) => {
     const selectedIndex = collectionTable.selectedRow.value;
