@@ -46,7 +46,6 @@ export default class Application implements IApplication {
     this.argv = processFlags(Deno.args, this.flags);
   }
   run(): Promise<void> {
-    console.log("Yas");
     return Tui(this);
   }
   registerModule(module: Module): void {
