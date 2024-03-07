@@ -1,5 +1,5 @@
 default:
-  image: denoland/deno:latest
+  image: denoland/deno:1.40.4 # unzip is not included > 1.40.5; seehttps://github.com/denoland/deno_docker/issues/344
 
 # curl -fsSL https://deno.land/install.sh | sh
 # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -51,7 +51,7 @@ Http:
 Web:
   stage: Build
   script:
-    - deno cache src/lib/npm_deps.ts
+    - deno cache src/core/npm_deps.ts
     - deno task build:web
     - mv dist/web ./zzz-web
   artifacts:
