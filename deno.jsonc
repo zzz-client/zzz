@@ -19,9 +19,9 @@
     "http:build": "deno compile --unstable --allow-all --output=bin/zzz-server src/http.ts",
     "web": "deno task vite --host 127.0.0.1",
     "web:build": "deno task vite build",
-    "desktop": "cargo tauri dev",
+    "desktop": "cd $INIT_CWD/src/apps/zzz/interfaces/desktop/; cargo tauri dev",
     "desktop:build": "cd $INIT_CWD/src/apps/zzz/interfaces/desktop/; cargo tauri build",
-    "desktop:run": "$INIT_CWD/src/apps/zzz/interfaces/desktop/target/release/Zzz",
+    "desktop:bin": "$INIT_CWD/src/apps/zzz/interfaces/desktop/target/release/Zzz",
 
     "web:preview": "deno task vite --host 127.0.0.1 preview",
     "vite": "cd src/apps/zzz/interfaces/web ; deno run -A --unstable --node-modules-dir npm:vite"
