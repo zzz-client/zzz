@@ -23,7 +23,7 @@ Lint:
 
 Cli:
   stage: Build
-  script: deno task cli:build ; mv bin/zzz ./
+  script: deno task cli:build ; mv dist/zzz ./
   artifacts:
     name: zzz-cli
     paths:
@@ -32,7 +32,7 @@ Cli:
 
 Tui:
   stage: Build
-  script: deno task tui:build ; mv bin/zzz ./
+  script: deno task tui:build ; mv dist/zzz ./
   artifacts:
     name: zzz-tui
     paths:
@@ -41,7 +41,7 @@ Tui:
 
 Http:
   stage: Build
-  script: deno task http:build ; mv bin/zzz-server ./
+  script: deno task http:build ; mv dist/zzz-server ./
   artifacts:
     name: zzz-server
     paths:
@@ -52,11 +52,12 @@ Web:
   stage: Build
   script:
     - deno cache src/lib/npm_deps.ts
-    - deno task vite build
+    - deno task build:web
+    - mv dist/web ./zzz-web
   artifacts:
     name: zzz-web
     paths:
-      - ./src/apps/zzz/interfaces/web/dist
+      - ./zzz-web
     expire_in: 1 day
 
 # Desktop:

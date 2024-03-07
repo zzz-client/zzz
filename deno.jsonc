@@ -3,28 +3,29 @@
   "version": "0.5.0",
   "description": "Replacement for Postman",
   "tasks": {
-    "init": "npm install ; deno task cache",
+    "init": "npm install ; cd src/web ; npm install ; cd ../.. ; deno task vite -v ; deno task cache",
     "cache": "deno cache src/**/*.ts",
     "test": "rm coverage/*.json 2>/dev/null; deno test -A --coverage=coverage",
     "tests": "deno task test 'src/*'",
     "coverage": "deno coverage --lcov --output=coverage/lcov.info coverage && deno coverage --html coverage && deno coverage",
     "coverage:open": "code coverage/html/index.html",
     "lint": "deno lint --unstable src/",
+    "build": "deno task cli:build ; deno task tui:build ; deno task http:build ; deno task web:build ; deno task desktop:build",
 
-    "cli": "deno run -A --unstable src/cli.ts",
-    "cli:build": "deno compile --unstable --allow-all --output=bin/zzz src/cli.ts",
-    "tui": "deno run -A --unstable src/tui.ts",
-    "tui:build": "deno compile --unstable --allow-all --output=bin/zzz-tui src/tui.ts",
-    "http": "deno run -A --unstable src/http.ts http",
-    "http:build": "deno compile --unstable --allow-all --output=bin/zzz-server src/http.ts",
+    "cli": "deno run -A --unstable src/cli/cli.ts",
+    "cli:build": "deno compile --unstable --allow-all --output=dist/zzz src/cli/cli.ts",
+    "tui": "deno run -A --unstable src/tui/tui.ts",
+    "tui:build": "deno compile --unstable --allow-all --output=dist/zzz-tui src/tui/tui.ts",
+    "http": "deno run -A --unstable src/http/http.ts",
+    "http:build": "deno compile --unstable --allow-all --output=dist/zzz-server src/http/http.ts",
     "web": "deno task vite --host 127.0.0.1",
     "web:build": "deno task vite build",
-    "desktop": "cd $INIT_CWD/src/apps/zzz/interfaces/desktop/; cargo tauri dev",
-    "desktop:build": "cd $INIT_CWD/src/apps/zzz/interfaces/desktop/; cargo tauri build",
-    "desktop:bin": "$INIT_CWD/src/apps/zzz/interfaces/desktop/target/release/Zzz",
+    "desktop": "cd src/desktop/ ; cargo tauri dev",
+    "desktop:build": "cd src/desktop/ ; cargo tauri build",
+    "desktop:bin": "src/desktop/target/release/Zzz",
 
     "web:preview": "deno task vite --host 127.0.0.1 preview",
-    "vite": "cd src/apps/zzz/interfaces/web ; deno run -A --unstable --node-modules-dir npm:vite"
+    "vite": "cd src/web ; deno run -A --unstable --node-modules-dir npm:vite"
   },
   "lock": false,
   "fmt": {
@@ -35,14 +36,7 @@
     "singleQuote": false,
     "proseWrap": "never",
     "include": ["src/"],
-    "exclude": [
-      "src/testdata/",
-      "data/fixtures/**/*.ts",
-      "node_nodules",
-      "src/apps/zzz/interfaces/desktop/target",
-      "src/apps/zzz/interfaces/web/dist",
-      "src/apps/zzz/interfaces/web/node_modules"
-    ]
+    "exclude": ["src/testdata/", "data/fixtures/**/*.ts", "node_nodules", "src/desktop/target", "src/web/dist", "src/web/node_modules"]
   },
   "lint": {
     "include": ["*.ts"],
@@ -51,10 +45,10 @@
       "data/fixtures/**/*.ts",
       "node_nodules",
       "**/node_nodules",
-      "src/apps/zzz/interfaces/desktop/target",
-      "src/apps/zzz/interfaces/web/dist",
-      "src/apps/zzz/interfaces/web/components",
-      "src/apps/zzz/interfaces/web/node_modules"
+      "src/desktop/target",
+      "src/web/dist",
+      "src/web/components",
+      "src/web/node_modules"
     ]
   },
   "test": {
@@ -64,10 +58,10 @@
       "data/fixtures/**/*.ts",
       "node_nodules",
       "**/node_nodules",
-      "src/apps/zzz/interfaces/desktop/target",
-      "src/apps/zzz/interfaces/web/dist",
-      "src/apps/zzz/interfaces/web/components/*.ts",
-      "src/apps/zzz/interfaces/web/node_modules"
+      "src/desktop/target",
+      "src/web/dist",
+      "src/web/components/*.ts",
+      "src/web/node_modules"
     ]
   }
 }
