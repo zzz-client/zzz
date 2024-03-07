@@ -1,5 +1,5 @@
 import { basename, exists, extname, join } from "../../lib/deps.ts";
-import { Meld, Trace } from "../../lib/etc.ts";
+import { asAny, Meld, Trace } from "../../lib/etc.ts";
 import { IStorage, Model, ParentModel, SearchParams } from "../mod.ts";
 import { getFileFormat } from "./formats.ts";
 const DEFAULT_MARKER = "_defaults";
@@ -120,7 +120,7 @@ export default class FileStorage implements IStorage {
     const fileFormat = getFileFormat(this.fileExtension);
     console.log("PUTTING FILE", model);
     const fullPath = this.adjustPath(model.Id, await this.isFile(model.Id));
-    delete model.Id;
+    delete (model as any).Id;
     await Deno.writeTextFile(fullPath, fileFormat.stringify(model));
   }
   private async putFolder(model: Model): Promise<void> {

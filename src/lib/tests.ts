@@ -17,6 +17,9 @@ export class TestStore implements IStore {
   move(modelType: string, oldId: string, newId: string): Promise<void> {
     throw new Error("Method not implemented.");
   }
+  remove(modelType: string, id: string): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
   search(searchParams: string): Promise<Model[]> {
     throw new Error("Method not implemented.");
   }
