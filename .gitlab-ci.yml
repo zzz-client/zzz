@@ -67,6 +67,8 @@ Desktop:
     - main
   script:
     - cd src/desktop/
+    # apt install -y protobuf-compiler
+    - cargo install deno
     - cargo install tauri-cli
     - deno task desktop:build
     - mv src/desktop/target/release/Zzz ./zzz-desktop
