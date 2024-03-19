@@ -67,11 +67,10 @@ Desktop:
     - main
   script:
     - cd src/desktop/
-    # apt install -y protobuf-compiler
-    - cargo install deno
+    # - cargo install deno
     - cargo install tauri-cli
-    - deno task desktop:build
-    - mv src/desktop/target/release/Zzz ./zzz-desktop
+    - CARGO_TARGET_DIR=../../dist cargo tauri build # equivalent to: deno task desktop:build
+    # - mv src/desktop/target/release/Zzz ./zzz-desktop
   artifacts:
     name: zzz-desktop
     paths:
