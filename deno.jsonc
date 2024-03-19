@@ -1,6 +1,6 @@
 {
   "name": "zzz",
-  "version": "0.8.0",
+  "version": "0.8.5",
   "description": "Replacement for Postman",
   "tasks": {
     "init": "npm install ; cd src/web ; npm install ; cd ../.. ; deno task vite -v ; deno task cache",
@@ -25,7 +25,9 @@
     "desktop:clean": "cd src/desktop/ ; cargo clean",
 
     "web:preview": "deno task vite --host 127.0.0.1 preview",
-    "vite": "cd src/web ; deno run -A --unstable --node-modules-dir npm:vite"
+    "vite": "cd src/web ; deno run -A --unstable --node-modules-dir npm:vite",
+
+    "bump": "deno run --allow-read --allow-write scripts/setVersion.ts"
   },
   "lock": false,
   "fmt": {
