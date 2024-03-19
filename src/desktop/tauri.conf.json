@@ -1,14 +1,14 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
+  "package": {
+    "productName": "Zzz",
+    "version": "0.8.5"
+  },
   "build": {
     "beforeBuildCommand": "deno task web:build",
     "beforeDevCommand": "deno task web",
     "devPath": "http://localhost:5173",
     "distDir": "../../dist/web"
-  },
-  "package": {
-    "productName": "Zzz",
-    "version": "0.8.5"
   },
   "tauri": {
     "allowlist": {
