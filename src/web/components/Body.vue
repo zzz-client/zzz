@@ -67,8 +67,8 @@ function parseBodyType(): string {
     <br />
     <Textarea v-model="bodyDouble" autoResize rows="5" cols="185" />
   </div>
-  <div id="formBody" v-if="bodyType == 'form'"><!-- TODO --></div>
-  <div id="binaryBody" v-if="bodyType == 'binary'"><!-- TODO --></div>
+  <div id="formBody" v-if="bodyType == 'form'"><!-- TODO: #22 --></div>
+  <div id="binaryBody" v-if="bodyType == 'binary'"><!-- TODO: #23 --></div>
 </template>
 
 <style scoped>
