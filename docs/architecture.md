@@ -1,29 +1,15 @@
 
 # Architecture
 
-> NOTE: This is probably still gonna change
+Here are some terms that are used throughout Zzz:
 
-## Model
+  - **[Model](./models)** - the generic word for a set of attributes that can be stored and retrieved. Model can be thought of as an abstract class which defines a contract without an implementation.
+  - **Storage** - the lowest level way that Zzz accesses a specific type of Model. Current storage drivers:
+    - Files
+  - **Store** - a coordinator for Storages for each different Model type. If it helps, think of it is going to a Store and buying stuff from their Storage.
+  - **Hook** - a set actions to be performed before or after a Request is executed. An example would be persisting a bearer token to Session storage
+  - **[Module](./modules)** - TODO
 
-This is the generic word for a set of attributes that can be stored and retrieved. Model itself is an abstract class, but a class must extend it to be able to be used with Storage.
-
-## Storage
-
-The way that Zzz accesses any type of model. The constructor parameters are the base directory and the file extension.
-
-Current storage drivers:
-  - Files
-
-## Stores
-
-A store is app-specific responsible for managing Storage. If it helps, think of it is going to a Store and buying stuff from their Storage.
-
-The key thing about Stores is that they can use different types of Storage for different types of Models.
-
-
-## Hooks
-
-TODO: Needs its own modularity
 
 # Modules
 
