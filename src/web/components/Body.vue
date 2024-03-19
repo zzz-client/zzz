@@ -8,19 +8,24 @@ import { HttpRequest } from "../core/modules/requests/mod.ts";
 
 const requestData = defineModel({} as HttpRequest);
 const bodyType = ref(parseBodyType());
-const bodyBro = ref("");
+const bodyDouble = ref("");
 
-watch(
-  () => requestData.value.Body,
-  () => {
-    if (requestData.value.Body instanceof Object) {
-      bodyBro.value = JSON.stringify(requestData.value.Body, null, 2);
-    } else {
-      bodyBro.value = requestData.value.Body;
-    }
-    bodyType.value = parseBodyType();
+watch(bodyType, (newBodyType) => {
+  if (newBodyType == "none") {
+    delete requestData.value.Body;
+  } else if (newBodyType == "raw") {
+    requestData.value.Body = bodyDouble.value;
   }
-);
+});
+watch(requestData, (newRequestData) => {
+  console.log("newRequestData", newRequestData.Body);
+  bodyDouble.value = newRequestData.Body;
+  bodyType.value = parseBodyType();
+});
+watch(bodyDouble, (newBodyDouble) => {
+  console.log("newBodyDouble", newBodyDouble);
+  requestData.value.Body = newBodyDouble;
+});
 
 function isDefault(): boolean {
   return bodyType != "form" && bodyType != "binary" && !!requestData.value.Body;
@@ -60,7 +65,7 @@ function parseBodyType(): string {
   </div>
   <div id="rawBody" v-if="bodyType == 'raw'">
     <br />
-    <Textarea v-model="requestData.Body" autoResize rows="5" cols="185" />
+    <Textarea v-model="bodyDouble" autoResize rows="5" cols="185" />
   </div>
   <div id="formBody" v-if="bodyType == 'form'"><!-- TODO --></div>
   <div id="binaryBody" v-if="bodyType == 'binary'"><!-- TODO --></div>
