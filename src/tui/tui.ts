@@ -1,6 +1,6 @@
 // deno-lint-ignore-file
 import { crayon } from "https://deno.land/x/crayon/mod.ts";
-import { handleInput, handleKeyboardControls, handleMouseControls, Theme, Tui as TuiMod } from "https://deno.land/x/tui/mod.ts";
+import { Computed, handleInput, handleKeyboardControls, handleMouseControls, Theme, Tui as TuiMod } from "https://deno.land/x/tui/mod.ts";
 import { Button, ButtonOptions, ComboBox, ComboBoxOptions, Frame, FrameOptions, Input, InputOptions, Label, LabelOptions, Table, TableOptions, Text, TextOptions } from "https://deno.land/x/tui/src/components/mod.ts";
 import IApplication from "../apps/mod.ts";
 import { initDi } from "../apps/zzz/app.ts";
@@ -89,7 +89,7 @@ async function run(app: IApplication, collections: Model[], req: HttpRequest): P
       row: requestFrameOptions.rectangle.row!,
     },
     zIndex: 0,
-    text: req.Name,
+    text: new Computed(() => req.Name),
   } as TextOptions;
 
   const methodBoxOptions = {
