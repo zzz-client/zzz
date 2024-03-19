@@ -1,5 +1,5 @@
 default:
-  image: denoland/deno:latest
+  image: denoland/deno:1.40.4 # unzip is not included > 1.40.5; see https://github.com/denoland/deno_docker/issues/344
 
 # curl -fsSL https://deno.land/install.sh | sh
 # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -23,16 +23,25 @@ Lint:
 
 Cli:
   stage: Build
-  script: deno task cli:build ; mv bin/zzz ./
+  script: deno task cli:build ; mv dist/zzz ./
   artifacts:
     name: zzz-cli
     paths:
       - ./zzz
     expire_in: 1 day
 
+Tui:
+  stage: Build
+  script: deno task tui:build ; mv dist/zzz-tui ./
+  artifacts:
+    name: zzz-tui
+    paths:
+      - ./zzz
+    expire_in: 1 day
+
 Http:
   stage: Build
-  script: deno task http:build ; mv bin/zzz-server ./
+  script: deno task http:build ; mv dist/zzz-server ./
   artifacts:
     name: zzz-server
     paths:
@@ -42,30 +51,30 @@ Http:
 Web:
   stage: Build
   script:
-    - deno cache src/lib/npm_deps.ts
-    - deno task vite build
+    # - deno cache src/core/npm_deps.ts
+    - deno task web:build
+    - mv dist/web ./zzz-web
   artifacts:
     name: zzz-web
     paths:
-      - ./src/apps/zzz/interfaces/web/dist
+      - ./zzz-web
     expire_in: 1 day
 
-# Desktop:
-#   image: rustdocker/rust:stable
-#   stage: Build
-# only:
-#   - main
-#   script:
-#     - cd src/apps/zzz/interfaces/desktop/
-#     - cargo install tauri-cli
-#     # - deno task desktop:build ; mv src/apps/zzz/interfaces/desktop/target/release/Zzz ./zzz-desktop
-#     - cargo tauri build
-#     - mv src/apps/zzz/interfaces/desktop/target/release/Zzz ./zzz-desktop
-#   artifacts:
-#     name: zzz-desktop
-#     paths:
-#       - ./zzz-desktop
-#     expire_in: 1 day
+Desktop:
+  image: rustdocker/rust:stable
+  stage: Build
+  only:
+    - main
+  script:
+    - cd src/desktop/
+    - cargo install tauri-cli
+    - deno task desktop:build
+    - mv src/desktop/target/release/Zzz ./zzz-desktop
+  artifacts:
+    name: zzz-desktop
+    paths:
+      - ./zzz-desktop
+    expire_in: 1 day
 
 DeployWeb:
   stage: Deploy
