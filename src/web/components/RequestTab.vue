@@ -18,6 +18,7 @@ const basename = (path) => path.split("/").reverse()[0];
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 import Session, { SessionProps, setProp } from "./Session";
+import Dialog from "primevue/dialog";
 
 const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 
@@ -34,6 +35,7 @@ const response = ref({
   headers: {},
   data: null
 });
+
 function load(newValue: string) {
   if (!newValue) {
     breadcrumbs.value = [{ label: "Unsaved Request" }];
@@ -69,12 +71,27 @@ function save(): Promise<void> {
     }
   });
 }
+function saveNew(): Promise<void> {
+  console.log("Saving", JSON.stringify(requestData.value));
+}
 
 load(tab.value.id);
+let saveNewRequest = ref(false);
 </script>
 
 <template>
   <Toast />
+  <Dialog v-model:visible="saveNewRequest" modal header="Save Request" :style="{ width: '25rem' }">
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="name" class="font-semibold w-6rem">Request Name</label>
+      <InputText id="name" class="flex-auto" autocomplete="off" />
+    </div>
+    <div class="flex justify-content-end gap-2">
+      <Button type="button" label="Cancel" severity="secondary" @click="saveNewRequest = false"></Button>
+      <Button type="button" label="Save" @click="SaveNew"></Button>
+    </div>
+  </Dialog>
+
   <Splitter layout="vertical">
     <SplitterPanel :minSize="10">
       <Button label="Save" severity="secondary" icon="pi pi-save" @click="save" style="float: right">Save</Button>
@@ -93,7 +110,7 @@ load(tab.value.id);
           <TabPanel header="Params"><KeyValueTable v-model="requestData.QueryParams"></KeyValueTable></TabPanel>
           <TabPanel header="Headers"><KeyValueTable v-model="requestData.Headers"></KeyValueTable></TabPanel>
           <TabPanel header="Body">
-            <Body v-model="requestData.Body"></Body>
+            <Body v-model="requestData"></Body>
           </TabPanel>
           <TabPanel header="Settings"></TabPanel>
           <TabPanel header="Source">
@@ -104,6 +121,8 @@ load(tab.value.id);
       </div>
     </SplitterPanel>
     <SplitterPanel :minSize="10">
+      <h3>Request Data</h3>
+      {{ requestData }}
       <Response v-if="response.status > 0" :data="response"></Response>
     </SplitterPanel>
   </Splitter>
