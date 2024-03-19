@@ -104,14 +104,10 @@ let saveNewRequest = ref(false);
       </div>
       <div class="flex">
         <TabView style="flex: 1">
-          <TabPanel header="Authorization">
-            <Authorization v-model="requestData"></Authorization>
-          </TabPanel>
+          <TabPanel header="Authorization"><Authorization v-model="requestData"></Authorization></TabPanel>
           <TabPanel header="Params"><KeyValueTable v-model="requestData.QueryParams"></KeyValueTable></TabPanel>
           <TabPanel header="Headers"><KeyValueTable v-model="requestData.Headers"></KeyValueTable></TabPanel>
-          <TabPanel header="Body">
-            <Body v-model="requestData"></Body>
-          </TabPanel>
+          <TabPanel header="Body"><Body v-model="requestData"></Body> </TabPanel>
           <TabPanel header="Settings"></TabPanel>
           <TabPanel header="Source">
             <pre>{{ requestData }}</pre>
@@ -122,7 +118,7 @@ let saveNewRequest = ref(false);
     </SplitterPanel>
     <SplitterPanel :minSize="10">
       <h3>Request Data</h3>
-      {{ requestData }}
+      <pre>{{ requestData }}</pre>
       <Response v-if="response.status > 0" :data="response"></Response>
     </SplitterPanel>
   </Splitter>
