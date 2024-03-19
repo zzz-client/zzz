@@ -105,7 +105,7 @@ let saveNewRequest = ref(false);
       <div class="flex">
         <TabView style="flex: 1">
           <TabPanel header="Authorization">
-            <Authorization v-model="requestData.Authorization"></Authorization>
+            <Authorization v-model="requestData"></Authorization>
           </TabPanel>
           <TabPanel header="Params"><KeyValueTable v-model="requestData.QueryParams"></KeyValueTable></TabPanel>
           <TabPanel header="Headers"><KeyValueTable v-model="requestData.Headers"></KeyValueTable></TabPanel>
