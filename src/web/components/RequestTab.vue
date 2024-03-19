@@ -12,7 +12,7 @@ import { ref, toRefs } from "vue";
 import Authorization from "./Authorization.vue";
 import Body from "./Body.vue";
 import KeyValueTable from "./KeyValueTable.vue";
-import { executeRequest, loadRequest, saveRequest } from "./RequestTab.axios";
+import { executeRequest, loadRequest, saveRequest, saveNewRequest } from "./RequestTab.axios";
 import Response from "./Response.vue";
 const basename = (path) => path.split("/").reverse()[0];
 import Toast from "primevue/toast";
@@ -29,6 +29,7 @@ const method = ref("GET");
 const requestData = ref({});
 const breadcrumbs = ref([]);
 const authorizationType = ref("None");
+const newRequestName = ref("");
 const response = ref({
   status: 0,
   statusText: "",
@@ -59,42 +60,55 @@ function send(): Promise<void> {
 function showCookies(): void {
   Session.update(setProp("showCookies", true));
 }
-function save(): Promise<void> {
+async function save(): Promise<void> {
   console.log("Saving", JSON.stringify(requestData.value));
-  return saveRequest(tab.value.id, requestData.value).then((response) => {
-    if (response.status < 300) {
-      console.log(response);
-      toast.add({ summary: "Saved", severity: "success", life: 5000 });
-    } else {
-      console.error(response);
-      toast.add({ summary: "Error", detail: response.data, severity: "error" });
-    }
-  });
+  const response = await saveRequest(requestData.value);
+  if (response.status < 300) {
+    console.log(response);
+    toast.add({ summary: "Saved", severity: "success", life: 5000 });
+  } else {
+    console.error(response);
+    toast.add({ summary: "Error", detail: response.data, severity: "error" });
+  }
 }
-function saveNew(): Promise<void> {
-  console.log("Saving", JSON.stringify(requestData.value));
+async function saveAsNew(): Promise<void> {
+  const response = await saveNewRequest({
+    ...requestData.value,
+    Id: `${Session.getValue().scope}/${newRequestName.value}`, // TODO Support saving to any Collection
+    Name: newRequestName.value
+  } as HttpRequest);
+  if (response.status < 300) {
+    console.log(response);
+    showSaveAs.value = false;
+    toast.add({ summary: `Saved ${newRequestName.value}`, severity: "success", life: 5000 });
+  } else {
+    console.error(response);
+    toast.add({ summary: "Error saving", detail: response.data, severity: "error" });
+  }
 }
 
 load(tab.value.id);
-let saveNewRequest = ref(false);
+let showSaveAs = ref(false);
 </script>
 
 <template>
   <Toast />
-  <Dialog v-model:visible="saveNewRequest" modal header="Save Request" :style="{ width: '25rem' }">
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="name" class="font-semibold w-6rem">Request Name</label>
-      <InputText id="name" class="flex-auto" autocomplete="off" />
+  <Dialog v-model:visible="showSaveAs" modal header="Save Request" :style="{ width: '25rem' }">
+    <InputText v-model="newRequestName" autocomplete="off" autofocus placeholder="Request name" />
+    <div style="margin: 3em">
+      Presently only saving to the root Collection is supported
+      <!-- TODO: Save requests to any Collection -->
     </div>
-    <div class="flex justify-content-end gap-2">
-      <Button type="button" label="Cancel" severity="secondary" @click="saveNewRequest = false"></Button>
-      <Button type="button" label="Save" @click="SaveNew"></Button>
+    <div style="float: right">
+      <Button style="display: inline" type="button" label="Save" @click="saveAsNew"></Button>
+      &nbsp;
+      <Button style="display: inline" type="button" label="Cancel" severity="secondary" @click="showSaveAs = false"></Button>
     </div>
   </Dialog>
 
   <Splitter layout="vertical">
     <SplitterPanel :minSize="10">
-      <Button label="Save" severity="secondary" icon="pi pi-save" @click="save" style="float: right">Save</Button>
+      <Button label="Save" severity="secondary" icon="pi pi-save" @click="showSaveAs = true" style="float: right">Save</Button>
       <Breadcrumb :model="breadcrumbs" />
 
       <div class="flex">

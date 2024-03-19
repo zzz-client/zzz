@@ -35,29 +35,36 @@ export function loadRequest(requestId: string): Promise<Response> {
     })
     .catch(catchError);
 }
-export function saveRequest(requestId: string, body: any): Promise<Response> {
-  return axios
-    .put(
-      "http://localhost:8000/" + requestId,
-      body,
-      {
-        headers: {
-          "X-Zzz-Context": "integrate",
-        },
-      },
-    )
-    .then((what) => {
-      return {
-        data: what.data,
-        status: what.status,
-        statusText: what.statusText,
-        success: what.status < 400,
-        headers: what.headers as StringToStringMap,
-      };
-    })
+const AXIOS_PARAMS = {
+  headers: {
+    "X-Zzz-Context": Session.getValue().context,
+  },
+};
+export function saveRequest(body: any): Promise<Response> {
+  return axios.put("http://localhost:8000/" + body.Id, body, AXIOS_PARAMS).then((what) => {
+    return {
+      data: what.data,
+      status: what.status,
+      statusText: what.statusText,
+      success: what.status < 400,
+      headers: what.headers as StringToStringMap,
+    };
+  })
     .catch(catchError);
 }
 
+export function saveNewRequest(body: any): Promise<Response> {
+  return axios.post("http://localhost:8000/" + body.Id + "?type=request", body, AXIOS_PARAMS).then((what) => {
+    return {
+      data: what.data,
+      status: what.status,
+      statusText: what.statusText,
+      success: what.status < 400,
+      headers: what.headers as StringToStringMap,
+    };
+  })
+    .catch(catchError);
+}
 function catchError(error: any) {
   return {
     data: error.response.data,
@@ -75,7 +82,7 @@ export function executeRequest(requestId: string): Promise<Response> {
       {},
       {
         headers: {
-          "X-Zzz-Context": "integrate",
+          "X-Zzz-Context": Session.getValue().context,
         },
       },
     )

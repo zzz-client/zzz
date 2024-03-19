@@ -10,7 +10,7 @@ export type SearchParams = string;
 export interface IStorage {
   has(id: string): Promise<boolean>;
   retrieve(id: string): Promise<Model>;
-  put(model: Model): Promise<void>;
+  save(model: Model): Promise<void>;
   delete(id: string): Promise<void>;
   rename(oldId: string, newId: string): Promise<void>;
   search(searchParams: SearchParams): Promise<Model[]>;

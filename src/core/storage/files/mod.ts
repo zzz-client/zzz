@@ -18,19 +18,23 @@ export default class FileStorage implements IStorage {
   async retrieve(fullId: string): Promise<Model> {
     if (await this.isFile(fullId)) {
       return this.getFile(fullId);
+    } else if (await this.isDirectory(fullId)) {
+      return this.getDirectory(fullId);
     } else {
-      return this.getFolder(fullId);
+      throw new Error("File not found: " + fullId);
     }
   }
   rename(_oldId: string, _newId: string): Promise<void> {
     // TODO
     throw new Error("Method not implemented.");
   }
-  async put(model: Model): Promise<void> {
+  async save(model: Model): Promise<void> {
     if (await this.isFile(model.Id)) {
       await this.putFile(model);
+    } else if (await this.isDirectory(model.Id)) {
+      await this.putDirectory(model);
     } else {
-      await this.putFolder(model);
+      await this.putFile(model);
     }
   }
   async delete(id: string): Promise<void> {
@@ -48,13 +52,20 @@ export default class FileStorage implements IStorage {
   }
   async list(directory: string): Promise<Model[]> {
     console.log("Getting list of ", directory);
-    return (await this.getFolder(directory)).Children;
+    return (await this.getDirectory(directory)).Children;
   }
   private async isFile(fullId: string): Promise<boolean> {
     try {
       return (await Deno.stat(this.adjustPath(fullId, true))).isFile;
     } catch (_error) {
-      return (await Deno.stat(this.adjustPath(fullId, false))).isFile;
+      return false;
+    }
+  }
+  private async isDirectory(fullId: string): Promise<boolean> {
+    try {
+      return (await Deno.stat(this.adjustPath(fullId, false))).isDirectory;
+    } catch (_error) {
+      return false;
     }
   }
   private async getFile(fullPath: string): Promise<Model> {
@@ -70,13 +81,13 @@ export default class FileStorage implements IStorage {
     model.Name = basename(fullPath);
     return Promise.resolve(model);
   }
-  private async getFolder(fullPath: string): Promise<ParentModel> {
+  private async getDirectory(fullPath: string): Promise<ParentModel> {
     const model = { Id: fullPath, Name: basename(fullPath), Children: [] as Model[] } as ParentModel;
     if (model.Id.startsWith("./")) {
       model.Id = model.Id.substring("./".length);
     }
-    Trace("Getting folder " + fullPath);
-    await this.readDirectoryToFolder(model);
+    Trace("Getting directory " + fullPath);
+    await this.readDirectoryToDirectory(model);
     await this.readDirectoryDefaults(model);
     return model;
   }
@@ -93,12 +104,12 @@ export default class FileStorage implements IStorage {
       return join(Deno.cwd(), this.baseDir, fullPath);
     }
   }
-  private async readDirectoryToFolder(model: ParentModel): Promise<void> {
+  private async readDirectoryToDirectory(model: ParentModel): Promise<void> {
     for await (const child of Deno.readDir(this.adjustPath(model.Id))) {
       if (child.isDirectory) {
         Trace("Child is directory");
-        const x = await this.getFolder(`${model.Id}/${child.name}`);
-        Trace("Folder: " + x.Id);
+        const x = await this.getDirectory(`${model.Id}/${child.name}`);
+        Trace("Directory: " + x.Id);
         model.Children.push(x);
       } else if (child.isFile && this.isFileToInclude(child.name)) {
         Trace("Child is file");
@@ -110,7 +121,7 @@ export default class FileStorage implements IStorage {
   }
   private async readDirectoryDefaults(model: ParentModel): Promise<void> {
     if (await exists(this.adjustPath(model.Id + "/" + DEFAULT_MARKER, true))) {
-      Trace("Loading folder defaults");
+      Trace("Loading directory defaults");
       const defaults = await this.getFile(model.Id + "/" + DEFAULT_MARKER);
       Trace("Defaults:", defaults);
       Meld(model, defaults);
@@ -119,11 +130,11 @@ export default class FileStorage implements IStorage {
   private async putFile(model: Model): Promise<void> {
     const fileFormat = getFileFormat(this.fileExtension);
     console.log("PUTTING FILE", model);
-    const fullPath = this.adjustPath(model.Id, await this.isFile(model.Id));
+    const fullPath = this.adjustPath(model.Id, true);
     delete asAny(model).Id;
     await Deno.writeTextFile(fullPath, fileFormat.stringify(model));
   }
-  private async putFolder(model: Model): Promise<void> {
+  private async putDirectory(model: Model): Promise<void> {
     if (!(await exists(model.Id))) {
       Deno.mkdir(model.Id, { recursive: true });
     }
@@ -135,7 +146,7 @@ export default class FileStorage implements IStorage {
     delete what.Name;
     if (Object.keys(what).length > 0 || await exists(defaultFilePath)) {
       const fileFormat = getFileFormat(this.fileExtension);
-      Trace(`Putting folder defaults ${fileFormat} ${model.Id}`);
+      Trace(`Putting directory defaults ${fileFormat} ${model.Id}`);
       await Deno.writeTextFile(defaultFilePath, fileFormat.stringify(what));
     }
   }
@@ -191,7 +202,7 @@ describe("FileStorage", () => {
       // fail("Write this test");
     });
   });
-  describe("getFolder", () => {
+  describe("getDirectory", () => {
     it("works", async () => {
       // fail("Write this test");
     });
@@ -206,7 +217,7 @@ describe("FileStorage", () => {
       // fail("Write this test");
     });
   });
-  describe("readDirectoryToFolder", () => {
+  describe("readDirectoryToDirectory", () => {
     it("works", async () => {
       // fail("Write this test");
     });
@@ -221,7 +232,7 @@ describe("FileStorage", () => {
       // fail("Write this test");
     });
   });
-  describe("putFolder", () => {
+  describe("putDirectory", () => {
     it("works", async () => {
       // fail("Write this test");
     });

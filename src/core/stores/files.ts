@@ -34,7 +34,7 @@ export default class FileStore implements IStore {
     return result;
   }
   async set(modelType: string, model: Model): Promise<void> {
-    await this.storage(modelType).put(model);
+    await this.storage(modelType).save(model);
   }
   async remove(modelType: string, id: string): Promise<void> {
     await this.storage(modelType).delete(id);

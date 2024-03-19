@@ -16,24 +16,28 @@ export function listen(server: IServer): Promise<void> {
   Trace("Starting server on port " + server.port);
   Deno.serve({ port: server.port }, (request: Request): Promise<Response> => {
     Trace("Server:Respond: Responding to " + request.method, request.url);
-    switch (request.method) {
-      case "GET":
-        return server.respondToGet(request);
-      case "POST":
-        return server.respondToPost(request);
-      case "PUT":
-        return server.respondToPut(request);
-      case "PATCH":
-        return server.respondToPatch(request);
-      case "OPTIONS":
-        return server.respondToOptions(request);
-      default:
-        return Promise.reject(
-          new Response("Unsupported request method: " + request.method, {
-            status: 400,
-            headers: STANDARD_HEADERS,
-          }),
-        );
+    try {
+      switch (request.method) {
+        case "GET":
+          return server.respondToGet(request);
+        case "POST":
+          return server.respondToPost(request);
+        case "PUT":
+          return server.respondToPut(request);
+        case "PATCH":
+          return server.respondToPatch(request);
+        case "OPTIONS":
+          return server.respondToOptions(request);
+        default:
+          return Promise.reject(
+            new Response("Unsupported request method: " + request.method, {
+              status: 400,
+              headers: STANDARD_HEADERS,
+            }),
+          );
+      }
+    } catch (error) {
+      return Promise.reject(new Response("Error: " + error, { status: 500, headers: STANDARD_HEADERS }));
     }
   });
   Trace("Server started (asynchronously)");
@@ -153,7 +157,8 @@ export class Server implements IServer {
   }
   private async executePost(request: Request): Promise<void> {
     const model = await request.json() as Model;
-    const modelType = await this.app.store.getModelType(model.Id);
+    const modelType = getModelTypeForNewRequest(request);
+    console.log("Executing post on", modelType);
     await this.app.store.set(modelType, model);
   }
   private async executePut(request: Request): Promise<void> {
@@ -165,6 +170,15 @@ export class Server implements IServer {
     const modelId = getModelIdFromRequest(request);
     const modelType = await this.app.store.getModelType(modelId);
     await this.app.store.remove(modelType, modelId);
+  }
+}
+
+function getModelTypeForNewRequest(request: Request): string {
+  const fromUrl = (new URL(request.url)).searchParams.get("type");
+  if (!fromUrl || fromUrl === "request") {
+    return HttpRequest.name;
+  } else {
+    return fromUrl;
   }
 }
 
