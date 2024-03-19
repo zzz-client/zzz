@@ -1,24 +1,38 @@
 <script setup lang="ts">
 import RadioButton from "primevue/radiobutton";
 import { ref, toRefs, watch } from "vue";
+import Inplace from "primevue/inplace";
+import Textarea from "primevue/textarea";
+import Editor from "primevue/editor";
+import { HttpRequest } from "../core/modules/requests/mod.ts";
 
-const body = defineModel();
-const bodyType = ref("none");
-
-console.log("body", body.value);
+const requestData = defineModel({} as HttpRequest);
+const bodyType = ref(parseBodyType());
+const bodyBro = ref("");
 
 watch(
-  () => body.value,
-  (newValue) => {
-    console.log("What", newValue);
-    if (newValue == null) {
-      bodyType.value = "none";
-      body!.value = newValue;
+  () => requestData.value.Body,
+  () => {
+    if (requestData.value.Body instanceof Object) {
+      bodyBro.value = JSON.stringify(requestData.value.Body, null, 2);
     } else {
-      bodyType.value = "raw";
+      bodyBro.value = requestData.value.Body;
     }
+    bodyType.value = parseBodyType();
   }
 );
+
+function isDefault(): boolean {
+  return bodyType != "form" && bodyType != "binary" && !!requestData.value.Body;
+}
+function parseBodyType(): string {
+  console.log("Parsing body type on", requestData.value.Body);
+  if (requestData.value.Body) {
+    return "raw";
+  } else {
+    return "none";
+  }
+}
 </script>
 
 <template>
@@ -45,10 +59,11 @@ watch(
     </div>
   </div>
   <div id="rawBody" v-if="bodyType == 'raw'">
-    <pre>{{ body }}</pre>
+    <br />
+    <Textarea v-model="requestData.Body" autoResize rows="5" cols="185" />
   </div>
-  <div id="formBody" v-if="bodyType.includes('form-')"></div>
-  <div id="binaryBody" v-if="bodyType == 'binary'"></div>
+  <div id="formBody" v-if="bodyType == 'form'"><!-- TODO --></div>
+  <div id="binaryBody" v-if="bodyType == 'binary'"><!-- TODO --></div>
 </template>
 
 <style scoped>
