@@ -7,7 +7,7 @@ More than a comparison, I give this list of recommendations I recommend trying i
   - License: OSL
   - Platforms
     - CLI
-    - TUI TODO
+    - TUI
     - REST/Act
     - Web
     - Desktop (Tauri)
@@ -20,7 +20,7 @@ More than a comparison, I give this list of recommendations I recommend trying i
     - Desktop: Tauri
     - Readline: [tui](https://deno.land/x/tui@2.1.7)
   - Notable Features:
-    - Hooks (JS) TODO
+    - Hooks (JS)
     - Modules (e.g. Authorization, Body)
   - Storage:
     - YAML
@@ -43,7 +43,7 @@ More than a comparison, I give this list of recommendations I recommend trying i
     - Runtime: Nodejs
     - Language: Javascript
     - Server: Webpack
-    - Front end: ???
+    - Front end: React
     - Desktop: Electron
   - Notable Features:
     - GraphQL
