@@ -2,13 +2,13 @@ import { extname } from "../core/deps.ts";
 import { Action, asAny, Log, StringToStringMap, Trace } from "../core/etc.ts";
 import { getFileFormat } from "../core/storage/files/formats.ts";
 import { Model } from "../core/storage/mod.ts";
-import IApplication, { executeModules, FeatureFlags } from "../apps/mod.ts";
+import IApplication, { executeModules, FeatureFlags } from "../core/app.ts";
 import ExecuteActor from "../core/actors/execute.ts";
 import { Context } from "../core/modules/context/mod.ts";
 import { HttpRequest } from "../core/modules/requests/mod.ts";
 import { Scope } from "../core/modules/scope/mod.ts";
 import Application from "./app.ts";
-import { initDi } from "../apps/zzz/app.ts";
+import { initDi } from "../app.ts";
 
 const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "allow,content-type,x-zzz-context", "Access-Control-Allow-Methods": "GET,PUT,PATCH" };
 

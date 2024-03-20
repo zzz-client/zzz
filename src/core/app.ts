@@ -1,7 +1,7 @@
-import { Args } from "../core/deps.ts";
-import { Action, StringToStringMap, Trace } from "../core/etc.ts";
-import { IModuleModifier, Module } from "../core/module.ts";
-import { IStore, Model } from "../core/storage/mod.ts";
+import { Args } from "./deps.ts";
+import { Action, StringToStringMap, Trace } from "./etc.ts";
+import { IModuleModifier, Module } from "./module.ts";
+import { IStore, Model } from "./storage/mod.ts";
 
 export default interface IApplication {
   flags: Flags;
@@ -43,7 +43,7 @@ export async function executeModules(modules: Module[], action: Action, model: M
 
 // ----------------------------------------- TESTS -----------------------------------------
 
-import { describe, it } from "../core/tests.ts";
+import { describe, it } from "./tests.ts";
 
 describe("executeModules", () => {
   it("works", async () => {

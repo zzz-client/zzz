@@ -2,8 +2,8 @@
 import { crayon } from "https://deno.land/x/crayon/mod.ts";
 import { Computed, handleInput, handleKeyboardControls, handleMouseControls, Theme, Tui as TuiMod } from "https://deno.land/x/tui/mod.ts";
 import { Button, ButtonOptions, ComboBox, ComboBoxOptions, Frame, FrameOptions, Input, InputOptions, Label, LabelOptions, Table, TableOptions, Text, TextOptions } from "https://deno.land/x/tui/src/components/mod.ts";
-import IApplication from "../apps/mod.ts";
-import { initDi } from "../apps/zzz/app.ts";
+import IApplication from "../core/app.ts";
+import { initDi } from "../app.ts";
 import { asAny } from "../core/etc.ts";
 import { Collection, HttpRequest } from "../core/modules/requests/mod.ts";
 import { Scope } from "../core/modules/scope/mod.ts";

@@ -1,10 +1,10 @@
-import DI from "../../core/di.ts";
-import BasicAuthAuthorizer from "../../core/modules/auth/basicAuth.ts";
-import BearerTokenAuthorizer from "../../core/modules/auth/bearerToken.ts";
-import HeaderAuthorizer from "../../core/modules/auth/header.ts";
-import FileStorage from "../../core/storage/files/mod.ts";
-import QueryAuthorizer from "../../core/modules/auth/query.ts";
-import FileStore from "../../core/stores/files.ts";
+import DI from "./core/di.ts";
+import BasicAuthAuthorizer from "./core/modules/auth/basicAuth.ts";
+import BearerTokenAuthorizer from "./core/modules/auth/bearerToken.ts";
+import HeaderAuthorizer from "./core/modules/auth/header.ts";
+import FileStorage from "./core/storage/files/mod.ts";
+import QueryAuthorizer from "./core/modules/auth/query.ts";
+import FileStore from "./core/stores/files.ts";
 
 // deno-fmt-ignore
 export function initDi(): void{

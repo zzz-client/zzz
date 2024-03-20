@@ -33,6 +33,10 @@ export interface IModuleRenderer {
 export interface IModuleModifier {
   modify(model: Model, action: Action): Promise<void>;
 }
+export interface IModuleHook {
+  preHook(model: Model, action: Action): Promise<void>;
+  postHook(model: Model, result: unknown): Promise<void>;
+}
 export interface ModuleFields {
   [key: string]: ModuleField;
 }
