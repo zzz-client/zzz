@@ -9,7 +9,6 @@ export default interface IApplication {
   argv: Args;
   env: StringToStringMap;
   modules: Module[];
-  hooks: Hooks;
   store: IStore;
   // renderers: IModuleRenderer[];
   registerModule(module: Module): void;
