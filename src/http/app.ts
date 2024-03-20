@@ -14,7 +14,7 @@ import { RedactModule } from "../core/modules/redact/mod.ts";
 import { RequestsModule } from "../core/modules/requests/mod.ts";
 import { ScopeModule } from "../core/modules/scope/mod.ts";
 import TemplateModule from "../core/modules/template/mod.ts";
-import { AfterHooksModule, BeforeHooksModule } from "../core/modules/hooks/mod.ts";
+import { AfterHooksModule, BeforeHooksModule, Hooks } from "../core/modules/hooks/mod.ts";
 import { listen, Server } from "./http.ts";
 
 initDi();
@@ -50,6 +50,7 @@ export default class Application implements IApplication {
     this.registerModule(new AfterHooksModule(this.store));
     this.argv = processFlags(Deno.args, this.flags);
   }
+  hooks = {} as Hooks;
   run(): Promise<void> {
     return listen(new Server(this));
   }

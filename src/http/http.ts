@@ -2,7 +2,7 @@ import { extname } from "../core/deps.ts";
 import { Action, asAny, Log, StringToStringMap, Trace } from "../core/etc.ts";
 import { getFileFormat } from "../core/storage/files/formats.ts";
 import { Model } from "../core/storage/mod.ts";
-import IApplication, { executeModules, FeatureFlags } from "../core/app.ts";
+import IApplication, { executeHooks, executeModules, FeatureFlags } from "../core/app.ts";
 import ExecuteActor from "../core/actors/execute.ts";
 import { Context } from "../core/modules/context/mod.ts";
 import { HttpRequest } from "../core/modules/requests/mod.ts";
@@ -10,6 +10,7 @@ import { Scope } from "../core/modules/scope/mod.ts";
 import Application from "./app.ts";
 import { initDi } from "../app.ts";
 
+const DEFAULT_FILETYPE = "json";
 const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "allow,content-type,x-zzz-context", "Access-Control-Allow-Methods": "GET,PUT,PATCH" };
 
 export function listen(server: IServer): Promise<void> {
@@ -72,22 +73,22 @@ export class Server implements IServer {
     }
     if (pathname === "/") {
       Trace("Responding to base URL: scope list");
-      return this.respondToList("json"); // TODO: At some point this should be configurable by the client somehow
+      return this.respondToList(DEFAULT_FILETYPE);
     }
     const model = await this.executeGet(request);
-    return Promise.resolve(newResponse(200, this.stringify(model, parts.extension || "json"), STANDARD_HEADERS));
+    return Promise.resolve(newResponse(200, this.stringify(model, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS));
   }
   async respondToPut(request: Request): Promise<Response> {
     const parts = dissectRequest(request);
     Trace("Responding to PUT");
     await this.executePut(request);
-    return Promise.resolve(newResponse(200, this.stringify("^_^", parts.extension || "json"), STANDARD_HEADERS)); // TODO: What response? empty? what code?
+    return Promise.resolve(newResponse(200, this.stringify("^_^", parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS)); // TODO: What response? empty? what code?
   }
   async respondToPost(request: Request): Promise<Response> {
     Trace("Responding to POST");
     const parts = dissectRequest(request);
     await this.executePost(request);
-    return Promise.resolve(newResponse(200, this.stringify("^_^", parts.extension || "json"), STANDARD_HEADERS)); // TODO: What response? empty? what code?
+    return Promise.resolve(newResponse(200, this.stringify("^_^", parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS)); // TODO: What response? empty? what code?
   }
   async respondToPatch(request: Request): Promise<Response> {
     const parts = dissectRequest(request);
@@ -96,14 +97,17 @@ export class Server implements IServer {
     if (!(model instanceof HttpRequest)) {
       return Promise.resolve(newResponse(400, this.stringify({ message: "PATCH only supported for Requests" }, parts.extension), STANDARD_HEADERS));
     }
+    const action = new Action(this.app.argv as FeatureFlags, this.app.env);
+    await executeHooks("Before", model, action);
     const executeResponse = await (new ExecuteActor()).act(model);
-    return Promise.resolve(newResponse(200, this.stringify(executeResponse, parts.extension || "json"), STANDARD_HEADERS));
+    await executeHooks("After", model, executeResponse);
+    return Promise.resolve(newResponse(200, this.stringify(executeResponse, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS));
   }
   async respondToDelete(request: Request): Promise<Response> {
     Trace("Responding to DELETE");
     const parts = dissectRequest(request);
     await this.executeDelete(request);
-    return Promise.resolve(newResponse(200, this.stringify("^_^", parts.extension || "json"), STANDARD_HEADERS)); // TODO: What response? empty? what code?
+    return Promise.resolve(newResponse(200, this.stringify("^_^", parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS)); // TODO: What response? empty? what code?
   }
   respondToOptions(request: Request): Promise<Response> {
     Trace("Responding to OPTIONS");
@@ -139,7 +143,7 @@ export class Server implements IServer {
     return newResponse(200, this.stringify(body, fileExtension), STANDARD_HEADERS);
   }
   // deno-lint-ignore no-explicit-any
-  private stringify(result: any, fileExtension = "json"): string {
+  private stringify(result: any, fileExtension = DEFAULT_FILETYPE): string {
     return getFileFormat(fileExtension).stringify(result);
   }
   private async executeGet(request: Request): Promise<Model> {

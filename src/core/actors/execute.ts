@@ -5,11 +5,7 @@ import { Model } from "../storage/mod.ts";
 import { HttpRequest } from "../modules/requests/mod.ts";
 
 // TODO: Move to own file?
-export interface IActor {
-  act(theRequest: Model): Promise<any>;
-}
-
-export default class ExecuteActor implements IActor {
+export default class ExecuteActor {
   async act(theModel: Model): Promise<any> {
     try {
       return await helpers.doRequest(theModel as HttpRequest); // TODO: Naughty cast

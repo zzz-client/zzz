@@ -1,14 +1,15 @@
 import { Args } from "./deps.ts";
-import { Action, StringToStringMap, Trace } from "./etc.ts";
+import { Action, asAny, StringToStringMap, Trace } from "./etc.ts";
 import { IModuleModifier, Module } from "./module.ts";
+import { Hooks } from "./modules/hooks/mod.ts";
 import { IStore, Model } from "./storage/mod.ts";
 
 export default interface IApplication {
   flags: Flags;
   argv: Args;
-  // features: FeatureMap;
   env: StringToStringMap;
   modules: Module[];
+  hooks: Hooks;
   store: IStore;
   // renderers: IModuleRenderer[];
   registerModule(module: Module): void;
@@ -38,6 +39,13 @@ export async function executeModules(modules: Module[], action: Action, model: M
       Trace("Executing module", module.Name);
       await (module as unknown as IModuleModifier).modify(model, action);
     }
+  }
+}
+export async function executeHooks(hookIdentifier: string, model: Model, actionOrExecuteResponse: any): Promise<void> {
+  const hooks = asAny(model).Hooks as StringToStringMap;
+  if (hooks && hookIdentifier in hooks) {
+    const hook = hooks[hookIdentifier] as string;
+    // TODO: Execute hook
   }
 }
 
