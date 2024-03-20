@@ -50,7 +50,8 @@
       "src/desktop/target",
       "src/web/dist",
       "src/web/components",
-      "src/web/node_modules"
+      "src/web/node_modules",
+      "**/.vite"
     ]
   },
   "test": {
