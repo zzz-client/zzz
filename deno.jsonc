@@ -22,6 +22,7 @@
     "web:build": "deno task vite build && cp src/web/serve.sh dist/web/",
     "desktop": "cd src/desktop/ ; cargo tauri dev",
     "desktop:build": "cd src/desktop/ ; CARGO_TARGET_DIR=../../dist cargo tauri build",
+    "desktop:windows": "makensis scripts/desktop.nsi",
     "desktop:clean": "cd src/desktop/ ; cargo clean",
 
     "web:preview": "deno task vite --host 127.0.0.1 preview",

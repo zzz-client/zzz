@@ -76,6 +76,19 @@ Desktop:
       - ./zzz-desktop
     expire_in: 1 day
 
+DesktopInstaller:
+  image: hp41/nsis
+  stage: Build
+  only:
+    - main
+  script:
+    - makensis scripts/desktop.nsi
+  artifacts:
+    name: zzz-setup
+    paths:
+      - ./zzz-setup.exe
+    expire_in: 1 day
+
 DeployWeb:
   stage: Deploy
   only:
