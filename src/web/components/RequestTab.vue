@@ -8,7 +8,7 @@ import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { ref, toRefs, watchEffect } from "vue";
+import { ref, toRefs, watch, watchEffect } from "vue";
 import Authorization from "./Authorization.vue";
 import Body from "./Body.vue";
 import KeyValueTable from "./KeyValueTable.vue";
@@ -17,7 +17,7 @@ import Response from "./Response.vue";
 const basename = (path) => path.split("/").reverse()[0];
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
-import Session, { setProp } from "./Session";
+import Session, { Status, setProp } from "./Session";
 import Preferences from "./Preferences";
 import Dialog from "primevue/dialog";
 import ProgressBar from "primevue/progressbar";
@@ -39,6 +39,7 @@ const response = ref({
   headers: {},
   data: null
 });
+const showSaveAs = ref(false);
 
 function load(newValue: string) {
   if (!newValue) {
@@ -107,8 +108,12 @@ watchEffect(() => {
   }
 });
 
-load(tab.value.id);
-let showSaveAs = ref(false);
+let firstLoad = true;
+watch(Status, (newStatus, oldStatus) => {
+  if (newStatus.online && (firstLoad || !oldStatus.online)) {
+    load(tab.value.id);
+  }
+});
 </script>
 
 <template>
