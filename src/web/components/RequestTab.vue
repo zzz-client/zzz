@@ -8,7 +8,7 @@ import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { ref, toRefs } from "vue";
+import { ref, toRefs, watchEffect } from "vue";
 import Authorization from "./Authorization.vue";
 import Body from "./Body.vue";
 import KeyValueTable from "./KeyValueTable.vue";
@@ -17,15 +17,18 @@ import Response from "./Response.vue";
 const basename = (path) => path.split("/").reverse()[0];
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
-import Session, { SessionProps, setProp } from "./Session";
+import Session, { setProp } from "./Session";
+import Preferences from "./Preferences";
 import Dialog from "primevue/dialog";
 import ProgressBar from "primevue/progressbar";
+import { HttpRequest } from "../../core/modules/requests/mod";
 
 const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 
 const tab = defineModel();
 const toast = useToast();
 
+const splitterOrientation = ref("vertical" as "horizontal" | "vertical");
 const sendInitiated = ref(false);
 const requestData = ref({});
 const breadcrumbs = ref([]);
@@ -96,6 +99,14 @@ function cancelSend(): void {
   sendInitiated.value = false;
 }
 
+watchEffect(() => {
+  if (Preferences.getValue().responsePanelLocation == "right") {
+    splitterOrientation.value = "horizontal";
+  } else {
+    splitterOrientation.value = "vertical";
+  }
+});
+
 load(tab.value.id);
 let showSaveAs = ref(false);
 </script>
@@ -112,7 +123,7 @@ let showSaveAs = ref(false);
     </div>
   </Dialog>
 
-  <Splitter layout="vertical" style="height: 100%">
+  <Splitter :layout="splitterOrientation" style="height: 100%">
     <SplitterPanel :minSize="25">
       <ProgressBar v-if="sendInitiated" mode="indeterminate" style="height: 2px"></ProgressBar>
       <Button label="Save" severity="secondary" icon="pi pi-save" @click="save" style="float: right">Save</Button>
