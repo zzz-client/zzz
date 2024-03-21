@@ -2,6 +2,7 @@ import axios from "npm:axios";
 import { StringToStringMap } from "../../core/etc.ts";
 import Session, { SessionProps } from "./Session.ts";
 import { select } from "npm:@ngneat/elf";
+import { addSecretQueryParam, getAxiosParams } from "./Utils.axios.ts";
 
 type Response = {
   data: any;
@@ -10,16 +11,9 @@ type Response = {
   headers: StringToStringMap;
 };
 
-function addQueryParams(base: string): string {
-  if (Session.pipe(select((state: SessionProps) => state.showSecrets))) {
-    return base + "?format";
-  } else {
-    return base;
-  }
-}
 export function loadRequest(requestId: string): Promise<Response> {
   return axios
-    .get(addQueryParams("http://localhost:8000/" + requestId + ".json"), getAxiosParams())
+    .get(addSecretQueryParam("http://localhost:8000/" + requestId + ".json"), getAxiosParams())
     .then((what) => {
       return {
         data: what.data,
@@ -30,13 +24,6 @@ export function loadRequest(requestId: string): Promise<Response> {
       };
     })
     .catch(catchError);
-}
-function getAxiosParams() {
-  return {
-    headers: {
-      "X-Zzz-Context": Session.getValue().context,
-    },
-  };
 }
 export function saveRequest(body: any): Promise<Response> {
   return axios.put("http://localhost:8000/" + body.Id, body, getAxiosParams()).then((what) => {

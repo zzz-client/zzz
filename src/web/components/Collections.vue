@@ -101,15 +101,16 @@ export interface Cookie {
 let firstLoad = true;
 watch(Status, (newStatus, oldStatus) => {
   if (newStatus.online && (firstLoad || !oldStatus.online)) {
-    loadCollections(scope.value).then((models) => {
+    loadCollections().then((models) => {
+      console.log("models", models);
       collections.value = [];
       models.forEach((model) => addModelToNodes(collections.value, model));
     });
-    loadScopes().then((resultScopes) => {
-      resultScopes.forEach((resultScope) => {
-        scopes.value.push(resultScope);
-      });
-    });
+    // loadScopes().then((resultScopes) => {
+    //   resultScopes.forEach((resultScope) => {
+    //     scopes.value.push(resultScope);
+    //   });
+    // });
   }
 });
 </script>

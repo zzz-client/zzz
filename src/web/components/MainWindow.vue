@@ -132,7 +132,7 @@ loadContexts()
       <Collections />
     </SplitterPanel>
     <SplitterPanel :size="75" :min-size="40" class="absolute">
-      <div style="position: absolute; top: 1em; right: 1em">
+      <div style="position: absolute; top: 1em; right: 1em; z-index: 1000">
         <Dropdown v-model="context" :options="contexts" placeholder="Select a Context" checkmark :highlightOnSelect="true" />
       </div>
       <div v-if="tabs.length === 0" class="align-super-centered">

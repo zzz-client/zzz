@@ -9,9 +9,10 @@ import { HttpRequest } from "../core/modules/requests/mod.ts";
 import { Scope } from "../core/modules/scope/mod.ts";
 import Application from "./app.ts";
 import { initDi } from "../app.ts";
+import { OptionsResponse } from "../web/components/Utils.axios.ts";
 
 const DEFAULT_FILETYPE = "json";
-const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "allow,content-type,x-zzz-context", "Access-Control-Allow-Methods": "GET,PUT,PATCH" };
+const STANDARD_HEADERS = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "allow,content-type,x-zzz-context,x-zzz-scope", "Access-Control-Allow-Methods": "OPTIONS,GET,POST,PUT,PATCH,DELETE" };
 
 export function listen(server: IServer): Promise<void> {
   Trace("Starting server on port " + server.port);
@@ -69,17 +70,16 @@ export class Server implements IServer {
   async respondToGet(request: Request): Promise<Response> {
     const parts = dissectRequest(request);
     const { pathname } = new URL(request.url);
-    Trace("respondToGet " + parts.fullId);
+    Trace("respondToGet " + parts.entityId);
     if (pathname === "/favicon.ico") {
-      Trace("Responding to favicon request");
-      return Promise.resolve(newResponse(204, null, STANDARD_HEADERS));
+      return this.respondToFavicon();
+    } else {
+      const model = await this.executeGet(request);
+      return Promise.resolve(newResponse(200, this.stringify(model, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS));
     }
-    if (pathname === "/") {
-      Trace("Responding to base URL: scope list");
-      return this.respondToList(DEFAULT_FILETYPE);
-    }
-    const model = await this.executeGet(request);
-    return Promise.resolve(newResponse(200, this.stringify(model, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS));
+  }
+  private respondToFavicon(): Promise<Response> {
+    return Promise.resolve(newResponse(204, null, STANDARD_HEADERS));
   }
   async respondToPut(request: Request): Promise<Response> {
     const parts = dissectRequest(request);
@@ -119,7 +119,7 @@ export class Server implements IServer {
     await this.executeDelete(request);
     return Promise.resolve(newResponse(200, this.stringify("^_^", parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS)); // TODO: What response? empty? what code?
   }
-  respondToOptions(request: Request): Promise<Response> {
+  async respondToOptions(request: Request): Promise<Response> {
     Trace("Responding to OPTIONS");
     const headers = {
       "Allow": ["OPTIONS", "GET"],
@@ -128,15 +128,15 @@ export class Server implements IServer {
     if (request.url !== "/" && this.allowPatch) {
       headers.Allow.push("PATCH");
     }
+    const body = await this.getList();
     return Promise.resolve(
-      new Response(null, {
-        status: 204,
+      new Response(this.stringify(body, DEFAULT_FILETYPE), {
+        status: 200,
         headers: headers as unknown as HeadersInit,
       }),
     );
   }
-  async respondToList(fileExtension: string): Promise<Response> {
-    Trace("Responding to list");
+  async getList(): Promise<OptionsResponse> {
     const scopes = await this.app.store.list(Scope.name);
     Trace("Scopes:", scopes);
     const scopeIds = scopes.map((scope: Model) => scope.Id);
@@ -145,11 +145,10 @@ export class Server implements IServer {
     Trace("Contexts:", contexts);
     const contextIds = contexts.map((context: Model) => context.Id); // .filter((contextId: string) => !contextId.includes(".local") && contextId != "globals")
     Trace("Context IDs:", contextIds);
-    const body = {
+    return {
       scopes: scopeIds,
       contexts: contextIds,
     };
-    return newResponse(200, this.stringify(body, fileExtension), STANDARD_HEADERS);
   }
   // deno-lint-ignore no-explicit-any
   private stringify(result: any, fileExtension = DEFAULT_FILETYPE): string {
@@ -200,25 +199,24 @@ function newResponse(status: number, body: any, headers: StringToStringMap): Res
 }
 function getModelIdFromRequest(request: Request): string {
   const parts = dissectRequest(request);
+  let result = parts.entityId;
   if (parts.extension) {
-    return parts.fullId.substring(0, parts.fullId.indexOf("."));
-  } else {
-    return parts.fullId;
+    result = parts.entityId.substring(0, parts.entityId.indexOf("."));
   }
+  return result;
 }
 function dissectRequest(request: Request): RequestParts {
   const { searchParams, pathname } = new URL(request.url);
   const extension = extname(pathname).replace("\.", "");
   const decodedPathname = decodeURI(pathname.replace(/^\//, ""));
-  const scope = decodedPathname.split("/")[0];
-  const entityId = decodedPathname.substring(scope.length + 1, decodedPathname.length - extension.length).replace(/^\./, "");
+  const scope = request.headers?.get("x-zzz-scope") || "";
+  const entityId = decodedPathname.substring(0, decodedPathname.length - extension.length).replace(/^\./, "");
   const context = searchParams.get("context") || request.headers?.get("x-zzz-context") || "";
   return {
     context,
     scope,
     entityId,
     extension,
-    fullId: (entityId ? (scope + "/" + entityId) : scope),
   };
 }
 type RequestParts = {
@@ -226,7 +224,6 @@ type RequestParts = {
   entityId: string;
   scope: string;
   extension: string;
-  fullId: string;
 };
 
 // TODO: Tests
