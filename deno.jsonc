@@ -16,7 +16,7 @@
     "cli:build": "deno compile --unstable --allow-all --output=dist/zzz src/cli/cli.ts",
     "tui": "deno run -A --unstable src/tui/tui.ts",
     "tui:build": "deno compile --unstable --allow-all --output=dist/zzz-tui src/tui/tui.ts",
-    "http": "deno run -A --unstable src/http/http.ts",
+    "http": "deno run -A --unstable src/http/http.ts --act",
     "http:watch": "deno run -A https://deno.land/x/live_reload@0.0.3/reload.ts --main=src/http/http.ts allow-net allow-read allow-write",
     "http:build": "deno compile --unstable --allow-all --output=dist/zzz-server src/http/http.ts",
     "web": "deno task vite --host 127.0.0.1",

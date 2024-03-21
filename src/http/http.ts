@@ -29,14 +29,13 @@ export function listen(server: IServer): Promise<void> {
           return server.respondToPatch(request);
         case "OPTIONS":
           return server.respondToOptions(request);
-        default:
-          return Promise.reject(
-            new Response("Unsupported request method: " + request.method, {
-              status: 400,
-              headers: STANDARD_HEADERS,
-            }),
-          );
       }
+      return Promise.reject(
+        new Response("Unsupported request method: " + request.method, {
+          status: 400,
+          headers: STANDARD_HEADERS,
+        }),
+      );
     } catch (error) {
       return Promise.reject(new Response("Error: " + error, { status: 500, headers: STANDARD_HEADERS }));
     }
@@ -59,9 +58,11 @@ export interface IServer {
 export class Server implements IServer {
   port: number;
   app: Application;
-  constructor(app: Application) {
+  allowPatch: boolean;
+  constructor(app: Application, allowPatch: boolean) {
     this.port = app.argv!.http || 8000;
     this.app = app;
+    this.allowPatch = allowPatch;
   }
   async respondToGet(request: Request): Promise<Response> {
     const parts = dissectRequest(request);
@@ -91,6 +92,9 @@ export class Server implements IServer {
     return Promise.resolve(newResponse(200, this.stringify("^_^", parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS)); // TODO: What response? empty? what code?
   }
   async respondToPatch(request: Request): Promise<Response> {
+    if (!this.allowPatch) {
+      return Promise.resolve(newResponse(405, this.stringify({ message: "PATCH not supported" }, "json"), STANDARD_HEADERS));
+    }
     const parts = dissectRequest(request);
     Trace("Responding to PATCH");
     const model = await this.executeGet(request);
@@ -115,9 +119,8 @@ export class Server implements IServer {
       "Allow": ["OPTIONS", "GET"],
       ...STANDARD_HEADERS,
     };
-    if (request.url !== "/") {
-      Trace("PATCH allowed to execute requests");
-      headers.Allow.push("PATCH}");
+    if (request.url !== "/" && this.allowPatch) {
+      headers.Allow.push("PATCH");
     }
     return Promise.resolve(
       new Response(null, {

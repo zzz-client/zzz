@@ -24,8 +24,10 @@ export default class Application implements IApplication {
   flags = {
     preamble: "Usage: zzz <options>",
     string: [],
-    boolean: ["trace"] as string[],
-    description: {} as StringToStringMap,
+    boolean: ["trace", "act"] as string[],
+    description: {
+      act: "If passed, performing PATCH on a request will execute it and yield the result",
+    } as StringToStringMap,
     argument: {} as StringToStringMap,
     default: {} as { [key: string]: ConfigValue },
     alias: {} as StringToStringMap,
@@ -50,7 +52,7 @@ export default class Application implements IApplication {
     this.argv = processFlags(Deno.args, this.flags);
   }
   run(): Promise<void> {
-    return listen(new Server(this));
+    return listen(new Server(this, Deno.args.includes("--act")));
   }
   registerModule(module: Module): void {
     /*
