@@ -7,7 +7,7 @@ import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import Collections from "./Collections.vue";
 import Cookies from "./Cookies.vue";
 import { loadContexts } from "./MainWindow.axios";
@@ -26,6 +26,9 @@ Session.subscribe((state) => {
   console.log("subscribe", state.tabs);
   tabs.value = state.tabs || [];
   activeTab.value = state.activeTab || 0;
+});
+watch(context, (newContext) => {
+  Session.update(setProp("context", newContext));
 });
 
 // In case of epic failure:
@@ -79,7 +82,7 @@ Status.connecting = true;
 loadContexts()
   .then((resultContexts) => {
     Status.online = true;
-    contexts.value = { ...resultContexts };
+    contexts.value = [...resultContexts];
   })
   .catch((error) => {
     console.log("oh no", error);

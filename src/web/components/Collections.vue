@@ -18,6 +18,9 @@ Session.subscribe((state) => {
   scope.value = state.scope;
   viewSecrets.value = state.viewSecrets;
 });
+watch(scope, (newScope) => {
+  Session.update(setProp("scope", newScope));
+});
 
 function expand(items: [], value: boolean) {
   for (const item of items) {
