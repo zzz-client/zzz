@@ -1,3 +1,6 @@
 [submodule "library"]
 	path = library
 	url = git@gitlab.com:cat-dev-null/zzz-requests.git
+[submodule "docs"]
+	path = docs
+	url = git@gitlab.com:cat-dev-null/zzz.wiki.git
