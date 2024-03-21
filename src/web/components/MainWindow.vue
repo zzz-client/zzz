@@ -17,7 +17,6 @@ import Skeleton from "primevue/skeleton";
 
 const tabs = ref([]);
 const activeTab = ref(0);
-const scope = ref(Session.getValue().scope);
 const context = ref(Session.getValue().context);
 const contexts = ref([]);
 

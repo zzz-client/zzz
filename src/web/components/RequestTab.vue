@@ -21,6 +21,7 @@ import Session, { Status, setProp } from "./Session";
 import Preferences from "./Preferences";
 import Dialog from "primevue/dialog";
 import ProgressBar from "primevue/progressbar";
+import ProgressSpinner from "primevue/progressspinner";
 import { HttpRequest } from "../../core/modules/requests/mod";
 
 const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
@@ -40,16 +41,18 @@ const response = ref({
   data: null
 });
 const showSaveAs = ref(false);
+const loading = ref(false);
 
-function load(newValue: string) {
+function load(newValue: string): Promise<void> {
   if (!newValue) {
     breadcrumbs.value = [{ label: "Unsaved Request" }];
+    return Promise.resolve();
   } else {
     breadcrumbs.value = newValue.split("/").map((pathPart) => ({
       label: basename(pathPart),
       command: () => alert("Fix breadcrumbs, yo dolt")
     }));
-    loadRequest(newValue).then((loadedRequest) => {
+    return loadRequest(newValue).then((loadedRequest) => {
       console.log("response", loadedRequest);
       requestData.value = loadedRequest.data;
       tab.value.title = loadedRequest.data.Name;
@@ -109,9 +112,19 @@ watchEffect(() => {
 });
 
 let firstLoad = true;
+
 watch(Status, (newStatus, oldStatus) => {
   if (newStatus.online && (firstLoad || !oldStatus.online)) {
-    load(tab.value.id);
+    loading.value = true;
+    load(tab.value.id)
+      .then(() => {
+        firstLoad = false;
+        loading.value = false;
+      })
+      .catch(() => {
+        firstLoad = false;
+        loading.value = false;
+      });
   }
 });
 </script>
@@ -128,7 +141,8 @@ watch(Status, (newStatus, oldStatus) => {
     </div>
   </Dialog>
 
-  <Splitter :layout="splitterOrientation" style="height: 100%">
+  <ProgressSpinner v-if="loading" class="align-super-centered" width="100%" height="100%" />
+  <Splitter v-if="!loading" :layout="splitterOrientation" style="height: 100%">
     <SplitterPanel :minSize="25">
       <ProgressBar v-if="sendInitiated" mode="indeterminate" style="height: 2px"></ProgressBar>
       <Button label="Save" severity="secondary" icon="pi pi-save" @click="save" style="float: right">Save</Button>
