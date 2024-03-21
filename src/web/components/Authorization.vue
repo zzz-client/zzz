@@ -60,6 +60,10 @@ const methodOptions = [
 ];
 
 watch(requestData, (newRequestData) => {
+  if (!newRequestData.Authorization) {
+    chosenMethod.value = "None";
+    return;
+  }
   console.log("watched requestData", newRequestData.Authorization);
   const newAuthMethod = getMethodFromRequestAuthorization(newRequestData.Authorization);
   console.log("newAuthMethod", newAuthMethod);
