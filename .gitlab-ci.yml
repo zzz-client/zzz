@@ -69,7 +69,7 @@ Desktop:
     - cd src/desktop/
     - cargo install tauri-cli
     - deno task desktop:build
-    - mv src/desktop/target/release/Zzz ./zzz-desktop
+    - mv dist/release/Zzz ./zzz-desktop
   artifacts:
     name: zzz-desktop
     paths:
@@ -79,12 +79,14 @@ Desktop:
 DesktopInstaller:
   image: hp41/nsis
   stage: Build
-  only:
-    - main
+  dependencies: [Desktop]
+  # only:
+  #   - main
   script:
+    # - curl --location --output artifacts.zip "https://gitlab.example.com/api/v4/projects/1/jobs/artifacts/main/download?job=test&job_token=$CI_JOB_TOKEN"
     - makensis scripts/desktop.nsi
   artifacts:
-    name: zzz-setup
+    name: zzz-win-setup
     paths:
       - ./zzz-setup.exe
     expire_in: 1 day
