@@ -1,4 +1,4 @@
-import { FeatureFlags } from "../apps/mod.ts";
+import { FeatureFlags } from "./app.ts";
 
 export interface StringToStringMap {
   [key: string]: string;

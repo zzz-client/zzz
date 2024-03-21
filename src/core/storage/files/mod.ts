@@ -63,6 +63,7 @@ export default class FileStorage implements IStorage {
   }
   private async isDirectory(fullId: string): Promise<boolean> {
     try {
+      Trace("Adjusted path " + this.adjustPath(fullId, false));
       return (await Deno.stat(this.adjustPath(fullId, false))).isDirectory;
     } catch (_error) {
       return false;

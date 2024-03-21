@@ -1,7 +1,7 @@
 import DI from "../core/di.ts";
 import { StringToStringMap } from "../core/etc.ts";
 import { IModuleRenderer, Module } from "../core/module.ts";
-import IApplication, { ConfigValue, Flags } from "../apps/mod.ts";
+import IApplication, { ConfigValue, Flags } from "../core/app.ts";
 import Tui from "./tui.ts";
 
 import { Args, processFlags } from "../core/deps.ts";
@@ -15,6 +15,7 @@ import { RedactModule } from "../core/modules/redact/mod.ts";
 import { RequestsModule } from "../core/modules/requests/mod.ts";
 import { ScopeModule } from "../core/modules/scope/mod.ts";
 import TemplateModule from "../core/modules/template/mod.ts";
+import { AfterHooksModule, BeforeHooksModule } from "../core/modules/hooks/mod.ts";
 
 export default class Application implements IApplication {
   store = DI.newInstance("IStore") as IStore;
@@ -34,6 +35,7 @@ export default class Application implements IApplication {
   renderers = [] as IModuleRenderer[];
   constructor() {
     this.env = Deno.env.toObject();
+    this.registerModule(new BeforeHooksModule(this.store));
     this.registerModule(new RequestsModule(this.store));
     this.registerModule(new BodyModule(this.store));
     this.registerModule(new PathParamsModule(this.store));
@@ -43,6 +45,7 @@ export default class Application implements IApplication {
     this.registerModule(new TemplateModule(this.store));
     this.registerModule(new CookiesModule(this.store));
     this.registerModule(new RedactModule(this.store));
+    this.registerModule(new AfterHooksModule(this.store));
     this.argv = processFlags(Deno.args, this.flags);
   }
   run(): Promise<void> {

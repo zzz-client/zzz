@@ -3,8 +3,8 @@ import DI from "../core/di.ts";
 import { StringToStringMap } from "../core/etc.ts";
 import { IModuleRenderer, Module } from "../core/module.ts";
 import { IStore } from "../core/storage/mod.ts";
-import IApplication, { ConfigValue, Flags } from "../apps/mod.ts";
-import { initDi } from "../apps/zzz/app.ts";
+import IApplication, { ConfigValue, Flags } from "../core/app.ts";
+import { initDi } from "../app.ts";
 import { AuthorizationModule } from "../core/modules/auth/mod.ts";
 import { BodyModule } from "../core/modules/body/mod.ts";
 import { ContextModule } from "../core/modules/context/mod.ts";
@@ -14,6 +14,7 @@ import { RedactModule } from "../core/modules/redact/mod.ts";
 import { RequestsModule } from "../core/modules/requests/mod.ts";
 import { ScopeModule } from "../core/modules/scope/mod.ts";
 import TemplateModule from "../core/modules/template/mod.ts";
+import { Hooks, HooksModule } from "../core/modules/hooks/mod.ts";
 import { listen, Server } from "./http.ts";
 
 initDi();
@@ -23,8 +24,10 @@ export default class Application implements IApplication {
   flags = {
     preamble: "Usage: zzz <options>",
     string: [],
-    boolean: ["trace"] as string[],
-    description: {} as StringToStringMap,
+    boolean: ["trace", "act"] as string[],
+    description: {
+      act: "If passed, performing PATCH on a request will execute it and yield the result",
+    } as StringToStringMap,
     argument: {} as StringToStringMap,
     default: {} as { [key: string]: ConfigValue },
     alias: {} as StringToStringMap,
@@ -36,6 +39,7 @@ export default class Application implements IApplication {
   renderers = [] as IModuleRenderer[];
   constructor() {
     this.env = Deno.env.toObject();
+    this.registerModule(new HooksModule(this.store));
     this.registerModule(new RequestsModule(this.store));
     this.registerModule(new BodyModule(this.store));
     this.registerModule(new PathParamsModule(this.store));
@@ -48,7 +52,7 @@ export default class Application implements IApplication {
     this.argv = processFlags(Deno.args, this.flags);
   }
   run(): Promise<void> {
-    return listen(new Server(this));
+    return listen(new Server(this, Deno.args.includes("--act")));
   }
   registerModule(module: Module): void {
     /*
