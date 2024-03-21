@@ -19,11 +19,7 @@ function addQueryParams(base: string): string {
 }
 export function loadRequest(requestId: string): Promise<Response> {
   return axios
-    .get(addQueryParams("http://localhost:8000/" + requestId + ".json"), {
-      headers: {
-        "X-Zzz-Context": "integrate",
-      },
-    })
+    .get(addQueryParams("http://localhost:8000/" + requestId + ".json"), getAxiosParams())
     .then((what) => {
       return {
         data: what.data,
@@ -35,13 +31,15 @@ export function loadRequest(requestId: string): Promise<Response> {
     })
     .catch(catchError);
 }
-const AXIOS_PARAMS = {
-  headers: {
-    "X-Zzz-Context": Session.getValue().context,
-  },
-};
+function getAxiosParams() {
+  return {
+    headers: {
+      "X-Zzz-Context": Session.getValue().context,
+    },
+  };
+}
 export function saveRequest(body: any): Promise<Response> {
-  return axios.put("http://localhost:8000/" + body.Id, body, AXIOS_PARAMS).then((what) => {
+  return axios.put("http://localhost:8000/" + body.Id, body, getAxiosParams()).then((what) => {
     return {
       data: what.data,
       status: what.status,
@@ -54,7 +52,7 @@ export function saveRequest(body: any): Promise<Response> {
 }
 
 export function saveNewRequest(body: any): Promise<Response> {
-  return axios.post("http://localhost:8000/" + body.Id + "?type=request", body, AXIOS_PARAMS).then((what) => {
+  return axios.post("http://localhost:8000/" + body.Id + "?type=request", body, getAxiosParams()).then((what) => {
     return {
       data: what.data,
       status: what.status,
@@ -80,11 +78,7 @@ export function executeRequest(requestId: string): Promise<Response> {
     .patch(
       "http://localhost:8000/" + requestId,
       {},
-      {
-        headers: {
-          "X-Zzz-Context": Session.getValue().context,
-        },
-      },
+      getAxiosParams(),
     )
     .then((what) => {
       return {

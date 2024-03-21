@@ -6,7 +6,7 @@ import Dropdown from "primevue/dropdown";
 import Session, { SessionProps, Status, setProp } from "./Session";
 import { loadCollections, loadScopes } from "./Collections.axios";
 
-import { ref, toRefs } from "vue";
+import { ref, toRefs, watch } from "vue";
 const expandedKeys = ref({} as [string: boolean]);
 const collections = ref([] as any[]);
 
@@ -95,13 +95,19 @@ export interface Cookie {
   expires: Date;
 }
 
-loadCollections(scope.value).then((models) => {
-  models.forEach((model) => addModelToNodes(collections.value, model));
-});
-loadScopes().then((resultScopes) => {
-  resultScopes.forEach((resultScope) => {
-    scopes.value.push(resultScope);
-  });
+let firstLoad = true;
+watch(Status, (newStatus, oldStatus) => {
+  if (newStatus.online && (firstLoad || !oldStatus.online)) {
+    loadCollections(scope.value).then((models) => {
+      collections.value = [];
+      models.forEach((model) => addModelToNodes(collections.value, model));
+    });
+    loadScopes().then((resultScopes) => {
+      resultScopes.forEach((resultScope) => {
+        scopes.value.push(resultScope);
+      });
+    });
+  }
 });
 </script>
 <template>
