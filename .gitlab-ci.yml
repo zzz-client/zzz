@@ -21,11 +21,11 @@ Lint:
 
 Cli:
   stage: Build
-  script: deno task cli:build ; mv dist/zzz ./
+  script: deno task cli:build ; mv dist/zzz-cli ./
   artifacts:
     name: zzz-cli
     paths:
-      - ./zzz
+      - ./zzz-cli
     expire_in: 1 day
 
 Tui:

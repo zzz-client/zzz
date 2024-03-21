@@ -13,7 +13,7 @@
     "build": "deno task cli:build ; deno task tui:build ; deno task http:build ; deno task web:build ; deno task desktop:build",
 
     "cli": "deno run -A --unstable src/cli/cli.ts",
-    "cli:build": "deno compile --unstable --allow-all --output=dist/zzz src/cli/cli.ts",
+    "cli:build": "deno compile --unstable --allow-all --output=dist/zzz-cli src/cli/cli.ts",
     "tui": "deno run -A --unstable src/tui/tui.ts",
     "tui:build": "deno compile --unstable --allow-all --output=dist/zzz-tui src/tui/tui.ts",
     "http": "deno run -A src/core/watch.ts -A src/http/http.ts",

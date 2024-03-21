@@ -1,0 +1,17 @@
+_flavor=cli # tui http web desktop
+
+pkgname=zzz-$_flavor
+pkgdesc="CLI interface for the Zzzz REST client"
+pkgver=0.8.5
+pkgrel=1
+arch=("x86_64")
+url="https://zzz.rest"
+license=('OSL-3.0')
+source=(
+    "dist/$pkgname",
+    "LICENSE.md"
+)
+package() {
+  install -Dm755 "${srcdir}/$pkgname" "${pkgdir}/usr/bin/$pkgname"
+  install -Dm644 LICENSE.md "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
