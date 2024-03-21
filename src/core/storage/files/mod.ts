@@ -2,7 +2,7 @@ import { basename, exists, extname, join } from "../../deps.ts";
 import { asAny, Meld, Trace } from "../../etc.ts";
 import { IStorage, Model, ParentModel, SearchParams } from "../mod.ts";
 import { getFileFormat } from "./formats.ts";
-const DEFAULT_MARKER = "_defaults";
+const DEFAULT_MARKER = "_collection";
 
 export default class FileStorage implements IStorage {
   private baseDir;
