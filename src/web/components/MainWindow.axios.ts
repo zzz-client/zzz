@@ -1,6 +1,12 @@
 import axios from "npm:axios";
 
-export function loadContexts(): Promise<void> {
+declare type ResponseForm = {
+  contexts: string[];
+  scopes: string[];
+};
+
+// TODO: Rename me
+export function loadContexts(): Promise<string[]> {
   return axios
     .get("http://localhost:8000/")
     .then((res) => {

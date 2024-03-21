@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { MenuItemCommandEvent } from "primevue/menuitem";
+import type { MenuItem, MenuItemCommandEvent } from "primevue/menuitem";
 import PanelMenu from "primevue/panelmenu";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
-import Session, { SessionProps, setProp } from "./Session";
+import Session, { SessionProps, Status, setProp } from "./Session";
 import { loadCollections, loadScopes } from "./Collections.axios";
 
 import { ref, toRefs } from "vue";

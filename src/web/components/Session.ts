@@ -1,6 +1,7 @@
 import { createStore, withProps } from "npm:@ngneat/elf";
 export { setProp } from "npm:@ngneat/elf";
 import { localStorageStrategy, persistState } from "npm:@ngneat/elf-persist-state";
+import { reactive } from "npm:vue";
 
 export interface SessionProps {
   showSecrets: boolean;
@@ -16,6 +17,12 @@ const Session = createStore(
   withProps<SessionProps>({ showSecrets: false, activeTab: 0, showCookies: false, tabs: [], scope: "", context: null }),
 );
 export default Session;
+
+export const Status = reactive({
+  online: false,
+  connecting: false,
+  error: "",
+});
 
 persistState(Session, {
   key: "session",
