@@ -130,27 +130,25 @@ loadContexts()
       <Collections />
     </SplitterPanel>
     <SplitterPanel :size="75" :min-size="40" class="absolute">
-      <div>
-        <div style="position: absolute; top: 1em; right: 1em">
-          <Dropdown v-model="context" :options="contexts" placeholder="Select a Context" checkmark :highlightOnSelect="true" />
-        </div>
-        <div v-if="tabs.length === 0" class="align-super-centered">
-          <div style="font-size: 5em; opacity: 70%">😴</div>
-          Nothing to see!
-          <br />
-          <Button @click="newTab()" style="font-size: 0.6em">Create a new Request</Button>
-        </div>
-        <TabView class="absolute" @tab-click="onTabChange" v-model:activeIndex="activeTab">
-          <TabPanel v-for="(tab, i) in tabs" :key="tab.id" :header="tab.title" class="absolute">
-            <RequestTab v-model="tabs[i]" class="absolute"></RequestTab>
-            <template #header>
-              <Badge v-if="dirty[i]" style="margin-left: 0.5em; margin-right: 0.5em"></Badge>
-              <Badge style="margin-left: 0.5em" value="x" @click="closeTab(i)"></Badge>
-            </template>
-          </TabPanel>
-          <TabPanel v-if="tabs.length > 0" header="+" />
-        </TabView>
+      <div style="position: absolute; top: 1em; right: 1em">
+        <Dropdown v-model="context" :options="contexts" placeholder="Select a Context" checkmark :highlightOnSelect="true" />
       </div>
+      <div v-if="tabs.length === 0" class="align-super-centered">
+        <div style="font-size: 5em; opacity: 70%">😴</div>
+        Nothing to see!
+        <br />
+        <Button @click="newTab()" style="font-size: 0.6em">Create a new Request</Button>
+      </div>
+      <TabView class="absolute" @tab-click="onTabChange" v-model:activeIndex="activeTab">
+        <TabPanel v-for="(tab, i) in tabs" :key="tab.id" :header="tab.title" class="absolute">
+          <RequestTab v-model="tabs[i]"></RequestTab>
+          <template #header>
+            <Badge v-if="dirty[i]" style="margin-left: 0.5em; margin-right: 0.5em"></Badge>
+            <Badge style="margin-left: 0.5em" value="x" @click="closeTab(i)"></Badge>
+          </template>
+        </TabPanel>
+        <TabPanel v-if="tabs.length > 0" header="+" />
+      </TabView>
     </SplitterPanel>
   </Splitter>
   <Cookies></Cookies>

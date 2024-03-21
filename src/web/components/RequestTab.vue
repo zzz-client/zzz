@@ -104,10 +104,7 @@ let showSaveAs = ref(false);
   <Toast />
   <Dialog v-model:visible="showSaveAs" modal header="Save Request" :style="{ width: '25rem' }">
     <InputText v-model="newRequestName" autocomplete="off" autofocus placeholder="Request name" />
-    <div style="margin: 3em">
-      Presently only saving to the root Collection is supported
-      <!-- TODO: Save requests to any Collection -->
-    </div>
+    <div style="margin: 3em">Presently only saving to the root Collection is supported</div>
     <div style="float: right">
       <Button style="display: inline" type="button" label="Save" @click="saveAsNew"></Button>
       &nbsp;
@@ -115,8 +112,8 @@ let showSaveAs = ref(false);
     </div>
   </Dialog>
 
-  <Splitter layout="vertical">
-    <SplitterPanel :minSize="10">
+  <Splitter layout="vertical" style="height: 100%">
+    <SplitterPanel :minSize="25">
       <ProgressBar v-if="sendInitiated" mode="indeterminate" style="height: 2px"></ProgressBar>
       <Button label="Save" severity="secondary" icon="pi pi-save" @click="save" style="float: right">Save</Button>
       <Breadcrumb :model="breadcrumbs" />
@@ -140,7 +137,7 @@ let showSaveAs = ref(false);
         <a style="font-weight: bold; margin: 1em; cursor: pointer" @click="showCookies">Cookies</a>
       </div>
     </SplitterPanel>
-    <SplitterPanel :minSize="10">
+    <SplitterPanel :minSize="25">
       <Response v-if="response.status > 0" :data="response.data"></Response>
     </SplitterPanel>
   </Splitter>
