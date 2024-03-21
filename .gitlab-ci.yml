@@ -74,12 +74,12 @@ Desktop:
       - ./zzz-desktop
     expire_in: 1 day
 
-DesktopInstaller:
+WindowsInstaller:
   image: debian:stable
   stage: Package
   dependencies: [Desktop]
-  # only:
-  #   - main
+  only:
+    - main
   script:
     # - curl --location --output artifacts.zip "https://gitlab.example.com/api/v4/projects/1/jobs/artifacts/main/download?job=test&job_token=$CI_JOB_TOKEN"
     - apt-get -qq -o dir::cache::archives="$CI_PROJECT_DIR/.cache/apt" install -y zip nsis
@@ -88,6 +88,21 @@ DesktopInstaller:
     name: zzz-win-setup
     paths:
       - ./zzz-setup.exe
+    expire_in: 1 day
+
+ArchPackage:
+  image: archlinux/base
+  stage: Package
+  only:
+    - main
+  script:
+    - cd scripts
+    - makepkg
+    - mv *.pkg.tar.zst ../
+  artifacts:
+    name: zzz-pacman
+    paths:
+      - "*.pkg.tar.zst"
     expire_in: 1 day
 
 DeployWeb:

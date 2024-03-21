@@ -2,7 +2,7 @@
 !define VERSION "0.8.5"
 
 Name "${APPNAME} ${VERSION}"
-OutFile "../dist/${APPNAME}Setup.exe"
+OutFile "../pkg/${APPNAME}Setup.exe"
 
 ShowInstDetails show
 RequestExecutionLevel User

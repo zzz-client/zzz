@@ -8,7 +8,7 @@ arch=("x86_64")
 url="https://zzz.rest"
 license=('OSL-3.0')
 source=(
-    "dist/$pkgname",
+    "../dist/$pkgname",
     "LICENSE.md"
 )
 package() {
