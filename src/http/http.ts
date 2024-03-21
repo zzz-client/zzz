@@ -37,7 +37,9 @@ export function listen(server: IServer): Promise<void> {
         }),
       );
     } catch (error) {
-      return Promise.reject(new Response("Error: " + error, { status: 500, headers: STANDARD_HEADERS }));
+      console.log("Error caught");
+      const errorMsg = error instanceof Error ? error.message : error;
+      return Promise.reject(new Response(errorMsg, { status: 500, headers: STANDARD_HEADERS }));
     }
   });
   Trace("Server started (asynchronously)");
@@ -93,19 +95,23 @@ export class Server implements IServer {
   }
   async respondToPatch(request: Request): Promise<Response> {
     if (!this.allowPatch) {
-      return Promise.resolve(newResponse(405, this.stringify({ message: "PATCH not supported" }, "json"), STANDARD_HEADERS));
+      return Promise.resolve(newResponse(405, this.stringify({ message: "PATCH not supported" }, DEFAULT_FILETYPE), STANDARD_HEADERS));
     }
     const parts = dissectRequest(request);
     Trace("Responding to PATCH");
     const model = await this.executeGet(request);
-    if (!(model instanceof HttpRequest)) {
-      return Promise.resolve(newResponse(400, this.stringify({ message: "PATCH only supported for Requests" }, parts.extension), STANDARD_HEADERS));
+    if (!("Method" in model)) {
+      return Promise.resolve(newResponse(400, this.stringify({ message: "PATCH only supported for Requests" }, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS));
     }
     const action = new Action(this.app.argv as FeatureFlags, this.app.env);
-    await executeHooks("Before", model, action);
-    const executeResponse = await (new ExecuteActor()).act(model);
-    await executeHooks("After", model, executeResponse);
-    return Promise.resolve(newResponse(200, this.stringify(executeResponse, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS));
+    try {
+      await executeHooks("Before", model, action);
+      const executeResponse = await (new ExecuteActor()).act(model);
+      await executeHooks("After", model, executeResponse);
+      return Promise.resolve(newResponse(200, this.stringify(executeResponse, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS));
+    } catch (error) {
+      return newResponse(599, this.stringify({ message: "Error: " + error }, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS);
+    }
   }
   async respondToDelete(request: Request): Promise<Response> {
     Trace("Responding to DELETE");
@@ -165,7 +171,6 @@ export class Server implements IServer {
   private async executePost(request: Request): Promise<void> {
     const model = await request.json() as Model;
     const modelType = getModelTypeForNewRequest(request);
-    console.log("Executing post on", modelType);
     await this.app.store.set(modelType, model);
   }
   private async executePut(request: Request): Promise<void> {

@@ -19,16 +19,16 @@ import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 import Session, { SessionProps, setProp } from "./Session";
 import Dialog from "primevue/dialog";
+import ProgressBar from "primevue/progressbar";
 
 const methods = ["GET", "POST", "PUT", "DELETE", "INFO"];
 
 const tab = defineModel();
 const toast = useToast();
 
-const method = ref("GET");
+const sendInitiated = ref(false);
 const requestData = ref({});
 const breadcrumbs = ref([]);
-const authorizationType = ref("None");
 const newRequestName = ref("");
 const response = ref({
   status: 0,
@@ -53,9 +53,15 @@ function load(newValue: string) {
   }
 }
 function send(): Promise<void> {
-  return executeRequest(tab.value.id).then((executedResponse) => {
-    response.value = executedResponse;
-  });
+  sendInitiated.value = true;
+  return executeRequest(tab.value.id)
+    .then((executedResponse) => {
+      response.value = executedResponse;
+      sendInitiated.value = false;
+    })
+    .catch(() => {
+      sendInitiated.value = false;
+    });
 }
 function showCookies(): void {
   Session.update(setProp("showCookies", true));
@@ -86,6 +92,9 @@ async function saveAsNew(): Promise<void> {
     toast.add({ summary: "Error saving", detail: response.data, severity: "error" });
   }
 }
+function cancelSend(): void {
+  sendInitiated.value = false;
+}
 
 load(tab.value.id);
 let showSaveAs = ref(false);
@@ -108,13 +117,14 @@ let showSaveAs = ref(false);
 
   <Splitter layout="vertical">
     <SplitterPanel :minSize="10">
-      <Button label="Save" severity="secondary" icon="pi pi-save" @click="showSaveAs = true" style="float: right">Save</Button>
+      <ProgressBar v-if="sendInitiated" mode="indeterminate" style="height: 2px"></ProgressBar>
+      <Button label="Save" severity="secondary" icon="pi pi-save" @click="save" style="float: right">Save</Button>
       <Breadcrumb :model="breadcrumbs" />
-
       <div class="flex">
         <Dropdown v-model="requestData.Method" :options="methods" class="w-full md:w-14rem" />
         <InputText type="text" v-model="requestData.URL" />
-        <Button label="Send" @click="send">Send</Button>
+        <Button v-if="sendInitiated" label="Cancel" @click="cancelSend" severity="secondary"> Cancel </Button>
+        <Button v-if="!sendInitiated" label="Send" @click="send"> Send </Button>
       </div>
       <div class="flex">
         <TabView style="flex: 1">
@@ -131,9 +141,7 @@ let showSaveAs = ref(false);
       </div>
     </SplitterPanel>
     <SplitterPanel :minSize="10">
-      <h3>Request Data</h3>
-      <pre>{{ requestData }}</pre>
-      <Response v-if="response.status > 0" :data="response"></Response>
+      <Response v-if="response.status > 0" :data="response.data"></Response>
     </SplitterPanel>
   </Splitter>
 </template>
@@ -158,5 +166,11 @@ button {
 input {
   display: flex;
   flex: 1;
+}
+.align-super-centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
