@@ -14,7 +14,7 @@ import { RedactModule } from "../core/modules/redact/mod.ts";
 import { RequestsModule } from "../core/modules/requests/mod.ts";
 import { ScopeModule } from "../core/modules/scope/mod.ts";
 import TemplateModule from "../core/modules/template/mod.ts";
-import { Hooks, HooksModule } from "../core/modules/hooks/mod.ts";
+import { HooksModule } from "../core/modules/hooks/mod.ts";
 import { listen, Server } from "./http.ts";
 
 initDi();

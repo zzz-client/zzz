@@ -1,7 +1,6 @@
 import { Args } from "./deps.ts";
 import { Action, asAny, StringToStringMap, Trace } from "./etc.ts";
 import { IModuleModifier, Module } from "./module.ts";
-import { Hooks } from "./modules/hooks/mod.ts";
 import { IStore, Model } from "./storage/mod.ts";
 
 export default interface IApplication {
@@ -40,12 +39,13 @@ export async function executeModules(modules: Module[], action: Action, model: M
     }
   }
 }
-export async function executeHooks(hookIdentifier: string, model: Model, actionOrExecuteResponse: any): Promise<void> {
+export function executeHooks(hookIdentifier: string, model: Model, _actionOrExecuteResponse: unknown): Promise<void> {
   const hooks = asAny(model).Hooks as StringToStringMap;
   if (hooks && hookIdentifier in hooks) {
-    const hook = hooks[hookIdentifier] as string;
+    // const hook = hooks[hookIdentifier] as string;
     // TODO: Execute hook
   }
+  return Promise.resolve();
 }
 
 // ----------------------------------------- TESTS -----------------------------------------

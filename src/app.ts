@@ -14,7 +14,7 @@ export function initDi(): void{
   DI.register("IAuthorizer",            () => new HeaderAuthorizer());
   DI.register("IAuthorizer",            () => new QueryAuthorizer());
   DI.register("IStore",                 () => new FileStore());
-  DI.register("IStorage:Scope",         () => new ConfigStorage('zzz.yml'));
+  DI.register("IStorage:Scope",         () => new ConfigStorage('zzz.yml', 'yml'));
   DI.register("IStorage:HttpRequest",   () => new FileStorage('library', 'yml'));
   DI.register("IStorage:Collection",    () => new FileStorage('library', 'yml'));
   DI.register("IStorage:Context",       () => new FileStorage('library/contexts', 'yml'));

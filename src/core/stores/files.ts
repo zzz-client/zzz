@@ -1,5 +1,5 @@
 import DI from "../di.ts";
-import { asAny, Trace } from "../etc.ts";
+import { Trace } from "../etc.ts";
 import { IStorage, IStore, Model, ParentModel, SearchParams } from "../storage/mod.ts";
 import { Authorization } from "../modules/auth/mod.ts";
 import { Context } from "../modules/context/mod.ts";

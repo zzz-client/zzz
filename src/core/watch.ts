@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 // This was yoinked from https://github.com/Caesar2011/rhinoder and modified
 
 const throttle = 500;
