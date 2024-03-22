@@ -2,36 +2,30 @@ default:
   image: denoland/deno:1.40.4 # unzip is not included > 1.40.5; see https://github.com/denoland/deno_docker/issues/344
 
 stages:
-  - Test
-  - Build
-  - Package
-  - Deploy
+  - test
+  - build
+  - package
+  - deploy
 
 Tests:
-  stage: Test
+  stage: test
   script:
     - deno task tests
     - deno task coverage
 
 Lint:
-  stage: Test
+  stage: test
   script:
     - deno task lint
     - deno fmt --check
 
 Linux:
-  image: rustdocker/rust:stable
-  stage: Build
+  stage: build
   script:
     - deno task build:cli:linux
     - deno task build:tui:linux
     - deno task build:http:linux
     - deno task build:web:linux
-    - cd src/desktop/
-    - cargo install tauri-cli
-    - deno task build:desktop
-    - cd ../../
-    - mv dist/release/Zzz dist/zzz-desktop
   artifacts:
     name: x86_64-unknown-linux-gnu
     paths:
@@ -39,14 +33,12 @@ Linux:
     expire_in: 1 day
 
 Windows:
-  image: rustdocker/rust:stable
-  stage: Build
+  stage: build
   script:
     - deno task build:cli:windows
     - deno task build:tui:windows
     - deno task build:http:windows
     - deno task build:web:windows
-    - echo Cross compilation is not yet supported for Tauri
   artifacts:
     name: x86_64-pc-windows-msvc
     paths:
@@ -54,14 +46,12 @@ Windows:
     expire_in: 1 day
 
 Mac:
-  image: rustdocker/rust:stable
-  stage: Build
+  stage: build
   script:
     - deno task build:cli:mac:x86
     - deno task build:tui:mac:x86
     - deno task build:http:mac:x86
     - deno task build:web:mac:x86
-    - echo Cross compilation is not yet supported for Tauri
   artifacts:
     name: x86_64-apple-darwin
     paths:
@@ -69,23 +59,22 @@ Mac:
     expire_in: 1 day
 
 MacARM:
-  image: rustdocker/rust:stable
-  stage: Build
+  stage: build
   script:
     - deno task build:cli:mac:arm
     - deno task build:tui:mac:arm
     - deno task build:http:mac:arm
     - deno task build:web:mac
-    - echo Cross compilation is not yet supported for Tauri
   artifacts:
     name: x86_64-apple-darwin
     paths:
       - dist
     expire_in: 1 day
 
+# Tauri does not yet support cross compilation so we can only build for the image's OS
 Desktop:
   image: rustdocker/rust:stable
-  stage: Build
+  stage: build
   only:
     - main
   script:
@@ -93,14 +82,14 @@ Desktop:
     - cargo install tauri-cli
     - deno task desktop:build
   artifacts:
-    name: zzz-desktop
+    name: desktop
     paths:
       - ./zzz-desktop
     expire_in: 1 day
 
 WindowsInstaller:
   image: debian:stable
-  stage: Package
+  stage: package
   dependencies: [Desktop]
   only:
     - main
@@ -116,7 +105,7 @@ WindowsInstaller:
 
 ArchPackage:
   image: archlinux/base
-  stage: Package
+  stage: package
   only:
     - main
   script:
@@ -130,7 +119,7 @@ ArchPackage:
     expire_in: 1 day
 
 DeployWeb:
-  stage: Deploy
+  stage: deploy
   only:
     - main
   environment: production
