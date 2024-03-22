@@ -15,6 +15,7 @@ import { loadContexts } from "./MainWindow.axios";
 import RequestTab from "./RequestTab.vue";
 import Session, { SessionProps, setProp, Status } from "./Session";
 import Skeleton from "primevue/skeleton";
+import Preferences from "./Preferences";
 
 const tabs = ref([]);
 const activeTab = ref(0);
@@ -23,11 +24,25 @@ const contexts = ref([]);
 
 const dirty = ref([] as boolean[]);
 
+function getTitle() {
+  let result: string;
+  console.log("title", Preferences.getValue().stylizedTitle);
+  if (Preferences.getValue().stylizedTitle) {
+    result = "ᶻ 𝗓 𐰁";
+  } else {
+    result = "Zzz";
+  }
+  if (Session.getValue().scope) {
+    result += " - " + Session.getValue().scope;
+  }
+  return result;
+}
+
 Session.subscribe((state) => {
   console.log("subscribe", state.tabs);
   tabs.value = state.tabs || [];
   activeTab.value = state.activeTab || 0;
-  document.title = "ᶻ 𝗓 𐰁" + (state.scope ? " - " + state.scope : "");
+  document.title = getTitle();
 });
 watch(context, (newContext) => {
   Session.update(setProp("context", newContext));

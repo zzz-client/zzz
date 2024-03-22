@@ -5,11 +5,12 @@ import { reactive } from "npm:vue";
 
 export interface PreferencesProps {
   responsePanelLocation: "bottom" | "right";
+  stylizedTitle: boolean; // Note: Web only (not desktop)
 }
 
 const Preferences = createStore(
   { name: "preferences" },
-  withProps<PreferencesProps>({ responsePanelLocation: "bottom" }),
+  withProps<PreferencesProps>({ responsePanelLocation: "bottom", stylizedTitle: true }),
 );
 export default Preferences;
 
