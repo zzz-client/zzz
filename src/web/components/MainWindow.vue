@@ -26,6 +26,7 @@ Session.subscribe((state) => {
   console.log("subscribe", state.tabs);
   tabs.value = state.tabs || [];
   activeTab.value = state.activeTab || 0;
+  document.title = state.scope || "ᶻ 𝗓 𐰁";
 });
 watch(context, (newContext) => {
   Session.update(setProp("context", newContext));
