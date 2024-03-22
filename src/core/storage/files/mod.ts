@@ -84,7 +84,7 @@ export default class FileStorage implements IStorage {
       splitsies.pop();
       model.Name = splitsies.pop()!;
     } else {
-    model.Name = basename(fullPath);
+      model.Name = basename(fullPath);
     }
     return Promise.resolve(model);
   }
@@ -100,7 +100,7 @@ export default class FileStorage implements IStorage {
   }
   private isFileToInclude(name: string): boolean {
     Trace("is file to include? " + name);
-    const result = name.endsWith("." + this.fileExtension) && !name.startsWith("_");
+    const result = name.endsWith("." + this.fileExtension) && !basename(name).startsWith("_");
     Trace(result);
     return result;
   }
@@ -112,8 +112,9 @@ export default class FileStorage implements IStorage {
     }
   }
   private async readDirectoryToDirectory(model: ParentModel): Promise<void> {
-    for await (const child of Deno.readDir(this.adjustPath(model.Id))) {
-      if (child.isDirectory) {
+    const filepath = this.adjustPath(model.Id);
+    for await (const child of Deno.readDir(filepath)) {
+      if (child.isDirectory && !basename(filepath).startsWith("_")) {
         Trace("Child is directory");
         const x = await this.getDirectory(`${model.Id}/${child.name}`);
         Trace("Directory: " + x.Id);
