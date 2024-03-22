@@ -1,6 +1,4 @@
-# (ー。ー) Zzz
-
->
+![(ー。ー) ᶻ 𝗓 𐰁](snoozing.gif)
 
 Zzz (pronounced as "zees" or "zeds" depending on where you live) is a **REST client** meant to be a replacement to Postman with generally the same features list.
 

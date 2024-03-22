@@ -79,36 +79,43 @@ function newTab(tab: Tab = { title: "Untitled Request", id: "" }): void {
     activeTab: state.tabs.length
   }));
 }
-const loadingAnimationFull = ["loadingAnimationActive", "loadingAnimationActive", "loadingAnimationActive"];
-const loadingAnimationEmpty = ["loadingAnimation", "loadingAnimation", "loadingAnimation"];
-
-const loadingAnimation = ref(loadingAnimationFull);
-
+let loadingAnimationDirection = 1;
+const loadingAnimation = ref(["loadingAnimationActive", "loadingAnimationActive", "loadingAnimationActive"]);
+let loadingAnimationIndex = loadingAnimation.value.length - 1;
+const loadingFrequency = 250;
 let loadingId = setInterval(() => {
-  const loadingIndex = loadingAnimation.value.lastIndexOf("loadingAnimationActive");
-  // const loadingIndex = loadingAnimation.value.findIndex((c) => c === "loadingAnimationActive");
-  if (loadingIndex === loadingAnimation.value.length - 1) {
-    loadingAnimation.value = [...loadingAnimationEmpty];
-  } else {
-    loadingAnimation.value[loadingIndex + 1] = "loadingAnimationActive";
+  if (loadingAnimationIndex < 0) {
+    loadingAnimationDirection = 1;
   }
-  console.log("tick", loadingIndex, loadingAnimation.value);
-}, 500);
-
+  if (loadingAnimationIndex == loadingAnimation.value.length - 1) {
+    loadingAnimationDirection = -1;
+  }
+  loadingAnimationIndex += loadingAnimationDirection;
+  loadingAnimation.value = loadingAnimation.value.map((_, i) => {
+    if (i <= loadingAnimationIndex) {
+      return "loadingAnimationActive";
+    } else {
+      return "loadingAnimation";
+    }
+  });
+}, loadingFrequency);
+function init() {
+  loadContexts()
+    .then((resultContexts) => {
+      clearTimeout(loadingId);
+      Status.online = true;
+      contexts.value = [...resultContexts];
+    })
+    .catch((error) => {
+      clearTimeout(loadingId);
+      console.log("oh no", error);
+      Status.error = error.message || error;
+      Status.online = false;
+    })
+    .then(() => (Status.connecting = false));
+}
 Status.connecting = true;
-loadContexts()
-  .then((resultContexts) => {
-    clearTimeout(loadingId);
-    Status.online = true;
-    contexts.value = [...resultContexts];
-  })
-  .catch((error) => {
-    clearTimeout(loadingId);
-    console.log("oh no", error);
-    Status.error = error.message || error;
-    Status.online = false;
-  })
-  .then(() => (Status.connecting = false));
+init();
 </script>
 
 <template>
@@ -132,6 +139,7 @@ loadContexts()
           <path fill="#FCA326" d="m7.707 20.677 2.56 1.935 1.555 1.176a1.051 1.051 0 0 0 1.268 0l1.555-1.176 2.56-1.935-4.743-3.584-4.755 3.584Z"></path>
           <path
             fill="#FC6D26"
+            f
             d="M5.01 11.461a11.43 11.43 0 0 0-4.56-2.05L.416 9.5a6.297 6.297 0 0 0 2.09 7.278l.012.01.03.022 5.16 3.867 4.745-3.584-7.444-5.632Z"
           ></path>
         </svg>
@@ -142,13 +150,13 @@ loadContexts()
     }}</Message>
   </div>
   <div v-if="Status.connecting" class="align-super-centered" style="text-align: center; opacity: 70%">
-    <h1 style="font-size: 12em">
+    <h1 style="font-size: 10em">
       <span :class="loadingAnimation[0]"> ᶻ </span>
       <span :class="loadingAnimation[1]"> 𝗓 </span>
       <span :class="loadingAnimation[2]"> 𐰁 </span>
     </h1>
   </div>
-  <Skeleton v-if="Status.connecting" width="100%" height="100%" />
+  <!-- <Skeleton v-if="Status.connecting" width="100%" height="100%" /> -->
   <Splitter v-if="Status.online" class="absolute">
     <SplitterPanel :size="15" :minSize="20" class="absolute">
       <Collections />
@@ -158,11 +166,11 @@ loadContexts()
         <Dropdown v-model="context" :options="contexts" placeholder="Select a Context" checkmark :highlightOnSelect="true" />
       </div>
       <div v-if="tabs.length === 0" class="align-super-centered">
-        <div style="font-size: 10em; opacity: 70%">ᶻ 𝗓 𐰁</div>
-        <div style="font-size: 1.6em">Let's make your dreams come true</div>
+        <div style="font-size: 8em; opacity: 70%">ᶻ 𝗓 𐰁</div>
+        <div style="font-size: 1.4em">Let's make your dreams come true</div>
         <br />
         <br />
-        <Button @click="newTab()" style="font-size: 1.2em">Create a new Request</Button>
+        <Button @click="newTab()" style="font-size: 1.1em">Create a new Request</Button>
       </div>
       <TabView class="absolute" @tab-click="onTabChange" v-model:activeIndex="activeTab">
         <TabPanel v-for="(tab, i) in tabs" :key="tab.id" :header="tab.title" class="absolute">
