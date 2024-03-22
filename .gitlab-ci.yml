@@ -34,7 +34,6 @@ Build:
     - deno task build:tui
     - deno task build:http
     - deno task build:web
-    - deno task build:desktop
   artifacts:
     name: x86_64-unknown-linux-gnu
     paths:
@@ -67,7 +66,7 @@ Build:
 #       - dist
 #     expire_in: 1 day
 
-# Mac:
+# Mac x86:
 #   stage: build
 #   script:
 #     - deno task build:cli:mac:x86
@@ -80,7 +79,7 @@ Build:
 #       - dist
 #     expire_in: 1 day
 
-# MacARM:
+# Mac ARM:
 #   stage: build
 #   script:
 #     - deno task build:cli:mac:arm
