@@ -5,7 +5,7 @@
   "tasks": {
     "init": "npm install ; cd src/web ; npm install ; cd ../.. ; deno task vite -v ; deno task cache",
     "cache": "deno cache src/**/*.ts",
-    "test": "rm coverage/*.json 2>/dev/null; deno test -A --coverage=coverage",
+    "test": "rm coverage/*.json 2>/dev/null; deno test -A --coverage=coverage --junit-path=coverage/junit.xml",
     "tests": "deno task test src/cli/cli.ts src/tui/tui.ts src/http/http.ts",
     "coverage": "deno coverage --lcov --output=coverage/lcov.info coverage && deno coverage --html coverage && deno coverage",
     "coverage:open": "code coverage/html/index.html",

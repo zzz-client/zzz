@@ -2,29 +2,34 @@ default:
   image: denoland/deno:1.40.0 # unzip is not included > 1.40.5; see https://github.com/denoland/deno_docker/issues/344
 
 stages:
-  # - test
+  - test
   - build
   - package
   - deploy
 
-# Tests:
-#   stage: test
-#   script:
-#     - deno task tests
-#     - deno task coverage
+Tests:
+  stage: test
+  script:
+    - deno task tests
+    - deno task coverage
+  artifacts:
+    when: always
+    reports:
+      junit: coverage/junit.xml
 
-# Lint:
-#   stage: test
-#   script:
-#     - deno task lint
-#     - deno fmt --check
+Lint:
+  stage: test
+  script:
+    - deno task lint
+    - deno fmt --check
 
 Linux:
   stage: build
   script:
-    - deno install --allow-read --allow-write --allow-env --allow-sys --allow-run -rfn nzip https://deno.land/x/nzip@v1.1.2/mod.ts
-    - cp /usr/local/bin/nzip /bin/zip
-    - zip --version
+    # A failed attempt to install zip on the deno image
+    # - deno install --allow-read --allow-write --allow-env --allow-sys --allow-run -rfn nzip https://deno.land/x/nzip@v1.1.2/mod.ts
+    # - cp /usr/local/bin/nzip /bin/zip
+    # - zip --version
     - deno task build:cli:linux
     - deno task build:tui:linux
     - deno task build:http:linux
