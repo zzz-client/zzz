@@ -23,7 +23,8 @@ Linux:
   stage: build
   script:
     - deno install --allow-read --allow-write --allow-env --allow-sys --allow-run -rfn nzip https://deno.land/x/nzip@v1.1.2/mod.ts
-    - cp /usr/local/bin/nzip /usr/local/bin/zip
+    - cp /usr/local/bin/nzip /bin/zip
+    - zip --version
     - deno task build:cli:linux
     - deno task build:tui:linux
     - deno task build:http:linux
