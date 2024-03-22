@@ -26,6 +26,10 @@ Lint:
 Build:
   stage: build
   script:
+    # A failed attempt to install zip on the deno image
+    # - deno install --allow-read --allow-write --allow-env --allow-sys --allow-run -rfn nzip https://deno.land/x/nzip@v1.1.2/mod.ts
+    # - cp /usr/local/bin/nzip /bin/zip
+    # - zip --version
     - deno task build:cli
     - deno task build:tui
     - deno task build:http
@@ -37,61 +41,57 @@ Build:
       - dist
     expire_in: 1 day
 
-Linux:
-  stage: build
-  script:
-    # A failed attempt to install zip on the deno image
-    # - deno install --allow-read --allow-write --allow-env --allow-sys --allow-run -rfn nzip https://deno.land/x/nzip@v1.1.2/mod.ts
-    # - cp /usr/local/bin/nzip /bin/zip
-    # - zip --version
-    - deno task build:cli:linux
-    - deno task build:tui:linux
-    - deno task build:http:linux
-    - deno task build:web:linux
-  artifacts:
-    name: x86_64-unknown-linux-gnu
-    paths:
-      - dist
-    expire_in: 1 day
+# Linux:
+#   stage: build
+#   script:
+#     - deno task build:cli:linux
+#     - deno task build:tui:linux
+#     - deno task build:http:linux
+#     - deno task build:web:linux
+#   artifacts:
+#     name: x86_64-unknown-linux-gnu
+#     paths:
+#       - dist
+#     expire_in: 1 day
 
-Windows:
-  stage: build
-  script:
-    - deno task build:cli:windows
-    - deno task build:tui:windows
-    - deno task build:http:windows
-    - deno task build:web:windows
-  artifacts:
-    name: x86_64-pc-windows-msvc
-    paths:
-      - dist
-    expire_in: 1 day
+# Windows:
+#   stage: build
+#   script:
+#     - deno task build:cli:windows
+#     - deno task build:tui:windows
+#     - deno task build:http:windows
+#     - deno task build:web:windows
+#   artifacts:
+#     name: x86_64-pc-windows-msvc
+#     paths:
+#       - dist
+#     expire_in: 1 day
 
-Mac:
-  stage: build
-  script:
-    - deno task build:cli:mac:x86
-    - deno task build:tui:mac:x86
-    - deno task build:http:mac:x86
-    - deno task build:web:mac:x86
-  artifacts:
-    name: x86_64-apple-darwin
-    paths:
-      - dist
-    expire_in: 1 day
+# Mac:
+#   stage: build
+#   script:
+#     - deno task build:cli:mac:x86
+#     - deno task build:tui:mac:x86
+#     - deno task build:http:mac:x86
+#     - deno task build:web:mac:x86
+#   artifacts:
+#     name: x86_64-apple-darwin
+#     paths:
+#       - dist
+#     expire_in: 1 day
 
-MacARM:
-  stage: build
-  script:
-    - deno task build:cli:mac:arm
-    - deno task build:tui:mac:arm
-    - deno task build:http:mac:arm
-    - deno task build:web:mac
-  artifacts:
-    name: x86_64-apple-darwin
-    paths:
-      - dist
-    expire_in: 1 day
+# MacARM:
+#   stage: build
+#   script:
+#     - deno task build:cli:mac:arm
+#     - deno task build:tui:mac:arm
+#     - deno task build:http:mac:arm
+#     - deno task build:web:mac
+#   artifacts:
+#     name: x86_64-apple-darwin
+#     paths:
+#       - dist
+#     expire_in: 1 day
 
 # Tauri does not yet support cross compilation so we can only build for the image's OS
 Desktop:
