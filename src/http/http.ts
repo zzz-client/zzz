@@ -73,19 +73,18 @@ export class Server implements IServer {
     Trace("respondToGet " + parts.entityId);
     if (pathname === "/favicon.ico") {
       return this.respondToFavicon();
-    } else {
-      let model: Model;
-      try {
-        model = await this.executeGet(request);
-      } catch (error) {
-        if (error.message.includes("Unable to determine model type for ID")) {
-          return newResponse(404, this.stringify({ message: "No such entity " + parts.entityId }, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS);
-        } else {
-          throw error;
-        }
-      }
-      return Promise.resolve(newResponse(200, this.stringify(model, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS));
     }
+    let model: Model;
+    try {
+      model = await this.executeGet(request);
+    } catch (error) {
+      if (error.message.includes("Unable to determine model type for ID")) {
+        return newResponse(404, this.stringify({ message: "No such entity " + parts.entityId }, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS);
+      } else {
+        throw error;
+      }
+    }
+    return Promise.resolve(newResponse(200, this.stringify(model, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS));
   }
   private respondToFavicon(): Promise<Response> {
     return Promise.resolve(newResponse(204, null, STANDARD_HEADERS));
