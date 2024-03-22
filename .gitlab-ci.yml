@@ -1,5 +1,5 @@
 default:
-  image: denoland/deno:1.40.4 # unzip is not included > 1.40.5; see https://github.com/denoland/deno_docker/issues/344
+  image: denoland/deno:1.40.0 # unzip is not included > 1.40.5; see https://github.com/denoland/deno_docker/issues/344
 
 stages:
   # - test
