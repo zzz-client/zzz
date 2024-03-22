@@ -74,7 +74,16 @@ export class Server implements IServer {
     if (pathname === "/favicon.ico") {
       return this.respondToFavicon();
     } else {
-      const model = await this.executeGet(request);
+      let model: Model;
+      try {
+        model = await this.executeGet(request);
+      } catch (error) {
+        if (error.message.includes("Unable to determine model type for ID")) {
+          return newResponse(404, this.stringify({ message: "No such entity " + parts.entityId }, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS);
+        } else {
+          throw error;
+        }
+      }
       return Promise.resolve(newResponse(200, this.stringify(model, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS));
     }
   }
@@ -99,7 +108,16 @@ export class Server implements IServer {
     }
     const parts = dissectRequest(request);
     Trace("Responding to PATCH");
-    const model = await this.executeGet(request);
+    let model: Model;
+    try {
+      model = await this.executeGet(request);
+    } catch (error) {
+      if (error.message.includes("Unable to determine model type for ID")) {
+        return newResponse(404, this.stringify({ message: "No such entity " + parts.entityId }, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS);
+      } else {
+        throw error;
+      }
+    }
     if (!("Method" in model)) {
       return Promise.resolve(newResponse(400, this.stringify({ message: "PATCH only supported for Requests" }, parts.extension || DEFAULT_FILETYPE), STANDARD_HEADERS));
     }
@@ -163,9 +181,10 @@ export class Server implements IServer {
     const action = new Action(flagValues, this.app.env);
     const modelId = getModelIdFromRequest(request);
     const model = { Id: modelId } as Model;
-    await executeModules(this.app.modules, action, model);
-    Log("Result", model);
-    return Promise.resolve(model);
+    return executeModules(this.app.modules, action, model).then(() => model).catch((error) => {
+      Log("Error in executeModules:", error);
+      throw error;
+    });
   }
   private async executePost(request: Request): Promise<void> {
     const model = await request.json() as Model;
