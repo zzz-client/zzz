@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Badge from "primevue/badge";
+import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
 import Message from "primevue/message";
 import "primevue/resources/themes/arya-purple/theme.css";
@@ -26,7 +27,7 @@ Session.subscribe((state) => {
   console.log("subscribe", state.tabs);
   tabs.value = state.tabs || [];
   activeTab.value = state.activeTab || 0;
-  document.title = state.scope || "ᶻ 𝗓 𐰁";
+  document.title = "ᶻ 𝗓 𐰁" + (state.scope ? " - " + state.scope : "");
 });
 watch(context, (newContext) => {
   Session.update(setProp("context", newContext));
@@ -157,10 +158,11 @@ loadContexts()
         <Dropdown v-model="context" :options="contexts" placeholder="Select a Context" checkmark :highlightOnSelect="true" />
       </div>
       <div v-if="tabs.length === 0" class="align-super-centered">
-        <div style="font-size: 5em; opacity: 70%">ᶻ 𝗓 𐰁</div>
-        Nothing to see!
+        <div style="font-size: 10em; opacity: 70%">ᶻ 𝗓 𐰁</div>
+        <div style="font-size: 1.6em">Let's make your dreams come true</div>
         <br />
-        <Button @click="newTab()" style="font-size: 0.6em">Create a new Request</Button>
+        <br />
+        <Button @click="newTab()" style="font-size: 1.2em">Create a new Request</Button>
       </div>
       <TabView class="absolute" @tab-click="onTabChange" v-model:activeIndex="activeTab">
         <TabPanel v-for="(tab, i) in tabs" :key="tab.id" :header="tab.title" class="absolute">
@@ -188,6 +190,7 @@ loadContexts()
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  text-align: center;
 }
 .loadingAnimation {
   opacity: 20%;
