@@ -77,14 +77,31 @@ function newTab(tab: Tab = { title: "Untitled Request", id: "" }): void {
     activeTab: state.tabs.length
   }));
 }
+const loadingAnimationFull = ["loadingAnimationActive", "loadingAnimationActive", "loadingAnimationActive"];
+const loadingAnimationEmpty = ["loadingAnimation", "loadingAnimation", "loadingAnimation"];
+
+const loadingAnimation = ref(loadingAnimationFull);
+
+let loadingId = setInterval(() => {
+  const loadingIndex = loadingAnimation.value.lastIndexOf("loadingAnimationActive");
+  // const loadingIndex = loadingAnimation.value.findIndex((c) => c === "loadingAnimationActive");
+  if (loadingIndex === loadingAnimation.value.length - 1) {
+    loadingAnimation.value = [...loadingAnimationEmpty];
+  } else {
+    loadingAnimation.value[loadingIndex + 1] = "loadingAnimationActive";
+  }
+  console.log("tick", loadingIndex, loadingAnimation.value);
+}, 500);
 
 Status.connecting = true;
 loadContexts()
   .then((resultContexts) => {
+    clearTimeout(loadingId);
     Status.online = true;
     contexts.value = [...resultContexts];
   })
   .catch((error) => {
+    clearTimeout(loadingId);
     console.log("oh no", error);
     Status.error = error.message || error;
     Status.online = false;
@@ -123,8 +140,11 @@ loadContexts()
     }}</Message>
   </div>
   <div v-if="Status.connecting" class="align-super-centered" style="text-align: center; opacity: 70%">
-    <h1 style="font-size: 10em">😴</h1>
-    <h2>waking up...</h2>
+    <h1 style="font-size: 12em">
+      <span :class="loadingAnimation[0]"> ᶻ </span>
+      <span :class="loadingAnimation[1]"> 𝗓 </span>
+      <span :class="loadingAnimation[2]"> 𐰁 </span>
+    </h1>
   </div>
   <Skeleton v-if="Status.connecting" width="100%" height="100%" />
   <Splitter v-if="Status.online" class="absolute">
@@ -136,7 +156,7 @@ loadContexts()
         <Dropdown v-model="context" :options="contexts" placeholder="Select a Context" checkmark :highlightOnSelect="true" />
       </div>
       <div v-if="tabs.length === 0" class="align-super-centered">
-        <div style="font-size: 5em; opacity: 70%">😴</div>
+        <div style="font-size: 5em; opacity: 70%">ᶻ 𝗓 𐰁</div>
         Nothing to see!
         <br />
         <Button @click="newTab()" style="font-size: 0.6em">Create a new Request</Button>
@@ -167,5 +187,11 @@ loadContexts()
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+.loadingAnimation {
+  opacity: 20%;
+}
+.loadingAnimationActive {
+  opacity: 100%;
 }
 </style>

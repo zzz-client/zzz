@@ -17,7 +17,7 @@ export function initDi(): void{
   DI.register("IStorage:Scope",         () => new ConfigStorage('zzz.yml', 'yml'));
   DI.register("IStorage:HttpRequest",   () => new FileStorage('library', 'yml'));
   DI.register("IStorage:Collection",    () => new FileStorage('library', 'yml'));
-  DI.register("IStorage:Context",       () => new FileStorage('library/contexts', 'yml'));
-  DI.register("IStorage:Authorization", () => new FileStorage('library/auth', 'yml'));
-  DI.register("IStorage:Cookies",       () => new FileStorage('library/cookies', 'yml'));
+  DI.register("IStorage:Context",       () => new FileStorage('library/_contexts', 'yml'));
+  DI.register("IStorage:Authorization", () => new FileStorage('library/_auth', 'yml'));
+  DI.register("IStorage:Cookies",       () => new FileStorage('library/_cookies', 'yml'));
 }
