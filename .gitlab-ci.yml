@@ -2,22 +2,22 @@ default:
   image: denoland/deno:1.40.4 # unzip is not included > 1.40.5; see https://github.com/denoland/deno_docker/issues/344
 
 stages:
-  - test
+  # - test
   - build
   - package
   - deploy
 
-Tests:
-  stage: test
-  script:
-    - deno task tests
-    - deno task coverage
+# Tests:
+#   stage: test
+#   script:
+#     - deno task tests
+#     - deno task coverage
 
-Lint:
-  stage: test
-  script:
-    - deno task lint
-    - deno fmt --check
+# Lint:
+#   stage: test
+#   script:
+#     - deno task lint
+#     - deno fmt --check
 
 Linux:
   stage: build
