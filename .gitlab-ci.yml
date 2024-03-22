@@ -19,43 +19,68 @@ Lint:
     - deno task lint
     - deno fmt --check
 
-Cli:
-  stage: Build
-  script: deno task cli:build ; mv dist/zzz-cli ./
-  artifacts:
-    name: zzz-cli
-    paths:
-      - ./zzz-cli
-    expire_in: 1 day
-
-Tui:
-  stage: Build
-  script: deno task tui:build ; mv dist/zzz-tui ./
-  artifacts:
-    name: zzz-tui
-    paths:
-      - ./zzz
-    expire_in: 1 day
-
-Http:
-  stage: Build
-  script: deno task http:build ; mv dist/zzz-server ./
-  artifacts:
-    name: zzz-server
-    paths:
-      - ./zzz-server
-    expire_in: 1 day
-
-Web:
+Linux:
+  image: rustdocker/rust:stable
   stage: Build
   script:
-    # - deno cache src/core/npm_deps.ts
-    - deno task web:build
-    - mv dist/web ./zzz-web
+    - deno task build:cli:linux
+    - deno task build:tui:linux
+    - deno task build:http:linux
+    - deno task build:web:linux
+    - cd src/desktop/
+    - cargo install tauri-cli
+    - deno task build:desktop
+    - cd ../../
+    - mv dist/release/Zzz dist/zzz-desktop
   artifacts:
-    name: zzz-web
+    name: x86_64-unknown-linux-gnu
     paths:
-      - ./zzz-web
+      - dist
+    expire_in: 1 day
+
+Windows:
+  image: rustdocker/rust:stable
+  stage: Build
+  script:
+    - deno task build:cli:windows
+    - deno task build:tui:windows
+    - deno task build:http:windows
+    - deno task build:web:windows
+    - echo Cross compilation is not yet supported for Tauri
+  artifacts:
+    name: x86_64-pc-windows-msvc
+    paths:
+      - dist
+    expire_in: 1 day
+
+Mac:
+  image: rustdocker/rust:stable
+  stage: Build
+  script:
+    - deno task build:cli:mac:x86
+    - deno task build:tui:mac:x86
+    - deno task build:http:mac:x86
+    - deno task build:web:mac:x86
+    - echo Cross compilation is not yet supported for Tauri
+  artifacts:
+    name: x86_64-apple-darwin
+    paths:
+      - dist
+    expire_in: 1 day
+
+MacARM:
+  image: rustdocker/rust:stable
+  stage: Build
+  script:
+    - deno task build:cli:mac:arm
+    - deno task build:tui:mac:arm
+    - deno task build:http:mac:arm
+    - deno task build:web:mac
+    - echo Cross compilation is not yet supported for Tauri
+  artifacts:
+    name: x86_64-apple-darwin
+    paths:
+      - dist
     expire_in: 1 day
 
 Desktop:
@@ -67,7 +92,6 @@ Desktop:
     - cd src/desktop/
     - cargo install tauri-cli
     - deno task desktop:build
-    - mv dist/release/Zzz ./zzz-desktop
   artifacts:
     name: zzz-desktop
     paths:

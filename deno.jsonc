@@ -10,20 +10,38 @@
     "coverage": "deno coverage --lcov --output=coverage/lcov.info coverage && deno coverage --html coverage && deno coverage",
     "coverage:open": "code coverage/html/index.html",
     "lint": "deno lint --unstable src/",
-    "build": "deno task cli:build ; deno task tui:build ; deno task http:build ; deno task web:build ; deno task desktop:build",
 
     "cli": "deno run -A --unstable src/cli/cli.ts",
-    "cli:build": "deno compile --unstable --allow-all --output=dist/zzz-cli src/cli/cli.ts",
     "tui": "deno run -A --unstable src/tui/tui.ts",
-    "tui:build": "deno compile --unstable --allow-all --output=dist/zzz-tui src/tui/tui.ts",
     "http": "deno run -A src/core/watch.ts -A src/http/http.ts --act",
-    "http:build": "deno compile --unstable --allow-all --output=dist/zzz-server src/http/http.ts",
     "web": "deno task vite --host 127.0.0.1",
-    "web:build": "deno task vite build && cp src/web/serve.sh dist/web/",
     "desktop": "cd src/desktop/ ; cargo tauri dev",
-    "desktop:build": "cd src/desktop/ ; CARGO_TARGET_DIR=../../dist cargo tauri build",
     "desktop:windows": "makensis scripts/desktop.nsi",
     "desktop:clean": "cd src/desktop/ ; cargo clean",
+
+    "build:all": "deno task build:cli ; deno task build:tui ; deno task build:http ; deno task build:web ; deno task build:desktop",
+
+    "build:cli":              "deno compile --output=dist/zzz-cli             --unstable --allow-all src/cli/cli.ts",
+    "build:cli:linux":        "deno compile --target x86_64-unknown-linux-gnu --unstable --allow-all --output=dist/zzz-cli src/cli/cli.ts",
+    "build:cli:windows":      "deno compile --target x86_64-pc-windows-msvc   --unstable --allow-all --output=dist/zzz-cli src/cli/cli.ts",
+    "build:cli:mac:x86":      "deno compile --target x86_64-apple-darwin      --unstable --allow-all --output=dist/zzz-cli src/cli/cli.ts",
+    "build:cli:mac:arm":      "deno compile --target aarch64-apple-darwin     --unstable --allow-all --output=dist/zzz-cli src/cli/cli.ts",
+
+    "build:tui":              "deno compile --output=dist/zzz-tui             --unstable --allow-all src/tui/tui.ts",
+    "build:tui:linux":        "deno compile --target x86_64-unknown-linux-gnu --unstable --allow-all --output=dist/zzz-tui src/tui/tui.ts",
+    "build:tui:windows":      "deno compile --target x86_64-pc-windows-msvc   --unstable --allow-all --output=dist/zzz-tui src/tui/tui.ts",
+    "build:tui:mac:x86":      "deno compile --target x86_64-apple-darwin      --unstable --allow-all --output=dist/zzz-tui src/tui/tui.ts",
+    "build:tui:mac:arm":      "deno compile --target aarch64-apple-darwin     --unstable --allow-all --output=dist/zzz-tui src/tui/tui.ts",
+
+    "build:http":             "deno compile --output=dist/zzz-http            --unstable --allow-all src/http/http.ts",
+    "build:http:linux":       "deno compile --target x86_64-unknown-linux-gnu --unstable --allow-all --output=dist/zzz-http src/http/http.ts",
+    "build:http:windows":     "deno compile --target x86_64-pc-windows-msvc   --unstable --allow-all --output=dist/zzz-http src/http/http.ts",
+    "build:http:mac:x86":     "deno compile --target x86_64-apple-darwin      --unstable --allow-all --output=dist/zzz-http src/http/http.ts",
+    "build:http:mac:arm":     "deno compile --target aarch64-apple-darwin     --unstable --allow-all --output=dist/zzz-http src/http/http.ts",
+
+    "build:web":              "deno task vite build && cp src/web/serve.sh dist/web/",
+
+    "build:desktop":          "cd src/desktop/ ; CARGO_TARGET_DIR=../../dist cargo tauri build && cp ../../dist/release/zzz-desktop* ../../dist/zzz-desktop",
 
     "web:preview": "deno task vite --host 127.0.0.1 preview",
     "vite": "cd src/web ; deno run -A --unstable --node-modules-dir npm:vite",
