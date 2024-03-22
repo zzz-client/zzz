@@ -127,8 +127,8 @@ WindowsInstaller:
 ArchPackage:
   image: archlinux/base
   stage: package
-  only:
-    - main
+  # only:
+  #   - main
   script:
     - cd scripts
     - makepkg
