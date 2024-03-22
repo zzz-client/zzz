@@ -79,7 +79,13 @@ export default class FileStorage implements IStorage {
     if (model.Id.startsWith("./")) {
       model.Id = model.Id.substring("./".length);
     }
+    if (fullPath.endsWith("/" + DEFAULT_MARKER)) {
+      const splitsies = fullPath.split("/");
+      splitsies.pop();
+      model.Name = splitsies.pop()!;
+    } else {
     model.Name = basename(fullPath);
+    }
     return Promise.resolve(model);
   }
   private async getDirectory(fullPath: string): Promise<ParentModel> {
