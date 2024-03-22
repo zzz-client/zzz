@@ -1,5 +1,5 @@
 default:
-  image: denoland/deno:1.40.0 # unzip is not included > 1.40.5; see https://github.com/denoland/deno_docker/issues/344
+  image: denoland/deno:1.40.4 # unzip is not included > 1.40.5; see https://github.com/denoland/deno_docker/issues/344
 
 stages:
   - test
@@ -22,6 +22,20 @@ Lint:
   script:
     - deno task lint
     - deno fmt --check
+
+Build:
+  stage: build
+  script:
+    - deno task build:cli
+    - deno task build:tui
+    - deno task build:http
+    - deno task build:web
+    - deno task build:desktop
+  artifacts:
+    name: x86_64-unknown-linux-gnu
+    paths:
+      - dist
+    expire_in: 1 day
 
 Linux:
   stage: build
