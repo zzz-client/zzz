@@ -1,0 +1,23 @@
+{
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": true,
+  "files.insertFinalNewline": true,
+  "cSpell.words": [
+    "aarch",
+    "makensis",
+    "msvc"
+  ],
+  "deno.enable": true,
+  "deno.lint": true,
+  "deno.unstable": false,
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#4C201E",
+    "titleBar.activeBackground": "#6A2D2A",
+    "titleBar.activeForeground": "#FEFCFC"
+  }
+}

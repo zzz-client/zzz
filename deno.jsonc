@@ -1,0 +1,96 @@
+{
+  "name": "zzz",
+  "version": "0.85.0",
+  "description": "Replacement for Postman with Desktop, Web, CLI, TUI, and HTTP interfaces",
+  "tasks": {
+    "run": "deno run --allow-read --allow-write --allow-net --allow-env --allow-run",
+    "compile": "deno compile --allow-read --allow-write --allow-net --allow-env",
+    "init": "npm install ; cd src/web ; npm install ; cd ../.. ; deno task vite -v ; deno task cache",
+    "cache": "deno cache src/**/*.ts",
+    "test": "rm coverage/*.json 2>/dev/null; deno test -A --coverage=coverage --junit-path=coverage/junit.xml",
+    "spec": "deno task test src/cli/app.ts src/tui/app.ts src/http/app.ts",
+    "coverage": "deno coverage --lcov --output=coverage/lcov.info coverage && deno coverage --html coverage && deno coverage",
+    "coverage:open": "code coverage/html/index.html",
+    "lint": "deno lint src/",
+
+    "cli": "deno task run src/cli/app.ts",
+    "tui": "deno task run src/tui/app.ts",
+    "http": "deno task run src/core/watch.ts -A src/http/app.ts --act",
+    "web": "deno task vite --host 127.0.0.1",
+    "desktop": "cd src/desktop/ ; cargo tauri dev",
+    "desktop:windows": "makensis scripts/desktop.nsi",
+    "desktop:clean": "cd src/desktop/ ; cargo clean",
+
+    "build:all": "deno task build:cli ; deno task build:tui ; deno task build:http ; deno task build:web ; deno task build:desktop",
+
+    "build:cli":              "deno task compile --output=dist/zzz-cli                                    src/cli/app.ts",
+    "build:cli:linux":        "deno task compile --target x86_64-unknown-linux-gnu  --output=dist/zzz-cli src/cli/app.ts",
+    "build:cli:windows":      "deno task compile --target x86_64-pc-windows-msvc    --output=dist/zzz-cli src/cli/app.ts",
+    "build:cli:mac:x86":      "deno task compile --target x86_64-apple-darwin       --output=dist/zzz-cli src/cli/app.ts",
+    "build:cli:mac:arm":      "deno task compile --target aarch64-apple-darwin      --output=dist/zzz-cli src/cli/app.ts",
+
+    "build:tui":              "deno task compile --output=dist/zzz-tui              src/tui/app.ts",
+    "build:tui:linux":        "deno task compile --target x86_64-unknown-linux-gnu  --output=dist/zzz-tui src/tui/app.ts",
+    "build:tui:windows":      "deno task compile --target x86_64-pc-windows-msvc    --output=dist/zzz-tui src/tui/app.ts",
+    "build:tui:mac:x86":      "deno task compile --target x86_64-apple-darwin       --output=dist/zzz-tui src/tui/app.ts",
+    "build:tui:mac:arm":      "deno task compile --target aarch64-apple-darwin      --output=dist/zzz-tui src/tui/app.ts",
+
+    "build:http":             "deno task compile --output=dist/zzz-http             src/http/app.ts",
+    "build:http:linux":       "deno task compile --target x86_64-unknown-linux-gnu  --output=dist/zzz-http src/http/app.ts",
+    "build:http:windows":     "deno task compile --target x86_64-pc-windows-msvc    --output=dist/zzz-http src/http/app.ts",
+    "build:http:mac:x86":     "deno task compile --target x86_64-apple-darwin       --output=dist/zzz-http src/http/app.ts",
+    "build:http:mac:arm":     "deno task compile --target aarch64-apple-darwin      --output=dist/zzz-http src/http/app.ts",
+
+    "build:web":              "deno task vite build && cp src/web/serve.sh dist/web/",
+
+    "build:desktop":          "cd src/desktop/ ; CARGO_TARGET_DIR=../../dist cargo tauri build",
+    "build:desktop:post:win": "mv dist/release/Zzz.exe dist/zzz-desktop.exe",
+    "build:desktop:post:posix": "mv dist/release/Zzz dist/zzz-desktop",
+
+
+    "pages:build": "echo ...",
+
+    "web:preview": "deno task vite --host 127.0.0.1 preview",
+    "vite": "cd src/web ; deno run --allow-read --allow-write --allow-net --allow-env --allow-ffi --allow-sys --allow-run --node-modules-dir npm:vite",
+
+    "bump": "deno task run scripts/setVersion.ts"
+  },
+  "lock": false,
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 280,
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": false,
+    "proseWrap": "never",
+    "include": ["src/"],
+    "exclude": ["node_nodules", "src/desktop/target", "src/web/dist", "src/web/node_modules"]
+  },
+  "lint": {
+    "include": ["*.ts"],
+    "exclude": [
+      "src/testdata/",
+      "data/fixtures/**/*.ts",
+      "node_nodules",
+      "**/node_nodules",
+      "src/desktop/target",
+      "src/web/dist",
+      "src/web/components",
+      "src/web/node_modules",
+      "**/.vite"
+    ]
+  },
+  "test": {
+    "include": ["src/*.ts"],
+    "exclude": [
+      "src/testdata/",
+      "data/fixtures/**/*.ts",
+      "node_nodules",
+      "**/node_nodules",
+      "src/desktop/target",
+      "src/web/dist",
+      "src/web/components/*.ts",
+      "src/web/node_modules"
+    ]
+  }
+}

@@ -1,49 +1,84 @@
-# lttr
+> The official development repo for this project is hosted at [Gitlab](https://gitlab.com/cat-dev-null/zzz).
 
-Program that stores requests as YAML. Meant to be a sleek modular replacement for Postman.
+![(ー。ー) ᶻ 𝗓 𐰁](snoozing.gif)
 
-- Method
-- URL
-- Query params
-- Authorization
-- Headers
-  - Default headers; Postman-Token calculated when request is sent
-- Body
+
+Zzz (pronounced as "zees" or "zeds" depending on where you live) is a **REST client** meant to be a replacement to Postman with generally the same features list.
+
+What sets it apart from other Postman alternatives is its modularity and the way it approaches modularity. The result is many different interfaces to access many different types of storage.
+
+Zzz can be used as a workspace of requests and variables, but it can also be used to run requests entirely stored in a single file, like so:
+
+```yaml
+Method: POST
+URL: "{{baseUrl}}{{auth_path}}token"
+Authorization:
+  BasicAuth: 32tersgvzfwt45g54=
+QueryParams:
+  grant_type: client_credentials
+  client_id: "{{clientId}}"
+  client_secret: "{{clientSecret}}"
+  content: application/x-www-form-urlencoded
+Variables:
+  clientId: XXXXXXX
+  clientSecret: XXXXXXXX
+  baseUrl: https://test.salesforce.com
+  auth_path: /services/oauth2/
+```
+
+Head on over to the project wiki or the [docs](docs) folder for more knowledge
+
+Also make sure to check the Wiki on Gitlab.
+
+
+## Postman feature parity
+
+- Request attributes:
+  - Method
+  - URL
+  - Query params
+  - Authorization
+  - Headers
+  - Body
+- Environments and Globals (aka Scopes)
+- Local variables (more Scopes)
+- Default values per folder or collection (aka Variables)
 - Cookie jar
-- Variables & Environments
-  - Easiest thing is probably just use mustache syntax?
+
+**Planned**:
+
 - Settings (per-request)
+  - Disable cookie jar
   - Follow redirects (3xx)
   - Follow original HTTP method (instead of redirecting to GET)
   - Follow Authorization Header
   - Remove referrer header on redirect
-  - enable strict HTTP parser???
-  - Encode URL automatically (path, query parameters, authentication fields)
-  - Disable cookie jar
+  - Enable strict HTTP parser???
+  - Encode URL automatically (path, query parameters, authorization fields)
   - Maximum number of redirects
 
-## How it would work
 
-1. Construct Request using:
-  **Dependency Injection**: seems like they all do the same thing, but maybe could also parse from curl or postman?
-  > IRequestConstructor.construct(requestFilePath: string): Request
-  we would start with 1 implementation of the above that would iterate over the following files each doing the same thing (collapsing down)
-  1. globals.yml
-  2. globals.local.yml
-  3. environment.yml
-  4. environment.local.yml
-  5. defaults.yml from root dir walked down to working dir (location of request)
-    Not allowed to be defaulted: Method, URL, QueryParams, Body, maybe more
-  6. request itself
-    Certain params should only be allowed to be specified on the request itself
-3. If [Authorization] is not null, load it from authorizations per-type and apply it to the Request
-    **Dependency Injection**: to start with, 3 implementations: ApiKey, BasicAuth, BearerToken
-    > IAuthorization.apply(request: Request, config: AuthConfig): void
-4. Convert to output
-    **Dependency Injection**: implementation to output compiled summary, convert to curl, to make request using node, etc
+# Interfaces
 
-## TODO
+#### Web
+![Zzz web interface](./screenshots/web.png)
 
- - where are workspace settings stored (e.g. environment)?
- - How does cookie jar work?
- - post-run script?
+Presently this also requires the REST API to be running
+
+### Desktop
+![Zzz_desktop_interface](./screenshots/desktop.png)
+
+Yeah, it's broken, but how cool is it that tauri builds?
+
+#### REST API
+![Zzz web interface](./screenshots/api.png)
+
+### CLI
+![Zzz cli interface](./screenshots/cli.png)
+
+Run `--help` or `-h` or `?` for more detail on flag usages and shorthands.
+
+### TUI
+![Zzz tui interface](./screenshots/tui.png)
+
+TODO

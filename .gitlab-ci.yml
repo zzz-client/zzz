@@ -1,0 +1,163 @@
+default:
+  image: denoland/deno:1.40.4 # unzip is not included > 1.40.5; see https://github.com/denoland/deno_docker/issues/344
+
+stages:
+  - Test
+  - Build
+  - Package
+  - Deploy
+
+Tests:
+  stage: Test
+  script:
+    - deno task spec
+    - deno task coverage
+  artifacts:
+    when: always
+    reports:
+      junit: coverage/junit.xml
+
+Lint:
+  stage: Test
+  script:
+    - deno task lint
+    - deno fmt --check
+
+Build:
+  stage: Build
+  script:
+    # A failed attempt to install zip on the deno image
+    # - deno install --allow-read --allow-write --allow-env --allow-sys --allow-run -rfn nzip https://deno.land/x/nzip@v1.1.2/mod.ts
+    # - cp /usr/local/bin/nzip /bin/zip
+    # - zip --version
+    - deno task build:cli
+    - deno task build:tui
+    - deno task build:http
+    - deno task build:web
+  artifacts:
+    name: UwU
+    paths:
+      - dist
+    exclude:
+      - dist/release
+      - dist/debug
+      - dust/*.json
+    expire_in: 1 day
+
+# Linux:
+#   stage: Build
+#   script:
+#     - deno task build:cli:linux
+#     - deno task build:tui:linux
+#     - deno task build:http:linux
+#     - deno task build:web:linux
+#   artifacts:
+#     name: x86_64-unknown-linux-gnu
+#     paths:
+#       - dist
+#     expire_in: 1 day
+
+# Windows:
+#   stage: Build
+#   script:
+#     - deno task build:cli:windows
+#     - deno task build:tui:windows
+#     - deno task build:http:windows
+#     - deno task build:web:windows
+#   artifacts:
+#     name: x86_64-pc-windows-msvc
+#     paths:
+#       - dist
+#     expire_in: 1 day
+
+# Mac x86:
+#   stage: Build
+#   script:
+#     - deno task build:cli:mac:x86
+#     - deno task build:tui:mac:x86
+#     - deno task build:http:mac:x86
+#     - deno task build:web:mac:x86
+#   artifacts:
+#     name: x86_64-apple-darwin
+#     paths:
+#       - dist
+#     expire_in: 1 day
+
+# Mac ARM:
+#   stage: Build
+#   script:
+#     - deno task build:cli:mac:arm
+#     - deno task build:tui:mac:arm
+#     - deno task build:http:mac:arm
+#     - deno task build:web:mac
+#   artifacts:
+#     name: x86_64-apple-darwin
+#     paths:
+#       - dist
+#     expire_in: 1 day
+
+# Tauri does not yet support cross compilation so we can only build for the image's OS
+Desktop:
+  image: rustdocker/rust:stable
+  stage: Build
+  only:
+    - main
+  script:
+    - cd src/desktop/
+    - cargo install tauri-cli
+    - deno task desktop:build
+  artifacts:
+    name: desktop
+    paths:
+      - ./zzz-desktop
+    expire_in: 1 day
+
+Windows Installer:
+  image: debian:stable
+  stage: Package
+  only:
+    - main
+  script:
+    # - curl --location --output artifacts.zip "https://gitlab.example.com/api/v4/projects/1/jobs/artifacts/main/download?job=test&job_token=$CI_JOB_TOKEN"
+    - apt-get -qq -o dir::cache::archives="$CI_PROJECT_DIR/.cache/apt" install -y zip nsis
+    - makensis scripts/desktop.nsi
+  artifacts:
+    name: zzz-win-setup
+    paths:
+      - ./zzz-setup.exe
+    expire_in: 1 day
+
+Arch Package:
+  image: archlinux/base
+  stage: Package
+  # only:
+  #   - main
+  script:
+    - cd scripts
+    - makepkg
+    - mv *.pkg.tar.zst ../
+  artifacts:
+    name: zzz-pacman
+    paths:
+      - "*.pkg.tar.zst"
+    expire_in: 1 day
+
+Deploy Web:
+  stage: Deploy
+  only:
+    - main
+  environment: production
+  script:
+    - echo "Deploying application..."
+    - echo "Application successfully deployed."
+# https://docs.gitlab.com/ee/user/project/releases/release_cicd_examples.html
+
+Pages:
+  stage: Test
+  script:
+    - deno task pages:build
+  artifacts:
+    paths:
+      - public
+  # rules:
+  #   - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH

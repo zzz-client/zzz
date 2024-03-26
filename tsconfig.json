@@ -1,12 +1,15 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es6",
-        "outDir": "dist",
-        "rootDir": ".",
-        "sourceMap": true,
-        "strict": false,
-        "skipLibCheck": true
-    },
-    "include": ["src"]
+  "compilerOptions": {
+    "module": "commonjs",
+    "lib": ["ESNext", "deno.ns"],
+    "target": "es6",
+    "outDir": "dist",
+    "rootDir": ".",
+    "sourceMap": true,
+    "strict": false,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "include": ["src"]
 }
