@@ -1,0 +1,9 @@
+{
+    "name": "lttr",
+    "version": "0.0.1",
+    "description": "Replacement for Postman",
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/src/index.js"
+    }
+}
